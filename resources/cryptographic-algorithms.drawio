@@ -1,0 +1,341 @@
+<mxfile host="app.diagrams.net" modified="2026-03-28" version="21.0.0">
+  <diagram id="algo-grammar" name="Cryptographic Algorithm Parameter Grammar">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1720" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TITLE -->
+        <mxCell id="2" value="Cryptographic Algorithm Parameter Grammar" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="10" width="1000" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- LEGEND HEADER -->
+        <mxCell id="3" value="Pattern Notation Symbols" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="72" width="240" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- NOTATION BOX 1 -->
+        <mxCell id="4" value="&lt;b&gt;[ … ]&lt;/b&gt;&lt;br/&gt;Optional parameter&lt;br/&gt;&lt;font color=&quot;#555555&quot;&gt;AES[-128]&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="30" y="102" width="230" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- NOTATION BOX 2 -->
+        <mxCell id="5" value="&lt;b&gt;( a | b )&lt;/b&gt;&lt;br/&gt;Required choice&lt;br/&gt;&lt;font color=&quot;#555555&quot;&gt;Ed(25519|448)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="280" y="102" width="230" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- NOTATION BOX 3 -->
+        <mxCell id="6" value="&lt;b&gt;{ x }&lt;/b&gt;&lt;br/&gt;Variable placeholder&lt;br/&gt;&lt;font color=&quot;#555555&quot;&gt;HMAC-{hashAlgorithm}&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="530" y="102" width="240" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- NOTATION BOX 4 -->
+        <mxCell id="7" value="&lt;b&gt;[ -{x} ]&lt;/b&gt;&lt;br/&gt;Optional variable param&lt;br/&gt;&lt;font color=&quot;#555555&quot;&gt;HMAC[-{hashAlgorithm}]&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="790" y="102" width="250" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- PATTERN RAILROAD -->
+        <mxCell id="8" value="&lt;b&gt;Pattern:&lt;/b&gt;  AlgorithmName  &lt;font color=&quot;#6c8ebf&quot;&gt;[ fixedValue ]&lt;/font&gt;  &lt;font color=&quot;#82b366&quot;&gt;[ -{placeholder} ]&lt;/font&gt;  &lt;font color=&quot;#d6b656&quot;&gt;( choice1 | choice2 | … )&lt;/font&gt;  &lt;font color=&quot;#9673a6&quot;&gt;-{placeholder}&lt;/font&gt;  ···  &lt;i&gt;(segments, any order)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="188" width="1200" height="42" as="geometry" />
+        </mxCell>
+
+        <!-- GRAMMAR PRODUCTION RULES -->
+        <mxCell id="9" value="&lt;b&gt;Grammar:&lt;/b&gt;  segment  →  &lt;font color=&quot;#6c8ebf&quot;&gt;[ value ]&lt;/font&gt;  |  &lt;font color=&quot;#82b366&quot;&gt;[ -{placeholder} ]&lt;/font&gt;  |  &lt;font color=&quot;#d6b656&quot;&gt;( v₁ | v₂ | … )&lt;/font&gt;  |  &lt;font color=&quot;#9673a6&quot;&gt;-{placeholder}&lt;/font&gt;         value  →  fixed-string  |  { placeholder }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="240" width="1200" height="42" as="geometry" />
+        </mxCell>
+
+        <!-- ===== ROW 1: §1–§5  y=300 ===== -->
+
+        <!-- §1 Size & Length -->
+        <mxCell id="10" value="§1  Size &amp; Length" style="swimlane;fontStyle=1;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="300" width="282" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="{keyLength}  ·  integer (bits)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="10">
+          <mxGeometry x="4" y="30" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="{saltLength}  ·  integer (bytes)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="10">
+          <mxGeometry x="4" y="66" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="{dkLen}  ·  integer (bytes)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="10">
+          <mxGeometry x="4" y="102" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="{tagLenBytes}  ·  integer (bytes)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="10">
+          <mxGeometry x="4" y="138" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="{outputLength}  ·  integer (bytes)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="10">
+          <mxGeometry x="4" y="174" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="{dkmLength}  ·  integer (bits)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="10">
+          <mxGeometry x="4" y="210" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="{length}  ·  integer (bits)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="10">
+          <mxGeometry x="4" y="246" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="{parameterSetIdentifier}  ·  enumeration" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="10">
+          <mxGeometry x="4" y="282" width="274" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- §2 Mode & Variant -->
+        <mxCell id="19" value="§2  Mode &amp; Variant" style="swimlane;fontStyle=1;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="332" y="300" width="282" height="358" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="{mode} [block cipher]  ·  enumeration" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="19">
+          <mxGeometry x="4" y="30" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="{mode} (HPKE)  ·  enumeration" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="19">
+          <mxGeometry x="4" y="66" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="{symmetricCipher}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="19">
+          <mxGeometry x="4" y="102" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="{cipherAlgorithm} [CMAC]  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="19">
+          <mxGeometry x="4" y="138" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="{cipherAlgorithm} (CTR_DRBG)  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="19">
+          <mxGeometry x="4" y="174" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="{blockCipher} (DRBG)  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="19">
+          <mxGeometry x="4" y="210" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="26" value="{encryptionAlgorithm}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="19">
+          <mxGeometry x="4" y="246" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="27" value="{kem}  ·  KEM identifier" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="19">
+          <mxGeometry x="4" y="282" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="28" value="{otherBlockCipher}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="19">
+          <mxGeometry x="4" y="318" width="274" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- §3 Hash & Digest -->
+        <mxCell id="29" value="§3  Hash &amp; Digest" style="swimlane;fontStyle=1;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="634" y="300" width="282" height="214" as="geometry" />
+        </mxCell>
+        <mxCell id="30" value="{hashAlgorithm}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="29">
+          <mxGeometry x="4" y="30" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="31" value="{maskGenAlgorithm}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="29">
+          <mxGeometry x="4" y="66" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="32" value="{prfFunction}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="29">
+          <mxGeometry x="4" y="102" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="{auxFunction}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="29">
+          <mxGeometry x="4" y="138" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="{hashfun} / {nbits} / {treeHeight}  ·  composite integers" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="29">
+          <mxGeometry x="4" y="174" width="274" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- §4 Curve & Group -->
+        <mxCell id="35" value="§4  Curve &amp; Group" style="swimlane;fontStyle=1;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="936" y="300" width="282" height="142" as="geometry" />
+        </mxCell>
+        <mxCell id="36" value="{ellipticCurve}  ·  curve identifier" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="35">
+          <mxGeometry x="4" y="30" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="37" value="{namedGroup}  ·  group identifier" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="35">
+          <mxGeometry x="4" y="66" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="38" value="{group}  ·  group identifier" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="35">
+          <mxGeometry x="4" y="102" width="274" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- §5 Auth & Tag -->
+        <mxCell id="39" value="§5  Auth &amp; Tag" style="swimlane;fontStyle=1;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1238" y="300" width="282" height="214" as="geometry" />
+        </mxCell>
+        <mxCell id="40" value="{tagLength}  ·  integer (bits)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="39">
+          <mxGeometry x="4" y="30" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="41" value="{ivLength}  ·  integer (bits)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="39">
+          <mxGeometry x="4" y="66" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="42" value="{mac}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="39">
+          <mxGeometry x="4" y="102" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="43" value="{macAlgorithm}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="39">
+          <mxGeometry x="4" y="138" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="44" value="{aead}  ·  AEAD identifier" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="39">
+          <mxGeometry x="4" y="174" width="274" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- ===== ROW 2: §6–§8  y=700 ===== -->
+
+        <!-- §6 KDF & Password -->
+        <mxCell id="45" value="§6  KDF &amp; Password" style="swimlane;fontStyle=1;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="700" width="282" height="506" as="geometry" />
+        </mxCell>
+        <mxCell id="46" value="{kdf}  ·  algorithm ref" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="30" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="47" value="{iterations}  ·  positive integer" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="66" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="48" value="{memoryKiB}  ·  positive integer (KiB)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="102" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="49" value="{passes}  ·  positive integer" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="138" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="50" value="{parallelism}  ·  positive integer" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="174" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="51" value="{saltLenBytes}  ·  integer (bytes)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="210" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="52" value="{N}  ·  power of 2  (scrypt)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="246" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="53" value="{r}  ·  positive integer  (scrypt block size)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="282" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="54" value="{p}  ·  positive integer  (scrypt parallelism)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="318" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="55" value="{cost}  ·  integer log2  (bcrypt)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="354" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="56" value="{ksf}  ·  algorithm ref  (OPAQUE)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="390" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="57" value="{N_log2}  ·  integer log2  (yescrypt)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="426" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="58" value="{t}  ·  non-negative integer  (yescrypt time mixing)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="45">
+          <mxGeometry x="4" y="462" width="274" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- §7 Padding & IV -->
+        <mxCell id="59" value="§7  Padding &amp; IV" style="swimlane;fontStyle=1;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="332" y="700" width="282" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="60" value="{padding}  ·  enumeration" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="59">
+          <mxGeometry x="4" y="30" width="274" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- §8 Protocol & Misc -->
+        <mxCell id="61" value="§8  Protocol &amp; Misc" style="swimlane;fontStyle=1;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="634" y="700" width="282" height="106" as="geometry" />
+        </mxCell>
+        <mxCell id="62" value="{compressionRounds}/{finalizationRounds}  ·  integer pair" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="61">
+          <mxGeometry x="4" y="30" width="274" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="63" value="{SRP version}  ·  enumeration  (3 | 6 | 6a)" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="61">
+          <mxGeometry x="4" y="66" width="274" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- ===== ROW 3: §9 PQC  y=1254 ===== -->
+
+        <!-- §9 outer swimlane -->
+        <mxCell id="64" value="§9  PQC Internal Parameters  (FIPS 203 / 204 / 205 / 206)" style="swimlane;fontStyle=1;startSize=28;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1254" width="1490" height="386" as="geometry" />
+        </mxCell>
+
+        <!-- §9 ML-DSA sub -->
+        <mxCell id="65" value="ML-DSA  (FIPS 204)" style="swimlane;fontStyle=1;startSize=22;fillColor=#f3e5f5;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="64">
+          <mxGeometry x="10" y="32" width="340" height="344" as="geometry" />
+        </mxCell>
+        <mxCell id="66" value="{k}, {l}  ·  lattice matrix dimensions" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="65">
+          <mxGeometry x="4" y="24" width="332" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="67" value="{eta}  ·  secret key coefficient bound" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="65">
+          <mxGeometry x="4" y="60" width="332" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="68" value="{gamma1}  ·  masking polynomial range" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="65">
+          <mxGeometry x="4" y="96" width="332" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="69" value="{gamma2}  ·  rounding threshold" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="65">
+          <mxGeometry x="4" y="132" width="332" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="70" value="{tau}  ·  challenge polynomial weight" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="65">
+          <mxGeometry x="4" y="168" width="332" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="71" value="{lambda}  ·  collision strength target (bits)" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="65">
+          <mxGeometry x="4" y="204" width="332" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="72" value="{deterministicSigning}  ·  deterministic | hedged" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="65">
+          <mxGeometry x="4" y="240" width="332" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="73" value="{parameterSetIdentifier}  ·  44 | 65 | 87" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="65">
+          <mxGeometry x="4" y="276" width="332" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- §9 ML-KEM sub -->
+        <mxCell id="74" value="ML-KEM  (FIPS 203)" style="swimlane;fontStyle=1;startSize=22;fillColor=#f3e5f5;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="64">
+          <mxGeometry x="360" y="32" width="290" height="242" as="geometry" />
+        </mxCell>
+        <mxCell id="75" value="{k}  ·  module rank  (2 | 3 | 4)" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="74">
+          <mxGeometry x="4" y="24" width="282" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="76" value="{du}, {dv}  ·  ciphertext compression bits" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="74">
+          <mxGeometry x="4" y="60" width="282" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="77" value="{eta1}, {eta2}  ·  noise distribution width" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="74">
+          <mxGeometry x="4" y="96" width="282" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="78" value="{hybridKemCombiner}  ·  concat | xor | HKDF" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="74">
+          <mxGeometry x="4" y="132" width="282" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="79" value="{parameterSetIdentifier}  ·  512 | 768 | 1024" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="74">
+          <mxGeometry x="4" y="168" width="282" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- §9 SLH-DSA sub -->
+        <mxCell id="80" value="SLH-DSA  (FIPS 205)" style="swimlane;fontStyle=1;startSize=22;fillColor=#f3e5f5;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="64">
+          <mxGeometry x="660" y="32" width="290" height="276" as="geometry" />
+        </mxCell>
+        <mxCell id="81" value="{n}  ·  security parameter (bytes)" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="80">
+          <mxGeometry x="4" y="24" width="282" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="82" value="{h}, {d}  ·  hypertree height &amp; layers" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="80">
+          <mxGeometry x="4" y="60" width="282" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="83" value="{a}  ·  FORS tree height" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="80">
+          <mxGeometry x="4" y="96" width="282" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="84" value="{k}  ·  number of FORS trees" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="80">
+          <mxGeometry x="4" y="132" width="282" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="85" value="{w} / {lg_w}  ·  Winternitz parameter (fixed: w=16)" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="80">
+          <mxGeometry x="4" y="168" width="282" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="86" value="{parameterSetIdentifier}  ·  128s|128f|192s|192f|256s|256f" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="80">
+          <mxGeometry x="4" y="204" width="282" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- §9 Cross-cutting / FN-DSA sub -->
+        <mxCell id="87" value="Cross-cutting PQC  (ML-DSA · SLH-DSA · FN-DSA)" style="swimlane;fontStyle=1;startSize=22;fillColor=#f3e5f5;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="64">
+          <mxGeometry x="960" y="32" width="520" height="310" as="geometry" />
+        </mxCell>
+        <mxCell id="88" value="{signingMode}  ·  pure | pre-hash" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="87">
+          <mxGeometry x="4" y="24" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="89" value="{context}  ·  byte string (0–255 B), cross-protocol domain separation" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="87">
+          <mxGeometry x="4" y="60" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="90" value="{hashAlgorithm} (pre-hash mode)  ·  SHAKE256 | SHA-512 | ..." style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="87">
+          <mxGeometry x="4" y="96" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="91" value="{floatingPointMode} [FN-DSA]  ·  ieee754-strict | ieee754-relaxed | integer-emulation" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="87">
+          <mxGeometry x="4" y="132" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="92" value="{parameterSetIdentifier} [FN-DSA]  ·  FN-DSA-512 | FN-DSA-1024" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="87">
+          <mxGeometry x="4" y="168" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="93" value="{deterministicSigning} [ML-DSA]  ·  hedged (default, fault-resistant) | deterministic" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="87">
+          <mxGeometry x="4" y="204" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="94" value="{hybridKemCombiner} [TLS 1.3]  ·  concat | xor | HKDF" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="87">
+          <mxGeometry x="4" y="240" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="95" value="{hashAlgorithm} (pre-hash OID)  ·  SHA-512 | SHAKE256  (CMS / S/MIME interop)" style="text;html=1;strokeColor=#9673a6;fillColor=#f9f0ff;align=left;verticalAlign=middle;spacingLeft=6;whiteSpace=wrap;" vertex="1" parent="87">
+          <mxGeometry x="4" y="276" width="512" height="34" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
