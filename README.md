@@ -53,7 +53,7 @@ Please note that this content is based on public data sources. Primarily:
 * https://github.com/spdx/cryptographic-algorithm-list (Creative Commons Zero Universal 1.0)
 * https://github.com/CycloneDX/specification/blob/master/schema/cryptography-defs.json (Apache License 2.0)
 * https://groups.google.com/a/list.nist.gov/g/pqc-forum (individual copyrights, licenses and trademarks apply)
-* and diverse public publications (such as special publications from NIST and BSI guidance).
+* and diverse public publications (such as special publications from NIST, FIPS and BSI guidance).
 
 The aggregation and enhancement of the content are provided under Creative Commons BY-SA 4.0, 
 Copyright (c) 2026 metaeffekt GmbH.
@@ -78,7 +78,7 @@ that adjustments can be applied accordingly.
 
 - **[random-number-generators.md](random-number-generators.md)** — Catalogue of deterministic and non-deterministic random number generators (DRBGs and TRNGs). Covers SP 800-90A/B/C families, OS entropy sources, and platform-specific APIs. Each entry lists construction type, security strength, seeding requirements, and CycloneDX RNG pattern strings.
 
-- **[cryptographic-recommendations.md](cryptographic-recommendations.md)** — Guidance on algorithm selection and key-length choices derived from NIST SP 800-57/800-131A, BSI TR-02102, and related standards. Organises algorithms by security strength tier, highlights deprecated and disallowed primitives, and cross-references the FIPS post-quantum standards.
+- **[cryptographic-status.md](cryptographic-status.md)** — Status on algorithms and key-length choices derived from NIST SP 800-57/800-131A, BSI TR-02102, and related standards. Organises algorithms by security strength tier, highlights deprecated and disallowed primitives, and cross-references the FIPS post-quantum standards.
 
 - **[glossary.md](glossary.md)** — Plain-language explanations of all terms and abbreviations used across this repository, written for readers without a mathematics background. Covers cryptographic primitives, protocol concepts, standardisation bodies, post-quantum terminology, and SBOM/CycloneDX notation. Includes an abbreviation quick-reference table.
 

@@ -1,6 +1,6 @@
-# Cryptographic Algorithm Recommendations and Alerts
+# Cryptographic Algorithm Status and Alerts
 
-> Characteristics, recommendations, and alerts derived from NIST and BSI publications.
+> Characteristics, status, and alerts derived from NIST and BSI publications.
 > Algorithms and RNGs are expressed using the CycloneDX pattern notation extended with two
 > wildcard conventions defined below.
 >
