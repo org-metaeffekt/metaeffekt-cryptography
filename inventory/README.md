@@ -141,7 +141,7 @@ and van Woerden. Uses NTRU lattices without the floating-point Gaussian sampler 
 
 CROSS (Codes and Restricted Objects Signature Scheme) and LESS (Linear Equivalence Signature
 Scheme) are based on code equivalence problems. LESS, PERK, RYDE, and QR-UOV do not have
-widely maintained public GitHub organisations as of March 2026; implementations are distributed
+widely maintained public GitHub organisations as of Q1 2026; implementations are distributed
 via algorithm websites and the NIST CSRC submission packages.
 
 ### 3.4 MPC-in-the-Head (MitH)
@@ -372,7 +372,7 @@ implementations now in CIRCL.
 `pyca/cryptography` inherits PQC support directly from its OpenSSL backend: applications using
 OpenSSL >= 3.5.0 gain ML-KEM, ML-DSA, and SLH-DSA without any code changes, provided the
 system's OpenSSL build includes the FIPS provider. PyCryptodome and PyNaCl have no PQC roadmap
-items as of March 2026.
+items as of Q1 2026.
 
 ---
 
@@ -406,7 +406,7 @@ items as of March 2026.
    NIST is evaluating additional signature candidates (CROSS, MAYO prioritised) with down-selection
    expected mid-to-late 2025 and final standard potentially by 2026-2027 (NIST IR 8545).
    LESS, PERK, RYDE, and QR-UOV do not have widely-found public GitHub organisations as of
-   March 2026; implementations are distributed via their respective algorithm websites and the
+   Q1 2026; implementations are distributed via their respective algorithm websites and the
    NIST CSRC submission packages.
 
 7. **FAEST-avx v2.0.1** — The AVX2-optimised C++ implementation is at version 2.0.1, matching

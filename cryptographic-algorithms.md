@@ -132,7 +132,7 @@ Cryptographic Algorithms
 | `aes-gcm` | AES-GCM (Galois/Counter Mode) | AEAD mode | `2.16.840.1.101.3.4.1.6/26/46` | `AES-[128\|192\|256]-GCM` | SP 800-38D; FIPS 197 |
 | `aes-ccm` | AES-CCM (Counter with CBC-MAC) | AEAD mode | `2.16.840.1.101.3.4.1.7/27/47` | `AES-[128\|192\|256]-CCM` | SP 800-38C; RFC 3610 |
 | `aes-gcm-siv` | AES-GCM-SIV (Nonce-Misuse Resistant) | AEAD mode | — | `AES-[128\|256]-GCM-SIV` | RFC 8452 |
-| `aes-ocb` | AES-OCB (Offset Code Book) | AEAD mode | — | `AES-[128\|192\|256]-OCB` | RFC 7253; SP 800-38F |
+| `aes-ocb` | AES-OCB (Offset Code Book) | AEAD mode | — | `AES-[128\|192\|256]-OCB` | RFC 7253 |
 | `aes-siv` | AES-SIV (Synthetic IV) | Deterministic AEAD | — | `AES-[128\|256]-SIV` | RFC 5297 |
 | `aes-cfb1` | AES-CFB1 (Cipher Feedback, 1-bit segment) | Block cipher mode — confidentiality | — | `AES-[128\|192\|256]-CFB1` | SP 800-38A |
 | `aes-cfb8` | AES-CFB8 (Cipher Feedback, 8-bit segment) | Block cipher mode — confidentiality | — | `AES-[128\|192\|256]-CFB8` | SP 800-38A |
@@ -153,7 +153,7 @@ Cryptographic Algorithms
 | `aes-hctr2` | AES-HCTR2 | Block cipher mode — wide-block (length-preserving) | — | `AES-[128\|256]-HCTR2` | Adiantum; Google 2018; storage on low-end devices |
 | `chacha20-poly1305` | ChaCha20-Poly1305 | AEAD mode | — | `ChaCha20-Poly1305` | RFC 8439; BSI TR-02102-1 |
 | `xchacha20-poly1305` | XChaCha20-Poly1305 | AEAD mode | — | `XChaCha20-Poly1305` | draft-irtf-cfrg-xchacha |
-| `adiantum` | Adiantum (ChaCha12 + AES-HCTR2 + Poly1305) | Length-preserving AEAD mode (disk/storage) | — | `Adiantum-*` | Google 2018; RFC 9369; Android for ARMv7 devices |
+| `adiantum` | Adiantum (ChaCha12 + AES-HCTR2 + Poly1305) | Length-preserving AEAD mode (disk/storage) | — | `Adiantum-*` | Crowley & Biggers 2018; Android for ARMv7 devices |
 
 ---
 
@@ -224,14 +224,14 @@ Cryptographic Algorithms
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
 | `rsassa-pss` | RSASSA-PSS (RSA with Probabilistic Signature Scheme) | Digital signature | `1.2.840.113549.1.1.10` | `RSASSA-PSS-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5; SP 800-131A |
-| `rsassa-pkcs1` | RSASSA-PKCS1-v1.5 | Digital signature (legacy) | `1.2.840.113549.1.1.5` (SHA-256) | `RSASSA-PKCS1-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5 (deprecated for new use) |
+| `rsassa-pkcs1` | RSASSA-PKCS1-v1.5 | Digital signature (legacy) | `1.2.840.113549.1.1.5` (SHA-1) · `.11` (SHA-256) · `.12` (SHA-384) · `.13` (SHA-512) · `.14` (SHA-224) | `RSASSA-PKCS1-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5 (deprecated for new use) |
 | `ecdsa` | ECDSA (Elliptic Curve Digital Signature Algorithm) | Digital signature | `1.2.840.10045.4.3.2` (P-256/SHA-256) | `ECDSA-{curve}-{hashAlgorithm}` | FIPS 186-5; SP 800-186; RFC 5758 |
 | `eddsa` | EdDSA (Edwards-curve Digital Signature Algorithm) | Digital signature | `1.3.101.112` (Ed25519) · `1.3.101.113` (Ed448) | `EdDSA-(Ed25519\|Ed448)` | RFC 8032; FIPS 186-5 |
 | `ed25519` | Ed25519 | Digital signature | `1.3.101.112` | `Ed25519` | RFC 8032; FIPS 186-5 |
 | `ed448` | Ed448 · Ed448-Goldilocks | Digital signature | `1.3.101.113` | `Ed448` | RFC 8032; FIPS 186-5 |
 | `dsa` | DSA (Digital Signature Algorithm) | Digital signature (deprecated) | `1.2.840.10040.4.1` | `DSA-{keyLength}-{hashAlgorithm}` | FIPS 186-4 (withdrawn 2023); SP 800-131A |
 | `sm2` | SM2 (signature scheme) | Digital signature | `1.2.156.10197.1.501` | `SM2-*` | GM/T 0003-2012 |
-| `gostr3410-2012` | GOST R 34.10-2012 · Grasshopper DSA | Digital signature | `1.2.643.7.1.1.3.2` | `GOSTR3410-2012-*` | RFC 7091; GOST R 34.10-2012 |
+| `gostr3410-2012` | GOST R 34.10-2012 | Digital signature | `1.2.643.7.1.1.3.2` | `GOSTR3410-2012-*` | RFC 7091; GOST R 34.10-2012 |
 
 ---
 
@@ -580,7 +580,7 @@ Cryptographic Algorithms
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
-| `elgamal` | ElGamal | Asymmetric encryption / signature | `1.3.14.7.2.1.1` | `ElGamal-{keyLength}` | Taher ElGamal 1985; used in OpenPGP (RFC 4880) |
+| `elgamal` | ElGamal | Asymmetric encryption / signature | — | `ElGamal-{keyLength}` | Taher ElGamal 1985; used in OpenPGP (RFC 4880) |
 | `ntruencrypt` | NTRUEncrypt | Asymmetric encryption (lattice, historical) | — | `NTRUEncrypt-{paramSet}` | NTRU Cryptosystems 1996; patents in public domain (Security Innovation, 2017) |
 | `rabin` | Rabin | Asymmetric encryption | — | `Rabin-{keyLength}` | Rabin 1979 |
 | `blum-goldwasser` | Blum-Goldwasser | Asymmetric encryption (probabilistic) | — | `BlumGoldwasser-*` | Blum & Goldwasser 1984 |

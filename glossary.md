@@ -27,6 +27,9 @@ AES used in GCM mode, providing both encryption and authentication (an AEAD cons
 **AES-KW / AES-KWP — AES Key Wrap / Key Wrap with Padding**
 A standardised way to encrypt (wrap) one cryptographic key inside another, so the key can be safely stored or transmitted. Used in XML encryption, CMS, and enterprise key management.
 
+**AIS 20/31**
+A BSI technical guideline defining requirements for random number generators in security modules. Version 3 (2022) classifies generators into functionality classes: DRG.2-4 for deterministic generators, PTG.2-3 for physical TRNGs, and NTG.1 for non-deterministic RBGs. Referenced in cryptographic module evaluations (Common Criteria, BSI certification).
+
 **Agility, Cryptographic**
 The design property of a system that allows its cryptographic algorithms to be swapped out without redesigning the system. Important for migrating away from algorithms that are broken or deprecated.
 
@@ -35,6 +38,9 @@ A modern password-hashing algorithm (RFC 9106) designed to resist brute-force at
 
 **ARIA**
 A 128-bit block cipher standardised in South Korea, used in Korean government and financial applications.
+
+**ASN.1 — Abstract Syntax Notation One**
+A standard interface description language (ITU-T X.680) for defining data structures. In cryptography, ASN.1 is used to describe certificate formats (X.509), key encodings (PKCS#8), and algorithm identifiers (OIDs). DER and BER are the binary encoding rules used to serialize ASN.1 structures in certificates and signed messages.
 
 **Authentication**
 Verifying the identity of a sender or the integrity of data — confirming that a message truly came from who it claims to be from and has not been altered in transit.
@@ -76,6 +82,9 @@ An older 64-bit block cipher. Its small block size makes it vulnerable to the bi
 **BSI — Bundesamt für Sicherheit in der Informationstechnik**
 Germany's Federal Office for Information Security. Publishes algorithm recommendations (TR-02102 series) and standards for random number generators (AIS 20/31). A major authority alongside NIST for European deployments.
 
+**BSI TR — BSI Technical Regulation**
+A series of technical recommendations published by the German BSI. Key documents for cryptography: TR-02102-1 (cryptographic algorithms and key lengths), TR-02102-2 (TLS), TR-02102-3 (IPsec), TR-02102-4 (SSH). Updated annually; the current edition is TR-02102-1 (2026-01).
+
 ---
 
 ## C
@@ -86,17 +95,38 @@ A 128-bit block cipher developed by NTT and Mitsubishi, approved by NIST, ISO, a
 **CAST5 / CAST6**
 Block ciphers used in OpenPGP and some TLS ciphersuites. Largely superseded by AES.
 
+**CAVP — Cryptographic Algorithm Validation Program**
+A NIST program that validates cryptographic implementations through testing against known answer tests (KATs) and other validation procedures. A CAVP certificate demonstrates that a specific implementation produces correct outputs. CAVP is the testing component; CMVP (Cryptographic Module Validation Program) validates complete cryptographic modules under FIPS 140-3.
+
 **CBC — Cipher Block Chaining**
 A block cipher mode where each plaintext block is XOR-ed with the previous ciphertext block before encryption, so identical input blocks produce different output. Requires a random IV. Used in older TLS and still in file encryption; less preferred than AEAD modes for new designs.
 
 **CBC-MAC**
 A message authentication code computed using a block cipher in CBC mode. Vulnerable to certain extension attacks when used naively; CMAC is the safe standardised variant.
 
+**CBMC — C Bounded Model Checker**
+A formal verification tool that can mathematically prove the correctness of C programs by exploring all possible execution paths up to a specified bound. Used by the PQ Code Package (mlkem-native) to verify functional correctness of PQC implementations.
+
 **CCM — Counter with CBC-MAC**
 An AEAD mode combining AES-CTR (for encryption) and AES-CBC-MAC (for authentication). Used in IEEE 802.15.4 (ZigBee/IoT) and TLS. Less flexible than GCM for online processing.
 
 **CFB — Cipher Feedback Mode**
 A block cipher mode that converts a block cipher into a stream cipher by encrypting the previous output. Rarely preferred over CTR mode for new designs.
+
+**CFRG — Crypto Forum Research Group**
+An IRTF (Internet Research Task Force) research group that develops cryptographic algorithms and protocols for eventual IETF standardisation. Responsible for work on Curve25519/X25519, EdDSA, HPKE, and post-quantum algorithm integration.
+
+**CNSA 2.0 — Commercial National Security Algorithm Suite 2.0**
+A US NSA policy document specifying which cryptographic algorithms are approved for protecting classified and sensitive national security information. CNSA 2.0 (published 2022, updated 2024) requires transition to post-quantum algorithms: ML-KEM-1024, ML-DSA-87, SLH-DSA (SHA2-256s), and AES-256 by specific deadlines (2025-2033 depending on use case).
+
+**Code Equivalence**
+A mathematical problem where the task is to determine whether two error-correcting codes are equivalent under a permutation of coordinates. The hardness of this problem is the security basis for the LESS and CROSS post-quantum signature schemes.
+
+**Common Criteria (CC)**
+An international standard (ISO/IEC 15408) for evaluating the security properties of IT products and systems. Evaluation Assurance Levels (EAL 1-7) measure the rigor of evaluation. Relevant for cryptographic modules alongside FIPS 140-3.
+
+**CROSS — Codes and Restricted Objects Signature Scheme**
+A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on code equivalence problems. CROSS is one of the prioritised candidates alongside MAYO in the NIST additional signatures process.
 
 **ChaCha20**
 A stream cipher designed by Daniel Bernstein. Produces a keystream (pseudorandom bytes) that is XOR-ed with the plaintext. ChaCha20 is very fast on devices without hardware AES acceleration (mobile, IoT). Used in combination with Poly1305 authenticator.
@@ -196,6 +226,9 @@ Parameters controlling how aggressively ciphertext components are compressed in 
 
 ## E
 
+**EasyCrypt**
+A formal verification framework for cryptographic proofs, used to verify the security of implementations written in the Jasmin programming language. The mlkem-libjade implementation in the PQ Code Package uses EasyCrypt-level proofs.
+
 **ECB — Electronic Codebook Mode**
 A block cipher mode where each block is encrypted independently with the same key. Identical plaintext blocks produce identical ciphertext blocks, which leaks patterns (the "ECB penguin" problem). Never use ECB for messages longer than one block.
 
@@ -242,8 +275,11 @@ US government standards, published by NIST, defining requirements for cryptograp
 **FIPS 140-3**
 The current US government standard (and internationally recognised) for validating that a hardware or software cryptographic module meets security requirements. Systems handling classified or sensitive government data often require FIPS 140-3 validated cryptography.
 
+**FIPS Provider**
+In OpenSSL 3.x, a loadable module that contains only FIPS 140-3 validated cryptographic algorithm implementations. When the FIPS provider is loaded, OpenSSL restricts itself to approved algorithms and operates within the validated cryptographic module boundary. OpenSSL 3.5.0 added ML-KEM, ML-DSA, and SLH-DSA to the FIPS provider.
+
 **FN-DSA — FFT over NTRU-Lattice-Based Digital Signature Algorithm**
-The NIST name for the Falcon signature scheme. Based on lattice mathematics (NTRU) and uses Fast Fourier Transform computations. Produces the smallest signatures of the NIST PQC signature algorithms. Requires strict IEEE 754 floating-point arithmetic in the reference implementation; integer-only variants are under development for constrained platforms. **Status:** FIPS 206 is still in the Initial Public Draft (IPD) stage as of March 2026 — the IPD was submitted for Department of Commerce clearance in August 2025; the final standard is expected late 2026 or early 2027. FIPS 203 (ML-KEM), 204 (ML-DSA), and 205 (SLH-DSA) were published as final standards in August 2024.
+The NIST name for the Falcon signature scheme. Based on lattice mathematics (NTRU) and uses Fast Fourier Transform computations. Produces the smallest signatures of the NIST PQC signature algorithms. Requires strict IEEE 754 floating-point arithmetic in the reference implementation; integer-only variants are under development for constrained platforms. **Status:** FIPS 206 is still in the Initial Public Draft (IPD) stage as of Q1 2026 — the IPD was submitted for Department of Commerce clearance in August 2025; the final standard is expected late 2026 or early 2027. FIPS 203 (ML-KEM), 204 (ML-DSA), and 205 (SLH-DSA) were published as final standards in August 2024.
 
 **FN-DSA-512 / FN-DSA-1024**
 The two parameter sets for FN-DSA: 512 targets 128-bit security (NIST Level 1); 1024 targets 256-bit security (NIST Level 5).
@@ -253,6 +289,9 @@ An internal component of SLH-DSA that provides a "few-time" signature layer. It 
 
 **Fortuna**
 A CSPRNG (Cryptographically Secure Pseudorandom Number Generator) architecture designed by Bruce Schneier and Niels Ferguson. It uses 32 entropy pools to accumulate randomness from multiple sources, and an AES-256 counter-mode generator to produce output. Used in macOS/iOS since 2020 and in FreeBSD. The design improves on Yarrow by eliminating the need for an entropy estimator.
+
+**FrodoKEM**
+A conservative lattice-based key encapsulation mechanism based on the plain Learning With Errors (LWE) problem rather than the structured (ring or module) variants used by ML-KEM. FrodoKEM has larger keys and ciphertexts but its security relies on a simpler, more well-studied mathematical problem. Not selected for NIST standardisation; available in the Cloudflare CIRCL library.
 
 **Forward Secrecy (Perfect Forward Secrecy, PFS)**
 A property of a key-exchange protocol where the compromise of a long-term private key does not allow decryption of past recorded sessions. Achieved by generating a fresh, ephemeral key pair for each session (as in ECDHE in TLS 1.3) and discarding it immediately afterwards.
@@ -308,7 +347,7 @@ A NIST SP 800-90A DRBG using HMAC as its core update function. Considered the be
 A modern framework (RFC 9180) for public-key encryption combining a KEM (for key establishment), a KDF (for key derivation), and an AEAD (for symmetric encryption). Designed for one-shot encryption to a recipient's public key. Used in email encryption drafts and browser ECH (Encrypted Client Hello).
 
 **HQC — Hamming Quasi-Cyclic**
-A post-quantum key encapsulation mechanism selected by NIST in March 2025 as the fourth PQC standard (Round 4 on-ramp), providing a code-based alternative to the lattice-based ML-KEM.
+A post-quantum key encapsulation mechanism selected by NIST in March 2025 as the fifth PQC algorithm (code-based backup KEM), providing a code-based alternative to the lattice-based ML-KEM.
 
 ---
 
@@ -332,6 +371,9 @@ The guarantee that data has not been modified in transit or storage. Achieved by
 **IPsec — Internet Protocol Security**
 A suite of protocols for encrypting and authenticating IP packets, used in VPNs. Uses IKE for key exchange, AES for encryption, and HMAC for integrity.
 
+**Isogeny**
+A special kind of mapping between elliptic curves that preserves their algebraic structure. The difficulty of computing isogenies between supersingular elliptic curves is the basis for the SQIsign post-quantum signature scheme. The earlier SIKE/SIDH key exchange (based on isogenies) was broken in 2022.
+
 **Iterations (KDF)**
 The number of times a KDF's core function is repeated. More iterations = more time required to check each password guess = more expensive brute-force attacks. NIST SP 800-132 (2023) recommends at least 600 000 iterations for PBKDF2-HMAC-SHA256.
 
@@ -344,6 +386,15 @@ A random value used to initialise a block cipher mode (CBC, CFB, OFB) or AEAD co
 
 **J-PAKE — Password Authenticated Key Exchange by Juggling**
 A password-based key exchange protocol where both parties prove knowledge of the same password without either party revealing it. Used in smart-home and IoT pairing protocols.
+
+**Jasmin**
+A low-level programming language designed for writing high-assurance cryptographic implementations. Jasmin programs can be formally verified using EasyCrypt. The mlkem-libjade implementation in the PQ Code Package is written in Jasmin.
+
+**JCA / JCE — Java Cryptography Architecture / Java Cryptography Extension**
+The Java platform's standard API for cryptographic operations. JCA defines the architecture (providers, algorithm names, key management); JCE extends it with encryption, key agreement, and MAC operations. OpenJDK 26 adds ML-KEM and ML-DSA as native JCA algorithm identifiers.
+
+**JEP — JDK Enhancement Proposal**
+The formal process for proposing and tracking significant changes to the Java Development Kit. JEP 496 (ML-KEM) and JEP 497 (ML-DSA) track the addition of post-quantum algorithms to OpenJDK.
 
 **JOSE — JSON Object Signing and Encryption**
 A family of IETF standards for signing and encrypting JSON data, including JWT (JSON Web Token), JWE (JSON Web Encryption), and JWS (JSON Web Signature). Widely used in web APIs and OAuth.
@@ -382,12 +433,18 @@ The processes and infrastructure for generating, distributing, storing, rotating
 **Key Wrap / Key Wrapping**
 Encrypting a cryptographic key with another key for secure storage or transmission (AES-KW, AES-KWP).
 
+**KyberSlash**
+A timing side-channel vulnerability (CVE-2023-49722) discovered in several CRYSTALS-Kyber / ML-KEM implementations where division operations on secret data leaked information through execution timing. Affected implementations including crystals-go, which was subsequently archived in favour of CIRCL.
+
 **Kyber**
 See **ML-KEM**. Kyber is the earlier name of the algorithm that became ML-KEM when standardised as FIPS 203.
 
 ---
 
 ## L
+
+**LAMPS — Limited Additional Mechanisms for PKIX and SMIME**
+An IETF working group responsible for updating the PKIX (Public Key Infrastructure) and S/MIME standards to support post-quantum algorithms. Key deliverables include CMS specifications for ML-DSA, SLH-DSA, and composite signatures.
 
 **Lattice (cryptographic)**
 A mathematical structure used as the basis for post-quantum algorithms (ML-KEM, ML-DSA, FN-DSA). The security relies on the computational difficulty of finding short vectors in a high-dimensional grid — a problem believed to be hard even for quantum computers.
@@ -397,6 +454,9 @@ The simplest class of pseudorandom number generator, based on the formula Xₙ�
 
 **LESS — Linear Equivalence Signature Scheme**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the hardness of the Linear Code Equivalence problem.
+
+**LIP — Lattice Isomorphism Problem**
+A mathematical problem where the task is to determine whether two lattices are isomorphic (equivalent up to rotation). The hardness of LIP is the security basis for the HAWK post-quantum signature scheme. It is a different hard problem from the Module-LWE and SIS problems used in ML-KEM and ML-DSA.
 
 **LMS — Leighton-Micali Signature**
 A stateful hash-based signature scheme (RFC 8554, NIST SP 800-208). Uses a Merkle tree of one-time signature keys. Very fast verification; the signer must track which keys have been used (if the same key is used twice, security breaks). Suitable for firmware signing and code signing.
@@ -432,6 +492,9 @@ A conservative measure of how random a data source is. Defined as −log₂(prob
 **Mirath**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) resulting from the merger of the MIRA and MiRitH proposals, based on MinRank-in-the-Head.
 
+**MitH — MPC-in-the-Head**
+A technique for constructing digital signature schemes by simulating a multi-party computation (MPC) protocol "in the head" of the signer. The signer runs a zero-knowledge proof protocol internally, committing to the views of virtual parties. Several NIST Round 2 additional signature candidates use this approach: FAEST, SDitH, MQOM, Mirath, PERK, and RYDE.
+
 **ML-DSA — Module-Lattice-Based Digital Signature Algorithm**
 The NIST standard digital signature algorithm (FIPS 204, August 2024), formerly known as CRYSTALS-Dilithium. Based on the hardness of lattice problems believed to be secure against quantum computers. Three parameter sets: ML-DSA-44 (128-bit security), ML-DSA-65 (192-bit), ML-DSA-87 (256-bit).
 
@@ -443,6 +506,9 @@ A technique for using a block cipher to encrypt messages longer than one block. 
 
 **Module Lattice**
 A lattice defined over polynomial rings, used in the CRYSTALS family (ML-KEM, ML-DSA). The "module" structure provides a balance between security and performance — module lattice problems are harder than ordinary lattice problems in the same dimension.
+
+**Module-LWE — Module Learning With Errors**
+The mathematical hard problem underlying ML-KEM and ML-DSA. Module-LWE asks an adversary to distinguish noisy linear equations over polynomial modules from uniformly random samples. Believed to be hard even for quantum computers. The "module" structure provides a balance between the efficiency of Ring-LWE and the conservative security assumptions of plain LWE.
 
 **MQOM — MQ on my Mind**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the hardness of the Multivariate Quadratic (MQ) problem.
@@ -457,6 +523,12 @@ Master Public Key / Master Secret Key — terminology used in some key derivatio
 **Named Group**
 A standardised elliptic curve or finite-field group identified by a short name (e.g. `x25519`, `secp256r1`, `ffdhe2048`) used in TLS and other protocols. Using named groups ensures interoperability and that well-vetted parameters are used.
 
+**NIST CSRC — NIST Computer Security Resource Center**
+The public-facing portal where NIST publishes cryptographic standards (FIPS), special publications (SP 800 series), and PQC submission packages. Algorithm submission materials and Known Answer Tests are distributed via CSRC.
+
+**NIST IR — NIST Internal/Interagency Report**
+A series of NIST publications providing technical analysis and status reports. NIST IR 8545 documents the status and evaluation criteria for the additional digital signature candidates in the NIST PQC process.
+
 **NIST — National Institute of Standards and Technology**
 A US government agency that develops cryptographic standards, guidelines, and algorithm recommendations. Publishes FIPS standards and SP 800-series guidance. Managed the Post-Quantum Cryptography standardisation process (2016–2024) that produced ML-KEM, ML-DSA, SLH-DSA, and FN-DSA.
 
@@ -465,6 +537,9 @@ A "number used once" — a random or counter value that must never be repeated f
 
 **NTRU**
 A lattice-based public-key cryptosystem and the mathematical basis of FN-DSA. NTRU lattices are defined using polynomial rings, making them efficient to compute on.
+
+**NTT — Number Theoretic Transform**
+A mathematical operation (analogous to the Fast Fourier Transform over finite fields) used to efficiently multiply polynomials in lattice-based cryptography (ML-KEM, ML-DSA). NTT-based polynomial multiplication is the performance-critical inner loop of these algorithms; memory for the NTT of the public matrix A scales with the module dimensions.
 
 ---
 
@@ -487,6 +562,12 @@ An asymmetric Password-Authenticated Key Exchange (aPAKE) protocol that allows a
 
 **OPRF — Oblivious Pseudorandom Function**
 A protocol where a client and server jointly compute a pseudorandom function on the client's input (e.g. a password), such that the server learns nothing about the input and the client learns nothing about the server's secret key. A core building block of OPAQUE.
+
+**OID — Object Identifier**
+A globally unique hierarchical identifier used in ASN.1 to unambiguously identify cryptographic algorithms, curves, and data structures. Each OID is a sequence of integers separated by dots (e.g., `2.16.840.1.101.3.4.1` for the AES arc). OIDs appear in X.509 certificates, CMS signatures, and algorithm negotiation protocols.
+
+**OQS — Open Quantum Safe**
+An open-source project providing C libraries (liboqs) and integration wrappers (oqs-provider for OpenSSL) for post-quantum cryptographic algorithms. liboqs implements ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC, and experimental Round 2 candidates. When running against OpenSSL 3.5+, oqs-provider disables algorithms that OpenSSL now supports natively.
 
 **OWASP — Open Web Application Security Project**
 A non-profit community producing freely available security guidance and tools. The OWASP Password Storage Cheat Sheet is the primary practical reference for password-hashing parameter recommendations.
@@ -536,6 +617,9 @@ A message or data in its original, readable form before encryption.
 
 **Poly1305**
 A one-time message authentication code designed by Daniel Bernstein. Used as the authentication component in ChaCha20-Poly1305.
+
+**PMU — Performance Monitoring Unit**
+A CPU subsystem that provides hardware counters for events such as cache misses, branch mispredictions, and instruction counts. PMU measurements can be used to detect timing side-channel vulnerabilities in cryptographic implementations (e.g., the KyberSlash analysis used PMU tooling to demonstrate cache-timing leaks).
 
 **Post-Quantum Cryptography (PQC)**
 Cryptographic algorithms designed to resist attacks from quantum computers. Classical algorithms (RSA, ECDSA, ECDH) are broken by Shor's algorithm on a sufficiently powerful quantum computer. NIST standardised four PQC algorithms in August 2024: ML-KEM, ML-DSA, SLH-DSA, FN-DSA.
@@ -624,8 +708,14 @@ A post-quantum digital signature scheme (NIST Round 2 additional signatures) bas
 **Salt**
 A random value mixed into a password (or other input) before hashing to ensure that two identical passwords produce different hashes, preventing precomputed dictionary (rainbow table) attacks. The salt does not need to be secret — only the password does. Minimum 128 bits (16 bytes); 32 bytes recommended.
 
+**S/MIME — Secure/Multipurpose Internet Mail Extensions**
+A standard for sending encrypted and digitally signed email using CMS (Cryptographic Message Syntax). The IETF LAMPS working group is standardising ML-DSA and SLH-DSA for use in S/MIME certificates and signed messages.
+
 **SBOM — Software Bill of Materials**
 A machine-readable inventory of all software components, libraries, and their metadata (versions, licenses, known vulnerabilities). CycloneDX and SPDX are the two dominant SBOM standards.
+
+**SCA — Software Composition Analysis**
+A category of tools and processes that identify open-source and third-party components within a software project, track their versions and licenses, and flag known vulnerabilities. SCA tools consume SBOMs (CycloneDX, SPDX) and are the primary consumers of the cryptographic algorithm metadata documented in this repository.
 
 **scrypt**
 A memory-hard password-hashing / key-derivation function (RFC 7914). Parameters: N (CPU/memory cost, must be a power of 2), r (block mix factor), p (parallelism). Memory usage is 128·N·r bytes. Resistant to GPU/ASIC attacks.
@@ -641,6 +731,9 @@ A 128-bit block cipher standardised in South Korea (RFC 4269), used in Korean go
 
 **Serpent**
 A block cipher that was an AES finalist (1997–2001). Considered very conservative security margin but slower than AES.
+
+**SIS — Short Integer Solution**
+A mathematical problem where the task is to find a short non-zero vector in the kernel of a random matrix over a finite field. Together with LWE, SIS is one of the two fundamental hard problems underlying lattice-based cryptography. The security of ML-DSA signatures relies on the hardness of the Module-SIS problem.
 
 **SHA-1 — Secure Hash Algorithm 1**
 A 160-bit hash function. Collision attacks were found in 2005 and a practical collision demonstrated in 2017 (SHAttered). Disallowed for all digital signatures and certificate issuance; transitional use in non-signature contexts only until 2030.
@@ -748,6 +841,13 @@ A post-quantum digital signature scheme based on multivariate polynomial equatio
 
 ---
 
+## V
+
+**VOLEitH — Vector Oblivious Linear Evaluation in the Head**
+A variant of the MPC-in-the-Head paradigm used in the FAEST post-quantum signature scheme. Instead of simulating a general multi-party computation, VOLEitH simulates a two-party VOLE (Vector Oblivious Linear Evaluation) protocol, which is particularly efficient when the witness is an AES key. This allows FAEST to base its security solely on the security of AES.
+
+---
+
 ## W
 
 **Winternitz Parameter (w)**
@@ -813,12 +913,19 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | AEAD | Authenticated Encryption with Associated Data |
 | AES | Advanced Encryption Standard |
 | AIS | Anforderungen an Implementierungen mit Sicherheitszertifikat (BSI technical guideline) |
+| ASN.1 | Abstract Syntax Notation One |
 | BSI | Bundesamt für Sicherheit in der Informationstechnik |
+| BSI TR | BSI Technical Regulation |
 | CAVP | Cryptographic Algorithm Validation Program |
+| CBMC | C Bounded Model Checker |
 | CBC | Cipher Block Chaining |
+| CC | Common Criteria |
+| CFRG | Crypto Forum Research Group |
 | CMAC | Cipher-Based Message Authentication Code |
 | CMS | Cryptographic Message Syntax |
+| CNSA | Commercial National Security Algorithm Suite |
 | COSE | Concise Object Signing and Encryption |
+| CSRC | Computer Security Resource Center (NIST) |
 | CSPRNG | Cryptographically Secure Pseudorandom Number Generator |
 | CTR | Counter mode |
 | DH | Diffie-Hellman |
@@ -844,22 +951,33 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | IKE | Internet Key Exchange |
 | IPsec | Internet Protocol Security |
 | IV | Initialisation Vector |
+| JCA | Java Cryptography Architecture |
+| JCE | Java Cryptography Extension |
+| JEP | JDK Enhancement Proposal |
 | JOSE | JSON Object Signing and Encryption |
 | KAT | Known Answer Test |
 | KDF | Key Derivation Function |
 | KEM | Key Encapsulation Mechanism |
 | KMAC | Keccak Message Authentication Code |
 | KSF | Key-Stretching Function |
+| LAMPS | Limited Additional Mechanisms for PKIX and SMIME |
 | LCG | Linear Congruential Generator |
+| LIP | Lattice Isomorphism Problem |
 | LMS | Leighton-Micali Signature |
 | LMOTS | Leighton-Micali One-Time Signature |
+| LWE | Learning With Errors |
 | MAC | Message Authentication Code |
 | MGF | Mask Generation Function |
+| MitH | MPC-in-the-Head |
 | ML-DSA | Module-Lattice Digital Signature Algorithm |
 | ML-KEM | Module-Lattice Key-Encapsulation Mechanism |
 | NIST | National Institute of Standards and Technology |
+| NIST IR | NIST Internal/Interagency Report |
+| NTT | Number Theoretic Transform |
 | NTRU | Number Theoretic Research Unit (lattice type) |
 | OAEP | Optimal Asymmetric Encryption Padding |
+| OID | Object Identifier |
+| OQS | Open Quantum Safe |
 | OPAQUE | Oblivious PRF + Asymmetric Password-Authenticated KE |
 | OPRF | Oblivious Pseudorandom Function |
 | OTS | One-Time Signature |
@@ -870,6 +988,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | PCG | Permuted Congruential Generator |
 | PFS | Perfect Forward Secrecy |
 | PKI | Public Key Infrastructure |
+| PMU | Performance Monitoring Unit |
 | PKCS | Public-Key Cryptography Standards |
 | PQC | Post-Quantum Cryptography |
 | PQCA | Post-Quantum Cryptography Alliance |
@@ -880,9 +999,12 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | RBG | Random Bit Generator |
 | RFC | Request for Comments |
 | RSA | Rivest-Shamir-Adleman |
+| S/MIME | Secure/Multipurpose Internet Mail Extensions |
 | SBOM | Software Bill of Materials |
+| SCA | Software Composition Analysis |
 | SHA | Secure Hash Algorithm |
 | SHAKE | Secure Hash Algorithm Keccak (extendable output) |
+| SIS | Short Integer Solution |
 | SIV | Synthetic Initialisation Vector |
 | SLH-DSA | Stateless Hash-Based Digital Signature Standard |
 | SM2/SM3/SM4 | ShāngMì (Chinese cryptographic standards) |
@@ -894,6 +1016,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | TRNG | True Random Number Generator |
 | UMAC | Universal Message Authentication Code |
 | UOV | Unbalanced Oil and Vinegar |
+| VOLEitH | Vector Oblivious Linear Evaluation in the Head |
 | WOTS+ | Winternitz One-Time Signature Plus |
 | X3DH | Extended Triple Diffie-Hellman |
 | XOF | Extendable-Output Function |

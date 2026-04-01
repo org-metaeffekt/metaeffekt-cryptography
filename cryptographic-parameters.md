@@ -1023,7 +1023,7 @@ standardisation discussions on the NIST PQC Forum.
 | **Description** | FN-DSA/Falcon uses FFT-based Gaussian sampling over NTRU lattices, relying on floating-point arithmetic. Non-IEEE-754-compliant execution (extended precision x87 mode, flush-to-zero, non-standard rounding) produces a distribution that deviates from the specification, potentially weakening or breaking security. |
 | **Type** | enumeration |
 | **Canonical values** | `ieee754-strict` `ieee754-relaxed` `integer-emulation` |
-| **Implementation note** | This is a unique parameter class with no analogue in any other standardised algorithm. FIPS 206 is still in the Initial Public Draft (IPD) stage as of March 2026 and does not yet mandate a specific arithmetic model; ongoing implementation discussions (PQC forum, Dec 2025) concern whether IEEE 754 compliance or integer-only Gaussian sampling should be required for FIPS 140-3 validation. Integer emulation is slower but portable, deterministic, and verifiable without floating-point test infrastructure. |
+| **Implementation note** | This is a unique parameter class with no analogue in any other standardised algorithm. FIPS 206 is still in the Initial Public Draft (IPD) stage as of Q1 2026 and does not yet mandate a specific arithmetic model; ongoing implementation discussions (PQC forum, Dec 2025) concern whether IEEE 754 compliance or integer-only Gaussian sampling should be required for FIPS 140-3 validation. Integer emulation is slower but portable, deterministic, and verifiable without floating-point test infrastructure. |
 | **Used in** | FN-DSA |
 
 ---

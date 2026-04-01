@@ -8,7 +8,7 @@
 >
 > **Note:** NIST SP 800-90A Rev 2 is in progress (pre-draft comment period closed November 2025).
 > Planned changes include: removal of 3DES and SHA-1, addition of XOF_DRBG (SHAKE-based), SHA-3
-> and Ascon options, and updated entropy requirements. No IPD published as of March 2026.
+> and Ascon options, and updated entropy requirements. No IPD published as of Q1 2026.
 >
 > Last updated: 2026-03-29
 
@@ -17,7 +17,7 @@
 ## Pattern notation
 
 This document adopts the CycloneDX pattern convention from the
-[Cryptographic Algorithm Parameter Taxonomy](./cryptographic-algorithms.md):
+[Cryptographic Algorithm Parameter Taxonomy](./cryptographic-parameters.md):
 
 | Symbol | Meaning | Example |
 |:---|:---|:---|
