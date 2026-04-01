@@ -123,14 +123,14 @@ Cryptographic Algorithms
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
-| `aes-ecb` | AES-ECB (Electronic Code Book) | Block cipher mode — disallowed | `2.16.840.1.101.3.4.1.1/21/41` | `AES-[128\|192\|256]-ECB` | SP 800-38A; FIPS 197 (disallowed for multi-block) |
-| `aes-cbc` | AES-CBC (Cipher Block Chaining) | Block cipher mode — confidentiality | `2.16.840.1.101.3.4.1.2/22/42` | `AES-[128\|192\|256]-CBC` | SP 800-38A |
+| `aes-ecb` | AES-ECB (Electronic Code Book) | Block cipher mode — disallowed | `2.16.840.1.101.3.4.1.1` (128) · `.21` (192) · `.41` (256) | `AES-[128\|192\|256]-ECB` | SP 800-38A; FIPS 197 (disallowed for multi-block) |
+| `aes-cbc` | AES-CBC (Cipher Block Chaining) | Block cipher mode — confidentiality | `2.16.840.1.101.3.4.1.2` (128) · `.22` (192) · `.42` (256) | `AES-[128\|192\|256]-CBC` | SP 800-38A |
 | `aes-ctr` | AES-CTR (Counter) | Block cipher mode — confidentiality | — | `AES-[128\|192\|256]-CTR` | SP 800-38A |
-| `aes-cfb128` | AES-CFB128 (Cipher Feedback, 128-bit segment) | Block cipher mode — confidentiality | — | `AES-[128\|192\|256]-CFB128` | SP 800-38A |
-| `aes-ofb` | AES-OFB (Output Feedback) | Block cipher mode — confidentiality | — | `AES-[128\|192\|256]-OFB` | SP 800-38A |
+| `aes-cfb128` | AES-CFB128 (Cipher Feedback, 128-bit segment) | Block cipher mode — confidentiality | `2.16.840.1.101.3.4.1.4` (128) · `.24` (192) · `.44` (256) | `AES-[128\|192\|256]-CFB128` | SP 800-38A |
+| `aes-ofb` | AES-OFB (Output Feedback) | Block cipher mode — confidentiality | `2.16.840.1.101.3.4.1.3` (128) · `.23` (192) · `.43` (256) | `AES-[128\|192\|256]-OFB` | SP 800-38A |
 | `aes-xts` | AES-XTS (XEX Tweakable Block Cipher with Ciphertext Stealing) | Block cipher mode — storage only | — | `AES-[128\|256]-XTS` | SP 800-38E; IEEE 1619 |
-| `aes-gcm` | AES-GCM (Galois/Counter Mode) | AEAD mode | `2.16.840.1.101.3.4.1.6/26/46` | `AES-[128\|192\|256]-GCM` | SP 800-38D; FIPS 197 |
-| `aes-ccm` | AES-CCM (Counter with CBC-MAC) | AEAD mode | `2.16.840.1.101.3.4.1.7/27/47` | `AES-[128\|192\|256]-CCM` | SP 800-38C; RFC 3610 |
+| `aes-gcm` | AES-GCM (Galois/Counter Mode) | AEAD mode | `2.16.840.1.101.3.4.1.6` (128) · `.26` (192) · `.46` (256) | `AES-[128\|192\|256]-GCM` | SP 800-38D; FIPS 197 |
+| `aes-ccm` | AES-CCM (Counter with CBC-MAC) | AEAD mode | `2.16.840.1.101.3.4.1.7` (128) · `.27` (192) · `.47` (256) | `AES-[128\|192\|256]-CCM` | SP 800-38C; RFC 3610 |
 | `aes-gcm-siv` | AES-GCM-SIV (Nonce-Misuse Resistant) | AEAD mode | — | `AES-[128\|256]-GCM-SIV` | RFC 8452 |
 | `aes-ocb` | AES-OCB (Offset Code Book) | AEAD mode | — | `AES-[128\|192\|256]-OCB` | RFC 7253 |
 | `aes-siv` | AES-SIV (Synthetic IV) | Deterministic AEAD | — | `AES-[128\|256]-SIV` | RFC 5297 |
@@ -138,7 +138,7 @@ Cryptographic Algorithms
 | `aes-cfb8` | AES-CFB8 (Cipher Feedback, 8-bit segment) | Block cipher mode — confidentiality | — | `AES-[128\|192\|256]-CFB8` | SP 800-38A |
 | `aes-pcbc` | AES-PCBC (Propagating CBC) | Block cipher mode — legacy | — | `AES-[128\|192\|256]-PCBC` | —; error-propagating CBC variant; no NIST standard |
 | `aes-cts` | AES-CTS (Ciphertext Stealing) | Block cipher mode — confidentiality | — | `AES-[128\|192\|256]-CTS` | SP 800-38A §E; avoids padding for CBC |
-| `aes-kw` | AES-KW (Key Wrap) | Key wrapping | `2.16.840.1.101.3.4.1.5/25/45` | `AES-KW-[128\|192\|256]` | SP 800-38F; RFC 3394 |
+| `aes-kw` | AES-KW (Key Wrap) | Key wrapping | `2.16.840.1.101.3.4.1.5` (128) · `.25` (192) · `.45` (256) | `AES-KW-[128\|192\|256]` | SP 800-38F; RFC 3394 |
 | `aes-kwp` | AES-KWP (Key Wrap with Padding) | Key wrapping | — | `AES-KWP-[128\|192\|256]` | SP 800-38F; RFC 5649 |
 | `3des-tkw` | 3DES-TKW (Triple-DES Key Wrap) | Key wrapping (legacy) | — | `3DES-TKW` | SP 800-38F §6.3; key-wrapping only; 3DES deprecated |
 | `aes-eax` | AES-EAX | AEAD mode | — | `AES-[128\|192\|256]-EAX` | Bellare, Rogaway & Wagner 2003; no NIST standard |
@@ -151,7 +151,7 @@ Cryptographic Algorithms
 | `aes-cmc` | AES-CMC (CBC-Mask-CBC) | Block cipher mode — wide-block | — | `AES-[128\|256]-CMC` | Halevi & Rogaway 2003 |
 | `aes-eme` | AES-EME / AES-EME2 (Encrypt-Mix-Encrypt) | Block cipher mode — wide-block | — | `AES-[128\|256]-EME` | Halevi 2004; EME2 / EME* variants |
 | `aes-hctr2` | AES-HCTR2 | Block cipher mode — wide-block (length-preserving) | — | `AES-[128\|256]-HCTR2` | Adiantum; Google 2018; storage on low-end devices |
-| `chacha20-poly1305` | ChaCha20-Poly1305 | AEAD mode | — | `ChaCha20-Poly1305` | RFC 8439; BSI TR-02102-1 |
+| `chacha20-poly1305` | ChaCha20-Poly1305 | AEAD mode | `1.2.840.113549.1.9.16.3.18` (CMS) | `ChaCha20-Poly1305` | RFC 8439; BSI TR-02102-1 |
 | `xchacha20-poly1305` | XChaCha20-Poly1305 | AEAD mode | — | `XChaCha20-Poly1305` | draft-irtf-cfrg-xchacha |
 | `adiantum` | Adiantum (ChaCha12 + AES-HCTR2 + Poly1305) | Length-preserving AEAD mode (disk/storage) | — | `Adiantum-*` | Crowley & Biggers 2018; Android for ARMv7 devices |
 
@@ -176,8 +176,8 @@ Cryptographic Algorithms
 | `shake256` | SHAKE256 | Extendable-output function (XOF) | `2.16.840.1.101.3.4.2.12` | `SHAKE256[-{outputLength}]` | FIPS 202 |
 | `cshake128` | cSHAKE128 (customisable SHAKE128) | Extendable-output function (XOF) | — | `cSHAKE128[-{outputLength}]` | NIST SP 800-185 |
 | `cshake256` | cSHAKE256 (customisable SHAKE256) | Extendable-output function (XOF) | — | `cSHAKE256[-{outputLength}]` | NIST SP 800-185 |
-| `blake2b` | BLAKE2b · BLAKE2b-256 · BLAKE2b-512 | Hash function | — | `BLAKE2b-{outputLength}` | RFC 7693 |
-| `blake2s` | BLAKE2s · BLAKE2s-256 | Hash function | — | `BLAKE2s-{outputLength}` | RFC 7693 |
+| `blake2b` | BLAKE2b · BLAKE2b-256 · BLAKE2b-512 | Hash function | `1.3.6.1.4.1.1722.12.2.1.8` (BLAKE2b-256) | `BLAKE2b-{outputLength}` | RFC 7693 |
+| `blake2s` | BLAKE2s · BLAKE2s-256 | Hash function | `1.3.6.1.4.1.1722.12.2.2.8` (BLAKE2s-256) | `BLAKE2s-{outputLength}` | RFC 7693 |
 | `blake3` | BLAKE3 | Hash function / XOF | — | `BLAKE3[-{outputLength}]` | BLAKE3 spec 2020 |
 | `sm3` | SM3 | Hash function | `1.2.156.10197.1.401` | `SM3` | GM/T 0004-2012; ISO/IEC 10118-3 |
 | `gostr3411-2012` | GOST R 34.11-2012 · Streebog | Hash function | `1.2.643.7.1.1.2.2` (256) · `1.2.643.7.1.1.2.3` (512) | `GOSTR3411-2012-[256\|512]` | RFC 6986; GOST R 34.11-2012 |
@@ -191,7 +191,7 @@ Cryptographic Algorithms
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
-| `hmac` | HMAC | Keyed hash MAC | `1.2.840.113549.2.7` (HMAC-SHA-1 arc) | `HMAC[-{hashAlgorithm}]` | FIPS 198-1; RFC 2104; SP 800-107 |
+| `hmac` | HMAC | Keyed hash MAC | `1.2.840.113549.2.7` (SHA-1) · `.8` (SHA-224) · `.9` (SHA-256) · `.10` (SHA-384) · `.11` (SHA-512) | `HMAC[-{hashAlgorithm}]` | FIPS 198-1; RFC 2104; SP 800-107 |
 | `hmac-sha1` | HMAC-SHA-1 | Keyed hash MAC | `1.2.840.113549.2.7` | `HMAC-SHA-1` | FIPS 198-1 (legacy use only) |
 | `hmac-sha256` | HMAC-SHA-256 | Keyed hash MAC | `1.2.840.113549.2.9` | `HMAC-SHA-256` | FIPS 198-1; SP 800-57 |
 | `hmac-sha384` | HMAC-SHA-384 | Keyed hash MAC | `1.2.840.113549.2.10` | `HMAC-SHA-384` | FIPS 198-1 |
@@ -225,11 +225,11 @@ Cryptographic Algorithms
 |:---|:---|:---|:---|:---|:---|
 | `rsassa-pss` | RSASSA-PSS (RSA with Probabilistic Signature Scheme) | Digital signature | `1.2.840.113549.1.1.10` | `RSASSA-PSS-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5; SP 800-131A |
 | `rsassa-pkcs1` | RSASSA-PKCS1-v1.5 | Digital signature (legacy) | `1.2.840.113549.1.1.5` (SHA-1) · `.11` (SHA-256) · `.12` (SHA-384) · `.13` (SHA-512) · `.14` (SHA-224) | `RSASSA-PKCS1-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5 (deprecated for new use) |
-| `ecdsa` | ECDSA (Elliptic Curve Digital Signature Algorithm) | Digital signature | `1.2.840.10045.4.3.2` (P-256/SHA-256) | `ECDSA-{curve}-{hashAlgorithm}` | FIPS 186-5; SP 800-186; RFC 5758 |
+| `ecdsa` | ECDSA (Elliptic Curve Digital Signature Algorithm) | Digital signature | `1.2.840.10045.4.3.1` (SHA-224) · `.2` (SHA-256) · `.3` (SHA-384) · `.4` (SHA-512) · `2.16.840.1.101.3.4.3.9` (SHA3-256) · … | `ECDSA-{curve}-{hashAlgorithm}` | FIPS 186-5; SP 800-186; RFC 5758 |
 | `eddsa` | EdDSA (Edwards-curve Digital Signature Algorithm) | Digital signature | `1.3.101.112` (Ed25519) · `1.3.101.113` (Ed448) | `EdDSA-(Ed25519\|Ed448)` | RFC 8032; FIPS 186-5 |
 | `ed25519` | Ed25519 | Digital signature | `1.3.101.112` | `Ed25519` | RFC 8032; FIPS 186-5 |
 | `ed448` | Ed448 · Ed448-Goldilocks | Digital signature | `1.3.101.113` | `Ed448` | RFC 8032; FIPS 186-5 |
-| `dsa` | DSA (Digital Signature Algorithm) | Digital signature (deprecated) | `1.2.840.10040.4.1` | `DSA-{keyLength}-{hashAlgorithm}` | FIPS 186-4 (withdrawn 2023); SP 800-131A |
+| `dsa` | DSA (Digital Signature Algorithm) | Digital signature (deprecated) | `1.2.840.10040.4.1` (key) · `1.2.840.10040.4.3` (SHA-1) · `2.16.840.1.101.3.4.3.1` (SHA-224) · `.2` (SHA-256) | `DSA-{keyLength}-{hashAlgorithm}` | FIPS 186-4 (withdrawn 2023); SP 800-131A |
 | `sm2` | SM2 (signature scheme) | Digital signature | `1.2.156.10197.1.501` | `SM2-*` | GM/T 0003-2012 |
 | `gostr3410-2012` | GOST R 34.10-2012 | Digital signature | `1.2.643.7.1.1.3.2` | `GOSTR3410-2012-*` | RFC 7091; GOST R 34.10-2012 |
 
@@ -310,10 +310,10 @@ Cryptographic Algorithms
 | `pbkdf1` | PBKDF1 | Password-based KDF (deprecated) | `1.2.840.113549.1.5.3` | `PBKDF1-{hashAlgorithm}` | RFC 8018 (deprecated) |
 | `pbkdf2` | PBKDF2 | Password-based KDF | `1.2.840.113549.1.5.12` | `PBKDF2-{hashAlgorithm}` | RFC 8018; NIST SP 800-132 |
 | `bcrypt` | bcrypt | Password hashing function | — | `bcrypt-{cost}` | Provos & Mazières 1999 |
-| `scrypt` | scrypt | Memory-hard password hashing | — | `scrypt-{N}-{r}-{p}` | RFC 7914; NIST SP 800-132 |
-| `argon2i` | Argon2i | Memory-hard password hashing (data-independent) | — | `Argon2i-*` | RFC 9106; PHC winner 2015 |
-| `argon2d` | Argon2d | Memory-hard password hashing (data-dependent) | — | `Argon2d-*` | RFC 9106 |
-| `argon2id` | Argon2id | Memory-hard password hashing (hybrid) | — | `Argon2id-*` | RFC 9106; recommended variant |
+| `scrypt` | scrypt | Memory-hard password hashing | `1.3.6.1.4.1.11591.4.11` | `scrypt-{N}-{r}-{p}` | RFC 7914; NIST SP 800-132 |
+| `argon2i` | Argon2i | Memory-hard password hashing (data-independent) | `1.3.6.1.4.1.31591.2.1.2` | `Argon2i-*` | RFC 9106; PHC winner 2015 |
+| `argon2d` | Argon2d | Memory-hard password hashing (data-dependent) | `1.3.6.1.4.1.31591.2.1.1` | `Argon2d-*` | RFC 9106 |
+| `argon2id` | Argon2id | Memory-hard password hashing (hybrid) | `1.3.6.1.4.1.31591.2.1.3` | `Argon2id-*` | RFC 9106; recommended variant |
 | `yescrypt` | yescrypt | Memory-hard password hashing | — | `yescrypt-*` | UNIX /etc/shadow; Linux PAM |
 
 ---
