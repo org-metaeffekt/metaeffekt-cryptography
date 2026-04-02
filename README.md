@@ -4,7 +4,7 @@ Aggregates information on cryptographic algorithms, random number generators, an
 Covers a pattern-based approach for the evaluation of algorithms and generators.
 
 > [!WARNING]  
-> The content in this repository is ingested with artificial intelligence (Claude and partially Gemini). 
+> The content in this repository is aggregated with artificial intelligence (Claude and partially Gemini). 
 > There is absolutely no claim on completeness and correctness. All usages are at your own risk.
 
 ## Introduction
