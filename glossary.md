@@ -410,7 +410,7 @@ A set of pre-computed input/output pairs used to verify that a cryptographic imp
 An algorithm that derives one or more strong cryptographic keys from a source of keying material (a shared secret, a password, or random bytes). KDFs ensure that derived keys are uniformly random and independent of each other. Examples: HKDF, PBKDF2, scrypt, Argon2.
 
 **KEM — Key Encapsulation Mechanism**
-A public-key mechanism for establishing a shared secret. The sender uses the recipient's public key to "encapsulate" a randomly generated key, producing a ciphertext. The recipient "decapsulates" using their private key to recover the key. ML-KEM (CRYSTALS-Kyber) and HQC are NIST-standardised KEMs.
+A public-key mechanism for establishing a shared secret. The sender uses the recipient's public key to "encapsulate" a randomly generated key, producing a ciphertext. The recipient "decapsulates" using their private key to recover the key. ML-KEM (CRYSTALS-Kyber) is the NIST-standardised KEM (FIPS 203). HQC was selected by NIST as a second KEM standard in March 2025 (FIPS standard pending).
 
 **Key**
 A piece of secret data that controls the operation of a cryptographic algorithm. The security of the system depends entirely on keeping the key secret, not on keeping the algorithm secret.
@@ -530,7 +530,7 @@ The public-facing portal where NIST publishes cryptographic standards (FIPS), sp
 A series of NIST publications providing technical analysis and status reports. NIST IR 8545 documents the status and evaluation criteria for the additional digital signature candidates in the NIST PQC process.
 
 **NIST — National Institute of Standards and Technology**
-A US government agency that develops cryptographic standards, guidelines, and algorithm recommendations. Publishes FIPS standards and SP 800-series guidance. Managed the Post-Quantum Cryptography standardisation process (2016–2024) that produced ML-KEM, ML-DSA, SLH-DSA, and FN-DSA.
+A US government agency that develops cryptographic standards, guidelines, and algorithm recommendations. Publishes FIPS standards and SP 800-series guidance. Managed the Post-Quantum Cryptography standardisation process (2016–present) that produced ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205) in August 2024. FN-DSA (FIPS 206) is in the Initial Public Draft stage. HQC was selected as a fifth PQC standard in March 2025.
 
 **Nonce**
 A "number used once" — a random or counter value that must never be repeated for a given key. In AEAD ciphers (GCM, ChaCha20-Poly1305), reusing a nonce completely breaks security. In signatures, a random nonce is required for ECDSA (not for EdDSA, which is deterministic).
@@ -622,7 +622,7 @@ A one-time message authentication code designed by Daniel Bernstein. Used as the
 A CPU subsystem that provides hardware counters for events such as cache misses, branch mispredictions, and instruction counts. PMU measurements can be used to detect timing side-channel vulnerabilities in cryptographic implementations (e.g., the KyberSlash analysis used PMU tooling to demonstrate cache-timing leaks).
 
 **Post-Quantum Cryptography (PQC)**
-Cryptographic algorithms designed to resist attacks from quantum computers. Classical algorithms (RSA, ECDSA, ECDH) are broken by Shor's algorithm on a sufficiently powerful quantum computer. NIST standardised four PQC algorithms in August 2024: ML-KEM, ML-DSA, SLH-DSA, FN-DSA.
+Cryptographic algorithms designed to resist attacks from quantum computers. Classical algorithms (RSA, ECDSA, ECDH) are broken by Shor's algorithm on a sufficiently powerful quantum computer. NIST published three PQC standards in August 2024: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205). FN-DSA (FIPS 206) is in the Initial Public Draft stage (expected late 2026/early 2027). HQC was selected as a fifth PQC standard in March 2025 (FIPS standard pending).
 
 **PQC Forum**
 The official NIST mailing list (`pqc-forum@list.nist.gov`) where researchers, implementers, and standards bodies discuss post-quantum cryptography. Referenced throughout this repository for active implementation and standardisation discussions.

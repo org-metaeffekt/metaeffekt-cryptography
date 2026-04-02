@@ -683,4 +683,4 @@ The following RFCs specify protocol-level CNSA 1.0 compliance (updated guidance 
 
 ---
 
-*Last updated: 2026-04-02. Consult current NIST SP 800-131A and BSI TR-02102 editions for horizon dates and any post-publication amendments.*
+*Last updated: 2026-04-02 (§16 CNSA 2.0 added from PP-22-1338 source document). Consult current NIST SP 800-131A, BSI TR-02102, and NSA CNSA advisory editions for horizon dates and any post-publication amendments.*

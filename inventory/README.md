@@ -181,7 +181,7 @@ Both are research-quality implementations.
 | sdith-parameters | UNRELEASED | SDitH parameter selection reference | https://github.com/sdith/sdith-parameters |
 | kernel-pmu | UNRELEASED | XKCP/Kernel-PMU — PMU side-channel analysis tooling (cited in KyberSlash thread) | https://github.com/XKCP/Kernel-PMU |
 | alteq-py | UNRELEASED | alteq-py — ALTEQ forgery demonstration (Saarinen, OFFICIAL COMMENT: ALTEQ) | https://github.com/mjosaarinen/alteq-py |
-| slh-dsa-py | UNRELEASED | slh-dsa-py — SLH-DSA Python test-vector reference (Saarinen, FIPS 205 IPD) | https://github.com/mjosaarinen/slh-dsa-py |
+| slh-dsa-py | UNRELEASED | slh-dsa-py — SLH-DSA Python test-vector reference (Saarinen, FIPS 205) | https://github.com/mjosaarinen/slh-dsa-py |
 | crystals-go | UNRELEASED | crystals-go — Go CRYSTALS implementation, ARCHIVED (KyberSlash patch applied, then retired) | https://github.com/cloudflare/circl |
 
 `kernel-pmu` provides Linux PMU access from kernel modules; it was cited in the KyberSlash
