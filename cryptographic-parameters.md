@@ -16,6 +16,11 @@
 > norm bound); added `{n}` and `{sigma}` for FN-DSA; added `{m}` and `{h_prime}` for SLH-DSA;
 > completed the SLH-DSA parameter table to all 12 parameter sets; added key/signature/ciphertext
 > size reference tables for all four PQC algorithm families.
+>
+> **Revision note (2026-04-02):** `{hashfun}/{nbits}/{treeHeight}` entry (§3) expanded from a
+> minimal stub to full parameter tables covering all SP 800-208 LMS (20 sets), LMOTS (16 sets),
+> HSS, XMSS (18 sets), and XMSS^MT parameter sets. Added security strengths, signing capacity
+> guidance, LMOTS signature sizes, and the SP 800-208 §5.3 hardware module mandate.
 
 ## Pattern notation conventions
 
@@ -345,12 +350,98 @@ Parameters that identify a hash function or PRF used as a sub-component within a
 
 | Aspect | Detail |
 |:---|:---|
-| **Short** | Hash-based signature structure params (LMS / XMSS) |
-| **Description** | Parameters for stateful hash-based signatures (LMS, XMSS). Combine to define the tree height, hash output width, and Winternitz parameter. |
-| **Type** | composite integer set |
-| **Canonical values** | `SHA-256_M32_H5` `SHA-256_M32_H10` `SHA-256_M32_H15` `SHA-256_M32_H20` `SHA-256_M32_H25` `SHAKE_M24_H5` |
-| **Implementation note** | SP 800-208 LMS parameter sets: 5 tree heights × 2 hash functions × 5 Winternitz values = 50 combinations. Larger H = more one-time keys = longer lifetime. Note: SLH-DSA (FIPS 205) uses analogous but distinct internal parameters (`{n}`, `{h}`, `{d}`, `{a}`, `{k}`, `{w}`) that are not covered by this entry — see Section 9. |
-| **Used in** | LMS, LMOTS, XMSS, XMSSMT |
+| **Short** | Hash-based signature structure params (LMS / XMSS / HSS / XMSS^MT) |
+| **Description** | Parameters for stateful hash-based signatures (LMS, HSS, XMSS, XMSS^MT). Combine to define the hash function, hash output width (n bytes), Merkle tree height, and — for LMOTS/WOTS+ — the Winternitz parameter w. |
+| **Type** | composite parameter set identifier |
+| **Used in** | LMS, LMOTS, HSS, XMSS, XMSS^MT |
+
+#### LMS hash function parameter sets (SP 800-208 §4, Table 1)
+
+Four hash functions are approved, identified by hash algorithm and output width n:
+
+| SP 800-208 identifier | Hash function | n (bytes) | Security strength | Quantum security |
+|:---|:---|:---|:---|:---|
+| `LMS_SHA256_M32` | SHA-256 (full) | 32 | 256-bit | 128-bit |
+| `LMS_SHA256_M24` | SHA-256/192 (truncated to 192 bits) | 24 | 192-bit | 96-bit |
+| `LMS_SHAKE_M32` | SHAKE256 with 256-bit output | 32 | 256-bit | 128-bit |
+| `LMS_SHAKE_M24` | SHAKE256 with 192-bit output | 24 | 192-bit | 96-bit |
+
+> **CNSA 2.0 note:** NSA recommends `LMS_SHA256_M24` (SHA-256/192) parameter sets for National Security Systems.
+
+Five tree heights h are available for each hash function (SP 800-208 Table 1):
+
+| Height identifier | h | Max one-time signatures | Use case |
+|:---|:---|:---|:---|
+| `H5` | 5 | 2^5 = 32 | Short-lived keys; testing; embedded devices |
+| `H10` | 10 | 2^10 = 1 024 | General low-frequency signing |
+| `H15` | 15 | 2^15 = 32 768 | Firmware update lifecycles |
+| `H20` | 20 | 2^20 ≈ 1 048 576 | Long-lived code-signing roots |
+| `H25` | 25 | 2^25 ≈ 33 554 432 | Very long-lived hierarchies |
+
+Full LMS parameter set names combine hash and height, e.g. `LMS_SHA256_M32_H5` … `LMS_SHAKE_M24_H25` — **20 LMS parameter sets** total.
+
+#### LMOTS parameter sets (SP 800-208 §3, Table 2)
+
+Each LMS signature embeds one LMOTS (Leighton-Micali One-Time Signature) component. The Winternitz parameter w trades signature size for computation time:
+
+| SP 800-208 identifier (n=32 example) | w | LMOTS sig size (n=32) | Signing/verif. ops |
+|:---|:---|:---|:---|
+| `LMOTS_SHA256_N32_W1` | 1 | 8 516 bytes | Fewest hash calls; largest sig |
+| `LMOTS_SHA256_N32_W2` | 2 | 4 292 bytes | — |
+| `LMOTS_SHA256_N32_W4` | 4 | 2 180 bytes | Default; balanced |
+| `LMOTS_SHA256_N32_W8` | 8 | 1 124 bytes | Most hash calls; smallest sig |
+
+The same four Winternitz values apply to all four hash functions (N24/N32 × SHA256/SHAKE), giving **16 LMOTS parameter sets** total.
+
+LMOTS signature sizes above are from RFC 8554 §4.3 (type + n×(p+1) bytes). The full LMS signature size adds the Merkle authentication path: LMS_sig_size = 4 + LMOTS_sig + 4 + h×n bytes.
+
+#### HSS (Hierarchical Signature Scheme — SP 800-208 §6, RFC 8554 §6)
+
+HSS is a multi-level extension of LMS. An HSS key pair of L levels chains L LMS trees where each level's root key is signed by the level above. Maximum signing capacity = product of per-level capacities:
+
+| HSS levels L | Max signatures | Notes |
+|:---|:---|:---|
+| 1 | 2^h (single LMS tree) | Equivalent to bare LMS |
+| 2 | 2^(h₁ + h₂) | Typical: h₁=10, h₂=10 → 2^20 |
+| 3–8 | Up to 2^(h₁+…+h_L) | Longer-lived hierarchies |
+
+HSS public key = root LMS public key (4 + 4 + 16 + n bytes). HSS signature = concatenation of L (LMS signature + LMS public key) pairs.
+
+#### XMSS parameter sets (SP 800-208 §7, RFC 8391)
+
+XMSS uses WOTS+ one-time signatures. SP 800-208 approves the following parameter set families:
+
+| Family prefix | Hash | n (bytes) | Security | Heights h |
+|:---|:---|:---|:---|:---|
+| `XMSS-SHA2_{h}_256` | SHA-256 | 32 | 128-bit PQ | 10, 16, 20 |
+| `XMSS-SHA2_{h}_512` | SHA-512 | 64 | 256-bit (≥128 PQ) | 10, 16, 20 |
+| `XMSS-SHAKE_{h}_256` | SHAKE128 (256-bit output) | 32 | 128-bit PQ | 10, 16, 20 |
+| `XMSS-SHAKE_{h}_512` | SHAKE256 (512-bit output) | 64 | 256-bit | 10, 16, 20 |
+| `XMSS-SHA2_{h}_192` | SHA-256/192 (n=24, SP 800-208 addition) | 24 | 96-bit PQ | 10, 16, 20 |
+| `XMSS-SHAKE256_{h}_192` | SHAKE256/192 (n=24, SP 800-208 addition) | 24 | 96-bit PQ | 10, 16, 20 |
+
+Example names: `XMSS-SHA2_10_256`, `XMSS-SHA2_20_512`, `XMSS-SHAKE256_10_192`. **18 XMSS parameter sets** in SP 800-208.
+
+#### XMSS^MT parameter sets (SP 800-208 §8, RFC 8391)
+
+XMSS^MT (multi-tree XMSS) uses d layers of XMSS trees with total hypertree height H = h′×d. Enables very large signing volumes while keeping per-signing computation bounded to d WOTS+ computations:
+
+| Family prefix | Total height H | Layers d | Max signatures |
+|:---|:---|:---|:---|
+| `XMSSMT-SHA2_{H}/{d}_256` | 20, 40, 60 | 2, 4, 8 | 2^H |
+| `XMSSMT-SHA2_{H}/{d}_512` | 20, 40, 60 | 2, 4, 8 | 2^H |
+| `XMSSMT-SHAKE_{H}/{d}_256` | 20, 40, 60 | 2, 4, 8 | 2^H |
+| `XMSSMT-SHAKE_{H}/{d}_512` | 20, 40, 60 | 2, 4, 8 | 2^H |
+| `XMSSMT-SHA2_{H}/{d}_192` | 20, 40, 60 | 2, 4, 8 | 2^H |
+| `XMSSMT-SHAKE256_{H}/{d}_192` | 20, 40, 60 | 2, 4, 8 | 2^H |
+
+Example name: `XMSSMT-SHA2_20/2_256` (H=20, d=2, n=32).
+
+> **Implementation note — SP 800-208 §5.3 hardware mandate:** LMS and XMSS private key state **shall** be managed within a hardware cryptographic module validated to FIPS 140-2/3 Level 3 or higher. The current index value (state) must be stored in nonvolatile memory **before** any signature is exported from the module. Signing outside a validated hardware module is non-compliant with SP 800-208.
+>
+> The security strength against quantum adversaries is 4n bits (half the classical 8n-bit strength, by Grover's algorithm). Choose n=32 parameter sets for ≥128-bit post-quantum security; n=24 provides only 96-bit quantum security.
+>
+> Note: SLH-DSA (FIPS 205) uses analogous but **stateless** internal parameters (`{n}`, `{h}`, `{d}`, `{a}`, `{k}`, `{w}`) that are not covered by this entry — see Section 9.
 
 ---
 

@@ -116,6 +116,12 @@ A block cipher mode that converts a block cipher into a stream cipher by encrypt
 **CFRG — Crypto Forum Research Group**
 An IRTF (Internet Research Task Force) research group that develops cryptographic algorithms and protocols for eventual IETF standardisation. Responsible for work on Curve25519/X25519, EdDSA, HPKE, and post-quantum algorithm integration.
 
+**C(ie,js) — Key Establishment Scheme Notation (SP 800-56A)**
+A compact notation used in NIST SP 800-56A Rev.3 to categorise key establishment schemes by the number of ephemeral (e) and static (s) key contributions from each party (i = initiator, j = responder). For example: C(2e, 0s) means both parties contribute only ephemeral keys (full ephemeral, best forward secrecy); C(1e, 1s) means each party uses one ephemeral and one static key; C(0e, 2s) means both use only static keys (no forward secrecy). SP 800-56A Table 8 defines eleven named schemes covering ECC and FFC variants of each pattern.
+
+**Cofactor**
+An integer h associated with an elliptic curve. The order of the curve group = h × order of the main subgroup. Curves with cofactor h > 1 (Curve25519 h=8, Curve448 h=4, Edwards25519 h=8) require special handling during key agreement: the scalar must be multiplied by h (the "cofactor multiplication" step in the ECC CDH primitive) to avoid small-subgroup attacks. Prime-order Weierstrass curves (P-256, P-384, P-521) have h=1 and require no cofactor clearing.
+
 **CNSA 2.0 — Commercial National Security Algorithm Suite 2.0**
 NSA Cybersecurity Advisory PP-22-1338 (September 2022, Version 1.0) specifying which cryptographic algorithms are required for all National Security Systems (NSS). CNSA 2.0 mandates: ML-KEM-1024 / CRYSTALS-Kyber Level V (key establishment), ML-DSA-87 / CRYSTALS-Dilithium Level V (general signatures), LMS with SHA-256/192 recommended and XMSS (software/firmware signing — use immediately), AES-256 (symmetric encryption), and SHA-384 or SHA-512 (hashing). RSA, ECDH, ECDSA, and DH are deprecated upon mandate. SLH-DSA and FN-DSA are not included. Transition deadlines by system category range from 2025–2030 (software signing, networking) to 2033 (browsers, OS, legacy), with an overall NSM-10 deadline of 2035. Replaces CNSA 1.0 (CNSSP 15 Annex B), which required ECDH/ECDSA P-384, RSA-3072, DH-3072, SHA-384, and AES-256.
 
@@ -232,6 +238,9 @@ A formal verification framework for cryptographic proofs, used to verify the sec
 **ECB — Electronic Codebook Mode**
 A block cipher mode where each block is encrypted independently with the same key. Identical plaintext blocks produce identical ciphertext blocks, which leaks patterns (the "ECB penguin" problem). Never use ECB for messages longer than one block.
 
+**ECC CDH — Elliptic Curve Cofactor Diffie-Hellman**
+The primitive underlying ECDH key establishment, as defined in NIST SP 800-56A Rev.3 §5.7.1.2. The shared secret Z is computed as Z = h·dA·QB, where dA is the private key, QB is the peer's public key, and h is the curve cofactor. For prime-order curves (P-256, P-384, P-521) with h=1, no cofactor multiplication is needed. For Curve25519 (h=8), Curve448 (h=4), and Edwards curves (h=8 and h=4), the cofactor multiplication clears the small-subgroup component, preventing small-subgroup attacks. The result Z is then passed to a KDF (SP 800-56C) before use as a symmetric key.
+
 **ECDH — Elliptic Curve Diffie-Hellman**
 A key-exchange algorithm performing Diffie-Hellman key agreement using elliptic curves rather than large integers. Achieves the same security as classical DH with much smaller keys (256 bits of ECDH ≈ 3072 bits of DH).
 
@@ -342,6 +351,9 @@ A MAC construction (RFC 2104) built around any hash function. Computed as HMAC(K
 
 **HMAC_DRBG**
 A NIST SP 800-90A DRBG using HMAC as its core update function. Considered the best-proven of the three approved DRBGs — it has a machine-verified security proof. The standard choice for applications requiring FIPS 140-3 validation.
+
+**HSS — Hierarchical Signature Scheme**
+A multi-level extension of LMS (RFC 8554, NIST SP 800-208). An HSS key pair consists of L levels of LMS trees, where each tree's root public key is signed by the OTS key of the level above. The total signing capacity is the product of the capacities at each level: 2^(h₁ + h₂ + … + hₗ). HSS allows very large signing capacities while keeping tree heights manageable — for example, two levels of h=10 yield 2^20 signatures. The private key state must be managed by a FIPS 140-2/3 Level 3+ hardware module (SP 800-208 §5.3). Used for code and firmware signing where long-lived root keys are required.
 
 **HPKE — Hybrid Public Key Encryption**
 A modern framework (RFC 9180) for public-key encryption combining a KEM (for key establishment), a KDF (for key derivation), and an AEAD (for symmetric encryption). Designed for one-shot encryption to a recipient's public key. Used in email encryption drafts and browser ECH (Encrypted Client Hello).
@@ -459,10 +471,10 @@ A post-quantum digital signature scheme (NIST Round 2 additional signatures) bas
 A mathematical problem where the task is to determine whether two lattices are isomorphic (equivalent up to rotation). The hardness of LIP is the security basis for the HAWK post-quantum signature scheme. It is a different hard problem from the Module-LWE and SIS problems used in ML-KEM and ML-DSA.
 
 **LMS — Leighton-Micali Signature**
-A stateful hash-based signature scheme (RFC 8554, NIST SP 800-208). Uses a Merkle tree of one-time signature keys. Very fast verification; the signer must track which keys have been used (if the same key is used twice, security breaks). Suitable for firmware signing and code signing.
+A stateful hash-based signature scheme (RFC 8554, NIST SP 800-208). Uses a Merkle tree of LMOTS one-time signature keys. Very fast verification; the signer must track which keys have been used (if the same key is used twice, security breaks). SP 800-208 approves 20 parameter sets (4 hash functions × 5 tree heights h=5/10/15/20/25). Private key state must be managed in a FIPS 140-2/3 Level 3+ hardware cryptographic module. Suitable for firmware signing and code signing. See also **HSS** (multi-level extension).
 
 **LMOTS — Leighton-Micali One-Time Signature**
-The one-time signature primitive underlying LMS. Each LMOTS key can sign exactly one message.
+The one-time signature primitive underlying LMS (RFC 8554, SP 800-208). Each LMOTS key can sign exactly one message. Parameterised by a Winternitz parameter w ∈ {1, 2, 4, 8} that trades signature size for computation time. CNSA 2.0 recommends w=4 (default) with SHA-256/192 (n=24) hash function parameters.
 
 ---
 
@@ -470,6 +482,9 @@ The one-time signature primitive underlying LMS. Each LMOTS key can sign exactly
 
 **MAC — Message Authentication Code**
 A short value computed from a message and a secret key, used to verify both the integrity and authenticity of the message. The recipient recomputes the MAC and compares it; if they match, the message was not tampered with. A MAC provides authenticity; a hash function alone does not (hashes are not keyed).
+
+**Montgomery Curve**
+An elliptic curve of the form By² = x³ + Ax² + x. This form enables the Montgomery ladder algorithm — a method for computing scalar multiplication that is naturally constant-time (immune to timing side-channel attacks), because the same operations are performed regardless of the scalar bits. NIST SP 800-186 approves two Montgomery curves: Curve25519 (A=486662, B=1, cofactor h=8) for 128-bit security and Curve448 (A=156326, B=1, cofactor h=4) for 224-bit security. Used via the X25519 and X448 Diffie-Hellman functions (RFC 7748).
 
 **MAYO**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on multivariate polynomial equations.
@@ -705,6 +720,9 @@ A post-quantum digital signature scheme (NIST Round 2 additional signatures) bas
 
 ## S
 
+**Safe-Prime Group**
+A Diffie-Hellman prime group where p is a safe prime (p = 2q + 1, where q is also prime). The large prime-order subgroup of size q ensures that an attacker cannot exploit small subgroups to recover the private key. NIST SP 800-56A Rev.3 and RFC 7919 define named safe-prime groups (ffdhe2048, ffdhe3072, ffdhe4096, ffdhe6144, ffdhe8192) approved for TLS key agreement. Custom primes require full validation per SP 800-56A Appendix D.
+
 **Salt**
 A random value mixed into a password (or other input) before hashing to ensure that two identical passwords produce different hashes, preventing precomputed dictionary (rainbow table) attacks. The salt does not need to be secret — only the password does. Minimum 128 bits (16 bytes); 32 bytes recommended.
 
@@ -817,6 +835,9 @@ The standard protocol for encrypted communications over the Internet (HTTPS, IMA
 **TLS 1.3**
 The current recommended TLS version. Streamlined handshake (fewer round trips), mandatory forward secrecy (ECDHE), mandatory AEAD ciphers, removed weak legacy options.
 
+**Twisted Edwards Curve**
+An elliptic curve of the form ax² + y² = 1 + dx²y² (for a ≠ d, ad ≠ 0). Twisted Edwards curves enable the EdDSA signature algorithm and support very efficient, naturally complete addition formulas (no special cases for the point at infinity). NIST SP 800-186 approves two twisted Edwards curves: Edwards25519 (a=−1, d=−121665/121666; birationally equivalent to Curve25519) and Edwards448 (a=1, d=−39081; birationally equivalent to Curve448). These are used by Ed25519 and Ed448 respectively (RFC 8032, FIPS 186-5).
+
 **TPM — Trusted Platform Module**
 A tamper-resistant hardware security chip providing key storage, random number generation, and attestation. TPM 2.0 (TCG specification) exposes a random number generator via `TPM2_GetRandom`. Used in laptop/server security, BitLocker, Secure Boot.
 
@@ -875,8 +896,8 @@ A variant of ChaCha20-Poly1305 with a 192-bit nonce (compared to 96-bit), making
 **XMSS — eXtended Merkle Signature Scheme**
 A stateful hash-based signature scheme (RFC 8391, NIST SP 800-208). Uses a hierarchy of Merkle trees to support a large number of signatures. More complex state management than LMS. Suitable for long-lived signing keys such as firmware signing.
 
-**XMSSMT — Multi-Tree XMSS**
-A multi-layer variant of XMSS supporting even higher signing capacity through a hyper-tree structure.
+**XMSS^MT — Multi-Tree XMSS**
+A multi-layer variant of XMSS (RFC 8391, NIST SP 800-208) supporting very high signing capacity through a hyper-tree structure of d XMSS tree layers, each of height h′. Total tree height H = h′×d, yielding a maximum of 2^H signatures. Each signature requires computing d WOTS+ signatures (one per layer), so signing time scales with d. Signing must be performed in a FIPS 140-2/3 Level 3+ hardware cryptographic module. Example: XMSSMT-SHA2_20/2_256 has H=20, d=2 layers, using SHA-256 with n=32-byte outputs.
 
 **XOF — Extendable-Output Function**
 A hash-like function that can produce output of any requested length, rather than a fixed-length digest. Examples: SHAKE128, SHAKE256, BLAKE3. Used where variable-length output is needed (key derivation, mask generation).
@@ -932,6 +953,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | DRBG | Deterministic Random Bit Generator |
 | DSA | Digital Signature Algorithm |
 | ECB | Electronic Codebook |
+| ECC CDH | Elliptic Curve Cofactor Diffie-Hellman |
 | ECDH | Elliptic Curve Diffie-Hellman |
 | ECDSA | Elliptic Curve Digital Signature Algorithm |
 | ECIES | Elliptic Curve Integrated Encryption Scheme |
@@ -963,6 +985,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | LAMPS | Limited Additional Mechanisms for PKIX and SMIME |
 | LCG | Linear Congruential Generator |
 | LIP | Lattice Isomorphism Problem |
+| HSS | Hierarchical Signature Scheme |
 | LMS | Leighton-Micali Signature |
 | LMOTS | Leighton-Micali One-Time Signature |
 | LWE | Learning With Errors |

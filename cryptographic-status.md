@@ -5,8 +5,8 @@
 > wildcard conventions defined below.
 >
 > **Primary sources:** NIST SP 800-57 Pt 1 Rev 5 (Rev 6 IPD Dec 2025) · SP 800-131A Rev 2 (Rev 3 IPD Oct 2024) · SP 800-38 series ·
-> SP 800-90A Rev 1 (Rev 2 pre-draft 2025) · SP 800-90B · SP 800-56A/B/C · SP 800-132 · SP 800-135 · SP 800-186 ·
-> FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (IPD) ·
+> SP 800-56A Rev 3 · SP 800-56B/C · SP 800-90A Rev 1 (Rev 2 pre-draft 2025) · SP 800-90B · SP 800-132 · SP 800-135 ·
+> SP 800-186 · SP 800-208 · FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (IPD) ·
 > BSI TR-02102-1 v2026-01 (2026-01-23) · BSI TR-02102-2 v2026-01 (2025-12-27) ·
 > BSI TR-02102-3 v2026-01 (2026-01-27) · BSI TR-02102-4 v2026-01 (2026-01-27) · BSI AIS 20/31 v3 (2022)
 
@@ -158,6 +158,80 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 > ⚠ **Ephemeral key agreement:** Static (non-ephemeral) ECDH and DH provide no forward secrecy. SP 800-56A requires ephemeral keys for forward-secret key establishment. TLS 1.3 mandates ECDHE or DHE.
 
+### 5.1 Approved elliptic curves (SP 800-186)
+
+SP 800-186 (February 2023) specifies the complete catalogue of NIST-approved elliptic curve domain parameters. The table below summarises security strength, approval status, and allowed usage:
+
+#### Weierstrass prime curves (FIPS 186-5 primary curves)
+
+| Curve | Also known as | Security strength | ECDH | ECDSA / EdDSA | Notes |
+|:---|:---|:---|:---|:---|:---|
+| P-192 | secp192r1 | 96-bit | ❌ Legacy only | ❌ Legacy only | SP 800-131A Rev 2: disallowed for new use after 2013; legacy verification only |
+| P-224 | secp224r1 | 112-bit | ⚠ Transitional | ⚠ Transitional | Through 2030; not recommended for new designs |
+| P-256 | secp256r1, prime256v1 | 128-bit | ✅ Recommended | ✅ Recommended | Most widely deployed; TLS 1.3 mandatory curve |
+| P-384 | secp384r1 | 192-bit | ✅ Recommended | ✅ Recommended | Required for NSS / CNSA 1.0; NSA baseline |
+| P-521 | secp521r1 | 260-bit | ✅ Recommended | ✅ Recommended | Highest NIST prime curve security |
+
+#### Montgomery curves (SP 800-186 §2.3)
+
+| Curve | Form | Cofactor h | Security | ECDH | Notes |
+|:---|:---|:---|:---|:---|:---|
+| Curve25519 | By = x³ + Ax² + x; A=486662, B=1 | 8 | 128-bit | ✅ Recommended | Used as X25519 (RFC 7748); constant-time |
+| Curve448 | By = x³ + Ax² + x; A=156326, B=1 | 4 | 224-bit | ✓ Approved | Used as X448 (RFC 7748); 224-bit security |
+
+#### Twisted Edwards curves (SP 800-186 §2.4)
+
+| Curve | Form | Cofactor h | Security | Signature | Notes |
+|:---|:---|:---|:---|:---|:---|
+| Edwards25519 | ax² + y² = 1 + dx²y²; a=−1, d=−121665/121666 | 8 | 128-bit | ✅ Recommended (Ed25519) | Birationally equivalent to Curve25519; deterministic signing |
+| Edwards448 | ax² + y² = 1 + dx²y²; a=1, d=−39081 | 4 | 224-bit | ✓ Approved (Ed448) | Birationally equivalent to Curve448 |
+
+#### Binary curves (SP 800-186, Appendix G — all deprecated)
+
+All K-series and B-series binary curves (K-163, K-233, K-283, K-409, K-571, B-163, B-233, B-283, B-409, B-571) defined in earlier FIPS 186 editions are **deprecated** in SP 800-186. They are not approved for new implementations due to implementation complexity and side-channel concerns.
+
+#### Additional curves (SP 800-186, Appendix H)
+
+| Curve family | Approval status | Notes |
+|:---|:---|:---|
+| Brainpool curves (brainpoolP256r1, brainpoolP384r1, brainpoolP512r1, brainpoolP512t1, …) | ✓ Approved (SP 800-186 Appx H.1) | BSI-mandated alternative; may be used with NIST-approved schemes; not in FIPS 186-5 primary list |
+| secp256k1 | ❌ Not approved for general use | SP 800-186 Appendix H.2: discussed in context of blockchain/Bitcoin applications only; not approved for NSS or general-purpose cryptography |
+
+### 5.2 Key establishment scheme taxonomy (SP 800-56A Rev.3)
+
+SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number of key-establishment transactions (i and j) and static/ephemeral roles (s/e). The `C(i,e;j,s)` notation counts: i ephemeral + j static contributions per party.
+
+| Scheme | Description | Forward secrecy | NIST status |
+|:---|:---|:---|:---|
+| C(2e, 0s) — Full ephemeral | Both parties contribute only ephemeral keys | ✅ Full FS | Approved (SP 800-56A §6.2) |
+| C(1e, 1s) — Ephemeral + static | One ephemeral + one static key per party | ✅ Partial FS | Approved (SP 800-56A §6.2) |
+| C(0e, 2s) — Full static | Both parties use only static keys | ❌ No FS | Approved for specific uses; SP 800-57 deprecates for new TLS use |
+| C(1e, 0s) — One-pass ephemeral | Initiator-only ephemeral; no static | Limited | Approved for specific contexts |
+
+#### Approved FFC (MODP) groups for IKE (SP 800-56A Rev.3, Table 25)
+
+| Group | Prime size | Security | Status |
+|:---|:---|:---|:---|
+| MODP-2048 | 2048 bit | 112-bit | ⚠ Transitional (through 2030) |
+| MODP-3072 | 3072 bit | 128-bit | ✓ Approved |
+| MODP-4096 | 4096 bit | 140-bit | ✓ Approved |
+| MODP-6144 | 6144 bit | 152-bit | ✓ Approved |
+| MODP-8192 | 8192 bit | 192-bit | ✓ Approved |
+
+#### Approved FFC named groups for TLS (SP 800-56A Rev.3, Table 26 / RFC 7919)
+
+| Group | Prime size | Security | Status |
+|:---|:---|:---|:---|
+| ffdhe2048 | 2048 bit | 112-bit | ⚠ Transitional (through 2030) |
+| ffdhe3072 | 3072 bit | 128-bit | ✅ Recommended |
+| ffdhe4096 | 4096 bit | 140-bit | ✓ Approved |
+| ffdhe6144 | 6144 bit | 152-bit | ✓ Approved |
+| ffdhe8192 | 8192 bit | 192-bit | ✓ Approved |
+
+> ℹ **Key confirmation:** SP 800-56A §5.9 requires MAC-based key confirmation when assurance of possession of shared secret is needed. Acceptable MAC algorithms: HMAC, CMAC, KMAC. Minimum MacTagBits ≥ 64. The MAC key is derived from the shared secret, not reused.
+
+> ℹ **ECC CDH cofactor primitive:** For curves with cofactor h > 1 (Curve25519 h=8, Curve448 h=4, Edwards25519 h=8, Edwards448 h=4), the ECC CDH primitive must multiply the scalar by the cofactor: Z = h·dA·QB. This prevents small-subgroup attacks. SP 800-56A Rev.3 §5.7.1.2.
+
 ---
 
 ## 6. Digital Signatures
@@ -186,10 +260,22 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 | Pattern | Security | Status | Sources | Notes |
 |:---|:---|:---|:---|:---|
-| `LMS-*` | 128–256 bit | ✓ Approved | SP 800-208; RFC 8554 | **Stateful** — state (counter) must never repeat; suitable for firmware signing, code signing |
-| `XMSS-*` | 128–256 bit | ✓ Approved | SP 800-208; RFC 8391 | Stateful — same state-management requirements as LMS |
+| `LMS_SHA256_M32_H{5\|10\|15\|20\|25}` | 128-bit PQ | ✓ Approved | SP 800-208; RFC 8554 | **Stateful** — 256-bit classical / 128-bit post-quantum; n=32 |
+| `LMS_SHA256_M24_H{5\|10\|15\|20\|25}` | 96-bit PQ | ✓ Approved | SP 800-208; RFC 8554 | CNSA 2.0 recommended parameter family for NSS; n=24 |
+| `LMS_SHAKE_M32_H{5\|10\|15\|20\|25}` | 128-bit PQ | ✓ Approved | SP 800-208 | SHAKE256/256 hash variant; n=32 |
+| `LMS_SHAKE_M24_H{5\|10\|15\|20\|25}` | 96-bit PQ | ✓ Approved | SP 800-208 | SHAKE256/192 hash variant; n=24 |
+| `HSS-*` | 128-bit PQ | ✓ Approved | SP 800-208; RFC 8554 | Multi-level LMS; product of per-level capacities; state at each level |
+| `XMSS-SHA2_[10\|16\|20]_[256\|512]` | 128–256-bit PQ | ✓ Approved | SP 800-208; RFC 8391 | **Stateful** — WOTS+ OTS; SHA-256 (n=32) or SHA-512 (n=64) |
+| `XMSS-SHAKE_[10\|16\|20]_[256\|512]` | 128–256-bit PQ | ✓ Approved | SP 800-208; RFC 8391 | SHAKE-based XMSS variants |
+| `XMSS-SHA2_[10\|16\|20]_192` | 96-bit PQ | ✓ Approved | SP 800-208 | SHA-256/192 (n=24); SP 800-208 addition |
+| `XMSS-SHAKE256_[10\|16\|20]_192` | 96-bit PQ | ✓ Approved | SP 800-208 | SHAKE256/192 (n=24); SP 800-208 addition |
+| `XMSSMT-*` | 128–256-bit PQ | ✓ Approved | SP 800-208; RFC 8391 | Multi-tree XMSS; very large signing volumes; d-layer hypertree |
 
-> ⚠ **Statefulness:** Signing the same state twice under LMS or XMSS is cryptographically catastrophic. State must be managed by a trusted, crash-safe store. Not suitable for general-purpose signing; use for code/firmware where signing frequency is low and state is fully controlled.
+> ⚠ **Statefulness:** Signing the same state twice under LMS, HSS, XMSS, or XMSS^MT is cryptographically catastrophic — it directly exposes the private key. Not suitable for general-purpose signing; use for code/firmware signing where frequency is low and state is fully controlled.
+
+> 🔒 **SP 800-208 §5.3 hardware mandate:** Private key state for LMS and XMSS **shall** be maintained within a hardware cryptographic module validated to **FIPS 140-2/3 Level 3 or higher**. The current index value (state) must be stored in nonvolatile memory **before** any signature is exported from the module. Signing outside a validated hardware module is non-compliant.
+
+> ℹ **Signing capacity planning:** Tree height h determines the maximum number of one-time signatures per key pair (2^h). For HSS/XMSS^MT with L levels, total capacity is 2^(h₁+h₂+…+hₗ). Choose heights to outlast the expected key lifetime with margin; re-keying a root is a significant operation. SP 800-208 §3.4 requires use of an approved DRBG (SP 800-90A) seeded to at least 8n bits of entropy for key generation.
 
 ---
 
@@ -683,4 +769,4 @@ The following RFCs specify protocol-level CNSA 1.0 compliance (updated guidance 
 
 ---
 
-*Last updated: 2026-04-02 (§16 CNSA 2.0 added from PP-22-1338 source document). Consult current NIST SP 800-131A, BSI TR-02102, and NSA CNSA advisory editions for horizon dates and any post-publication amendments.*
+*Last updated: 2026-04-02 (§5.1 SP 800-186 elliptic curve catalogue added; §5.2 SP 800-56A Rev.3 key establishment scheme taxonomy and FFC group tables added; §6.2 LMS/XMSS expanded with full parameter patterns and SP 800-208 §5.3 hardware mandate; §16 CNSA 2.0 added from PP-22-1338 source document). Consult current NIST SP 800-131A, BSI TR-02102, and NSA CNSA advisory editions for horizon dates and any post-publication amendments.*

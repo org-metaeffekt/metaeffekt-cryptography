@@ -55,6 +55,9 @@ Please note that this content is based on public data sources. Primarily:
 * https://groups.google.com/a/list.nist.gov/g/pqc-forum (individual copyrights, licenses and trademarks apply)
 * NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 IPD (FN-DSA) — public domain
 * NIST SP 800-57 Part 1 Rev 5, SP 800-131A Rev 2 — public domain
+* NIST SP 800-56A Rev 3 — *Recommendation for Pair-Wise Key-Establishment Schemes Using Discrete Logarithm Cryptography*, April 2018 — public domain
+* NIST SP 800-186 — *Recommendations for Discrete Logarithm-Based Cryptography: Elliptic Curve Domain Parameters*, February 2023 — public domain
+* NIST SP 800-208 — *Recommendation for Stateful Hash-Based Signature Schemes*, October 2020 — public domain
 * BSI TR-02102-1 v2026-01, TR-02102-2 v2026-01, TR-02102-3 v2026-01, TR-02102-4 v2026-01 — public domain
 * NSA Cybersecurity Advisory PP-22-1338: *Announcing the Commercial National Security Algorithm Suite 2.0* (CNSA 2.0), September 2022, Version 1.0 — public domain
 * and diverse public publications (such as special publications from NIST, FIPS and BSI guidance).
