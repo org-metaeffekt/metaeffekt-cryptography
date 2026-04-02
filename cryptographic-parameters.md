@@ -1355,6 +1355,69 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 
 ---
 
+### HQC parameters (NIST selection, spec v2025-08-22)
+
+> **Primary source:** HQC submission team, *Hamming Quasi-Cyclic (HQC)*, specification document v2025-08-22, https://pqc-hqc.org. NIST selected HQC as a fifth PQC standard (code-based KEM) in March 2025; FIPS standard pending.
+
+#### Overview
+
+HQC is an IND-CCA2-secure Key Encapsulation Mechanism (KEM) whose security is based on the **Quasi-Cyclic Syndrome Decoding (QCSD)** problem — a variant of the decoding problem for random linear codes over F₂. Unlike many code-based schemes, HQC does not require the underlying code family to be indistinguishable from random codes, which simplifies security arguments.
+
+HQC-PKE (the underlying public-key encryption scheme) achieves IND-CPA security under the 2-DQCSD-P and 3-DQCSD-PT problems. HQC-KEM is obtained by applying the **Salted Fujisaki-Okamoto (SFO⊥) transform** to HQC-PKE, yielding IND-CCA2 security in the random-oracle model.
+
+#### Internal structure
+
+HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | rot(h)) and a decodable **concatenated Reed-Muller / Reed-Solomon (RMRS) code C** for message encoding.
+
+| Component | Detail |
+|:---|:---|
+| External code | Shortened Reed-Solomon code over F₂₅₆ (field polynomial: 1+α²+α³+α⁴+α⁸); k_e = 16/24/32 symbols for L1/L3/L5 |
+| Internal code | First-order duplicated Reed-Muller RM(1,7) = [128, 8, 64], duplicated 3× (L1) or 5× (L3, L5) |
+| Duplication | L1: [384, 8] L3: [640, 8] L5: [640, 8] |
+| Decoding | Maximum-likelihood decoding on internal code (fast Hadamard transform); algebraic decoder (Berlekamp-Massey / Euclidean) on external RS code |
+
+#### Hash functions and XOF
+
+| Function | Instantiation | Purpose |
+|:---|:---|:---|
+| G, I | SHA3-512 | Key and shared-secret derivation |
+| H, J | SHA3-256 | Challenge hash in FO transform |
+| XOF | SHAKE256 | Pseudorandom expansion of seeds into vectors |
+
+#### Parameter sets (Table 5 of HQC spec v2025-08-22)
+
+| Parameter | HQC-128 (HQC-1) | HQC-192 (HQC-3) | HQC-256 (HQC-5) |
+|:---|---:|---:|---:|
+| NIST security category | 1 | 3 | 5 |
+| n (block length) | 17 669 | 35 851 | 57 637 |
+| n₁ (RS code length) | 46 | 56 | 90 |
+| n₂ (RM code length) | 384 | 640 | 640 |
+| k (message bits) | 128 | 192 | 256 |
+| w = w_r = w_x (Hamming weight) | 66 | 100 | 131 |
+| w_e (error vector weight) | 75 | 114 | 149 |
+| DFR (decoding failure rate) | < 2⁻¹²⁸ | < 2⁻¹⁹² | < 2⁻²⁵⁶ |
+
+#### Key and ciphertext sizes (Table 6 of HQC spec v2025-08-22)
+
+| Size | HQC-128 (HQC-1) | HQC-192 (HQC-3) | HQC-256 (HQC-5) |
+|:---|---:|---:|---:|
+| Encapsulation key ek (bytes) | 2 241 | 4 514 | 7 237 |
+| Decapsulation key dk — default (bytes) | 2 321 | 4 602 | 7 333 |
+| Decapsulation key dk — compressed (bytes) | 32 | 32 | 32 |
+| Ciphertext c (bytes) | 4 433 | 8 978 | 14 421 |
+| Shared secret K (bytes) | 32 | 32 | 32 |
+
+> The **compressed dk** format stores only `seed_KEM` (32 bytes); the full key pair can be re-derived from this seed. The **default dk** format stores `(ek_KEM; dk_PKE; σ; seed_KEM)` to avoid re-derivation during decapsulation.
+
+#### Security notes
+
+- Classical security: ISD (Information Set Decoding) attacks yield work factors ≥ 2¹²⁸/²¹⁹²/²⁵⁶.
+- Quantum security: ISD with quantum speedup (Grover / quantum ISD variants) halves the exponent; security parameters are chosen conservatively to maintain ≥ 128/192/256 bit classical and ≥ 64/96/128 bit quantum security.
+- The quasi-cyclic structure does not benefit ISD attacks beyond a small constant factor; the DOOM attack gives at most O(√n) gain.
+- OIDs: none assigned yet; will be defined in the forthcoming FIPS standard.
+
+---
+
 ## Summary table
 
 | Parameter | Category | Type | Key algorithm families |

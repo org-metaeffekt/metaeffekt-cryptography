@@ -436,7 +436,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 | Algorithm | Security | Status | Key sizes | Notes |
 |:---|:---|:---|:---|:---|
-| `HQC-128` / `HQC-192` / `HQC-256` | 128 / 192 / 256 bit | ⚠ Conditional | pk: 2249 / 4522 / 7245 B; ct: 4481 / 8978 / 14469 B | NIST selected March 2025 as fifth PQC standard (code-based backup KEM); FIPS draft expected 2026 — not yet final |
+| `HQC-128` / `HQC-192` / `HQC-256` | 128 / 192 / 256 bit | ⚠ Conditional | ek: 2241 / 4514 / 7237 B; dk: 2321 / 4602 / 7333 B (or 32 B compressed); ct: 4433 / 8978 / 14421 B; K: 32 B | NIST selected March 2025 as fifth PQC standard (code-based backup KEM); FIPS draft expected 2026 — not yet final; sizes from HQC spec v2025-08-22 |
 | `FrodoKEM-640` / `976` / `1344` | 128 / 192 / 256 bit | ❌ Not standardised | pk: 9616 / 15632 / 21520 B; ct: 9720 / 15744 / 21632 B | Conservative plain-LWE basis (no ring/module structure); available in liboqs / OQS-OpenSSL |
 | `Classic McEliece` (all parameter sets) | 128–256 bit | ❌ Not standardised | pk: 261 KB–1.36 MB; ct: 128–240 B | 40+ year history of binary Goppa code analysis; smallest ciphertext of all PQC KEMs; public key is the main deployment obstacle; used in McTiny and post-quantum WireGuard |
 | `BIKE-L1` / `L3` / `L5` | 128 / 192 / 256 bit | ❌ Not standardised | pk: ~1.5–6 KB; ct: ~1.5–6 KB | Quasi-cyclic MDPC codes; key sizes similar to HQC; available in liboqs |

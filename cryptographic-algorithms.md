@@ -333,9 +333,9 @@ Cryptographic Algorithms
 | `ml-kem-512` | ML-KEM-512 · Kyber-512 | PQC KEM (lattice) — NIST Level 1 | `2.16.840.1.101.3.4.4.1` | `ML-KEM-512` | FIPS 203; SP 800-227 (draft); RFC 9935 (PKIX) |
 | `ml-kem-768` | ML-KEM-768 · Kyber-768 | PQC KEM (lattice) — NIST Level 3 | `2.16.840.1.101.3.4.4.2` | `ML-KEM-768` | FIPS 203; SP 800-227 (draft); RFC 9935 (PKIX) |
 | `ml-kem-1024` | ML-KEM-1024 · Kyber-1024 | PQC KEM (lattice) — NIST Level 5 | `2.16.840.1.101.3.4.4.3` | `ML-KEM-1024` | FIPS 203; RFC 9935 (PKIX); CNSA 2.0 (NSS mandate Level 5) |
-| `hqc-128` | HQC-128 | PQC KEM (code-based) — NIST Level 1 | — (FIPS draft 2026) | `HQC-128` | NIST selection March 2025; FIPS draft expected 2026 |
-| `hqc-192` | HQC-192 | PQC KEM (code-based) — NIST Level 3 | — | `HQC-192` | NIST selection March 2025 |
-| `hqc-256` | HQC-256 | PQC KEM (code-based) — NIST Level 5 | — | `HQC-256` | NIST selection March 2025 |
+| `hqc-128` | HQC-128 · HQC-1 | PQC KEM (code-based, quasi-cyclic) — NIST Level 1 | — (OID pending FIPS) | `HQC-128` | NIST selection March 2025; FIPS draft expected 2026; HQC spec v2025-08-22 |
+| `hqc-192` | HQC-192 · HQC-3 | PQC KEM (code-based, quasi-cyclic) — NIST Level 3 | — | `HQC-192` | NIST selection March 2025; HQC spec v2025-08-22 |
+| `hqc-256` | HQC-256 · HQC-5 | PQC KEM (code-based, quasi-cyclic) — NIST Level 5 | — | `HQC-256` | NIST selection March 2025; HQC spec v2025-08-22 |
 | `frodokem-640` | FrodoKEM-640 · FrodoKEM-640-AES · FrodoKEM-640-SHAKE | PQC KEM (lattice, conservative) | — | `FrodoKEM-640-*` | FrodoKEM spec; CIRCL library |
 | `frodokem-976` | FrodoKEM-976 | PQC KEM (lattice, conservative) | — | `FrodoKEM-976-*` | FrodoKEM spec |
 | `frodokem-1344` | FrodoKEM-1344 | PQC KEM (lattice, conservative) | — | `FrodoKEM-1344-*` | FrodoKEM spec |

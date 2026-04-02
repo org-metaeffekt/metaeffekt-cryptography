@@ -65,6 +65,7 @@ Please note that this content is based on public data sources. Primarily:
 * RFC 9881 — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Digital Signature Algorithm (ML-DSA)*, October 2025 — IETF (Revised BSD License)
 * RFC 9935 — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)*, March 2026 — IETF (Revised BSD License)
 * draft-ietf-lamps-pq-composite-sigs-15 — *Composite ML-DSA for use in X.509 Public Key Infrastructure*, February 2026 — IETF Internet-Draft (work in progress); (Revised BSD License)
+* HQC submission team — *Hamming Quasi-Cyclic (HQC)*, specification document v2025-08-22, https://pqc-hqc.org (individual authors; code in the public domain)
 * and diverse public publications (such as special publications from NIST, FIPS and BSI guidance).
 
 The aggregation and enhancement of the content are provided under Creative Commons BY-SA 4.0, 
