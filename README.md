@@ -110,6 +110,6 @@ The grammars are fully experimental.
 
 ## Diagrams
 
-- **[resources/cryptographic-algorithms.drawio](resources/cryptographic-algorithms.drawio)** — Draw.io diagram illustrating the classification hierarchy of cryptographic algorithms covered in this repository.
+- **[resources/cryptographic-algorithms.drawio](resources/cryptographic-algorithms.drawio)** — Draw.io diagram visualising the CycloneDX cryptographic algorithm pattern grammar: notation legend (`{x}`, `[…]`, `(a|b)`), railroad pattern structure, grammar production rules, and a parameter taxonomy overview grouped by the sections in `cryptographic-algorithms.md`.
 
-- **[resources/random-number-generators.drawio](resources/random-number-generators.drawio)** — Draw.io diagram illustrating the classification hierarchy of random number generators covered in this repository.
+- **[resources/random-number-generators.drawio](resources/random-number-generators.drawio)** — Draw.io diagram visualising the RNG pattern grammar (notation legend, identifier format, grammar production rules) and a classification hierarchy of random number generators (TRNG, CSPRNG/DRBG, non-cryptographic PRNG) as covered in `random-number-generators.md`.
