@@ -117,7 +117,7 @@ A block cipher mode that converts a block cipher into a stream cipher by encrypt
 An IRTF (Internet Research Task Force) research group that develops cryptographic algorithms and protocols for eventual IETF standardisation. Responsible for work on Curve25519/X25519, EdDSA, HPKE, and post-quantum algorithm integration.
 
 **CNSA 2.0 — Commercial National Security Algorithm Suite 2.0**
-A US NSA policy document specifying which cryptographic algorithms are approved for protecting classified and sensitive national security information. CNSA 2.0 (published 2022, updated 2024) requires transition to post-quantum algorithms: ML-KEM-1024, ML-DSA-87, SLH-DSA (SHA2-256s), and AES-256 by specific deadlines (2025-2033 depending on use case).
+A US NSA Cybersecurity Advisory (published September 2022) specifying which cryptographic algorithms are required to protect classified and sensitive national security information (NSS). CNSA 2.0 mandates a transition to post-quantum algorithms: ML-KEM-1024 (key establishment), ML-DSA-87 (general signatures), LMS and XMSS (software/firmware signing, immediately), AES-256 (symmetric encryption), and SHA-384/512 (hashing). Notably, CNSA 2.0 does not include SLH-DSA, FN-DSA, or any classical asymmetric algorithms (RSA, ECDH, ECDSA) for new systems. Transition deadlines range from immediate (LMS/XMSS for firmware signing) to 2033 (full exclusive use), depending on system category. Replaces CNSA 1.0 (2015).
 
 **Code Equivalence**
 A mathematical problem where the task is to determine whether two error-correcting codes are equivalent under a permutation of coordinates. The hardness of this problem is the security basis for the LESS and CROSS post-quantum signature schemes.

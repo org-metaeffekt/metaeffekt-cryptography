@@ -56,6 +56,7 @@ Please note that this content is based on public data sources. Primarily:
 * NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 IPD (FN-DSA) — public domain
 * NIST SP 800-57 Part 1 Rev 5, SP 800-131A Rev 2 — public domain
 * BSI TR-02102-1 v2026-01, TR-02102-2 v2026-01, TR-02102-3 v2026-01, TR-02102-4 v2026-01 — public domain
+* NSA Cybersecurity Advisory: Commercial National Security Algorithm Suite 2.0 (CNSA 2.0), September 2022 — public domain
 * and diverse public publications (such as special publications from NIST, FIPS and BSI guidance).
 
 The aggregation and enhancement of the content are provided under Creative Commons BY-SA 4.0, 
@@ -81,7 +82,7 @@ that adjustments can be applied accordingly.
 
 - **[random-number-generators.md](random-number-generators.md)** — Catalogue of deterministic and non-deterministic random number generators (DRBGs and TRNGs). Covers SP 800-90A/B/C families, OS entropy sources, and platform-specific APIs. Each entry lists construction type, security strength, seeding requirements, and CycloneDX RNG pattern strings.
 
-- **[cryptographic-status.md](cryptographic-status.md)** — Status on algorithms and key-length choices derived from NIST SP 800-57 Part 1 Rev 5, SP 800-131A Rev 2, BSI TR-02102-1 through -4, and related standards. Organises algorithms by security strength tier, highlights deprecated and disallowed primitives, and cross-references the FIPS post-quantum standards. Includes security strength equivalence tables (SP 800-57 Table 2), SSH recommendations (BSI TR-02102-4), and IPsec/IKEv2 recommendations (BSI TR-02102-3).
+- **[cryptographic-status.md](cryptographic-status.md)** — Status on algorithms and key-length choices derived from NIST SP 800-57 Part 1 Rev 5, SP 800-131A Rev 2, BSI TR-02102-1 through -4, NSA CNSA 2.0, and related standards. Organises algorithms by security strength tier, highlights deprecated and disallowed primitives, and cross-references the FIPS post-quantum standards. Includes security strength equivalence tables (SP 800-57 Table 2), SSH recommendations (BSI TR-02102-4), IPsec/IKEv2 recommendations (BSI TR-02102-3), and CNSA 2.0 algorithm requirements and migration timeline.
 
 - **[glossary.md](glossary.md)** — Plain-language explanations of all terms and abbreviations used across this repository, written for readers without a mathematics background. Covers cryptographic primitives, protocol concepts, standardisation bodies, post-quantum terminology, and SBOM/CycloneDX notation. Includes an abbreviation quick-reference table.
 

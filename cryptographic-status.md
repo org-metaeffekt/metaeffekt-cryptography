@@ -581,4 +581,63 @@ Recommendations for IPsec with IKEv2. Source: BSI TR-02102-3, Version 2026-01 (2
 
 ---
 
+---
+
+## 16. NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0)
+
+> **Source:** NSA Cybersecurity Advisory *"Commercial National Security Algorithm Suite 2.0"*, released 7 September 2022. Applies to National Security Systems (NSS) — systems processing classified or sensitive national security information in the US government and defence industrial base. CNSA 2.0 replaces CNSA 1.0 (2015).
+
+### 16.1 Algorithm requirements
+
+CNSA 2.0 specifies a fixed set of algorithms at fixed parameter sizes. No classical asymmetric algorithms (RSA, ECDH, ECDSA) are permitted for new NSS going forward — the suite is exclusively post-quantum.
+
+| Purpose | Algorithm | Standard | Required parameters | Notes |
+|:---|:---|:---|:---|:---|
+| Symmetric encryption | AES | FIPS 197 | **256-bit key** | AES-128/192 not sufficient; AES-256 mandatory |
+| Key establishment | ML-KEM | FIPS 203 | **ML-KEM-1024** | NIST Level 5; 256-bit quantum security |
+| General digital signatures | ML-DSA | FIPS 204 | **ML-DSA-87** | NIST Level 5; 256-bit quantum security |
+| Software / firmware signing | LMS | SP 800-208 | SHA-256/192 or SHA-256/256 | Stateful; see §6.2 for state-management requirements |
+| Software / firmware signing | XMSS | SP 800-208 | SHA-256 based variants | Stateful; alternative to LMS |
+| Hashing | SHA-384 | FIPS 180-4 | 384-bit output | Minimum for NSS |
+| Hashing (high-assurance) | SHA-512 | FIPS 180-4 | 512-bit output | Preferred for long-term data protection |
+
+**Explicitly excluded from CNSA 2.0:**
+- No RSA (any key size) for new key establishment or signing
+- No ECDH / ECDSA / EdDSA (any curve)
+- No SLH-DSA (FIPS 205) — not included in the 2022 advisory
+- No FN-DSA / Falcon (FIPS 206) — not included in the 2022 advisory
+- No AES-128 or AES-192
+
+> ℹ CNSA 1.0 (2015) required RSA-3072+, ECDH-P-384, ECDSA-P-384, SHA-384, and AES-256. CNSA 2.0 replaces all asymmetric primitives with PQC equivalents. The AES-256 and SHA-384 requirements carry over.
+
+### 16.2 Migration timeline
+
+NSA published transition timelines by system/product category. The four milestone columns reflect the four time horizons in the advisory.
+
+| System / product category | Immediately (2022) | By 2025 | By 2030 | By 2033 |
+|:---|:---|:---|:---|:---|
+| **Software and firmware signing** | ✅ Use LMS or XMSS now | All new products support LMS/XMSS | LMS/XMSS exclusively; no legacy | — |
+| **Browsers, mobile OS, cloud services** | Prepare migration plan | Support ML-KEM-1024 | ML-KEM-1024 exclusively | Full CNSA 2.0 only |
+| **General-purpose OS and applications** | Inventory cryptographic dependencies | Support ML-KEM-1024 + ML-DSA-87 | Prefer CNSA 2.0 | CNSA 2.0 exclusively |
+| **Networking equipment (routers, VPNs)** | Prepare migration plan | — | Support + prefer CNSA 2.0 | CNSA 2.0 exclusively |
+| **Legacy NSS (long lifecycle systems)** | Assess upgrade path | Begin hybrid deployment | Require CNSA 2.0 support | Full CNSA 2.0 or decommission |
+
+> ⚠ **Immediate LMS/XMSS mandate:** The 2022 advisory states that LMS and XMSS should be used for software and firmware signing *immediately* — this is the only "use now" requirement in CNSA 2.0. All other PQC transitions follow the 2025–2033 runway. Both are stateful; see §6.2 for state-management requirements.
+
+> ⚠ **Hybrid deployment:** During the transition period, CNSA 2.0 permits hybrid operation (classical + PQC), but the target is pure PQC. Hybrid is a migration step, not a long-term posture.
+
+### 16.3 Relationship to NIST standards
+
+| CNSA 2.0 requirement | NIST standard | NIST security level | Classical equivalent |
+|:---|:---|:---|:---|
+| ML-KEM-1024 | FIPS 203 | Level 5 (256-bit quantum) | ECDH-P-384 or RSA-7680 |
+| ML-DSA-87 | FIPS 204 | Level 5 (256-bit quantum) | ECDSA-P-384 or RSA-7680 |
+| LMS / XMSS | SP 800-208 | 192–256-bit | — (no classical equivalent) |
+| AES-256 | FIPS 197 | — | — (symmetric; unchanged) |
+| SHA-384 / SHA-512 | FIPS 180-4 | 192/256-bit | — (hash; unchanged) |
+
+> ℹ **CNSA 2.0 selects Level 5 only.** The NIST PQC standards offer three parameter sets each (Levels 1/3/5). NSA mandates the highest level (ML-KEM-1024, ML-DSA-87) for all NSS, regardless of data classification level. This differs from general NIST guidance, which recommends ML-KEM-768 / ML-DSA-65 as the balanced default for non-NSS use.
+
+---
+
 *Last updated: 2026-04-02. Consult current NIST SP 800-131A and BSI TR-02102 editions for horizon dates and any post-publication amendments.*
