@@ -58,13 +58,14 @@ Cryptographic Algorithms
 │   └── Key Agreement  (ECDH, FFDH, HPKE, MQV, BLS)
 │
 ├── Post-Quantum Cryptography
-│   ├── KEM — Lattice  (ML-KEM / Kyber)
-│   ├── KEM — Code-based  (HQC, FrodoKEM)
+│   ├── KEM — Lattice  (ML-KEM / Kyber; NTRU; Saber; FrodoKEM; NTRU-Prime)
+│   ├── KEM — Code-based  (HQC, BIKE, Classic McEliece)
+│   ├── KEM — Isogeny  (SIKE — broken 2022)
 │   ├── Signatures — Lattice  (ML-DSA / Dilithium, FN-DSA / Falcon, HAWK)
 │   ├── Signatures — Hash-based stateless  (SLH-DSA / SPHINCS+)
-│   ├── Signatures — Multivariate  (MAYO, SNOVA, UOV / pqov, QR-UOV)
+│   ├── Signatures — Multivariate  (MAYO, SNOVA, UOV / pqov, QR-UOV; Rainbow — broken 2022; GeMSS — broken)
 │   ├── Signatures — Code-based  (CROSS, LESS)
-│   ├── Signatures — MPC-in-the-Head  (FAEST, SDitH, MQOM, Mirath, PERK, RYDE)
+│   ├── Signatures — MPC-in-the-Head  (FAEST, SDitH, MQOM, Mirath, PERK, RYDE; Picnic)
 │   └── Signatures — Isogeny  (SQIsign, SQIsign2D)
 │
 ├── Key Derivation Functions (KDF)
@@ -322,9 +323,9 @@ Cryptographic Algorithms
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
-| `ml-kem-512` | ML-KEM-512 · Kyber-512 | PQC KEM (lattice) — NIST Level 1 | `2.16.840.1.101.3.4.4.1` | `ML-KEM-512` | FIPS 203; SP 800-227 (draft) |
-| `ml-kem-768` | ML-KEM-768 · Kyber-768 | PQC KEM (lattice) — NIST Level 3 | `2.16.840.1.101.3.4.4.2` | `ML-KEM-768` | FIPS 203; SP 800-227 (draft) |
-| `ml-kem-1024` | ML-KEM-1024 · Kyber-1024 | PQC KEM (lattice) — NIST Level 5 | `2.16.840.1.101.3.4.4.3` | `ML-KEM-1024` | FIPS 203 |
+| `ml-kem-512` | ML-KEM-512 · Kyber-512 | PQC KEM (lattice) — NIST Level 1 | `2.16.840.1.101.3.4.4.1` | `ML-KEM-512` | FIPS 203; SP 800-227 (draft); RFC 9935 (PKIX) |
+| `ml-kem-768` | ML-KEM-768 · Kyber-768 | PQC KEM (lattice) — NIST Level 3 | `2.16.840.1.101.3.4.4.2` | `ML-KEM-768` | FIPS 203; SP 800-227 (draft); RFC 9935 (PKIX) |
+| `ml-kem-1024` | ML-KEM-1024 · Kyber-1024 | PQC KEM (lattice) — NIST Level 5 | `2.16.840.1.101.3.4.4.3` | `ML-KEM-1024` | FIPS 203; RFC 9935 (PKIX); CNSA 2.0 (NSS mandate Level 5) |
 | `hqc-128` | HQC-128 | PQC KEM (code-based) — NIST Level 1 | — (FIPS draft 2026) | `HQC-128` | NIST selection March 2025; FIPS draft expected 2026 |
 | `hqc-192` | HQC-192 | PQC KEM (code-based) — NIST Level 3 | — | `HQC-192` | NIST selection March 2025 |
 | `hqc-256` | HQC-256 | PQC KEM (code-based) — NIST Level 5 | — | `HQC-256` | NIST selection March 2025 |
@@ -332,15 +333,42 @@ Cryptographic Algorithms
 | `frodokem-976` | FrodoKEM-976 | PQC KEM (lattice, conservative) | — | `FrodoKEM-976-*` | FrodoKEM spec |
 | `frodokem-1344` | FrodoKEM-1344 | PQC KEM (lattice, conservative) | — | `FrodoKEM-1344-*` | FrodoKEM spec |
 
+### NIST Round 3 KEM finalists and alternates (not standardised)
+
+The following were NIST Round 3 candidates. None were selected for standardisation by NIST (as of 2026), but they remain relevant as reference designs and are present in liboqs / Open Quantum Safe implementations.
+
+| Id | Name | Crypto Class | OID | Pattern | References |
+|:---|:---|:---|:---|:---|:---|
+| `classic-mceliece-348864` | Classic McEliece 348864 | PQC KEM (code-based, Goppa) — NIST Level 1 | — | `ClassicMcEliece-348864[f]` | Round 3 finalist; Niederreiter + binary Goppa codes; not standardised by NIST |
+| `classic-mceliece-460896` | Classic McEliece 460896 | PQC KEM (code-based, Goppa) — NIST Level 3 | — | `ClassicMcEliece-460896[f]` | Round 3 finalist |
+| `classic-mceliece-6688128` | Classic McEliece 6688128 | PQC KEM (code-based, Goppa) — NIST Level 5 | — | `ClassicMcEliece-6688128[f]` | Round 3 finalist; pk >1 MB |
+| `classic-mceliece-6960119` | Classic McEliece 6960119 | PQC KEM (code-based, Goppa) — NIST Level 5 | — | `ClassicMcEliece-6960119[f]` | Round 3 finalist; pk >1 MB |
+| `classic-mceliece-8192128` | Classic McEliece 8192128 | PQC KEM (code-based, Goppa) — NIST Level 5 | — | `ClassicMcEliece-8192128[f]` | Round 3 finalist; pk >1 MB |
+| `bike-l1` | BIKE Level 1 | PQC KEM (code-based, quasi-cyclic MDPC) — NIST Level 1 | — | `BIKE-L1` | Round 3 alternate; not standardised |
+| `bike-l3` | BIKE Level 3 | PQC KEM (code-based, quasi-cyclic MDPC) — NIST Level 3 | — | `BIKE-L3` | Round 3 alternate |
+| `bike-l5` | BIKE Level 5 | PQC KEM (code-based, quasi-cyclic MDPC) — NIST Level 5 | — | `BIKE-L5` | Round 3 alternate |
+| `ntru-hps-2048677` | NTRU-HPS-2048-677 | PQC KEM (lattice, NTRU) — NIST Level 1 | — | `NTRU-HPS-2048-677` | Round 3 finalist; not standardised; Hoffstein-Pipher-Silverman 1998 |
+| `ntru-hps-2048821` | NTRU-HPS-2048-821 | PQC KEM (lattice, NTRU) — NIST Level 3 | — | `NTRU-HPS-2048-821` | Round 3 finalist |
+| `ntru-hrss-701` | NTRU-HRSS-701 | PQC KEM (lattice, NTRU) — NIST Level 3 | — | `NTRU-HRSS-701` | Round 3 finalist; merged with NTRUEncrypt submission |
+| `ntru-hps-4096821` | NTRU-HPS-4096-821 | PQC KEM (lattice, NTRU) — NIST Level 5 | — | `NTRU-HPS-4096-821` | Round 3 finalist |
+| `saber-lightsaber` | LightSaber | PQC KEM (lattice, Module-LWR) — NIST Level 1 | — | `LightSaber` | Round 3 finalist; not standardised; power-of-two moduli |
+| `saber-saber` | Saber | PQC KEM (lattice, Module-LWR) — NIST Level 3 | — | `Saber` | Round 3 finalist |
+| `saber-firesaber` | FireSaber | PQC KEM (lattice, Module-LWR) — NIST Level 5 | — | `FireSaber` | Round 3 finalist |
+| `ntruprime-sntrup761` | NTRU-Prime sntrup761 (Streamlined) | PQC KEM (lattice, non-cyclotomic NTRU) — NIST Level 3 | — | `sntrup761` | Round 3 alternate; non-cyclotomic ring to avoid cyclotomic attacks |
+| `ntruprime-ntrulpr761` | NTRU-Prime ntrulpr761 (LPRime) | PQC KEM (lattice, non-cyclotomic) — NIST Level 3 | — | `ntrulpr761` | Round 3 alternate |
+| `sike-p434` | SIKE-p434 | PQC KEM (isogeny) — NIST Level 1 | — | `SIKE-p434` | Round 3 alternate; **broken July 2022** by Castryck-Decru classical polynomial-time attack — do not use |
+| `sike-p610` | SIKE-p610 | PQC KEM (isogeny) — NIST Level 3 | — | `SIKE-p610` | **Broken 2022** |
+| `sike-p751` | SIKE-p751 | PQC KEM (isogeny) — NIST Level 5 | — | `SIKE-p751` | **Broken 2022** |
+
 ---
 
 ## 14. Post-Quantum: Digital Signatures — NIST Standardised
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
-| `ml-dsa-44` | ML-DSA-44 · Dilithium2 | PQC signature (lattice) — NIST Level 2 | `2.16.840.1.101.3.4.3.17` | `ML-DSA-44[-hedged]` | FIPS 204 |
-| `ml-dsa-65` | ML-DSA-65 · Dilithium3 | PQC signature (lattice) — NIST Level 3 | `2.16.840.1.101.3.4.3.18` | `ML-DSA-65[-hedged]` | FIPS 204 |
-| `ml-dsa-87` | ML-DSA-87 · Dilithium5 | PQC signature (lattice) — NIST Level 5 | `2.16.840.1.101.3.4.3.19` | `ML-DSA-87[-hedged]` | FIPS 204 |
+| `ml-dsa-44` | ML-DSA-44 · Dilithium2 | PQC signature (lattice) — NIST Level 2 | `2.16.840.1.101.3.4.3.17` | `ML-DSA-44[-hedged]` | FIPS 204; RFC 9881 (PKIX) |
+| `ml-dsa-65` | ML-DSA-65 · Dilithium3 | PQC signature (lattice) — NIST Level 3 | `2.16.840.1.101.3.4.3.18` | `ML-DSA-65[-hedged]` | FIPS 204; RFC 9881 (PKIX) |
+| `ml-dsa-87` | ML-DSA-87 · Dilithium5 | PQC signature (lattice) — NIST Level 5 | `2.16.840.1.101.3.4.3.19` | `ML-DSA-87[-hedged]` | FIPS 204; RFC 9881 (PKIX); CNSA 2.0 (NSS mandate Level 5) |
 | `slh-dsa-sha2-128s` | SLH-DSA-SHA2-128s · SPHINCS+-SHA2-128s | PQC signature (hash-based stateless) — L1 small | `2.16.840.1.101.3.4.3.20` | `SLH-DSA-SHA2-128s` | FIPS 205 |
 | `slh-dsa-sha2-128f` | SLH-DSA-SHA2-128f · SPHINCS+-SHA2-128f | PQC signature (hash-based stateless) — L1 fast | `2.16.840.1.101.3.4.3.21` | `SLH-DSA-SHA2-128f` | FIPS 205 |
 | `slh-dsa-sha2-192s` | SLH-DSA-SHA2-192s | PQC signature — L3 small | `2.16.840.1.101.3.4.3.22` | `SLH-DSA-SHA2-192s` | FIPS 205 |
@@ -408,6 +436,22 @@ Cryptographic Algorithms
 |:---|:---|:---|:---|:---|:---|
 | `sqisign` | SQIsign (Special Quaternion Isogeny Signature) | PQC signature (isogeny) | — | `SQIsign-*` | NIST PQC Round 2; EUROCRYPT 2023 |
 | `sqisign2d` | SQIsign2D (2-dimensional variant) | PQC signature (isogeny) | — | `SQIsign2D-*` | NIST PQC Round 2; ASIACRYPT 2024 |
+
+### NIST Round 3 signature finalists and alternates (broken or not progressed)
+
+The following were NIST Round 3 signature candidates. They did not progress to standardisation, either due to security breaks or not being selected.
+
+| Id | Name | Crypto Class | OID | Pattern | References |
+|:---|:---|:---|:---|:---|:---|
+| `rainbow-i-classic` | Rainbow Level I (OV signature) | PQC signature (multivariate) — NIST Level 1 | — | `Rainbow-I-*` | Round 3 finalist; **broken 2022** (Ward Beullens, "Breaking Rainbow Takes a Weekend on a Laptop"); do not use |
+| `rainbow-iii-classic` | Rainbow Level III | PQC signature (multivariate) — NIST Level 3 | — | `Rainbow-III-*` | Round 3 finalist; **broken 2022** |
+| `rainbow-v-classic` | Rainbow Level V | PQC signature (multivariate) — NIST Level 5 | — | `Rainbow-V-*` | Round 3 finalist; **broken 2022** |
+| `picnic-l1-fs` | Picnic-L1-FS | PQC signature (MPC-in-the-Head, symmetric) — NIST Level 1 | — | `Picnic-L1-*` | Round 3 alternate; uses LowMC block cipher; sig ~12.6 kB at L1; not standardised; superseded by FAEST |
+| `picnic-l3-fs` | Picnic-L3-FS | PQC signature (MPC-in-the-Head, symmetric) — NIST Level 3 | — | `Picnic-L3-*` | Round 3 alternate; sig ~27.5 kB |
+| `picnic-l5-fs` | Picnic-L5-FS | PQC signature (MPC-in-the-Head, symmetric) — NIST Level 5 | — | `Picnic-L5-*` | Round 3 alternate; sig ~48.7 kB |
+| `gemss-128` | GeMSS-128 (Big-Field multivariate) | PQC signature (multivariate) — NIST Level 1 | — | `GeMSS-128` | Round 3 alternate; sig ~33 bytes at L1; pk ~350 KB; security significantly weakened by subsequent cryptanalysis; do not use |
+| `gemss-192` | GeMSS-192 | PQC signature (multivariate) — NIST Level 3 | — | `GeMSS-192` | Round 3 alternate; broken/weakened |
+| `gemss-256` | GeMSS-256 | PQC signature (multivariate) — NIST Level 5 | — | `GeMSS-256` | Round 3 alternate; broken/weakened |
 
 ---
 
@@ -487,7 +531,32 @@ Cryptographic Algorithms
 | `x25519mlkem768` | X25519+ML-KEM-768 hybrid KEM | Hybrid KEM (PQC + classical) | `1.3.9999.0.1` (draft) | `ECDH-X25519+ML-KEM-768` | IETF draft-kwiatkowski-tls-ecdhe-mlkem; Go 1.24+ TLS default |
 | `x25519kyber768` | X25519+Kyber768 hybrid KEM (pre-standard) | Hybrid KEM (draft) | — | `ECDH-X25519+Kyber-768` | Cloudflare / Google deployment (pre-FIPS 203) |
 | `p256mlkem768` | P-256+ML-KEM-768 hybrid KEM | Hybrid KEM | — | `ECDH-P-256+ML-KEM-768` | IETF TLS WG |
-| `composite-sig` | Composite signature (classical + PQC) | Composite signature | — | `{classicalSig}+{pqcSig}` | IETF draft-ounsworth-pq-composite-sigs |
+| `composite-sig` | Composite signature (classical + PQC) — generic | Composite signature | — | `{classicalSig}+{pqcSig}` | IETF draft-ounsworth-pq-composite-sigs |
+
+### Composite ML-DSA (IETF LAMPS, draft-ietf-lamps-pq-composite-sigs-15)
+
+Each composite algorithm combines ML-DSA with a traditional signature algorithm, producing a single public key, private key, and signature. An adversary must break **both** components simultaneously. OIDs are in the `1.3.6.1.5.5.7.6` arc (PKIX algorithms, IANA-assigned). All provide EUF-CMA security; none provide SUF-CMA. The specification is an IETF Internet-Draft (February 2026); OIDs are registered.
+
+| Id | Name | Crypto Class | OID | Pattern | References |
+|:---|:---|:---|:---|:---|:---|
+| `mldsa44-rsa2048-pss-sha256` | ML-DSA-44 + RSA-2048-PSS-SHA256 | Composite PQC/classical signature — L1 | `1.3.6.1.5.5.7.6.37` | `MLDSA44-RSA2048-PSS-SHA256` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa44-rsa2048-pkcs15-sha256` | ML-DSA-44 + RSA-2048-PKCS#1v1.5-SHA256 | Composite PQC/classical signature — L1 | `1.3.6.1.5.5.7.6.38` | `MLDSA44-RSA2048-PKCS15-SHA256` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa44-ed25519-sha512` | ML-DSA-44 + Ed25519-SHA512 | Composite PQC/classical signature — L1 | `1.3.6.1.5.5.7.6.39` | `MLDSA44-Ed25519-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa44-ecdsa-p256-sha256` | ML-DSA-44 + ECDSA-P-256-SHA256 | Composite PQC/classical signature — L1 | `1.3.6.1.5.5.7.6.40` | `MLDSA44-ECDSA-P256-SHA256` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa65-rsa3072-pss-sha512` | ML-DSA-65 + RSA-3072-PSS-SHA512 | Composite PQC/classical signature — L3 | `1.3.6.1.5.5.7.6.41` | `MLDSA65-RSA3072-PSS-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa65-rsa3072-pkcs15-sha512` | ML-DSA-65 + RSA-3072-PKCS#1v1.5-SHA512 | Composite PQC/classical signature — L3 | `1.3.6.1.5.5.7.6.42` | `MLDSA65-RSA3072-PKCS15-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa65-rsa4096-pss-sha512` | ML-DSA-65 + RSA-4096-PSS-SHA512 | Composite PQC/classical signature — L3 | `1.3.6.1.5.5.7.6.43` | `MLDSA65-RSA4096-PSS-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa65-rsa4096-pkcs15-sha512` | ML-DSA-65 + RSA-4096-PKCS#1v1.5-SHA512 | Composite PQC/classical signature — L3 | `1.3.6.1.5.5.7.6.44` | `MLDSA65-RSA4096-PKCS15-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa65-ecdsa-p256-sha512` | ML-DSA-65 + ECDSA-P-256-SHA512 | Composite PQC/classical signature — L3 | `1.3.6.1.5.5.7.6.45` | `MLDSA65-ECDSA-P256-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa65-ecdsa-p384-sha512` | ML-DSA-65 + ECDSA-P-384-SHA512 | Composite PQC/classical signature — L3 | `1.3.6.1.5.5.7.6.46` | `MLDSA65-ECDSA-P384-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa65-ecdsa-bp256-sha512` | ML-DSA-65 + ECDSA-brainpoolP256r1-SHA512 | Composite PQC/classical signature — L3 | `1.3.6.1.5.5.7.6.47` | `MLDSA65-ECDSA-BP256-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa65-ed25519-sha512` | ML-DSA-65 + Ed25519-SHA512 | Composite PQC/classical signature — L3 | `1.3.6.1.5.5.7.6.48` | `MLDSA65-Ed25519-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa87-ecdsa-p384-sha512` | ML-DSA-87 + ECDSA-P-384-SHA512 | Composite PQC/classical signature — L5 | `1.3.6.1.5.5.7.6.49` | `MLDSA87-ECDSA-P384-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa87-ecdsa-bp384-sha512` | ML-DSA-87 + ECDSA-brainpoolP384r1-SHA512 | Composite PQC/classical signature — L5 | `1.3.6.1.5.5.7.6.50` | `MLDSA87-ECDSA-BP384-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa87-ed448-shake256` | ML-DSA-87 + Ed448-SHAKE256/64 | Composite PQC/classical signature — L5 | `1.3.6.1.5.5.7.6.51` | `MLDSA87-Ed448-SHAKE256` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa87-rsa3072-pss-sha512` | ML-DSA-87 + RSA-3072-PSS-SHA512 | Composite PQC/classical signature — L5 | `1.3.6.1.5.5.7.6.52` | `MLDSA87-RSA3072-PSS-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa87-rsa4096-pss-sha512` | ML-DSA-87 + RSA-4096-PSS-SHA512 | Composite PQC/classical signature — L5 | `1.3.6.1.5.5.7.6.53` | `MLDSA87-RSA4096-PSS-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
+| `mldsa87-ecdsa-p521-sha512` | ML-DSA-87 + ECDSA-P-521-SHA512 | Composite PQC/classical signature — L5 | `1.3.6.1.5.5.7.6.54` | `MLDSA87-ECDSA-P521-SHA512` | draft-ietf-lamps-pq-composite-sigs-15 |
 
 ---
 
@@ -642,16 +711,18 @@ Cryptographic Algorithms
 | Password hashing (incl. Windows) | 10 |
 | Password-based encryption frameworks | 3 |
 | PKCS / protocol frameworks | 7 |
-| PQC KEMs | 9 |
+| PQC KEMs — standardised / selected | 9 |
+| PQC KEMs — Round 3 notable non-standardised (incl. broken) | 22 |
 | PQC signatures — NIST standardised | 17 |
 | PQC signatures — Round 2 candidates | 20 |
+| PQC signatures — Round 3 non-standardised / broken | 9 |
 | NIST SP 800-90A DRBGs | 12 |
 | Accumulator-based CSPRNGs | 2 |
 | OS entropy APIs and hardware RNGs | 10 |
 | Non-cryptographic PRNGs | 6 |
 | Padding / encoding schemes | 5 |
-| Composite / hybrid constructs | 4 |
-| **Total** | **~314** |
+| Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
+| **Total** | **~332** |
 
 ---
 

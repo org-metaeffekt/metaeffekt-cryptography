@@ -131,6 +131,12 @@ A mathematical problem where the task is to determine whether two error-correcti
 **Common Criteria (CC)**
 An international standard (ISO/IEC 15408) for evaluating the security properties of IT products and systems. Evaluation Assurance Levels (EAL 1-7) measure the rigor of evaluation. Relevant for cryptographic modules alongside FIPS 140-3.
 
+**Composite Cryptographic Element**
+A multi-algorithm scheme that combines multiple component algorithms of the same type (e.g. two signature algorithms) into a single cryptographic object presenting one public key and one signature value. An adversary must break **all** component algorithms simultaneously to compromise the system. The term is defined in RFC 9794. A composite algorithm is transparent at the protocol level — it appears as a single atomic algorithm identifier, enabling deployment in protocols that are not explicitly hybrid-aware. Contrast with explicit hybrid protocols (e.g. TLS hybrid key exchange) where the hybrid nature is visible to the protocol.
+
+**Composite ML-DSA**
+An IETF standard (draft-ietf-lamps-pq-composite-sigs-15, LAMPS WG, February 2026) defining 18 composite signature algorithms that combine ML-DSA (FIPS 204) with a traditional algorithm (RSA-PSS, RSA-PKCS#1v1.5, ECDSA, Ed25519, or Ed448). Each algorithm has a registered OID in the `1.3.6.1.5.5.7.6` arc. The signing process generates two independent component signatures (one ML-DSA, one traditional) serialised as a pair; verification requires both to succeed. Composite ML-DSA provides **EUF-CMA** (existential unforgeability) but not **SUF-CMA** (strong unforgeability); see those entries. Motivation: allows organisations to add post-quantum protection to existing PKIX infrastructure without replacing the traditional cryptography, reducing re-certification overhead. Security holds as long as either component algorithm remains unbroken.
+
 **CROSS — Codes and Restricted Objects Signature Scheme**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on code equivalence problems. CROSS is one of the prioritised candidates alongside MAYO in the NIST additional signatures process.
 
@@ -265,6 +271,9 @@ A measure of unpredictability or randomness. High-entropy data is difficult to g
 **Entropy Source**
 A hardware or software component that collects unpredictable data (thermal noise, interrupt timing, disk seek times, etc.) to seed a random number generator.
 
+**EUF-CMA — Existential Unforgeability under Chosen-Message Attack**
+The standard security notion for digital signature schemes. It states that an adversary with access to a signing oracle (the ability to request signatures on any messages of their choice) cannot produce a valid signature on any new message not previously signed — even after receiving polynomially many signatures. A signature scheme that achieves EUF-CMA is considered cryptographically secure for general use. ML-DSA, SLH-DSA, FN-DSA, LMS, and XMSS are all designed to achieve EUF-CMA. The "existential" qualifier means the adversary is allowed to choose which message to forge (the strongest form). See also **IND-CCA2** for the analogous notion for encryption.
+
 ---
 
 ## F
@@ -298,6 +307,12 @@ An internal component of SLH-DSA that provides a "few-time" signature layer. It 
 
 **Fortuna**
 A CSPRNG (Cryptographically Secure Pseudorandom Number Generator) architecture designed by Bruce Schneier and Niels Ferguson. It uses 32 entropy pools to accumulate randomness from multiple sources, and an AES-256 counter-mode generator to produce output. Used in macOS/iOS since 2020 and in FreeBSD. The design improves on Yarrow by eliminating the need for an entropy estimator.
+
+**Fiat-Shamir Transform**
+A generic technique for converting an interactive identification scheme (a "sigma protocol" or zero-knowledge proof) into a non-interactive digital signature scheme. The verifier's random challenge in the interactive protocol is replaced by the output of a cryptographic hash function applied to the message and the prover's commitment. The resulting signature scheme is secure in the random oracle model (ROM). Many PQC signature schemes use this approach: ML-DSA (Fiat-Shamir with aborts), FN-DSA (Falcon), and several NIST Round 2 additional signature candidates (SDitH, FAEST, CROSS, Mirath). Security in the stronger **QROM** (quantum-accessible random oracle model) requires additional care — see QROM.
+
+**FO-Transform — Fujisaki-Okamoto Transform**
+A generic technique for converting an IND-CPA-secure public-key encryption scheme (or a passively secure KEM) into an IND-CCA2-secure KEM. The transform works by hashing the randomness used for encryption into the key material, so that any decryption that fails to reproduce the expected ciphertext is rejected. First introduced by Fujisaki and Okamoto (1999). All NIST-standardised lattice KEMs use a variant of the FO-transform: ML-KEM uses the Hofheinz-Hövelmanns-Kiltz (HHK) modular variant with tightly provable security. The FO-transform enables tight security proofs in both the ROM and the QROM, which is why all NIST PQC KEM finalists adopted it.
 
 **FrodoKEM**
 A conservative lattice-based key encapsulation mechanism based on the plain Learning With Errors (LWE) problem rather than the structured (ring or module) variants used by ML-KEM. FrodoKEM has larger keys and ciphertexts but its security relies on a simpler, more well-studied mathematical problem. Not selected for NIST standardisation; available in the Cloudflare CIRCL library.
@@ -355,6 +370,12 @@ A NIST SP 800-90A DRBG using HMAC as its core update function. Considered the be
 **HSS — Hierarchical Signature Scheme**
 A multi-level extension of LMS (RFC 8554, NIST SP 800-208). An HSS key pair consists of L levels of LMS trees, where each tree's root public key is signed by the OTS key of the level above. The total signing capacity is the product of the capacities at each level: 2^(h₁ + h₂ + … + hₗ). HSS allows very large signing capacities while keeping tree heights manageable — for example, two levels of h=10 yield 2^20 signatures. The private key state must be managed by a FIPS 140-2/3 Level 3+ hardware module (SP 800-208 §5.3). Used for code and firmware signing where long-lived root keys are required.
 
+**Harvest Now, Decrypt Later (HNDL) — Retrospective Decryption**
+A threat model in which an attacker intercepts and stores encrypted ciphertext today, intending to decrypt it once a sufficiently powerful quantum computer becomes available. Because all RSA, ECDH, and DH-based key establishment can be broken by Shor's algorithm on a quantum computer, any confidential data encrypted with those schemes and captured now is at risk of future decryption. HNDL is most dangerous for long-lived secrets (national security data, health records, intellectual property) that must remain confidential for 10+ years. It is the primary driver of urgency in PQC migration, even before large quantum computers exist. Mitigation: migrate key establishment to ML-KEM (or a classical/PQC hybrid); NIST and CNSA 2.0 timelines reflect this urgency.
+
+**Hybrid Post-Quantum Cryptography**
+A deployment strategy combining a classical algorithm (e.g., ECDH P-256 or X25519) with a post-quantum algorithm (e.g., ML-KEM-768) in parallel, such that security is maintained as long as at least one of the two remains unbroken. For key encapsulation, the standard combiner is: run both KEM algorithms, then combine the two shared secrets (via concatenation into a KDF, or XOR) to derive the final session key. For digital signatures, the standard approach is to produce and verify two independent signatures. The TLS 1.3 hybrid `X25519MLKEM768` is the IETF-recommended hybrid for early deployment (draft-ietf-tls-hybrid-design). Hybrid deployment is the recommended transition strategy during the period before PQC implementations have accumulated sufficient operational confidence. See also ENISA Report "Post-Quantum Cryptography: Current state and quantum mitigation" (2021).
+
 **HPKE — Hybrid Public Key Encryption**
 A modern framework (RFC 9180) for public-key encryption combining a KEM (for key establishment), a KDF (for key derivation), and an AEAD (for symmetric encryption). Designed for one-shot encryption to a recipient's public key. Used in email encryption drafts and browser ECH (Encrypted Client Hello).
 
@@ -376,6 +397,12 @@ The organisation that develops and publishes Internet standards, published as RF
 
 **IKE — Internet Key Exchange**
 The key agreement protocol used to set up IPsec security associations. IKEv2 is the current version.
+
+**IND-CCA2 — Indistinguishability under Adaptive Chosen-Ciphertext Attack**
+The standard security notion for public-key encryption schemes and KEMs. An encryption scheme is IND-CCA2-secure if an adversary who can request decryptions of any ciphertext (except the challenge ciphertext) cannot distinguish encryptions of two messages of their choice. This is the strongest standard security notion for encryption and KEMs. ML-KEM, Classic McEliece, and HQC achieve IND-CCA2 security via the **FO-transform**. The weaker notion **IND-CPA** (indistinguishability under chosen-plaintext attack — no decryption oracle access) is achieved by the underlying lattice schemes before applying the FO-transform.
+
+**IND-CPA — Indistinguishability under Chosen-Plaintext Attack**
+A weaker PKE security notion than IND-CCA2: an adversary who can request encryptions of chosen plaintexts cannot distinguish between encryptions of two chosen messages. All NIST PQC KEM algorithms achieve at least IND-CPA security in their basic form. IND-CPA alone is not sufficient for most real-world protocols — the FO-transform upgrades IND-CPA schemes to IND-CCA2.
 
 **Integrity**
 The guarantee that data has not been modified in transit or storage. Achieved by message authentication codes (MACs) or digital signatures.
@@ -550,6 +577,9 @@ A US government agency that develops cryptographic standards, guidelines, and al
 **Nonce**
 A "number used once" — a random or counter value that must never be repeated for a given key. In AEAD ciphers (GCM, ChaCha20-Poly1305), reusing a nonce completely breaks security. In signatures, a random nonce is required for ECDSA (not for EdDSA, which is deterministic).
 
+**Non-separability (Composite Signatures)**
+A security property of composite signature schemes stating that a valid composite signature cannot be split into its component signatures and used independently (i.e. a valid ML-DSA-only signature cannot be extracted from a Composite ML-DSA signature and accepted by a verifier expecting a standalone ML-DSA signature). Non-separability is achieved through a domain-separation prefix bound into the signed message. Composite ML-DSA achieves weak non-separability by binding a scheme-specific label into the pre-hashed message digest; this prevents cross-protocol replay of component signatures.
+
 **NTRU**
 A lattice-based public-key cryptosystem and the mathematical basis of FN-DSA. NTRU lattices are defined using polynomial rings, making them efficient to compute on.
 
@@ -648,6 +678,9 @@ A community effort to produce formally verified, production-quality implementati
 **Prediction Resistance**
 A DRBG property: if enabled, the generator reseeds from a live entropy source before every output, preventing an attacker who has compromised the internal state from predicting future output. Costs performance and requires a reliable entropy source to always be available.
 
+**Pre-Shared Key Quantum Mitigation**
+An interim mitigation strategy for protecting confidential communications against the **Harvest Now, Decrypt Later** threat, without requiring post-quantum algorithms. A pre-shared symmetric key (PSK) is mixed into the session key derivation alongside the public-key-derived shared secret. Any attacker who later breaks the public-key exchange with a quantum computer still cannot recover the session key without also knowing the PSK. Protocols: WireGuard's built-in PSK mode (`preshared-key`), ZRTP key continuity, and TLS 1.3's optional `psk_dhe_ke` extension. Limitation: PSKs require secure out-of-band provisioning and do not scale to open systems. Recommended for systems with a limited set of known peers (VPN endpoints, IoT devices, critical infrastructure). See ENISA "Post-Quantum Cryptography" §6.2.
+
 **Pre-Hash Mode**
 A signing mode where the message is hashed by the application before being passed to the signature algorithm. Useful for processing very large messages. All NIST PQC signature algorithms support both pure mode (algorithm hashes internally) and pre-hash mode.
 
@@ -667,12 +700,21 @@ A randomised padding scheme for RSA signatures (RSASSA-PSS). The recommended alt
 **Quantum Computer**
 A computer exploiting quantum mechanical phenomena (superposition, entanglement) to solve certain mathematical problems exponentially faster than classical computers. Shor's algorithm on a quantum computer breaks RSA, ECDH, ECDSA, and DH. Grover's algorithm halves the effective key length of symmetric ciphers (AES-256 remains secure; AES-128 is weaker). No sufficiently powerful quantum computer exists yet (as of 2026), but cryptographic migration is already recommended.
 
+**QKD — Quantum Key Distribution**
+A quantum-physics-based method for distributing cryptographic keys between two parties, with security guaranteed by the laws of physics (eavesdropping disturbs the quantum state and is detectable). **QKD is not a form of post-quantum cryptography and does not replace PQC.** Key limitations: QKD requires a separate authenticated classical channel (which itself typically depends on public-key cryptography), specialised hardware, and point-to-point optical links — it is not directly applicable to large-scale Internet security. QKD provides key agreement only, not authentication or message confidentiality. ENISA and NIST recommend PQC as the primary migration path; QKD may complement PQC in specific high-security scenarios.
+
+**QROM — Quantum Random Oracle Model**
+A security proof model that models a cryptographic hash function as a random oracle accessible to quantum adversaries (i.e., an adversary that can query the hash function on quantum superpositions of inputs). The classical ROM (Random Oracle Model) is insufficient for post-quantum security proofs because quantum adversaries can query oracles in superposition. The QROM was proposed to address this. ML-KEM, ML-DSA, and SLH-DSA all have security proofs in the QROM. The Fiat-Shamir transform is secure in the QROM under slightly stronger conditions (requiring the underlying scheme to be "computationally unique" or using a concrete strengthening). Schemes whose security proofs rely only on the classical ROM should be treated with more caution in a post-quantum context.
+
 **QR-UOV**
 A post-quantum signature scheme based on Unbalanced Oil and Vinegar polynomials over a quotient ring structure.
 
 ---
 
 ## R
+
+**Retrospective Decryption**
+See **Harvest Now, Decrypt Later (HNDL)**.
 
 **RBG — Random Bit Generator**
 An umbrella term for any device or algorithm producing random bits, including both TRNGs (hardware entropy sources) and DRBGs (deterministic generators seeded from entropy sources).
@@ -806,6 +848,9 @@ A password-based authentication protocol where the client proves knowledge of a 
 
 **SSH — Secure Shell**
 A protocol for encrypted remote login and file transfer. Uses ECDH (typically X25519) for key exchange, AES-CTR or ChaCha20-Poly1305 for encryption, and HMAC or AEAD for integrity.
+
+**SUF-CMA — Strong Unforgeability under Chosen-Message Attack**
+A stronger security notion for digital signatures than EUF-CMA. EUF-CMA requires that an attacker cannot produce a valid signature on a message they have not previously queried; SUF-CMA additionally requires that the attacker cannot produce any *new* valid signature on a *previously signed* message (i.e. even if a valid (m, σ) pair is known, producing a different valid σ' on the same m must be infeasible). SUF-CMA is relevant in protocols where signature uniqueness matters (e.g. non-repudiation, transaction systems). Composite ML-DSA provides EUF-CMA but not SUF-CMA, because an attacker could potentially substitute one component signature for another valid one. Most modern schemes including ML-DSA itself are EUF-CMA; RSA-PSS and Ed25519 are SUF-CMA. See also **EUF-CMA**.
 
 **Stateful Signature**
 A signature scheme where the signer must maintain and update internal state between signing operations (e.g. LMS, XMSS). Signing the same message twice with the same state key compromises security — key management must ensure strict non-repetition.
@@ -955,6 +1000,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | ECB | Electronic Codebook |
 | ECC CDH | Elliptic Curve Cofactor Diffie-Hellman |
 | ECDH | Elliptic Curve Diffie-Hellman |
+| EUF-CMA | Existential Unforgeability under Chosen-Message Attack |
 | ECDSA | Elliptic Curve Digital Signature Algorithm |
 | ECIES | Elliptic Curve Integrated Encryption Scheme |
 | EdDSA | Edwards-Curve Digital Signature Algorithm |
@@ -966,11 +1012,14 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | GHASH | Galois Hash (authentication in GCM) |
 | HKDF | HMAC-Based Key Derivation Function |
 | HMAC | Keyed-Hash Message Authentication Code |
+| HNDL | Harvest Now, Decrypt Later |
 | HPKE | Hybrid Public Key Encryption |
 | HQC | Hamming Quasi-Cyclic |
 | IEEE | Institute of Electrical and Electronics Engineers |
 | IETF | Internet Engineering Task Force |
 | IKE | Internet Key Exchange |
+| IND-CCA2 | Indistinguishability under Adaptive Chosen-Ciphertext Attack |
+| IND-CPA | Indistinguishability under Chosen-Plaintext Attack |
 | IPsec | Internet Protocol Security |
 | IV | Initialisation Vector |
 | JCA | Java Cryptography Architecture |
@@ -1011,6 +1060,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | PCG | Permuted Congruential Generator |
 | PFS | Perfect Forward Secrecy |
 | PKI | Public Key Infrastructure |
+| PSK | Pre-Shared Key |
 | PMU | Performance Monitoring Unit |
 | PKCS | Public-Key Cryptography Standards |
 | PQC | Post-Quantum Cryptography |
@@ -1020,6 +1070,8 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | PRNG | Pseudorandom Number Generator |
 | PSS | Probabilistic Signature Scheme |
 | RBG | Random Bit Generator |
+| QKD | Quantum Key Distribution |
+| QROM | Quantum Random Oracle Model |
 | RFC | Request for Comments |
 | RSA | Rivest-Shamir-Adleman |
 | S/MIME | Secure/Multipurpose Internet Mail Extensions |
@@ -1034,6 +1086,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | SPDX | Software Package Data Exchange |
 | SRP | Secure Remote Password |
 | SSH | Secure Shell |
+| SUF-CMA | Strong Unforgeability under Chosen-Message Attack |
 | TLS | Transport Layer Security |
 | TPM | Trusted Platform Module |
 | TRNG | True Random Number Generator |

@@ -8,7 +8,8 @@
 > SP 800-56A Rev 3 · SP 800-56B/C · SP 800-90A Rev 1 (Rev 2 pre-draft 2025) · SP 800-90B · SP 800-132 · SP 800-135 ·
 > SP 800-186 · SP 800-208 · FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (IPD) ·
 > BSI TR-02102-1 v2026-01 (2026-01-23) · BSI TR-02102-2 v2026-01 (2025-12-27) ·
-> BSI TR-02102-3 v2026-01 (2026-01-27) · BSI TR-02102-4 v2026-01 (2026-01-27) · BSI AIS 20/31 v3 (2022)
+> BSI TR-02102-3 v2026-01 (2026-01-27) · BSI TR-02102-4 v2026-01 (2026-01-27) · BSI AIS 20/31 v3 (2022) ·
+> ENISA "Post-Quantum Cryptography: Current state and quantum mitigation" v2 (May 2021)
 
 ---
 
@@ -429,6 +430,27 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ℹ **FIPS 206 standardisation status:** FIPS 203, 204, and 205 were published as final standards on 13 August 2024. FIPS 206 (FN-DSA / Falcon) followed a separate timeline: the IPD was submitted for internal NIST approval in August 2025 and is awaiting Department of Commerce clearance. The final standard is expected late 2026 or early 2027. Implementations may reference the Falcon Round 3.1 specification in the interim.
 
+### 10.5 Notable non-standardised PQC algorithms
+
+#### Key Encapsulation
+
+| Algorithm | Security | Status | Key sizes | Notes |
+|:---|:---|:---|:---|:---|
+| `HQC-128` / `HQC-192` / `HQC-256` | 128 / 192 / 256 bit | ⚠ Conditional | pk: 2249 / 4522 / 7245 B; ct: 4481 / 8978 / 14469 B | NIST selected March 2025 as fifth PQC standard (code-based backup KEM); FIPS draft expected 2026 — not yet final |
+| `FrodoKEM-640` / `976` / `1344` | 128 / 192 / 256 bit | ❌ Not standardised | pk: 9616 / 15632 / 21520 B; ct: 9720 / 15744 / 21632 B | Conservative plain-LWE basis (no ring/module structure); available in liboqs / OQS-OpenSSL |
+| `Classic McEliece` (all parameter sets) | 128–256 bit | ❌ Not standardised | pk: 261 KB–1.36 MB; ct: 128–240 B | 40+ year history of binary Goppa code analysis; smallest ciphertext of all PQC KEMs; public key is the main deployment obstacle; used in McTiny and post-quantum WireGuard |
+| `BIKE-L1` / `L3` / `L5` | 128 / 192 / 256 bit | ❌ Not standardised | pk: ~1.5–6 KB; ct: ~1.5–6 KB | Quasi-cyclic MDPC codes; key sizes similar to HQC; available in liboqs |
+| `NTRU-HPS-2048-677` (Level 1) | 128 bit | ❌ Not standardised | pk + ct: ~930 B | NTRU patents expired 2017; perfectly correct (no decryption failures); round 3 finalist not selected |
+| `LightSaber` / `Saber` / `FireSaber` | 128 / 192 / 256 bit | ❌ Not standardised | pk: 672 / 992 / 1312 B; ct: 736 / 1088 / 1472 B | Module-LWR (power-of-two moduli); Round 3 finalist not selected in favour of ML-KEM |
+
+#### Broken algorithms (do not use)
+
+| Algorithm | Broken by | Year | Notes |
+|:---|:---|:---|:---|
+| `SIKE` / `SIDH` (all parameter sets) | Castryck-Decru classical polynomial-time attack | 2022 | Isogeny-based KEM; completely broken — no computationally hard problem remains |
+| `Rainbow` (all levels) | Ward Beullens ("Breaking Rainbow Takes a Weekend on a Laptop") | 2022 | Multivariate OV signature — Round 3 finalist; private key recoverable efficiently |
+| `GeMSS` (all levels) | Multiple cryptanalysis results (2020–2022) | 2020–2022 | Big-Field multivariate signature — security claims invalidated |
+
 ---
 
 ## 11. TLS / Protocol Quick-Reference
@@ -469,6 +491,9 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | `TLS 1.0 / 1.1` | BEAST, POODLE, weak PRF | 2020 (RFC 8996) | RFC 8996 |
 | `MT19937` | State recoverable; not CSPRNG | Never secure | — |
 | `LCG-*` | Trivially predictable | Never secure | — |
+| `Rainbow-[I\|III\|V]-*` | Broken 2022 — private key recoverable in hours (Beullens) | 2022 | NIST Round 3 delisted |
+| `SIKE-*` / `SIDH-*` | Broken 2022 — classical polynomial-time attack (Castryck-Decru) | 2022 | NIST Round 3 delisted |
+| `GeMSS-*` | Security claims invalidated by cryptanalysis (2020–2022) | 2022 | NIST Round 3 delisted |
 
 ---
 
@@ -767,6 +792,94 @@ The following RFCs specify protocol-level CNSA 1.0 compliance (updated guidance 
 | RFC 9206 | IPsec |
 | RFC 9212 | SSH |
 
+The following RFCs define how CNSA 2.0 algorithms are encoded in X.509 Public Key Infrastructure (PKIX) certificates and private key structures:
+
+| RFC | Algorithm | Key usage | Key details |
+|:---|:---|:---|:---|
+| RFC 9881 (Oct 2025) | ML-DSA (FIPS 204) in X.509 PKIX | `digitalSignature`, `nonRepudiation`, `keyCertSign`, `cRLSign` | OIDs `2.16.840.1.101.3.4.3.17/18/19`; parameters MUST be absent; pure ML-DSA only (HashML-DSA excluded from PKIX); pk 1312/1952/2592 B; sig 2420/3309/4627 B; seed 32 B |
+| RFC 9935 (Mar 2026) | ML-KEM (FIPS 203) in X.509 PKIX | `keyEncipherment` only | OIDs `2.16.840.1.101.3.4.4.1/2/3`; parameters MUST be absent; encap key 800/1184/1568 B; ciphertext 768/1088/1568 B; shared secret 32 B; private key: 64-byte seed or expanded key (1632/2400/3168 B) |
+
+For hybrid/transition deployments, the IETF LAMPS Working Group is standardising Composite ML-DSA (draft-ietf-lamps-pq-composite-sigs-15, February 2026), which combines ML-DSA with RSA, ECDSA, Ed25519, or Ed448 in a single X.509 algorithm identifier (OIDs `1.3.6.1.5.5.7.6.37–54`). This enables organisations to deploy PQC in existing PKIX infrastructure without requiring protocol changes, while retaining fallback protection from the classical component. Composite ML-DSA provides EUF-CMA but not SUF-CMA security. 14 ML-DSA-44 (L1), 8 ML-DSA-65 (L3), and 6 ML-DSA-87 (L5) combinations are registered. See also `cryptographic-algorithms.md` §21.
+
 ---
 
-*Last updated: 2026-04-02 (§5.1 SP 800-186 elliptic curve catalogue added; §5.2 SP 800-56A Rev.3 key establishment scheme taxonomy and FFC group tables added; §6.2 LMS/XMSS expanded with full parameter patterns and SP 800-208 §5.3 hardware mandate; §16 CNSA 2.0 added from PP-22-1338 source document). Consult current NIST SP 800-131A, BSI TR-02102, and NSA CNSA advisory editions for horizon dates and any post-publication amendments.*
+## 17. Quantum Threat and Migration Context
+
+> **Primary source:** ENISA "Post-Quantum Cryptography: Current state and quantum mitigation", v2, May 2021. Authors: Ward Beullens, Jan-Pieter D'Anvers, Andreas Hülsing, Tanja Lange, Lorenz Panny, Cyprien de Saint Guilhem, Nigel P. Smart. DOI: 10.2824/92307. Note: the 2021 report reflects NIST Round 3 status. NIST published final standards (ML-KEM, ML-DSA, SLH-DSA) in August 2024; HQC was selected March 2025.
+
+### 17.1 The harvest now, decrypt later (HNDL) threat
+
+An adversary with access to large-scale network recording capabilities can intercept and archive ciphertext today and decrypt it once a sufficiently powerful quantum computer becomes available. This threat model — called **Harvest Now, Decrypt Later (HNDL)** or **retrospective decryption** — applies to all key establishment schemes based on RSA, ECDH, or Diffie-Hellman: Shor's algorithm solves these problems in polynomial time on a quantum computer.
+
+Key implications:
+- Data encrypted today under RSA/ECDH key exchange that must remain confidential for **10 or more years** is already at risk.
+- Signatures (unlike encryption) can be replaced when broken — old signature keys can be revoked when the threat materialises. But the window for signature migration is narrow: if a post-quantum signature scheme is not deployed before a large quantum computer exists, an attacker could forge software update signatures and prevent remediation.
+- Symmetric encryption (AES-256, ChaCha20) is affected only by Grover's algorithm (square-root speedup), which halves the effective security level. AES-256 (128-bit quantum security) is the current recommendation; AES-128 provides only 64-bit quantum security.
+
+> ⚠ **Recommended action:** Migrate key establishment to ML-KEM (preferably as a hybrid with X25519 or P-256) immediately. Key establishment migration is urgent specifically because of HNDL. Signature migration is less time-critical but must precede quantum computer availability for critical infrastructure.
+
+### 17.2 PQC algorithm families
+
+Post-quantum algorithms are classified by the mathematical hard problem they are built on. All five families are considered quantum-resistant (as of 2026):
+
+| Family | Hard problem | Standardised examples | Notes |
+|:---|:---|:---|:---|
+| Lattice-based | Module-LWE / Module-LWR / NTRU | ML-KEM, ML-DSA, FN-DSA | Dominant family; efficient; strong QROM proofs |
+| Hash-based | Preimage resistance of hash functions | SLH-DSA, LMS, XMSS | Conservative; security rests only on hash security |
+| Code-based | Decoding random linear codes | HQC, Classic McEliece | Long history; large keys (Classic McEliece); HQC as NIST KEM backup |
+| Multivariate | Multivariate quadratic equations | UOV, MAYO, QR-UOV | Signatures only; small sig sizes but large public keys |
+| Isogeny-based | Isogeny problem on elliptic curves | SQIsign, SQIsign2D | SIDH/SIKE broken 2022; SQIsign uses different assumption (CSIDH/SQI) |
+
+Note: The original NIST Round 3 multivariate finalist Rainbow was broken in 2022. SIKE (isogeny-based KEM) was broken in July 2022 via a classical polynomial-time attack by Castryck-Decru. These do not affect the surviving algorithms above.
+
+### 17.3 Hybrid deployment strategy
+
+A hybrid scheme runs a classical and a PQC algorithm in parallel. Security holds as long as at least one component is unbroken — this is prudent during the transition period when PQC implementations are accumulating operational experience.
+
+**KEM / key establishment hybrid construction:**
+1. Run classical KEM (e.g., X25519): obtain shared secret `ss_classical`
+2. Run PQC KEM (e.g., ML-KEM-768): obtain shared secret `ss_pqc`
+3. Combine: derive session key as `KDF(ss_classical ∥ ss_pqc, context)` — both secrets feed a single KDF
+
+The TLS 1.3 hybrid `X25519MLKEM768` (draft-ietf-tls-hybrid-design) uses this construction. Chrome and Firefox have enabled it by default.
+
+**Digital signature hybrid construction:**
+1. Generate and distribute two independent public keys (one classical, one PQC)
+2. Produce two independent signatures per message
+3. Verify both signatures; accept only if both are valid
+
+> ℹ **When to deploy hybrids:** Deploy ML-KEM hybrid immediately for key establishment (HNDL risk). Maintain classical algorithm for backward compatibility. Remove classical algorithm only after PQC has become operationally validated and interoperability permits.
+
+### 17.4 Pre-shared key (PSK) quantum mitigation
+
+For organisations that cannot yet deploy PQC but need to protect long-lived confidential communications, a pre-shared symmetric key can be mixed into the key derivation alongside the public-key-derived secret. An attacker who later breaks the public-key exchange with a quantum computer still cannot recover the session key without the PSK.
+
+Construction (following ZRTP §10, WireGuard `preshared-key`):
+```
+session_key = KDF(ss_public_key, "session key", psk, handshake_context)
+```
+After each session, update the retained secret:
+```
+psk_new = KDF(session_key, "retained secret")
+```
+
+**Limitations:**
+- Requires secure out-of-band PSK provisioning (e.g., physical meeting, QR code exchange)
+- Does not scale to open public-key infrastructure
+- Not applicable to virtual machines restored from snapshots (PSK may be copied)
+- Recommended only for systems with a small, known set of communication partners
+
+### 17.5 QKD — why it is not a substitute for PQC
+
+Quantum Key Distribution (QKD) distributes symmetric keys using quantum-physics principles (BB84, E91). An eavesdropper cannot copy quantum states without disturbing them, making interception detectable. However:
+
+- QKD provides key agreement only — it does not provide authentication or message confidentiality
+- It requires a classical **authenticated** side-channel, which itself depends on public-key cryptography or pre-shared keys
+- It requires specialised hardware (optical links, single-photon detectors) and cannot run over the standard Internet
+- It is not scalable to open PKI, TLS, or HTTPS deployments
+
+ENISA's position (2021, endorsed by BSI and NIST): **PQC is the primary migration path.** QKD may complement PQC in specific high-value, point-to-point scenarios (e.g., inter-datacenter links) but does not substitute for it.
+
+---
+
+*Last updated: 2026-04-02 (§5.1 SP 800-186 elliptic curve catalogue added; §5.2 SP 800-56A Rev.3 key establishment scheme taxonomy and FFC group tables added; §6.2 LMS/XMSS expanded with full parameter patterns and SP 800-208 §5.3 hardware mandate; §16 CNSA 2.0 added from PP-22-1338 source document; §16.4 RFC 9881/RFC 9935 PKIX encoding and Composite ML-DSA draft added; §17 Quantum Threat and Migration Context added from ENISA PQC report v2, May 2021). Consult current NIST SP 800-131A, BSI TR-02102, and NSA CNSA advisory editions for horizon dates and any post-publication amendments.*

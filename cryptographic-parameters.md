@@ -961,13 +961,15 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### ML-DSA size reference (FIPS 204)
+#### ML-DSA size reference (FIPS 204 / RFC 9881)
 
-| Parameter set | pk (bytes) | sk (bytes) | sig (bytes) | NIST level |
-|:---|:---|:---|:---|:---|
-| ML-DSA-44 | 1312 | 2560 | 2420 | 2 |
-| ML-DSA-65 | 1952 | 4032 | 3309 | 3 |
-| ML-DSA-87 | 2592 | 4896 | 4627 | 5 |
+> RFC 9881 (October 2025) specifies the encoding of ML-DSA public keys and signatures in X.509 PKIX certificates and CRLs. Key usage: `digitalSignature`, `nonRepudiation`, `keyCertSign`, `cRLSign`. Algorithm parameters MUST be absent. Pure ML-DSA only (HashML-DSA is excluded from PKIX).
+
+| Parameter set | pk (bytes) | sk seed (bytes) | sk expanded (bytes) | sig (bytes) | NIST level |
+|:---|:---|:---|:---|:---|:---|
+| ML-DSA-44 | 1312 | 32 | 2560 | 2420 | 2 |
+| ML-DSA-65 | 1952 | 32 | 4032 | 3309 | 3 |
+| ML-DSA-87 | 2592 | 32 | 4896 | 4627 | 5 |
 
 ---
 
@@ -986,11 +988,13 @@ standardisation discussions on the NIST PQC Forum.
 
 **Values by parameter set:**
 
-| Parameter set | k | Encaps key (B) | Ciphertext (B) | NIST level |
-|:---|:---|:---|:---|:---|
-| ML-KEM-512 | 2 | 800 | 768 | 1 |
-| ML-KEM-768 | 3 | 1184 | 1088 | 3 |
-| ML-KEM-1024 | 4 | 1568 | 1568 | 5 |
+> RFC 9935 (March 2026) specifies ML-KEM encoding in X.509 PKIX certificates. Key usage: `keyEncipherment` only. Algorithm parameters MUST be absent. Private key: 64-byte seed (preferred; compact) or expanded decapsulation key. Shared secret: always 32 bytes.
+
+| Parameter set | k | Encaps key (B) | Decaps key — expanded (B) | Ciphertext (B) | Shared secret (B) | NIST level |
+|:---|:---|:---|:---|:---|:---|:---|
+| ML-KEM-512 | 2 | 800 | 1632 | 768 | 32 | 1 |
+| ML-KEM-768 | 3 | 1184 | 2400 | 1088 | 32 | 3 |
+| ML-KEM-1024 | 4 | 1568 | 3168 | 1568 | 32 | 5 |
 
 ---
 
