@@ -56,7 +56,7 @@ Please note that this content is based on public data sources. Primarily:
 * NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 IPD (FN-DSA) — public domain
 * NIST SP 800-57 Part 1 Rev 5, SP 800-131A Rev 2 — public domain
 * BSI TR-02102-1 v2026-01, TR-02102-2 v2026-01, TR-02102-3 v2026-01, TR-02102-4 v2026-01 — public domain
-* NSA Cybersecurity Advisory: Commercial National Security Algorithm Suite 2.0 (CNSA 2.0), September 2022 — public domain
+* NSA Cybersecurity Advisory PP-22-1338: *Announcing the Commercial National Security Algorithm Suite 2.0* (CNSA 2.0), September 2022, Version 1.0 — public domain
 * and diverse public publications (such as special publications from NIST, FIPS and BSI guidance).
 
 The aggregation and enhancement of the content are provided under Creative Commons BY-SA 4.0, 
