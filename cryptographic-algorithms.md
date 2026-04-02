@@ -226,7 +226,7 @@ Cryptographic Algorithms
 |:---|:---|:---|:---|:---|:---|
 | `rsassa-pss` | RSASSA-PSS (RSA with Probabilistic Signature Scheme) | Digital signature | `1.2.840.113549.1.1.10` | `RSASSA-PSS-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5; SP 800-131A |
 | `rsassa-pkcs1` | RSASSA-PKCS1-v1.5 | Digital signature (legacy) | `1.2.840.113549.1.1.5` (SHA-1) · `.11` (SHA-256) · `.12` (SHA-384) · `.13` (SHA-512) · `.14` (SHA-224) | `RSASSA-PKCS1-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5 (deprecated for new use) |
-| `ecdsa` | ECDSA (Elliptic Curve Digital Signature Algorithm) | Digital signature | `1.2.840.10045.4.3.1` (SHA-224) · `.2` (SHA-256) · `.3` (SHA-384) · `.4` (SHA-512) · `2.16.840.1.101.3.4.3.9` (SHA3-256) · … | `ECDSA-{curve}-{hashAlgorithm}` | FIPS 186-5; SP 800-186; RFC 5758 |
+| `ecdsa` | ECDSA (Elliptic Curve Digital Signature Algorithm) | Digital signature | `1.2.840.10045.4.3.1` (SHA-224) · `.2` (SHA-256) · `.3` (SHA-384) · `.4` (SHA-512) · `2.16.840.1.101.3.4.3.9` (SHA3-224) · `.10` (SHA3-256) · `.11` (SHA3-384) · `.12` (SHA3-512) | `ECDSA-{curve}-{hashAlgorithm}` | FIPS 186-5; SP 800-186; RFC 5758; NIST CSOR |
 | `eddsa` | EdDSA (Edwards-curve Digital Signature Algorithm) | Digital signature | `1.3.101.112` (Ed25519) · `1.3.101.113` (Ed448) | `EdDSA-(Ed25519\|Ed448)` | RFC 8032; FIPS 186-5 |
 | `ed25519` | Ed25519 | Digital signature | `1.3.101.112` | `Ed25519` | RFC 8032; FIPS 186-5 |
 | `ed448` | Ed448 · Ed448-Goldilocks | Digital signature | `1.3.101.113` | `Ed448` | RFC 8032; FIPS 186-5 |
@@ -270,6 +270,8 @@ Cryptographic Algorithms
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
+| `p-192` | P-192 · secp192r1 · prime192v1 | Elliptic curve (legacy, disallowed) | `1.2.840.10045.3.1.1` | `ECDH-P-192` / `ECDSA-P-192-*` | SP 800-131A Rev 2 (disallowed for new use after 2013; legacy verification only) |
+| `p-224` | P-224 · secp224r1 | Elliptic curve (transitional) | `1.3.132.0.33` | `ECDH-P-224` / `ECDSA-P-224-*` | FIPS 186-5; SP 800-186; SP 800-131A Rev 2 (transitional through 2030) |
 | `p-256` | P-256 · secp256r1 · prime256v1 | Elliptic curve | `1.2.840.10045.3.1.7` | `ECDH-P-256` / `ECDSA-P-256-*` | FIPS 186-5; SP 800-186 |
 | `p-384` | P-384 · secp384r1 | Elliptic curve | `1.3.132.0.34` | `ECDH-P-384` / `ECDSA-P-384-*` | FIPS 186-5; SP 800-186 |
 | `p-521` | P-521 · secp521r1 | Elliptic curve | `1.3.132.0.35` | `ECDH-P-521` / `ECDSA-P-521-*` | FIPS 186-5; SP 800-186 |
