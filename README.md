@@ -61,6 +61,7 @@ Please note that this content is based on public data sources. Primarily:
 * BSI TR-02102-1 v2026-01, TR-02102-2 v2026-01, TR-02102-3 v2026-01, TR-02102-4 v2026-01 — public domain
 * NSA Cybersecurity Advisory PP-22-1338: *Announcing the Commercial National Security Algorithm Suite 2.0* (CNSA 2.0), September 2022, Version 1.0 — public domain
 * ENISA — *Post-Quantum Cryptography: Current state and quantum mitigation*, v2, May 2021. Authors: Ward Beullens et al. DOI: 10.2824/92307. © European Union Agency for Cybersecurity (ENISA), 2021 (reproduction authorised, source acknowledged).
+* RFC 9180 — *Hybrid Public Key Encryption (HPKE)*, February 2022 — IETF (Revised BSD License)
 * RFC 9881 — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Digital Signature Algorithm (ML-DSA)*, October 2025 — IETF (Revised BSD License)
 * RFC 9935 — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)*, March 2026 — IETF (Revised BSD License)
 * draft-ietf-lamps-pq-composite-sigs-15 — *Composite ML-DSA for use in X.509 Public Key Infrastructure*, February 2026 — IETF Internet-Draft (work in progress); (Revised BSD License)

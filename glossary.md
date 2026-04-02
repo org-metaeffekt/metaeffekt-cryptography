@@ -376,8 +376,11 @@ A threat model in which an attacker intercepts and stores encrypted ciphertext t
 **Hybrid Post-Quantum Cryptography**
 A deployment strategy combining a classical algorithm (e.g., ECDH P-256 or X25519) with a post-quantum algorithm (e.g., ML-KEM-768) in parallel, such that security is maintained as long as at least one of the two remains unbroken. For key encapsulation, the standard combiner is: run both KEM algorithms, then combine the two shared secrets (via concatenation into a KDF, or XOR) to derive the final session key. For digital signatures, the standard approach is to produce and verify two independent signatures. The TLS 1.3 hybrid `X25519MLKEM768` is the IETF-recommended hybrid for early deployment (draft-ietf-tls-hybrid-design). Hybrid deployment is the recommended transition strategy during the period before PQC implementations have accumulated sufficient operational confidence. See also ENISA Report "Post-Quantum Cryptography: Current state and quantum mitigation" (2021).
 
+**DHKEM — Diffie-Hellman Key Encapsulation Mechanism**
+The KEM construction defined in RFC 9180 §4.1 that builds a KEM from a Diffie-Hellman group. The sender generates an ephemeral DH key pair, performs DH with the recipient's public key, and derives the shared secret via HKDF (ExtractAndExpand). Defined instantiations: DHKEM(P-256, HKDF-SHA256) (KEM ID 0x0010), DHKEM(P-384, HKDF-SHA384) (0x0011), DHKEM(P-521, HKDF-SHA512) (0x0012), DHKEM(X25519, HKDF-SHA256) (0x0020), DHKEM(X448, HKDF-SHA512) (0x0021). All five support AuthEncap/AuthDecap (authenticated variants). The KDF used inside DHKEM's ExtractAndExpand is the KEM's associated KDF (not the ciphersuite KDF).
+
 **HPKE — Hybrid Public Key Encryption**
-A modern framework (RFC 9180) for public-key encryption combining a KEM (for key establishment), a KDF (for key derivation), and an AEAD (for symmetric encryption). Designed for one-shot encryption to a recipient's public key. Used in email encryption drafts and browser ECH (Encrypted Client Hello).
+A modern framework (RFC 9180, IRTF CFRG, February 2022) for public-key encryption combining: a **KEM** (key encapsulation — typically DHKEM), a **KDF** (key derivation — HKDF), and an **AEAD** (symmetric encryption — AES-GCM or ChaCha20-Poly1305). A ciphersuite is a triple (KEM, KDF, AEAD). The recipient holds a static key pair; the sender encapsulates an ephemeral shared secret with the recipient's public key and uses it to encrypt the payload. RFC 9180 defines four operational modes: **mode_base** (0x00, unauthenticated sender), **mode_psk** (0x01, PSK-authenticated sender), **mode_auth** (0x02, sender KEM-key authenticated via AuthEncap/AuthDecap), **mode_auth_psk** (0x03, both). Security: IND-CCA2 under classical assumptions (ROM). **Not post-quantum secure** — the KEM relies on ECDH; replace DHKEM with a PQC KEM (e.g. ML-KEM hybrid) for quantum resistance. Applications: TLS ECH (Encrypted Client Hello), MLS (Messaging Layer Security), email encryption (LAMPS WG), OHTTP (Oblivious HTTP).
 
 **HQC — Hamming Quasi-Cyclic**
 A post-quantum key encapsulation mechanism selected by NIST in March 2025 as the fifth PQC algorithm (code-based backup KEM), providing a code-based alternative to the lattice-based ML-KEM.
@@ -995,6 +998,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | CSPRNG | Cryptographically Secure Pseudorandom Number Generator |
 | CTR | Counter mode |
 | DH | Diffie-Hellman |
+| DHKEM | Diffie-Hellman Key Encapsulation Mechanism |
 | DRBG | Deterministic Random Bit Generator |
 | DSA | Digital Signature Algorithm |
 | ECB | Electronic Codebook |

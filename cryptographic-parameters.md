@@ -180,7 +180,7 @@ Parameters that select among structural variants or sub-primitive choices for an
 | **Description** | Selects the HPKE authentication mode. Controls whether the sender identity is authenticated and whether a PSK is used. |
 | **Type** | enumeration |
 | **Canonical values** | `mode_base` `mode_psk` `mode_auth` `mode_auth_psk` |
-| **Implementation note** | RFC 9180: base (unauthenticated), psk (pre-shared key), auth (sender authenticated), auth_psk (both). Most deployments use mode_base. |
+| **Implementation note** | RFC 9180 §5 (Table 1): mode_base (0x00) — no sender auth, no PSK; mode_psk (0x01) — PSK authentication only; mode_auth (0x02) — KEM private-key sender auth; mode_auth_psk (0x03) — both. Not all KEMs support AuthEncap/AuthDecap (required by mode_auth and mode_auth_psk); DHKEM variants defined in RFC 9180 all support it. Most deployments use mode_base. |
 | **Used in** | HPKE |
 
 ---
@@ -264,8 +264,20 @@ Parameters that select among structural variants or sub-primitive choices for an
 | **Description** | Identifies the Key Encapsulation Mechanism used in HPKE. Determines the asymmetric key exchange component. |
 | **Type** | KEM identifier |
 | **Canonical values** | `DHKEM(P-256,HKDF-SHA256)` `DHKEM(P-384,HKDF-SHA384)` `DHKEM(P-521,HKDF-SHA512)` `DHKEM(X25519,HKDF-SHA256)` `DHKEM(X448,HKDF-SHA512)` `ML-KEM-768` `ML-KEM-1024` |
-| **Implementation note** | HPKE (RFC 9180) KEM IDs: 0x0010–0x0021. X25519 (0x0020) most common. Post-quantum hybrid KEMs (X25519+ML-KEM) emerging in TLS 1.3. |
+| **Implementation note** | RFC 9180 §7.1 (Table 2) defines five DHKEM instantiations with two-byte IANA KEM IDs. X25519 (0x0020) is the most common; P-256 (0x0010) is used when FIPS compliance is required. Post-quantum hybrid KEMs (X25519+ML-KEM) are emerging in TLS 1.3 but are not part of RFC 9180 itself. |
 | **Used in** | HPKE |
+
+**RFC 9180 KEM identifier table (Table 2):**
+
+| KEM ID | Name | Nsecret (B) | Nenc (B) | Npk (B) | Nsk (B) |
+|:---|:---|:---|:---|:---|:---|
+| 0x0010 | DHKEM(P-256, HKDF-SHA256) | 32 | 65 | 65 | 32 |
+| 0x0011 | DHKEM(P-384, HKDF-SHA384) | 48 | 97 | 97 | 48 |
+| 0x0012 | DHKEM(P-521, HKDF-SHA512) | 64 | 133 | 133 | 66 |
+| 0x0020 | DHKEM(X25519, HKDF-SHA256) | 32 | 32 | 32 | 32 |
+| 0x0021 | DHKEM(X448, HKDF-SHA512) | 64 | 56 | 56 | 56 |
+
+Nenc = encapsulated key size (ephemeral public key sent to recipient). Npk = recipient public key size. Nsecret = shared secret length fed into the KDF. For P-256/384/521, public keys are uncompressed SEC 1 points (0x04 prefix + coordinates); for X25519/X448, public keys are the compressed Montgomery u-coordinate.
 
 ---
 
@@ -564,8 +576,17 @@ Parameters related to authentication tags, AEAD construction identifiers, and MA
 | **Description** | Selects the AEAD algorithm for HPKE symmetric encryption. Registered in IANA HPKE AEAD Identifiers. |
 | **Type** | AEAD identifier |
 | **Canonical values** | `AES-128-GCM` `AES-256-GCM` `ChaCha20-Poly1305` `Export-Only` |
-| **Implementation note** | RFC 9180 AEAD IDs: 0x0001 AES-128-GCM, 0x0002 AES-256-GCM, 0x0003 ChaCha20-Poly1305, 0xFFFF Export-Only. |
+| **Implementation note** | RFC 9180 §7.3 (Table 5) defines three AEAD algorithms plus the export-only mode. 0xFFFF (Export-Only) is used when HPKE is used solely for key derivation (via the Secret Export API) with no symmetric encryption. |
 | **Used in** | HPKE |
+
+**RFC 9180 AEAD identifier table (Table 5):**
+
+| AEAD ID | Name | Nk (key, B) | Nn (nonce, B) | Nt (tag, B) |
+|:---|:---|:---|:---|:---|
+| 0x0001 | AES-128-GCM | 16 | 12 | 16 |
+| 0x0002 | AES-256-GCM | 32 | 12 | 16 |
+| 0x0003 | ChaCha20Poly1305 | 32 | 12 | 16 |
+| 0xFFFF | Export-Only | N/A | N/A | N/A |
 
 ---
 
@@ -584,8 +605,16 @@ Parameters controlling cost, memory hardness, and sub-components of key derivati
 | **Description** | Names the KDF used as a sub-component of a composite protocol (HPKE, ECIES, PBES2, OPAQUE). Distinct from top-level KDF algorithms. |
 | **Type** | algorithm reference |
 | **Canonical values** | `HKDF-SHA256` `HKDF-SHA384` `HKDF-SHA512` `HKDF-SHA3-256` `ANSI-KDF-X9.42` `ANSI-KDF-X9.63` `SP800_56C_OneStep` `TLS12-PRF-SHA256` `TLS13-PRF-SHA256` |
-| **Implementation note** | HPKE (RFC 9180) defines KDF IDs: HKDF-SHA256 (0x0001), HKDF-SHA384 (0x0002), HKDF-SHA512 (0x0003). |
+| **Implementation note** | RFC 9180 §7.2 (Table 3) defines three HKDF KDF IDs with their Extract output lengths (Nh). The KDF used inside a DHKEM's ExtractAndExpand is the one associated with the KEM (not necessarily the ciphersuite KDF). |
 | **Used in** | HPKE, ECIES, PBES2, J-PAKE, SPAKE2, SPAKE2PLUS, OPAQUE, X3DH |
+
+**RFC 9180 KDF identifier table (Table 3):**
+
+| KDF ID | Name | Nh (output, B) |
+|:---|:---|:---|
+| 0x0001 | HKDF-SHA256 | 32 |
+| 0x0002 | HKDF-SHA384 | 48 |
+| 0x0003 | HKDF-SHA512 | 64 |
 
 ---
 

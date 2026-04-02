@@ -255,7 +255,12 @@ Cryptographic Algorithms
 | `x25519` | X25519 (ECDH over Curve25519) | Key agreement | `1.3.101.110` | `ECDH-Curve25519` | RFC 7748; SP 800-186 |
 | `x448` | X448 (ECDH over Curve448) | Key agreement | `1.3.101.111` | `ECDH-Curve448` | RFC 7748; SP 800-186 |
 | `ffdh` | FFDH (Finite Field Diffie-Hellman) | Key agreement | — | `FFDH-{groupName}` | SP 800-56A Rev 3; RFC 7919 |
-| `hpke` | HPKE (Hybrid Public-Key Encryption) | Key agreement + encryption | — | `HPKE-{kemVariant}-{kdfVariant}-{aeadVariant}` | RFC 9180 |
+| `hpke` | HPKE (Hybrid Public-Key Encryption) | Key agreement + encryption framework | — (IANA ciphersuite registry) | `HPKE-{kemVariant}-{kdfVariant}-{aeadVariant}` | RFC 9180; IANA HPKE Parameters |
+| `dhkem-p256-hkdf-sha256` | DHKEM(P-256, HKDF-SHA256) | HPKE KEM | KEM ID 0x0010 | `DHKEM(P-256,HKDF-SHA256)` | RFC 9180 §7.1; Nsecret=32B, Nenc=65B, Npk=65B |
+| `dhkem-p384-hkdf-sha384` | DHKEM(P-384, HKDF-SHA384) | HPKE KEM | KEM ID 0x0011 | `DHKEM(P-384,HKDF-SHA384)` | RFC 9180 §7.1; Nsecret=48B, Nenc=97B, Npk=97B |
+| `dhkem-p521-hkdf-sha512` | DHKEM(P-521, HKDF-SHA512) | HPKE KEM | KEM ID 0x0012 | `DHKEM(P-521,HKDF-SHA512)` | RFC 9180 §7.1; Nsecret=64B, Nenc=133B, Npk=133B |
+| `dhkem-x25519-hkdf-sha256` | DHKEM(X25519, HKDF-SHA256) | HPKE KEM | KEM ID 0x0020 | `DHKEM(X25519,HKDF-SHA256)` | RFC 9180 §7.1; Nsecret=32B, Nenc=32B, Npk=32B; most common |
+| `dhkem-x448-hkdf-sha512` | DHKEM(X448, HKDF-SHA512) | HPKE KEM | KEM ID 0x0021 | `DHKEM(X448,HKDF-SHA512)` | RFC 9180 §7.1; Nsecret=64B, Nenc=56B, Npk=56B |
 | `mqv` | MQV (Menezes-Qu-Vanstone) | Authenticated key agreement | — | `MQV-{curve}` | SP 800-56A Rev 3 |
 | `bls` | BLS (Boneh-Lynn-Shacham) pairing | Key agreement / signature | — | `BLS-{curve}` | IETF draft-irtf-cfrg-bls-signature |
 
@@ -703,6 +708,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Non-cryptographic checksums | 4 |
 | Message authentication codes | 15 |
 | Asymmetric encryption and key exchange | 11 |
+| HPKE ciphersuites (DHKEM variants) | 5 |
 | Classical digital signatures | 9 |
 | Stateful hash-based signatures | 4 |
 | Key agreement algorithms | 7 |
@@ -722,18 +728,57 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Non-cryptographic PRNGs | 6 |
 | Padding / encoding schemes | 5 |
 | Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
-| **Total** | **~332** |
+| **Total** | **~337** |
 
 ---
 
 ## SPDX Coverage Notes
 
-Cross-referenced against the [SPDX Cryptographic Algorithm List](https://github.com/spdx/cryptographic-algorithm-list/tree/main/yaml) (127 entries).
+Cross-referenced against the [SPDX Cryptographic Algorithm List](https://github.com/spdx/cryptographic-algorithm-list/tree/main/yaml) (CC0 1.0, 127 entries). SPDX defines a flat enumeration of named algorithm identifiers used in SPDX SBOM documents.
 
 | Status | Count |
 |:---|:---|
-| SPDX entries covered | ~127 |
-| Entries added solely for SPDX coverage (sections 22–29) | ~74 |
-| Entries present in this table not in SPDX | ~167 (PQC, modes, curves, RNGs, KDFs) |
+| SPDX entries covered in this table | ~127 |
+| Entries added to this table solely for SPDX coverage (sections 22–29) | ~72 |
+| Entries present in this table not in the SPDX list | ~210 (PQC, HPKE/DHKEM, modes, curves, RNGs, KDFs, Composite ML-DSA) |
 
-SPDX entries not mapped (no standard cryptographic definition found): `dcc`, `ssha` (salted SHA — implementation convention, not an algorithm), `blakex` (BLAKE umbrella — covered by BLAKE2/3).
+SPDX entries not mapped (no standard cryptographic definition found): `dcc`, `ssha` (salted SHA — implementation convention, not an algorithm), `blakex` (BLAKE umbrella — covered by BLAKE2/3 entries in this table).
+
+---
+
+## CycloneDX Coverage Notes
+
+Cross-referenced against the [CycloneDX Cryptography Registry](https://github.com/CycloneDX/specification/blob/master/schema/cryptography-defs.json) (Apache 2.0). CycloneDX defines a **pattern vocabulary** — parameterised template strings used in the `cryptographicProperties.algorithm` and `algorithmProperties.primitiveType` fields of CycloneDX SBOM documents. Unlike SPDX's flat enumeration, CycloneDX patterns cover entire algorithm families via `{placeholder}` variables and wildcard notation.
+
+### Coverage model
+
+The `Pattern` column in this table directly uses CycloneDX pattern notation. Every entry with a non-empty Pattern value is CycloneDX-compatible. The `{placeholder}` parameters in Pattern values are documented in `cryptographic-parameters.md`.
+
+| Pattern type | Count | Example |
+|:---|:---|:---|
+| Parameterised (`{placeholder}`) | ~62 | `AES-{keyLength}-{mode}`, `ECDSA-{curve}-{hashAlgorithm}` |
+| Fixed name / wildcard (`*`) | ~295 | `SHA-256`, `ML-KEM-768`, `FAEST-128s` |
+| No CycloneDX pattern defined | 7 | `ristretto255`, `decaf448`, `pkcs7`, `pkcs12`, `x509`, `cms`, `asn1` |
+
+The 7 entries with no CycloneDX pattern are structural or encoding constructs (padding, PKI containers) rather than cryptographic primitives; they are documented here for completeness.
+
+### Coverage by scope
+
+| Scope | In CycloneDX? | Count | Notes |
+|:---|:---|:---|:---|
+| Core approved algorithms (§1–§14, §16–§20) | ✅ Yes | ~220 | AES, SHA-2/3, RSA, ECDSA, ECDH, HPKE, ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC, LMS, XMSS, DRBGs, CSPRNGs, etc. All CycloneDX-defined pattern families represented. |
+| NIST Round 2 additional PQC signature candidates (§15) | ❌ No | 24 | MAYO, SNOVA, UOV, QR-UOV, HAWK, CROSS, LESS, FAEST, SDitH, MQOM, Mirath, PERK, RYDE, SQIsign — not in current CycloneDX registry. |
+| NIST Round 3 non-standardised / broken signatures (§15) | ❌ No | 9 | Rainbow (broken), Picnic, GeMSS (broken) — not standardised, not in CycloneDX. |
+| NIST Round 3 non-standardised KEMs (§13 sub-section) | ❌ No | 20 | Classic McEliece, BIKE, NTRU, Saber, NTRU-Prime, SIKE (broken) — not in CycloneDX. |
+| FrodoKEM (§13) | ❌ No | 3 | Conservative non-NIST KEM; not in CycloneDX registry. |
+| Composite ML-DSA (§21 sub-section) | ❌ No | 18 | IETF LAMPS draft (Feb 2026); not yet in CycloneDX registry as of April 2026. |
+| Individual DHKEM entries (§9) | ❌ No | 5 | Each DHKEM variant is an individual entry here; CycloneDX uses the parameterised `HPKE-{kem}-{kdf}-{aead}` parent pattern instead of enumerating DHKEM sub-types. |
+| MQV, BLS (§9) | ❌ No | 2 | Specialised key agreement / pairing schemes not included in CycloneDX algorithm registry. |
+| Pre-standard hybrid KEMs (§21 generic) | ❌ No | 3 | `x25519kyber768` (pre-FIPS 203), `p256mlkem768`, `composite-sig` (generic) — not in CycloneDX. (`x25519mlkem768` is in CycloneDX.) |
+| ristretto255, decaf448 (§10) | ❌ No | 2 | Point-compression abstractions for Curve25519/448; no CycloneDX pattern defined. |
+| Historical / legacy + SPDX-only (§22–§29) | ❌ No | 72 | Obscure historical ciphers, eSTREAM portfolio, legacy hashes, protocol containers. Many are in the SPDX list but absent from CycloneDX. |
+| **Total not in CycloneDX registry** | | **158** | |
+
+### Relationship to `cryptographic-parameters.md`
+
+The `{placeholder}` parameters in Pattern values are individually documented in `cryptographic-parameters.md`, which records for each parameter: short description, type, canonical values, implementation notes, and which algorithms use it. Together, this table and `cryptographic-parameters.md` form a complete CycloneDX pattern reference: this table maps algorithm names to pattern strings; `cryptographic-parameters.md` defines what goes inside the `{…}` slots.
