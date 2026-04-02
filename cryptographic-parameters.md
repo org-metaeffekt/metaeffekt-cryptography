@@ -9,6 +9,13 @@
 > These parameters are fixed by the parameter set choice but are essential for implementation
 > analysis, memory planning, and understanding active standardisation discussions.
 > Affects: ML-DSA, ML-KEM, SLH-DSA, FN-DSA, and cross-cutting hybrid/protocol parameters.
+>
+> **Revision note (2026-03-31):** Section 9 updated with missing parameters cross-checked
+> against the authoritative FIPS 203, 204, 205, and 206 documents: added `{q}` modulus values
+> for ML-KEM, ML-DSA, and FN-DSA; added `{omega}` (ML-DSA hint bits); added `{beta}` (ML-DSA
+> norm bound); added `{n}` and `{sigma}` for FN-DSA; added `{m}` and `{h_prime}` for SLH-DSA;
+> completed the SLH-DSA parameter table to all 12 parameter sets; added key/signature/ciphertext
+> size reference tables for all four PQC algorithm families.
 
 ## Pattern notation conventions
 
@@ -820,6 +827,59 @@ standardisation discussions on the NIST PQC Forum.
 
 ---
 
+
+#### `{omega}` (ML-DSA) — maximum hint bits
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Maximum number of non-zero entries in the hint vector h |
+| **Description** | The hint vector h in an ML-DSA signature encodes rounding correction information. The parameter ω bounds the number of non-zero entries; any signature with more than ω hints is rejected. |
+| **Type** | integer |
+| **Values by parameter set** | ML-DSA-44: ω=80. ML-DSA-65: ω=55. ML-DSA-87: ω=75. |
+| **Implementation note** | ω affects signature size: the hint is encoded using ω+k bytes in the signature. Per FIPS 204 Table 1. |
+| **Used in** | ML-DSA |
+
+---
+
+
+#### `{beta}` (ML-DSA) — norm bound for signature acceptance
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Norm bound β = τ·η for the signature vector z check |
+| **Description** | During verification, the infinity norm of the signature vector z is checked against β. Defined as β = τ·η. Any signature with ‖z‖∞ ≥ γ₁−β is rejected. |
+| **Type** | integer |
+| **Values by parameter set** | ML-DSA-44: β=78 (39×2). ML-DSA-65: β=196 (49×4). ML-DSA-87: β=120 (60×2). |
+| **Implementation note** | Per FIPS 204 Table 1. β is a derived parameter (product of τ and η). |
+| **Used in** | ML-DSA |
+
+---
+
+
+#### `{q}` (ML-DSA) — prime modulus
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | The prime modulus for polynomial arithmetic in ML-DSA |
+| **Description** | All polynomial arithmetic in ML-DSA is performed modulo q = 8380417 = 2²³ − 2¹³ + 1. This prime was chosen to enable efficient NTT (Number Theoretic Transform) computation since it supports 512th roots of unity. |
+| **Type** | prime integer |
+| **Value** | q = 8380417 |
+| **Implementation note** | Per FIPS 204 §4. The value is the same across all ML-DSA parameter sets. Polynomial degree n = 256 is also fixed across all parameter sets. |
+| **Used in** | ML-DSA |
+
+---
+
+
+#### ML-DSA size reference (FIPS 204)
+
+| Parameter set | pk (bytes) | sk (bytes) | sig (bytes) | NIST level |
+|:---|:---|:---|:---|:---|
+| ML-DSA-44 | 1312 | 2560 | 2420 | 2 |
+| ML-DSA-65 | 1952 | 4032 | 3309 | 3 |
+| ML-DSA-87 | 2592 | 4896 | 4627 | 5 |
+
+---
+
 ### ML-KEM internal parameters (FIPS 203)
 
 
@@ -885,6 +945,31 @@ standardisation discussions on the NIST PQC Forum.
 
 ---
 
+
+#### `{q}` (ML-KEM) — prime modulus
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | The prime modulus for polynomial arithmetic in ML-KEM |
+| **Description** | All polynomial arithmetic in ML-KEM is performed modulo q = 3329. This prime was chosen because it is small (fits in 12 bits), supports efficient NTT (256th roots of unity exist modulo 3329), and provides good noise tolerance. |
+| **Type** | prime integer |
+| **Value** | q = 3329 |
+| **Implementation note** | Per FIPS 203 §4. The value is the same across all ML-KEM parameter sets. Polynomial degree n = 256 is also fixed across all parameter sets. |
+| **Used in** | ML-KEM |
+
+---
+
+
+#### ML-KEM size reference (FIPS 203)
+
+| Parameter set | ek (bytes) | dk (bytes) | Ciphertext (bytes) | Shared secret (bytes) | NIST level |
+|:---|:---|:---|:---|:---|:---|
+| ML-KEM-512 | 800 | 1632 | 768 | 32 | 1 |
+| ML-KEM-768 | 1184 | 2400 | 1088 | 32 | 3 |
+| ML-KEM-1024 | 1568 | 3168 | 1568 | 32 | 5 |
+
+---
+
 ### SLH-DSA internal parameters (FIPS 205)
 
 
@@ -912,16 +997,16 @@ standardisation discussions on the NIST PQC Forum.
 | **Implementation note** | The "smaller SPHINCS+" paper (Fluhrer/Dang, ePrint 2024/018, cited in PQC forum) shows that alternative (h, d, a, k) tuples can significantly reduce signature sizes for realistic maximum signing volumes without security loss, motivating the NIST request for additional parameter sets. |
 | **Used in** | SLH-DSA |
 
-**Values by parameter set (selected):**
+**Values by parameter set (all 12 — SHA-2 and SHAKE variants share the same structural parameters):**
 
-| Parameter set | h | d | h' | Max signatures |
+| Parameter set | h | d | h' = h/d | Max signatures |
 |:---|:---|:---|:---|:---|
-| SLH-DSA-\*-128s | 63 | 7 | 9 | 2⁶³ |
-| SLH-DSA-\*-128f | 66 | 22 | 3 | 2⁶⁶ |
-| SLH-DSA-\*-192s | 63 | 7 | 9 | 2⁶³ |
-| SLH-DSA-\*-192f | 66 | 22 | 3 | 2⁶⁶ |
-| SLH-DSA-\*-256s | 64 | 8 | 8 | 2⁶⁴ |
-| SLH-DSA-\*-256f | 68 | 17 | 4 | 2⁶⁸ |
+| SLH-DSA-SHA2-128s / SLH-DSA-SHAKE-128s | 63 | 7 | 9 | 2⁶³ |
+| SLH-DSA-SHA2-128f / SLH-DSA-SHAKE-128f | 66 | 22 | 3 | 2⁶⁶ |
+| SLH-DSA-SHA2-192s / SLH-DSA-SHAKE-192s | 63 | 7 | 9 | 2⁶³ |
+| SLH-DSA-SHA2-192f / SLH-DSA-SHAKE-192f | 66 | 22 | 3 | 2⁶⁶ |
+| SLH-DSA-SHA2-256s / SLH-DSA-SHAKE-256s | 64 | 8 | 8 | 2⁶⁴ |
+| SLH-DSA-SHA2-256f / SLH-DSA-SHAKE-256f | 68 | 17 | 4 | 2⁶⁸ |
 
 ---
 
@@ -947,7 +1032,7 @@ standardisation discussions on the NIST PQC Forum.
 | **Short** | Number of FORS tree instances per signature |
 | **Description** | Together with a, determines FORS signature size and few-time security level. |
 | **Type** | integer |
-| **Values by parameter set (selected)** | 128s: k=14. 128f: k=33. 192s: k=17. 192f: k=33. 256s: k=22. 256f: k=35. |
+| **Values by parameter set** | 128s: k=14. 128f: k=33. 192s: k=17. 192f: k=33. 256s: k=22. 256f: k=35. (SHA-2 and SHAKE variants share these values.) |
 | **Implementation note** | FORS signature size = k·(a+1)·n bytes. Reducing k while increasing a (or vice versa) for realistic 2^m maximum signing volumes is the subject of the Fluhrer/Dang paper and the PQC forum additional parameter sets request. |
 | **Used in** | SLH-DSA |
 
@@ -964,6 +1049,52 @@ standardisation discussions on the NIST PQC Forum.
 | **Values in FIPS 205** | All 12 parameter sets fix lg_w=4 (w=16) — not a free parameter. |
 | **Implementation note** | With w=16, each n-byte message maps to 2n hex digits. The SLH-DSA WOTS+ is distinct from the WOTS+ in RFC 8391 / SP 800-208 — the Winternitz parameter is fixed rather than selectable. |
 | **Used in** | SLH-DSA (WOTS+ component) |
+
+---
+
+
+#### `{h_prime}` (SLH-DSA) — individual XMSS tree height
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Height of each individual XMSS tree layer |
+| **Description** | The hypertree in SLH-DSA is composed of d layers, each containing XMSS trees of height h' = h/d. Each XMSS tree authenticates 2^h' sub-trees or FORS key pairs at the bottom layer. |
+| **Type** | integer |
+| **Values by parameter set** | 128s: h'=9. 128f: h'=3. 192s: h'=9. 192f: h'=3. 256s: h'=8. 256f: h'=4. |
+| **Implementation note** | h' = h/d is always an integer. Larger h' means fewer layers d but larger XMSS trees (more WOTS+ signatures computed per layer). The "s" (small) variants have larger h' and fewer layers, reducing signature size at the cost of slower signing. |
+| **Used in** | SLH-DSA |
+
+---
+
+
+#### `{m}` (SLH-DSA) — message digest length
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Length of the FORS message digest in bytes |
+| **Description** | The message digest is mapped to k values in the range [0, 2^a), plus a tree index and leaf index within the hypertree. The total digest length m (in bytes) must accommodate k·a bits for the FORS input plus the tree address bits. Defined per parameter set in FIPS 205 Table 1. |
+| **Type** | integer (bytes) |
+| **Values by parameter set** | 128s: m=30. 128f: m=34. 192s: m=39. 192f: m=42. 256s: m=47. 256f: m=49. |
+| **Implementation note** | m is derived from the formula: m = floor((k·a + h − h/d + 7) / 8) effectively. The exact values are fixed by FIPS 205 Table 1. |
+| **Used in** | SLH-DSA |
+
+---
+
+
+#### SLH-DSA complete parameter and size reference (FIPS 205)
+
+All 12 parameter sets (SHA-2 and SHAKE variants share identical structural parameters and sizes):
+
+| Parameter set | n | h | d | h' | a | k | lg_w | m | pk (B) | sk (B) | sig (B) | NIST level |
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+| SLH-DSA-\*-128s | 16 | 63 | 7 | 9 | 12 | 14 | 4 | 30 | 32 | 64 | 7856 | 1 |
+| SLH-DSA-\*-128f | 16 | 66 | 22 | 3 | 6 | 33 | 4 | 34 | 32 | 64 | 17088 | 1 |
+| SLH-DSA-\*-192s | 24 | 63 | 7 | 9 | 14 | 17 | 4 | 39 | 48 | 96 | 16224 | 3 |
+| SLH-DSA-\*-192f | 24 | 66 | 22 | 3 | 8 | 33 | 4 | 42 | 48 | 96 | 35664 | 3 |
+| SLH-DSA-\*-256s | 32 | 64 | 8 | 8 | 14 | 22 | 4 | 47 | 64 | 128 | 29792 | 5 |
+| SLH-DSA-\*-256f | 32 | 68 | 17 | 4 | 9 | 35 | 4 | 49 | 64 | 128 | 49856 | 5 |
+
+> Note: `*` stands for either `SHA2` or `SHAKE`. E.g. SLH-DSA-SHA2-128s and SLH-DSA-SHAKE-128s share all values above.
 
 ---
 
@@ -1025,6 +1156,61 @@ standardisation discussions on the NIST PQC Forum.
 | **Canonical values** | `ieee754-strict` `ieee754-relaxed` `integer-emulation` |
 | **Implementation note** | This is a unique parameter class with no analogue in any other standardised algorithm. FIPS 206 is still in the Initial Public Draft (IPD) stage as of Q1 2026 and does not yet mandate a specific arithmetic model; ongoing implementation discussions (PQC forum, Dec 2025) concern whether IEEE 754 compliance or integer-only Gaussian sampling should be required for FIPS 140-3 validation. Integer emulation is slower but portable, deterministic, and verifiable without floating-point test infrastructure. |
 | **Used in** | FN-DSA |
+
+---
+
+
+#### `{n}` (FN-DSA) — polynomial degree
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Degree of the NTRU polynomials |
+| **Description** | FN-DSA operates over the polynomial ring Z_q[x]/(x^n + 1). The degree n determines the lattice dimension and thus the security level. |
+| **Type** | integer (power of 2) |
+| **Values by parameter set** | FN-DSA-512: n=512. FN-DSA-1024: n=1024. |
+| **Implementation note** | n=512 targets NIST Level 1 (equivalent to AES-128). n=1024 targets NIST Level 5 (equivalent to AES-256). The FFT-based Gaussian sampler operates over dimension-n polynomials. |
+| **Used in** | FN-DSA |
+
+---
+
+
+#### `{q}` (FN-DSA) — prime modulus
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | The prime modulus for polynomial arithmetic in FN-DSA |
+| **Description** | All polynomial arithmetic in FN-DSA is performed modulo q = 12289. This prime supports efficient NTT since q ≡ 1 (mod 2n) for n up to 1024. |
+| **Type** | prime integer |
+| **Value** | q = 12289 |
+| **Implementation note** | Per FIPS 206. The value is the same for both FN-DSA-512 and FN-DSA-1024. The small modulus (14 bits) contributes to compact key and signature sizes compared to ML-DSA (q = 8380417). |
+| **Used in** | FN-DSA |
+
+---
+
+
+#### `{sigma}` (FN-DSA) — Gaussian standard deviation
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Standard deviation of the discrete Gaussian distribution used in signing |
+| **Description** | During signing, FN-DSA samples a short vector from a discrete Gaussian distribution with standard deviation σ. The signature norm is checked against a bound derived from σ. |
+| **Type** | floating-point constant |
+| **Values by parameter set** | FN-DSA-512: σ ≈ 165.736617183. FN-DSA-1024: σ ≈ 168.388571447. |
+| **Implementation note** | The Gaussian sampler is the most implementation-sensitive component of FN-DSA, requiring strict IEEE 754 double-precision floating-point arithmetic (see `{floatingPointMode}`). The signature acceptance bound is ‖(s₁, s₂)‖² ≤ ⌊β²⌋ where β² = (1.8962236 · σ)² · 2n. Incorrect floating-point behaviour can produce a biased distribution, leaking the secret key. |
+| **Used in** | FN-DSA |
+
+---
+
+
+#### FN-DSA size reference (FIPS 206 IPD)
+
+| Parameter set | n | q | pk (bytes) | sk (bytes) | sig (bytes, max) | NIST level |
+|:---|:---|:---|:---|:---|:---|:---|
+| FN-DSA-512 | 512 | 12289 | 897 | 1281 | 666 | 1 |
+| FN-DSA-1024 | 1024 | 12289 | 1793 | 2305 | 1280 | 5 |
+
+> Note: FN-DSA signature sizes are variable; the values above represent the expected maximum
+> sizes in practice. Actual signatures may be slightly smaller due to compression.
 
 ---
 
@@ -1102,17 +1288,26 @@ standardisation discussions on the NIST PQC Forum.
 | `{gamma2}` | PQC internal | integer | ML-DSA |
 | `{tau}` | PQC internal | integer | ML-DSA |
 | `{lambda}` | PQC internal | integer (bits) | ML-DSA |
+| `{omega}` (ML-DSA) | PQC internal | integer | ML-DSA |
+| `{beta}` (ML-DSA) | PQC internal | integer | ML-DSA |
+| `{q}` (ML-DSA) | PQC internal | prime integer | ML-DSA |
 | `{k}` (ML-KEM) | PQC internal | integer | ML-KEM |
 | `{du}` | PQC internal | integer (bits) | ML-KEM |
 | `{dv}` | PQC internal | integer (bits) | ML-KEM |
 | `{eta1}` | PQC internal | integer | ML-KEM |
 | `{eta2}` | PQC internal | integer | ML-KEM |
+| `{q}` (ML-KEM) | PQC internal | prime integer | ML-KEM |
 | `{n}` (SLH-DSA) | PQC internal | integer (bytes) | SLH-DSA |
 | `{h}` (SLH-DSA) | PQC internal | integer | SLH-DSA |
 | `{d}` (SLH-DSA) | PQC internal | integer | SLH-DSA |
 | `{a}` (SLH-DSA) | PQC internal | integer | SLH-DSA |
 | `{k}` (SLH-DSA) | PQC internal | integer | SLH-DSA |
 | `{w}` / `{lg_w}` | PQC internal | integer | SLH-DSA |
+| `{h_prime}` (SLH-DSA) | PQC internal | integer | SLH-DSA |
+| `{m}` (SLH-DSA) | PQC internal | integer (bytes) | SLH-DSA |
+| `{n}` (FN-DSA) | PQC internal | integer | FN-DSA |
+| `{q}` (FN-DSA) | PQC internal | prime integer | FN-DSA |
+| `{sigma}` (FN-DSA) | PQC internal | floating-point | FN-DSA |
 | `{signingMode}` | PQC protocol | enumeration | ML-DSA, SLH-DSA, FN-DSA |
 | `{deterministicSigning}` | PQC protocol | enumeration | ML-DSA |
 | `{context}` | PQC protocol | byte string (0–255 B) | ML-DSA, SLH-DSA, FN-DSA |

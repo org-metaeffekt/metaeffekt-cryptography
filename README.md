@@ -53,6 +53,9 @@ Please note that this content is based on public data sources. Primarily:
 * https://github.com/spdx/cryptographic-algorithm-list (Creative Commons Zero Universal 1.0)
 * https://github.com/CycloneDX/specification/blob/master/schema/cryptography-defs.json (Apache License 2.0)
 * https://groups.google.com/a/list.nist.gov/g/pqc-forum (individual copyrights, licenses and trademarks apply)
+* NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 IPD (FN-DSA) — public domain
+* NIST SP 800-57 Part 1 Rev 5, SP 800-131A Rev 2 — public domain
+* BSI TR-02102-1 v2026-01, TR-02102-2 v2026-01, TR-02102-3 v2026-01, TR-02102-4 v2026-01 — public domain
 * and diverse public publications (such as special publications from NIST, FIPS and BSI guidance).
 
 The aggregation and enhancement of the content are provided under Creative Commons BY-SA 4.0, 
@@ -74,11 +77,11 @@ that adjustments can be applied accordingly.
 
 - **[cryptographic-algorithms.md](cryptographic-algorithms.md)** — Algorithm table covering the full taxonomy: symmetric ciphers, block cipher modes, hash functions, MACs, asymmetric encryption, classical signatures, stateful hash-based signatures, post-quantum KEMs and signatures (NIST standardised + Round 2 candidates), KDFs, password hashing, DRBGs, OS entropy APIs, and non-cryptographic PRNGs. Each row includes id, name, crypto class, OID, CycloneDX pattern example, and references.
 
-- **[cryptographic-parameters.md](cryptographic-parameters.md)** — Catalogue of cryptographic algorithms grouped by family (symmetric, asymmetric, hash, MAC, KDF, KEM, signature). Each entry covers purpose, parameter sets, security levels, FIPS/NIST standardisation status, and CycloneDX algorithm pattern strings used in SBOM tooling.
+- **[cryptographic-parameters.md](cryptographic-parameters.md)** — Catalogue of cryptographic algorithms grouped by family (symmetric, asymmetric, hash, MAC, KDF, KEM, signature). Each entry covers purpose, parameter sets, security levels, FIPS/NIST standardisation status, and CycloneDX algorithm pattern strings used in SBOM tooling. PQC entries (ML-KEM, ML-DSA, SLH-DSA, FN-DSA) include full parameter tables with public-key, secret-key, ciphertext, and signature sizes in bytes.
 
 - **[random-number-generators.md](random-number-generators.md)** — Catalogue of deterministic and non-deterministic random number generators (DRBGs and TRNGs). Covers SP 800-90A/B/C families, OS entropy sources, and platform-specific APIs. Each entry lists construction type, security strength, seeding requirements, and CycloneDX RNG pattern strings.
 
-- **[cryptographic-status.md](cryptographic-status.md)** — Status on algorithms and key-length choices derived from NIST SP 800-57/800-131A, BSI TR-02102, and related standards. Organises algorithms by security strength tier, highlights deprecated and disallowed primitives, and cross-references the FIPS post-quantum standards.
+- **[cryptographic-status.md](cryptographic-status.md)** — Status on algorithms and key-length choices derived from NIST SP 800-57 Part 1 Rev 5, SP 800-131A Rev 2, BSI TR-02102-1 through -4, and related standards. Organises algorithms by security strength tier, highlights deprecated and disallowed primitives, and cross-references the FIPS post-quantum standards. Includes security strength equivalence tables (SP 800-57 Table 2), SSH recommendations (BSI TR-02102-4), and IPsec/IKEv2 recommendations (BSI TR-02102-3).
 
 - **[glossary.md](glossary.md)** — Plain-language explanations of all terms and abbreviations used across this repository, written for readers without a mathematics background. Covers cryptographic primitives, protocol concepts, standardisation bodies, post-quantum terminology, and SBOM/CycloneDX notation. Includes an abbreviation quick-reference table.
 

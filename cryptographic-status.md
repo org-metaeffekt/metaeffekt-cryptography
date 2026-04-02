@@ -7,7 +7,8 @@
 > **Primary sources:** NIST SP 800-57 Pt 1 Rev 5 (Rev 6 IPD Dec 2025) · SP 800-131A Rev 2 (Rev 3 IPD Oct 2024) · SP 800-38 series ·
 > SP 800-90A Rev 1 (Rev 2 pre-draft 2025) · SP 800-90B · SP 800-56A/B/C · SP 800-132 · SP 800-135 · SP 800-186 ·
 > FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (IPD) ·
-> BSI TR-02102-1 (2026-01) · BSI TR-02102-2 (2026) · BSI AIS 20/31 v3 (2022)
+> BSI TR-02102-1 v2026-01 (2026-01-23) · BSI TR-02102-2 v2026-01 (2025-12-27) ·
+> BSI TR-02102-3 v2026-01 (2026-01-27) · BSI TR-02102-4 v2026-01 (2026-01-27) · BSI AIS 20/31 v3 (2022)
 
 ---
 
@@ -385,4 +386,199 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ---
 
-*Last updated: 2026-03-28. Consult current NIST SP 800-131A and BSI TR-02102-1 editions for horizon dates and any post-publication amendments.*
+## 13. Security Strength Equivalence (SP 800-57 Part 1 Rev 5)
+
+Key-length equivalence guidance derived from NIST SP 800-57 Part 1 Rev 5, *Recommendation for Key Management: Part 1 — General* (May 2020).
+
+### 13.1 Table 2 — Comparable security strengths across algorithm families
+
+All values from §5.6.1 Table 2 (pp. 54–55).
+
+| Security strength (bits) | Symmetric cipher | FFC key size (L, N) | IFC key size (k) | ECC key size (f) | Status |
+|:---|:---|:---|:---|:---|:---|
+| < 80 | 2TDEA, SKIPJACK | L=1024, N=160 | 1024 | 160–223 | 🚫 Disallowed |
+| 112 | 3TDEA | L=2048, N=224 | 2048 | 224–255 | 🔜 Transitional (through 2030) |
+| 128 | AES-128 | L=3072, N=256 | 3072 | 256–383 | ✅ Recommended |
+| 192 | AES-192 | L=7680, N=384 | 7680 | 384–511 | ✅ Recommended |
+| 256 | AES-256 | L=15360, N=512 | 15360 | 512+ | ✅ Recommended |
+
+**Column definitions:**
+
+- **FFC (L, N):** L = bit length of the field order *p*; N = bit length of the subgroup order *q*. Applies to DSA, DH, and MQV over finite fields.
+- **IFC (k):** bit length of the RSA modulus *n = pq*. Applies to RSA encryption (RSAES-OAEP) and RSA signatures (RSASSA-PSS, RSASSA-PKCS1-v1_5).
+- **ECC (f):** bit length of the elliptic-curve base-point order. Applies to ECDSA, ECDH, EdDSA, and related schemes. Ranges reflect that any curve order within the interval provides the stated security strength.
+
+> ℹ **FFC parameters (SP 800-57 §5.6.1.1):** Use only NIST-approved or RFC 7919 named groups — custom prime generation requires full validation per SP 800-56A.
+
+> ℹ **IFC (RSA) security strength:** A 2048-bit RSA modulus provides approximately 112 bits of security, not 128. The common assumption that "2048-bit RSA = 128-bit security" is incorrect per SP 800-57 Table 2. 3072-bit RSA is the minimum for 128-bit security.
+
+### 13.2 Planning horizon and security-strength adequacy
+
+SP 800-57 Rev 5 §5.6.2–§5.6.3 and SP 800-131A Rev 2:
+
+| Security strength (bits) | Status | Planning horizon |
+|:---|:---|:---|
+| < 80 | 🚫 Disallowed | Disallowed since 2013. No algorithm providing only 80-bit security may be used to protect data. |
+| 112 | 🔜 Transitional | Acceptable minimum through **31 December 2030**. Keys remaining in use beyond 2030 must provide at least 128-bit security. |
+| 128 | ✅ Recommended | Required minimum from **1 January 2031** onward. Recommended for all new designs. |
+| 192 | ✅ Recommended | Exceeds minimum requirements; appropriate for high-assurance applications. |
+| 256 | ✅ Recommended | Highest tier; recommended for long-term protection and quantum-resilient symmetric designs. |
+
+### 13.3 Approved algorithms per security-strength tier
+
+Based on SP 800-57 Rev 5 §5.6.1 and the referenced FIPS standards.
+
+| Security strength (bits) | Symmetric encryption | Hash (collision resistance) | Digital signatures | Key agreement | KEM (post-quantum) |
+|:---|:---|:---|:---|:---|:---|
+| < 80 | 2TDEA (🚫) | SHA-1 (🚫 for signatures) | DSA-1024, RSA-1024, ECDSA-P-192 (all 🚫) | DH-1024, ECDH-P-192 (all 🚫) | — |
+| 112 | 3TDEA (🔜 deprecated 2024) | SHA-224 | RSA-2048 (PSS/PKCS1), DSA-2048 (🔜), ECDSA-P-224 | DH-2048, ECDH-P-224 | — |
+| 128 | AES-128 | SHA-256, SHA3-256 | RSA-3072+, ECDSA-P-256+, EdDSA-Ed25519, ML-DSA-44 | ECDH-P-256, X25519, FFDH-3072+, ML-KEM-512 | ML-KEM-512 |
+| 192 | AES-192 | SHA-384, SHA3-384 | RSA-7680, ECDSA-P-384, ML-DSA-65 | ECDH-P-384, FFDH-7680, ML-KEM-768 | ML-KEM-768 |
+| 256 | AES-256 | SHA-512, SHA3-512 | RSA-15360, ECDSA-P-521, EdDSA-Ed448, ML-DSA-87 | ECDH-P-521, X448, FFDH-15360, ML-KEM-1024 | ML-KEM-1024 |
+
+> ℹ **PQC note:** ML-KEM (FIPS 203) and ML-DSA (FIPS 204) were standardised in August 2024, after SP 800-57 Rev 5 was published. They are included here at the NIST security levels stated in their respective FIPS publications. SP 800-57 Rev 6 (Initial Public Draft December 2025) is expected to incorporate PQC algorithm mappings formally.
+
+### 13.4 Hash function security strength (SP 800-57 Rev 5 §5.6.1)
+
+Hash functions provide two distinct security properties with different bit strengths:
+
+| Hash function | Output (bits) | Collision resistance (bits) | Preimage resistance (bits) |
+|:---|:---|:---|:---|
+| SHA-1 | 160 | < 80 (broken) | 160 |
+| SHA-224 | 224 | 112 | 224 |
+| SHA-256 | 256 | 128 | 256 |
+| SHA-384 | 384 | 192 | 384 |
+| SHA-512 | 512 | 256 | 512 |
+| SHA3-256 | 256 | 128 | 256 |
+| SHA3-384 | 384 | 192 | 384 |
+| SHA3-512 | 512 | 256 | 512 |
+
+> For digital signatures and certificates, the collision-resistance strength of the hash must meet or exceed the security strength of the signing key. For HMAC, preimage resistance applies — HMAC-SHA-1 can still provide 112-bit security (transitional through 2030 per NIST; not recommended by BSI).
+
+### 13.5 Quantum impact on security-strength equivalence
+
+The equivalence table in §13.1 assumes classical (non-quantum) adversaries. Grover's algorithm halves the effective security of symmetric ciphers and hash preimage resistance; Shor's algorithm breaks RSA, DH, DSA, and ECC entirely in polynomial time.
+
+| Algorithm family | Classical security | Quantum security | Mitigation |
+|:---|:---|:---|:---|
+| AES-128 | 128 bit | ~64 bit (Grover) | Use AES-256 for quantum resilience |
+| AES-256 | 256 bit | ~128 bit (Grover) | Sufficient post-quantum |
+| RSA, DH, DSA (all sizes) | 80–256 bit | 0 (Shor) | Migrate to ML-KEM / ML-DSA |
+| ECDSA, ECDH (all curves) | 128–256 bit | 0 (Shor) | Migrate to ML-KEM / ML-DSA |
+| ML-KEM-768 | — | ~192 bit (NIST Level 3) | NIST-standardised PQC |
+| ML-DSA-65 | — | ~192 bit (NIST Level 3) | NIST-standardised PQC |
+
+> ⚠ **Harvest-now-decrypt-later:** Data encrypted today with RSA or ECDH may be stored by adversaries and decrypted once a cryptographically relevant quantum computer is available. SP 800-57 Rev 5 does not yet address quantum threat timelines, but NIST's PQC programme (FIPS 203/204/205) and the forthcoming SP 800-57 Rev 6 provide the migration path.
+
+---
+
+## 14. SSH (BSI TR-02102-4 v2026-01)
+
+Recommendations for SSH protocol usage. Source: BSI TR-02102-4, Version 2026-01 (2026-01-27). SSH-2 is the only acceptable version; SSH-1 is 🚫 Disallowed.
+
+### 14.1 Key exchange
+
+| Algorithm | Status | Notes |
+|:---|:---|:---|
+| `curve25519-sha256` | ✅ Recommended | ECDH over Curve25519 with SHA-256; constant-time |
+| `curve25519-sha256@libssh.org` | ✅ Recommended | Alias for the above |
+| `ecdh-sha2-nistp256` | ✓ Approved | ECDH over P-256 |
+| `ecdh-sha2-nistp384` | ✓ Approved | ECDH over P-384 |
+| `ecdh-sha2-nistp521` | ✓ Approved | ECDH over P-521 |
+| `diffie-hellman-group14-sha256` | 🔜 Transitional | 2048-bit DH; 112-bit security; acceptable through 2030 |
+| `diffie-hellman-group16-sha512` | ✓ Approved | 4096-bit DH; 128-bit security |
+| `diffie-hellman-group18-sha512` | ✓ Approved | 8192-bit DH |
+| `diffie-hellman-group14-sha1` | 🚫 Disallowed | SHA-1 |
+| `diffie-hellman-group1-sha1` | 🚫 Disallowed | 1024-bit DH; SHA-1 |
+| `diffie-hellman-group-exchange-sha1` | 🚫 Disallowed | SHA-1 |
+
+### 14.2 Host authentication
+
+| Algorithm | Status | Notes |
+|:---|:---|:---|
+| `ssh-ed25519` | ✅ Recommended | EdDSA over Curve25519; constant-time |
+| `ecdsa-sha2-nistp256` | ✓ Approved | ECDSA P-256 with SHA-256 |
+| `ecdsa-sha2-nistp384` | ✓ Approved | ECDSA P-384 with SHA-384 |
+| `ecdsa-sha2-nistp521` | ✓ Approved | ECDSA P-521 with SHA-512 |
+| `rsa-sha2-256` | ✓ Approved | RSA ≥ 3072 bits with SHA-256; ≥ 2048 transitional through 2030 |
+| `rsa-sha2-512` | ✓ Approved | RSA ≥ 3072 bits with SHA-512 |
+| `ssh-rsa` | 🚫 Disallowed | RSA with SHA-1; disallowed |
+| `ssh-dss` | 🚫 Disallowed | DSA-1024; disallowed |
+
+### 14.3 Symmetric encryption
+
+| Algorithm | Status | Notes |
+|:---|:---|:---|
+| `chacha20-poly1305@openssh.com` | ✅ Recommended | ChaCha20-Poly1305 AEAD; preferred when AES-NI unavailable |
+| `aes256-gcm@openssh.com` | ✅ Recommended | AES-256-GCM AEAD |
+| `aes128-gcm@openssh.com` | ✅ Recommended | AES-128-GCM AEAD |
+| `aes256-ctr` | ⚠ Conditional | CTR mode; use only with HMAC-ETM; no AEAD |
+| `aes192-ctr` | ⚠ Conditional | CTR mode; use only with HMAC-ETM |
+| `aes128-ctr` | ⚠ Conditional | CTR mode; use only with HMAC-ETM |
+| `aes256-cbc` | ❌ Deprecated | CBC mode; padding oracle risk; use GCM or CTR+ETM |
+| `3des-cbc` | 🚫 Disallowed | 3DES; 64-bit block; birthday-bound vulnerable |
+| `arcfour*` | 🚫 Disallowed | RC4; cryptographically broken |
+
+### 14.4 MAC (for CTR-mode ciphers; not needed with AEAD)
+
+| Algorithm | Status | Notes |
+|:---|:---|:---|
+| `hmac-sha2-256-etm@openssh.com` | ✅ Recommended | Encrypt-then-MAC; preferred |
+| `hmac-sha2-512-etm@openssh.com` | ✅ Recommended | Encrypt-then-MAC |
+| `umac-128-etm@openssh.com` | ✓ Approved | Encrypt-then-MAC |
+| `hmac-sha2-256` | ⚠ Conditional | MAC-then-Encrypt; acceptable only with CTR mode |
+| `hmac-sha2-512` | ⚠ Conditional | MAC-then-Encrypt; acceptable only with CTR mode |
+| `hmac-sha1*` | 🚫 Disallowed | SHA-1 |
+| `hmac-md5*` | 🚫 Disallowed | MD5 |
+
+---
+
+## 15. IPsec / IKEv2 (BSI TR-02102-3 v2026-01)
+
+Recommendations for IPsec with IKEv2. Source: BSI TR-02102-3, Version 2026-01 (2026-01-27). IKEv1 is 🚫 Disallowed; IKEv2 (RFC 7296) only.
+
+### 15.1 IKEv2 key exchange (Diffie-Hellman groups)
+
+| Group | Description | Status | Notes |
+|:---|:---|:---|:---|
+| Group 14 | 2048-bit MODP | 🔜 Transitional | 112-bit security; acceptable through 2030 |
+| Group 15 | 3072-bit MODP | ✓ Approved | 128-bit security |
+| Group 16 | 4096-bit MODP | ✓ Approved | |
+| Group 17 | 6144-bit MODP | ✓ Approved | |
+| Group 18 | 8192-bit MODP | ✓ Approved | |
+| Group 19 | 256-bit ECP (P-256) | ✓ Approved | |
+| Group 20 | 384-bit ECP (P-384) | ✓ Approved | |
+| Group 21 | 521-bit ECP (P-521) | ✓ Approved | |
+| Group 25 | 192-bit ECP | ❌ Deprecated | < 128-bit security |
+| Group 26 | 224-bit ECP | 🔜 Transitional | 112-bit security; acceptable through 2030 |
+| Group 31 | Curve25519 | ✅ Recommended | RFC 8031; constant-time |
+| Group 32 | Curve448 | ✅ Recommended | RFC 8031; 224-bit security |
+| Groups 1–5 | 768–1536-bit MODP | 🚫 Disallowed | < 112-bit security |
+
+### 15.2 IKEv2 encryption (ESP and IKE SA)
+
+| Algorithm | Status | Notes |
+|:---|:---|:---|
+| `AES-[128\|192\|256]-GCM` | ✅ Recommended | AEAD; RFC 4106 (ESP), RFC 5282 (IKE) |
+| `AES-[128\|192\|256]-CCM` | ✓ Approved | AEAD; RFC 4309 |
+| `ChaCha20-Poly1305` | ✓ Approved | AEAD; RFC 7634; BSI-approved |
+| `AES-[128\|192\|256]-CBC` | ⚠ Conditional | Must pair with separate integrity algorithm |
+| `AES-[128\|192\|256]-CTR` | ⚠ Conditional | Must pair with separate integrity algorithm |
+| `3DES-CBC` | 🚫 Disallowed | 64-bit block; birthday bound; disallowed |
+| `DES-CBC` | 🚫 Disallowed | 56-bit key; broken |
+
+### 15.3 IKEv2 integrity / PRF
+
+| Algorithm | Status | Notes |
+|:---|:---|:---|
+| `HMAC-SHA2-256-128` | ✅ Recommended | RFC 4868 |
+| `HMAC-SHA2-384-192` | ✅ Recommended | RFC 4868 |
+| `HMAC-SHA2-512-256` | ✅ Recommended | RFC 4868 |
+| `AES-XCBC-96` | ✓ Approved | RFC 3566 |
+| `AES-CMAC-96` | ✓ Approved | RFC 4494 |
+| `HMAC-SHA1-96` | 🚫 Disallowed | SHA-1 |
+| `HMAC-MD5-96` | 🚫 Disallowed | MD5 |
+
+---
+
+*Last updated: 2026-04-02. Consult current NIST SP 800-131A and BSI TR-02102 editions for horizon dates and any post-publication amendments.*
