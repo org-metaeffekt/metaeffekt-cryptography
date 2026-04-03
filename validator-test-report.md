@@ -1,9 +1,10 @@
 # Validator Test Report
 
-Test statistics for the `ae-pattern-validator` module. Generated from the JUnit 5 test
-suite against the YAML validation registry (8 files, 275 registered algorithm families).
+Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1).
+Generated from the test suite against the YAML validation registry
+(8 files, 275 registered algorithm families).
 
-Build command: `cd ae-pattern-validator && mvn clean verify`
+Build: `cd ae-pattern-validator && mvn clean verify`
 
 ---
 
@@ -11,16 +12,17 @@ Build command: `cd ae-pattern-validator && mvn clean verify`
 
 | Test class | Tests | Scope |
 |------------|------:|-------|
-| `InstanceValidationSymmetricTest` | 85 | Symmetric block ciphers, stream ciphers, block cipher modes — all 76 families |
-| `InstanceValidationHashMacTest` | 45 | Hash functions, MACs — all 32 hash + 7 MAC families |
-| `InstanceValidationAsymmetricTest` | 41 | Asymmetric encryption, digital signatures, key agreement — all 34 families |
-| `InstanceValidationPqcTest` | 50 | Post-quantum KEMs, signatures, pre-hash variants, composites — all 39 families |
-| `InstanceValidationKdfTest` | 23 | Key derivation functions, password hashing — all 23 families |
-| `InstanceValidationRngTest` | 27 | DRBGs, OS entropy APIs, PRNGs — all 21 families |
-| `TemplateValidationTest` | 21 | Template/wildcard mode, syntax errors, constraint validation, fixed identifier enforcement |
-| `CycloneDxRegistryCoverageTest` | 211 | Full CycloneDX cryptography-defs.json coverage — all 43 cdx families |
-| `AlgorithmRegistryTest` | 5 | Registry loading, duplicate detection, alias/status parsing |
-| **Total** | **508** | |
+| `InstanceValidationSymmetricTest` | 85 | All 76 symmetric families |
+| `InstanceValidationHashMacTest` | 45 | All 32 hash + 7 MAC families |
+| `InstanceValidationAsymmetricTest` | 41 | All 34 asymmetric families |
+| `InstanceValidationPqcTest` | 50 | All 39 PQC families |
+| `InstanceValidationKdfTest` | 23 | All 23 KDF families |
+| `InstanceValidationRngTest` | 27 | All 21 RNG families |
+| `TemplateValidationTest` | 28 | Templates, constraints, normalisation, choice groups, fixed identifiers |
+| `CycloneDxRegistryCoverageTest` | 211 | Full CycloneDX registry coverage + all 43 cdx families |
+| `MainTest` | 11 | CLI integration |
+| `AlgorithmRegistryTest` | 5 | Registry loading, duplicate detection |
+| **Total** | **526** | |
 
 ---
 
@@ -28,23 +30,23 @@ Build command: `cd ae-pattern-validator && mvn clean verify`
 
 | Registry file | Families | With segments | Fixed identifiers | Wildcard |
 |---------------|:--------:|:-------------:|:-----------------:|:--------:|
-| `cr-symmetric-ciphers.yaml` | 76 | 18 | 9 | 49 |
+| `cr-symmetric-ciphers.yaml` | 76 | 28 | 9 | 39 |
 | `cr-hash-functions.yaml` | 32 | 20 | 11 | 1 |
-| `cr-macs.yaml` | 7 | 6 | 0 | 1 |
-| `cr-asymmetric.yaml` | 34 | 23 | 2 | 9 |
-| `cr-pqc.yaml` | 39 | 18 | 5 | 16 |
-| `cr-kdfs.yaml` | 23 | 16 | 0 | 7 |
-| `cr-rngs.yaml` | 21 | 6 | 11 | 4 |
+| `cr-macs.yaml` | 7 | 7 | 0 | 0 |
+| `cr-asymmetric.yaml` | 34 | 27 | 2 | 5 |
+| `cr-pqc.yaml` | 39 | 20 | 5 | 14 |
+| `cr-kdfs.yaml` | 23 | 20 | 0 | 3 |
+| `cr-rngs.yaml` | 21 | 8 | 11 | 2 |
 | `cr-cdx.yaml` | 43 | 3 | 40 | 0 |
-| **Total** | **275** | **110** | **78** | **87** |
+| **Total** | **275** | **141** | **78** | **56** |
 
 ### Family validation modes
 
 | Mode | Count | Behaviour |
 |------|:-----:|-----------|
-| Segments defined | 110 | Parameters validated against controlled vocabulary + constraints |
+| Segments defined | 141 | Parameters validated against controlled vocabulary + constraints |
 | Fixed identifiers (`segments: []`) | 78 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
-| Wildcard (no `segments` field) | 87 | Any trailing parameters accepted |
+| Wildcard (no `segments` field) | 56 | Any trailing parameters accepted |
 
 ### Status Distribution
 
@@ -60,8 +62,6 @@ Build command: `cd ae-pattern-validator && mvn clean verify`
 ## Appendix A: All Instance Patterns Tested (267)
 
 Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
-Each pattern is matched against the registry, family is identified, and parameters
-are checked against controlled vocabularies or constraints.
 
 ### Symmetric Ciphers (89 patterns)
 
@@ -370,15 +370,13 @@ are checked against controlled vocabularies or constraints.
 | `Ed448ctx` | `cdx:Ed448ctx` |
 | `FFDHE-ffdhe4096` | `cdx:FFDHE` |
 
----
-
-## Appendix B: All Template Patterns Tested (148)
+## Appendix B: All Template Patterns Tested (149)
 
 Pattern templates validated in `TEMPLATE` mode, organized by taxonomy. Templates may
 contain wildcards (`*`), enumerations (`[a\|b]`, `(a\|b)`), and variable placeholders
 (`{x}`). Enumeration values are checked against the controlled vocabulary.
 
-### Symmetric Ciphers (47 patterns)
+### Symmetric Ciphers (48 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -389,6 +387,7 @@ contain wildcards (`*`), enumerations (`[a\|b]`, `(a\|b)`), and variable placeho
 | `3DES[-{keyLength}][-{mode}]` | `3DES` |
 | `3GPP-XOR[-KDF]` | `3GPP-XOR` |
 | `3GPP-XOR[-MAC]` | `3GPP-XOR` |
+| `AES-(128\|192\|256)-(GCM\|CCM)` | `AES` |
 | `AES-[128\|192\|256]-*` | `AES` |
 | `AES[-(128\|192\|256)]-GCM-SIV[-{tagLength}][-{ivLength}]` | `AES` |
 | `AES[-(128\|192\|256)]-OCB[-{tagLength}]` | `AES` |
