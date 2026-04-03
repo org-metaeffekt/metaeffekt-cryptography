@@ -19,10 +19,11 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `InstanceValidationKdfTest` | 23 | All 23 KDF families |
 | `InstanceValidationRngTest` | 27 | All 21 RNG families |
 | `TemplateValidationTest` | 28 | Templates, constraints, normalisation, choice groups, fixed identifiers |
-| `CycloneDxRegistryCoverageTest` | 211 | Full CycloneDX registry coverage + all 43 cdx families |
-| `MainTest` | 11 | CLI integration |
-| `AlgorithmRegistryTest` | 5 | Registry loading, duplicate detection |
-| **Total** | **526** | |
+| `CycloneDxRegistryCoverageTest` | 211 | Full CycloneDX cryptography-defs.json coverage + all 43 cdx families |
+| `SpdxCoverageTest` | 159 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
+| `MainTest` | 18 | CLI integration, OID output, OID reverse lookup |
+| `AlgorithmRegistryTest` | 11 | Registry loading, duplicate detection, OID index |
+| **Total** | **698** | |
 
 ---
 
@@ -56,6 +57,38 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | Deprecated | 40 | 3DES, SHA variant 1, Blowfish, IDEA, RSAES-PKCS1, cdx:ECDHE |
 | Disallowed | 3 | RC2, RC4, Dual_EC_DRBG |
 | Broken | 8 | DES, MD5, MD4, FEAL, CMEA, A5/2 |
+
+---
+
+## SPDX Coverage (159 tests)
+
+Tests validating all 127 algorithm identifiers from the SPDX cryptographic algorithm
+list (https://github.com/spdx/cryptographic-algorithm-list). Split into three test sets.
+
+| Test set | Count | What is validated |
+|----------|:-----:|-------------------|
+| `directMatches` | 89 | SPDX identifiers that directly match a registered family name |
+| `namingVariants` | 35 | SPDX identifiers with different naming conventions (rijndael, shs, desede, keccak, etc.) — verified parsable without syntax errors |
+| `compoundMatches` | 35 | SPDX identifiers matched via compound patterns (SHA-256, SNOW-3G, ChaCha20-Poly1305, ANSI-KDF-X9.42, etc.) |
+
+### SPDX Naming Variants (not directly matched)
+
+These SPDX identifiers use names that differ from the canonical registry families.
+They parse without errors but resolve to a different or no family:
+
+| SPDX identifier | Canonical equivalent | Notes |
+|-----------------|---------------------|-------|
+| `rijndael` | AES | Original name before NIST standardisation |
+| `shs` / `shax` | SHA | Secure Hash Standard (generic) |
+| `desede` / `tdes` | 3DES | Triple DES alternative names |
+| `sms4` | SM4 | Chinese standard identifier |
+| `keccak` | SHA3 | SHA-3 basis sponge construction |
+| `dhe` | ECDH / FFDH | Diffie-Hellman Ephemeral (generic) |
+| `diffiehellman` | FFDH | Generic DH |
+| `kazumi` | KASUMI | Variant spelling |
+| `md160` | RIPEMD | RIPEMD-160 short form |
+| `tnepres` | Serpent | Reversed name (alternative implementation) |
+| `salsa10` | Salsa20 | Reduced-round variant |
 
 ---
 

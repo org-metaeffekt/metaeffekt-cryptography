@@ -5,7 +5,7 @@ Cross-reference of naming conventions between the CycloneDX cryptography registr
 markdown taxonomy (`cryptographic-algorithms.md`), and the YAML validation registry (not yet published).
 
 Each entry describes a concrete inconsistency, its impact on tooling interoperability,
-and the current resolution status. Three mechanisms are used:
+and the current resolution status. Resolution mechanisms:
 
 1. **Aliases** on canonical families — simple name remapping; emits `ALIAS_USED` warning
 2. **Deprecated CycloneDX families** in `cr-cdx.yaml` — structural naming alternatives
@@ -13,6 +13,11 @@ and the current resolution status. Three mechanisms are used:
    emits `DEPRECATED_VALUE` warning with the rationale
 3. **New CycloneDX families** in `cr-cdx.yaml` — algorithms only present in the
    CycloneDX registry with no canonical equivalent; no deprecation warning
+4. **SPDX aliases** on canonical families — SPDX alternative names (rijndael, desede,
+   sms4, chacha, kazumi, diffiehellman, dhe, tdes); emit `ALIAS_USED` warning
+5. **Deprecated SPDX families** in `cr-spdx.yaml` — SPDX-specific identifiers that
+   differ from canonical names; marked `status: deprecated` with rationale
+6. **New SPDX families** in `cr-spdx.yaml` — SPDX entries with no canonical equivalent
 
 ---
 
@@ -417,39 +422,121 @@ convention issue, not a missing algorithm coverage issue.
 
 ---
 
+## 16. SPDX Cryptographic Algorithm List Deviations
+
+The SPDX cryptographic-algorithm-list (https://github.com/spdx/cryptographic-algorithm-list)
+contains 127 algorithm identifiers. These use naming conventions that differ from both this
+repository's canonical families and from CycloneDX. All 127 are now resolved through three
+mechanisms: aliases on canonical families, deprecated SPDX families in `cr-spdx.yaml`, or
+direct matches against existing canonical families.
+
+### 16.1 Resolved via Aliases on Canonical Families
+
+These SPDX identifiers are registered as aliases and produce an `ALIAS_USED` warning:
+
+| SPDX identifier | Alias resolves to | Notes |
+|-----------------|-------------------|-------|
+| `rijndael` | `AES` | Original Rijndael name before NIST standardisation |
+| `desede` | `3DES` | "DES-EDE" — standard Triple DES alternative |
+| `tdes` | `3DES` | Common abbreviation |
+| `sms4` | `SM4` | Chinese national standard identifier |
+| `chacha` | `ChaCha20` | Generic ChaCha (always means ChaCha20 in practice) |
+| `diffiehellman` | `FFDH` | Full Diffie-Hellman name |
+| `dhe` | `FFDH` | Diffie-Hellman Ephemeral abbreviation |
+| `kazumi` | `KASUMI` | Misspelling in the SPDX list (should be KASUMI) |
+
+### 16.2 Resolved via Deprecated SPDX Families (cr-spdx.yaml)
+
+These SPDX identifiers are registered as deprecated families with a `spdx:` prefix and a
+`note` explaining the preferred canonical form:
+
+**Generic unqualified names** (too broad to alias to a single canonical family):
+
+| SPDX identifier | spdx family | Canonical equivalent(s) | Rationale |
+|-----------------|-------------|------------------------|-----------|
+| `shs` | `spdx:shs` | SHA | Secure Hash Standard — covers entire SHA family |
+| `shax` | `spdx:shax` | SHA | Generic SHA — ambiguous which variant |
+| `rsa` | `spdx:rsa` | RSASSA-PSS, RSAES-OAEP, etc. | Generic RSA — ambiguous sign vs encrypt |
+| `cast` | `spdx:cast` | CAST5, CAST6 | Generic CAST — ambiguous which variant |
+| `gost` | `spdx:gost` | GOST-28147, GOSTR3410, GOSTR3411 | Generic GOST — covers cipher, sig, and hash |
+| `snow` | `spdx:snow` | SNOW-3G, SNOW-V | Generic SNOW — ambiguous which variant |
+| `grain` | `spdx:grain` | Grain-128 | Generic Grain — only Grain-128 is standardised |
+| `blake2` | `spdx:blake2` | BLAKE2b, BLAKE2s | Generic BLAKE2 — ambiguous which variant |
+| `blakex` | `spdx:blakex` | BLAKE2b, BLAKE2s, BLAKE3 | Generic BLAKE — covers entire family |
+| `keccak` | `spdx:keccak` | SHA3 | Keccak sponge — different padding than FIPS 202 SHA-3 |
+
+**Variant names** (SPDX uses a different name for an existing canonical algorithm):
+
+| SPDX identifier | spdx family | Canonical equivalent | Rationale |
+|-----------------|-------------|---------------------|-----------|
+| `dhies` | `spdx:dhies` | ECIES | DH Integrated Encryption Scheme |
+| `salsa10` | `spdx:salsa10` | Salsa20 | Reduced-round (10-round) variant |
+| `md160` | `spdx:md160` | RIPEMD | Short form for RIPEMD-160 |
+| `tnepres` | `spdx:tnepres` | Serpent | Reversed byte-order implementation |
+| `xtsea` | `spdx:xtsea` | XTEA | XTEA variant |
+| `ssha` | `spdx:ssha` | SHA | Salted SHA — salting is usage, not algorithm |
+| `umd5` | `spdx:umd5` | MD5 | Unicode MD5 |
+| `usha` | `spdx:usha` | SHA | Unicode SHA |
+| `gea0-x` | `spdx:gea0-x` | GEA | Generic GEA family |
+
+**Encoding frameworks** (not cryptographic algorithms):
+
+| SPDX identifier | spdx family | Notes |
+|-----------------|-------------|-------|
+| `pkcs12` | `spdx:pkcs12` | PKCS#12 key/certificate bundle format |
+| `pkcs7` | `spdx:pkcs7` | PKCS#7 / CMS signed data format |
+| `ASN1` | `spdx:ASN1` | ASN.1 encoding framework |
+| `X509` | `spdx:X509` | X.509 PKI certificate framework |
+| `cms` | `spdx:cms` | Cryptographic Message Syntax |
+
+### 16.3 SPDX Entries with No Canonical Equivalent
+
+These SPDX identifiers have no corresponding algorithm in the canonical registry or
+in CycloneDX. They are registered in `cr-spdx.yaml` without deprecation:
+
+| SPDX identifier | spdx family | Notes |
+|-----------------|-------------|-------|
+| `dcc` | `spdx:dcc` | Data Confidentiality Code |
+| `ubi` | `spdx:ubi` | Universal Block cipher Interface (Skein/Threefish component) |
+| `uffizi` | `spdx:uffizi` | Uffizi cipher |
+| `uxn` | `spdx:uxn` | UXN cipher |
+
+---
+
 ## Summary
 
 | Category | Count | Status |
 |----------|-------|--------|
+| **CycloneDX** | | |
 | Naming convention conflicts (RSA, AES-Wrap, TLS13, case) | 5 | Resolved via aliases |
 | CycloneDX naming alternatives with canonical equivalent | 29 | Resolved via deprecated cdx families (cr-cdx.yaml) |
 | CycloneDX-only families (no canonical equivalent) | 9 | Registered in cr-cdx.yaml (not deprecated) |
+| Remaining CycloneDX template notation gaps | 0 | All instance patterns covered |
+| **SPDX** | | |
+| SPDX aliases on canonical families | 8 | rijndael, desede, tdes, sms4, chacha, diffiehellman, dhe, kazumi |
+| SPDX deprecated alternatives (generic/variant names) | 24 | Resolved via deprecated spdx families (cr-spdx.yaml) |
+| SPDX-only families (no canonical equivalent) | 4 | dcc, ubi, uffizi, uxn |
+| Remaining SPDX unmatched identifiers | 0 | All 127 identifiers covered |
+| **Structural** | | |
 | Family consolidation (removed hardcoded parameters) | 4 | SHA, CRC, Adler, HC |
 | Segment additions to existing families | 6 | BLAKE2 HMAC, SEED AEAD, AES compound modes, BLS curves |
 | Standalone families for choice-in-name patterns | 7 | SHAKE/KMAC (canonical), ECDHE/FFDHE/Ed variants (deprecated cdx), yescrypt, IKE1 |
 | Duplicate names for same algorithm | 2 | Resolved via aliases |
 | Missing from CycloneDX registry | 6+ families | Upstream gap |
-| Remaining template notation gaps | 0 | All instance patterns covered; template notation is CycloneDX convention |
 
-All CycloneDX algorithm patterns are now covered for **instance validation**. Six
-resolution mechanisms are in place:
+All CycloneDX and SPDX algorithm identifiers are now covered for **instance validation**.
+The registry uses 303 families across 9 YAML files. Eight resolution mechanisms are in place:
 
-1. **Aliases** (on canonical families) — for simple name mappings (RSA-PSS, X25519,
-   AES-Wrap, RABBIT); emit `ALIAS_USED` warning
-2. **Deprecated cdx families** (in `cr-cdx.yaml`) — for CycloneDX patterns that differ
-   structurally from canonical families (ECDHE, FFDHE, Ed25519ph/ctx, underscore
-   separators, GOST compact forms); emit `DEPRECATED_VALUE` warning with a `note`
-   explaining the preferred canonical form
-3. **New cdx families** (in `cr-cdx.yaml`) — for algorithms only present in the CycloneDX
-   registry with no canonical equivalent; no deprecation warning
-4. **Family consolidation** — replaced per-variant families (SHA-1/224/256/..., CRC-16/32,
-   HC-128/256) with single families using parameter segments
-5. **Segment additions** — controlled vocabulary extensions on existing canonical families
-   to cover additional modes, output lengths, or curve parameters
-6. **Standalone families** — concrete expanded names (SHAKE128, KMAC256, yescrypt)
-   registered as canonical families when the CycloneDX template notation
-   (choice-in-name without dash) cannot be structurally parsed
-
-CycloneDX *template* patterns using choice-in-name notation (e.g., `SHAKE(128\|256)`)
-remain unparsable as templates, but this is a notation convention issue — all concrete
-instances derived from those templates are fully covered.
+1. **CycloneDX aliases** — RSA-PSS, X25519, AES-Wrap, RABBIT, TLS13-PRF
+2. **SPDX aliases** — rijndael, desede, tdes, sms4, chacha, diffiehellman, dhe, kazumi
+3. **Deprecated CycloneDX families** (`cr-cdx.yaml`) — 29 families for CycloneDX-specific
+   naming (underscore separators, ECDHE/FFDHE, Ed25519ph/ctx, GOST compact forms)
+4. **Deprecated SPDX families** (`cr-spdx.yaml`) — 24 families for SPDX-specific naming
+   (generic names, variant names, encoding frameworks)
+5. **New CycloneDX families** (`cr-cdx.yaml`) — 9 families only in CycloneDX (TupleHash,
+   ParallelHash, KMACXOF, PBMAC1, X3DH, J-PAKE, WOTSP)
+6. **New SPDX families** (`cr-spdx.yaml`) — 4 families only in SPDX (dcc, ubi, uffizi, uxn)
+7. **Family consolidation** — SHA, CRC, Adler, HC consolidated from per-variant to
+   single families with parameter segments
+8. **Standalone families** — concrete expanded names (SHAKE128, KMAC256, yescrypt)
+   for choice-in-name patterns that cannot be structurally parsed
