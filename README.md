@@ -87,6 +87,8 @@ that adjustments can be applied accordingly.
 
 ## Content
 
+- **[cryptographic-governance.md](cryptographic-governance.md)** — Framing document for the governance challenge: five questions every organization should be able to answer about its cryptographic posture, why the quantum transition makes inventory urgent now, what a Cryptography Bill of Materials enables, and the scale of the taxonomy required to make it meaningful. Starting point for non-technical stakeholders and outreach.
+
 - **[cryptographic-algorithms.md](cryptographic-algorithms.md)** — Algorithm table covering the full taxonomy: symmetric ciphers, block cipher modes, hash functions, MACs, asymmetric encryption, classical signatures, stateful hash-based signatures, post-quantum KEMs and signatures (NIST standardised + Round 2 candidates), KDFs, password hashing, DRBGs, OS entropy APIs, and non-cryptographic PRNGs. Each row includes id, name, crypto class, OID, CycloneDX pattern example, and references.
 
 - **[cryptographic-parameters.md](cryptographic-parameters.md)** — Catalogue of cryptographic algorithms grouped by family (symmetric, asymmetric, hash, MAC, KDF, KEM, signature). Each entry covers purpose, parameter sets, security levels, FIPS/NIST standardisation status, and CycloneDX algorithm pattern strings used in SBOM tooling. PQC entries (ML-KEM, ML-DSA, SLH-DSA, FN-DSA) include full parameter tables with public-key, secret-key, ciphertext, and signature sizes in bytes.
