@@ -1,1 +1,7 @@
+# intellij
 /.idea/
+
+# mac
+**/.DS_Store
+**/._*
+
