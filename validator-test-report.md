@@ -1,8 +1,8 @@
 # Validator Test Report
 
-Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1).
-Generated from the test suite against the YAML validation registry
-(8 files, 275 registered algorithm families).
+Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
+Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
+registry (9 files, 303 registered algorithm families, 159 OIDs).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 
@@ -13,13 +13,13 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | Test class | Tests | Scope |
 |------------|------:|-------|
 | `InstanceValidationSymmetricTest` | 85 | All 76 symmetric families |
-| `InstanceValidationHashMacTest` | 45 | All 32 hash + 7 MAC families |
+| `InstanceValidationHashMacTest` | 55 | All 40 hash + 9 MAC families (incl. NIST SP 800-185) |
 | `InstanceValidationAsymmetricTest` | 41 | All 34 asymmetric families |
 | `InstanceValidationPqcTest` | 50 | All 39 PQC families |
 | `InstanceValidationKdfTest` | 23 | All 23 KDF families |
 | `InstanceValidationRngTest` | 27 | All 21 RNG families |
 | `TemplateValidationTest` | 28 | Templates, constraints, normalisation, choice groups, fixed identifiers |
-| `CycloneDxRegistryCoverageTest` | 211 | Full CycloneDX cryptography-defs.json coverage + all 43 cdx families |
+| `CycloneDxRegistryCoverageTest` | 201 | Full CycloneDX cryptography-defs.json coverage + all 33 cdx families |
 | `SpdxCoverageTest` | 159 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
 | `MainTest` | 18 | CLI integration, OID output, OID reverse lookup |
 | `AlgorithmRegistryTest` | 11 | Registry loading, duplicate detection, OID index |
@@ -32,21 +32,22 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | Registry file | Families | With segments | Fixed identifiers | Wildcard |
 |---------------|:--------:|:-------------:|:-----------------:|:--------:|
 | `cr-symmetric-ciphers.yaml` | 76 | 28 | 9 | 39 |
-| `cr-hash-functions.yaml` | 32 | 20 | 11 | 1 |
-| `cr-macs.yaml` | 7 | 7 | 0 | 0 |
+| `cr-hash-functions.yaml` | 40 | 20 | 19 | 1 |
+| `cr-macs.yaml` | 9 | 7 | 2 | 0 |
 | `cr-asymmetric.yaml` | 34 | 27 | 2 | 5 |
 | `cr-pqc.yaml` | 39 | 20 | 5 | 14 |
 | `cr-kdfs.yaml` | 23 | 20 | 0 | 3 |
 | `cr-rngs.yaml` | 21 | 8 | 11 | 2 |
-| `cr-cdx.yaml` | 43 | 3 | 40 | 0 |
-| **Total** | **275** | **141** | **78** | **56** |
+| `cr-cdx.yaml` | 33 | 3 | 30 | 0 |
+| `cr-spdx.yaml` | 28 | 0 | 28 | 0 |
+| **Total** | **303** | **141** | **106** | **56** |
 
 ### Family validation modes
 
 | Mode | Count | Behaviour |
 |------|:-----:|-----------|
 | Segments defined | 141 | Parameters validated against controlled vocabulary + constraints |
-| Fixed identifiers (`segments: []`) | 78 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
+| Fixed identifiers (`segments: []`) | 106 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
 | Wildcard (no `segments` field) | 56 | Any trailing parameters accepted |
 
 ### Status Distribution
@@ -54,7 +55,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | Status | Count | Examples |
 |--------|:-----:|---------|
 | Approved (default) | 221 | AES, ML-KEM, SHA, ECDH |
-| Deprecated | 40 | 3DES, SHA variant 1, Blowfish, IDEA, RSAES-PKCS1, cdx:ECDHE |
+| Deprecated | 64 | 3DES, SHA variant 1, Blowfish, cdx:ECDHE, spdx:shs, spdx:rsa |
 | Disallowed | 3 | RC2, RC4, Dual_EC_DRBG |
 | Broken | 8 | DES, MD5, MD4, FEAL, CMEA, A5/2 |
 
@@ -63,32 +64,23 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 ## SPDX Coverage (159 tests)
 
 Tests validating all 127 algorithm identifiers from the SPDX cryptographic algorithm
-list (https://github.com/spdx/cryptographic-algorithm-list). Split into three test sets.
+list (https://github.com/spdx/cryptographic-algorithm-list). All identifiers are fully
+matched — zero unmatched. Split into two test sets.
 
 | Test set | Count | What is validated |
 |----------|:-----:|-------------------|
-| `directMatches` | 89 | SPDX identifiers that directly match a registered family name |
-| `namingVariants` | 35 | SPDX identifiers with different naming conventions (rijndael, shs, desede, keccak, etc.) — verified parsable without syntax errors |
-| `compoundMatches` | 35 | SPDX identifiers matched via compound patterns (SHA-256, SNOW-3G, ChaCha20-Poly1305, ANSI-KDF-X9.42, etc.) |
+| `directMatches` | 124 | SPDX identifiers matched to a family: canonical (89), via alias (8), via `spdx:` deprecated family (27) |
+| `compoundMatches` | 35 | SPDX identifiers matched via compound patterns (SHA-256, SNOW-3G, ChaCha20-Poly1305, etc.) |
 
-### SPDX Naming Variants (not directly matched)
+### SPDX Resolution Breakdown
 
-These SPDX identifiers use names that differ from the canonical registry families.
-They parse without errors but resolve to a different or no family:
-
-| SPDX identifier | Canonical equivalent | Notes |
-|-----------------|---------------------|-------|
-| `rijndael` | AES | Original name before NIST standardisation |
-| `shs` / `shax` | SHA | Secure Hash Standard (generic) |
-| `desede` / `tdes` | 3DES | Triple DES alternative names |
-| `sms4` | SM4 | Chinese standard identifier |
-| `keccak` | SHA3 | SHA-3 basis sponge construction |
-| `dhe` | ECDH / FFDH | Diffie-Hellman Ephemeral (generic) |
-| `diffiehellman` | FFDH | Generic DH |
-| `kazumi` | KASUMI | Variant spelling |
-| `md160` | RIPEMD | RIPEMD-160 short form |
-| `tnepres` | Serpent | Reversed name (alternative implementation) |
-| `salsa10` | Salsa20 | Reduced-round variant |
+| Mechanism | Count | Examples |
+|-----------|:-----:|---------|
+| Direct canonical match | 89 | AES, MD5, ECDH, PBKDF2, Fortuna |
+| Alias on canonical family | 8 | rijndael → AES, desede/tdes → 3DES, sms4 → SM4, chacha → ChaCha20, diffiehellman/dhe → FFDH, kazumi → KASUMI |
+| Deprecated `spdx:` family | 24 | spdx:shs, spdx:rsa, spdx:keccak, spdx:cast, spdx:gost, spdx:md160, spdx:tnepres, spdx:pkcs12 |
+| New `spdx:` family (no canonical) | 4 | spdx:dcc, spdx:ubi, spdx:uffizi, spdx:uxn |
+| Compound pattern match | 35 | SHA-256, SNOW-3G, GOSTR3410, ChaCha20-Poly1305 |
 
 ---
 
