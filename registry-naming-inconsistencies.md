@@ -2,8 +2,7 @@
 
 Cross-reference of naming conventions between the CycloneDX cryptography registry
 (`cryptography-defs.json`), the SPDX cryptographic algorithm list, this repository's
-markdown taxonomy (`cryptographic-algorithms.md`), and the YAML validation registry
-(split across `cr-*.yaml` files in `src/main/resources/registry/`).
+markdown taxonomy (`cryptographic-algorithms.md`), and the YAML validation registry (not yet published).
 
 Each entry describes a concrete inconsistency, its impact on tooling interoperability,
 and the current resolution status. Three mechanisms are used:
@@ -76,13 +75,13 @@ registering underscore variants as aliases.
 | IETF RFC 8032 | Ed25519, Ed448 (no generic "EdDSA" identifier) |
 
 **Issue:** CycloneDX uses `Ed` as a two-character prefix with a required choice group
-for the curve (`Ed(25519|448)`), making the curve part of the name token. This repo
+for the curve (`Ed(25519\|448)`), making the curve part of the name token. This repo
 registers three separate families: `EdDSA` (with curve as parameter), `Ed25519`, and
 `Ed448` (as standalone fixed identifiers). The CycloneDX pattern also supports
 `ph` and `ctx` variants (pre-hashing and context), which are not in this repo.
 
 **Impact:** `Ed25519` matches the `Ed25519` family in this repo but not the CycloneDX
-`Ed(25519|448)` pattern without expansion. `EdDSA-Ed25519` is a valid instance in this
+`Ed(25519\|448)` pattern without expansion. `EdDSA-Ed25519` is a valid instance in this
 repo but not a CycloneDX pattern.
 
 **Resolution:** Not yet aliased. Would require registering `Ed25519` and `Ed448` as
@@ -100,18 +99,18 @@ variants to the EdDSA segment vocabulary.
 | NIST SP 800-185 | KMAC128, KMAC256, TupleHash128, TupleHash256, etc. |
 
 **Issue:** CycloneDX encodes the output length as a choice group appended directly to
-the name without a dash separator: `SHAKE(128|256)`. In the ANTLR4 parse tree, `SHAKE`
-is a NAME token followed by a choiceGroup `(128|256)`. This repo registers `SHAKE128`
+the name without a dash separator: `SHAKE(128\|256)`. In the ANTLR4 parse tree, `SHAKE`
+is a NAME token followed by a choiceGroup `(128\|256)`. This repo registers `SHAKE128`
 and `SHAKE256` as separate families with no parameters. The NIST standard uses the
 concatenated form (KMAC128, not KMAC-128).
 
-**Impact:** `SHAKE(128|256)` does not match any family prefix in the registry because
+**Impact:** `SHAKE(128\|256)` does not match any family prefix in the registry because
 `SHAKE` alone is not registered and the choice group is not part of the prefix. The
 validator identifies no family for these patterns.
 
 **Resolution:** Not yet aliased. Requires either registering `SHAKE`, `KMAC`, etc. as
 families with a choice segment, or implementing a pre-parse expansion step that converts
-`SHAKE(128|256)` to two patterns: `SHAKE128`, `SHAKE256`.
+`SHAKE(128\|256)` to two patterns: `SHAKE128`, `SHAKE256`.
 
 ---
 
@@ -120,21 +119,19 @@ families with a choice segment, or implementing a pre-parse expansion step that 
 | Source | Pattern |
 |--------|---------|
 | CycloneDX | `SHA-(224\|256\|384\|512\|512/224\|512/256)` |
-| This repo | `SHA-224`, `SHA-256`, `SHA-384`, `SHA-512`, `SHA-512-224`, `SHA-512-256` (separate families) |
+| This repo | `SHA` with compound `variant` segment (1, 224, 256, 384, 512, 512-224, 512-256) |
 | NIST FIPS 180-4 | SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224, SHA-512/256 |
 
-**Issue:** CycloneDX uses a single pattern `SHA-(224|256|...)` with a required choice
-group after the `SHA-` prefix. This repo registers each SHA-2 variant as a separate
-family. The validator finds `SHA` as a prefix token but no family matches because the
-registered prefixes are `["SHA", "224"]`, `["SHA", "256"]`, etc. The choice group
-prevents prefix matching.
+**Issue:** CycloneDX uses a single pattern `SHA-(224\|256\|...)` with a required choice
+group after the `SHA-` prefix. The choice group notation (`(224\|256\|...)` without dash)
+prevents the validator from matching the CycloneDX template pattern as a template.
 
-**Impact:** The CycloneDX SHA pattern cannot be validated against the per-variant
-registry entries without expanding the choice group first.
-
-**Resolution:** Not yet aliased. Recommend adding a generic `SHA` family covering the
-SHA-2 variants with a choice segment, or implementing choice-group expansion so that
-`SHA-(224|256)` is tested as `SHA-224` and `SHA-256` individually.
+**Resolution:** Resolved for instance validation. The canonical `SHA` family
+(`cr-hash-functions.yaml`) uses a single family with `["SHA"]` as prefix and a compound
+`variant` segment covering all output lengths including `1` (deprecated), `512-224`, and
+`512-256`. Concrete instances like `SHA-256` and `SHA-512-224` are fully matched. The
+CycloneDX template form `SHA-(224\|256\|...)` remains unparsable as a template due to
+choice-in-name notation.
 
 ---
 
@@ -328,7 +325,6 @@ with a `note` field explaining the preferred canonical name. The validator emits
 
 | CycloneDX pattern | cdx family | Canonical family | Rationale |
 |--------------------|------------|------------------|-----------|
-| `SHA-(224\|256\|384\|512\|...)` | `cdx:SHA` | `SHA-224`, `SHA-256`, etc. | CycloneDX generic; prefer per-variant families |
 | `Ed(25519\|448)` | `cdx:Ed` | `EdDSA`, `Ed25519`, `Ed448` | CycloneDX short form |
 | `CMAC[-{cipher}][-{length}]` | `cdx:CMAC` | `AES-CMAC` | Prefer cipher-qualified form |
 | `ECMQV[-{curve}]` | `cdx:ECMQV` | `MQV` | CycloneDX EC-specific split |
@@ -365,23 +361,59 @@ with a `note` field explaining the preferred canonical name. The validator emits
 | `J-PAKE[-{group}][-{kdf}][-{mac}]` | `cdx:J-PAKE` | RFC 8236 |
 | `WOTSP-(SHA2\|SHAKE)` | `cdx:WOTSP` | Winternitz OTS (XMSS component) |
 
-### 15.3 Remaining Gaps
+### 15.3 Resolved via Family Consolidation and Segment Additions
 
-These CycloneDX patterns are not yet covered by any resolution mechanism.
+These CycloneDX patterns were covered by consolidating per-variant families into
+single families with parameter segments, or by adding controlled vocabulary segments
+to existing canonical families.
 
-| CycloneDX pattern | Issue | Notes |
-|--------------------|-------|-------|
-| `FFDH(E)[-{group}]` | Optional `E` suffix inside the family name | Requires optional name suffix support |
-| `ECDH[E][-{curve}]` | Optional `E` suffix | Same |
-| `Ed(25519\|448)[(ph\|ctx)]` | `ph`/`ctx` variants not modelled | `Ed` prefix covered by `cdx:Ed`; `ph`/`ctx` need segment extension |
-| `SHAKE(128\|256)`, `KMAC(128\|256)` | Choice appended to name without dash | Pre-parse concatenation needed; SHAKE128/256, KMAC128/256 exist as canonical families |
-| `[{hashAlgorithm}-]yescrypt[...]` | Starts with an optional prefix | Requires leading-optional support |
-| `BLS(13-381\|13-377\|BN254)` | Choice group with dashes inside alternatives | BLS family exists but specific curve choices need expansion |
-| `BLAKE2b-*-HMAC`, `BLAKE2s-*-HMAC` | HMAC suffix after output-length parameter | BLAKE2 families exist but HMAC mode needs segment extension |
-| `SEED-128-(CCM\|GCM)` | AEAD modes for SEED | SEED family exists but needs AEAD mode segments |
-| `AES-CTR-HMAC-SHA1[-96]` | Composite AEAD construction | AES family exists but compound mode not registered |
-| `AES-XCBC_MAC[_96]` | Underscore in mode name | Needs `AES-XCBC_MAC` family or underscore normalisation |
-| `IKE1_(PRF\|Extended)_DERIVE` | Choice group between underscores | Template-level underscore patterns |
+**Family consolidation** (removed hardcoded parameters from family names):
+
+| Before | After | File | Change |
+|--------|-------|------|--------|
+| `SHA-1`, `SHA-224`, `SHA-256`, `SHA-384`, `SHA-512`, `SHA-512-224`, `SHA-512-256` (7 families) | `SHA` | cr-hash-functions.yaml | Single family with compound `variant` segment; SHA-1 marked deprecated |
+| `CRC-32`, `CRC-16` (2 families) | `CRC` | cr-hash-functions.yaml | Single family with numeric `width` segment |
+| `Adler-32` | `Adler` | cr-hash-functions.yaml | Single family with numeric `width` segment |
+| `HC-128`, `HC-256` (2 families) | `HC` | cr-symmetric-ciphers.yaml | Single family with numeric `variant` segment |
+
+**Segment additions** (no family rename, just vocabulary extensions):
+
+| CycloneDX pattern | Family | Change |
+|--------------------|--------|--------|
+| `BLAKE2b-(160\|256\|384\|512)-HMAC` | `BLAKE2b` | Added `outputLength` segment (160/256/384/512) and `mode` segment with `HMAC` value |
+| `BLAKE2s-(160\|256)-HMAC` | `BLAKE2s` | Added `outputLength` segment (160/256) and `mode` segment with `HMAC` value |
+| `SEED-128-(CCM\|GCM)` | `SEED` | Added `keyLength` segment (128) and `mode` segment (ECB, CBC, CTR, OFB, CFB, GCM, CCM) |
+| `AES-CTR-HMAC-SHA1[-96]` | `AES` | Added `CTR-HMAC-SHA1` as compound mode value (deprecated) |
+| `AES-XCBC_MAC[_96]` | `AES` | Added `XCBC_MAC` and `XCBC_MAC_96` as mode values |
+| `BLS(13-381\|13-377\|BN254)` | `BLS` | Added `curve` compound segment with `BLS12-381`, `BLS12-377`, `BN254` values |
+
+### 15.4 Resolved via Standalone Families
+
+These CycloneDX patterns use notation (choice groups appended without dash, optional
+suffixes) that the grammar cannot decompose structurally. They are resolved by
+registering each expanded concrete name as a **separate family** with its own prefix
+and segment definitions.
+
+Families that represent protocol-level variants of a canonical algorithm (ECDHE, FFDHE,
+Ed25519ph/ctx) are in `cr-cdx.yaml` marked `status: deprecated` with a note pointing
+to the canonical family. Families that already existed as canonical entries require no
+additional registration.
+
+| CycloneDX pattern | Families | File | Status |
+|--------------------|----------|------|--------|
+| `ECDH[E][-{curve}]` | `cdx:ECDHE` | cr-cdx.yaml | Deprecated; prefer `ECDH` — ephemeral is a protocol property |
+| `FFDH(E)[-{group}]` | `cdx:FFDHE` | cr-cdx.yaml | Deprecated; prefer `FFDH` — ephemeral is a protocol property |
+| `Ed(25519\|448)[(ph\|ctx)]` | `cdx:Ed25519ph`, `cdx:Ed25519ctx`, `cdx:Ed448ph`, `cdx:Ed448ctx` | cr-cdx.yaml | Deprecated; prefer `Ed25519`/`Ed448` with context parameter |
+| `SHAKE(128\|256)` | `SHAKE128`, `SHAKE256` | cr-hash-functions.yaml | Canonical; already existed |
+| `KMAC(128\|256)` | `KMAC128`, `KMAC256` | cr-macs.yaml | Canonical; already existed |
+| `[{hashAlgorithm}-]yescrypt[...]` | `yescrypt` | cr-kdfs.yaml | Canonical; already existed |
+| `IKE1_(PRF\|Extended)_DERIVE` | `cdx:IKE1_PRF_DERIVE`, `cdx:IKE1_Extended_DERIVE` | cr-cdx.yaml | Deprecated; prefer `IKEv2-PRF` |
+
+**Note:** The CycloneDX *template* patterns (e.g., `SHAKE(128\|256)`) still cannot be
+validated as templates because the choice group is appended without a dash separator.
+However, all *concrete instances* (e.g., `SHAKE128`, `FFDHE-ffdhe3072`, `Ed25519ph`)
+are fully matched by the validator. The template notation gap is a CycloneDX grammar
+convention issue, not a missing algorithm coverage issue.
 
 ---
 
@@ -390,19 +422,34 @@ These CycloneDX patterns are not yet covered by any resolution mechanism.
 | Category | Count | Status |
 |----------|-------|--------|
 | Naming convention conflicts (RSA, AES-Wrap, TLS13, case) | 5 | Resolved via aliases |
-| CycloneDX naming alternatives with canonical equivalent | 24 | Resolved via deprecated cdx families (cr-cdx.yaml) |
+| CycloneDX naming alternatives with canonical equivalent | 29 | Resolved via deprecated cdx families (cr-cdx.yaml) |
 | CycloneDX-only families (no canonical equivalent) | 9 | Registered in cr-cdx.yaml (not deprecated) |
+| Family consolidation (removed hardcoded parameters) | 4 | SHA, CRC, Adler, HC |
+| Segment additions to existing families | 6 | BLAKE2 HMAC, SEED AEAD, AES compound modes, BLS curves |
+| Standalone families for choice-in-name patterns | 7 | SHAKE/KMAC (canonical), ECDHE/FFDHE/Ed variants (deprecated cdx), yescrypt, IKE1 |
 | Duplicate names for same algorithm | 2 | Resolved via aliases |
 | Missing from CycloneDX registry | 6+ families | Upstream gap |
-| Remaining structural gaps | 11 | Require grammar/validator extensions |
+| Remaining template notation gaps | 0 | All instance patterns covered; template notation is CycloneDX convention |
 
-Three resolution mechanisms are now in place:
-1. **Aliases** (on canonical families) — for simple name mappings; emit `ALIAS_USED` warning
+All CycloneDX algorithm patterns are now covered for **instance validation**. Six
+resolution mechanisms are in place:
+
+1. **Aliases** (on canonical families) — for simple name mappings (RSA-PSS, X25519,
+   AES-Wrap, RABBIT); emit `ALIAS_USED` warning
 2. **Deprecated cdx families** (in `cr-cdx.yaml`) — for CycloneDX patterns that differ
-   structurally from canonical families; emit `DEPRECATED_VALUE` warning with a `note`
+   structurally from canonical families (ECDHE, FFDHE, Ed25519ph/ctx, underscore
+   separators, GOST compact forms); emit `DEPRECATED_VALUE` warning with a `note`
    explaining the preferred canonical form
 3. **New cdx families** (in `cr-cdx.yaml`) — for algorithms only present in the CycloneDX
    registry with no canonical equivalent; no deprecation warning
+4. **Family consolidation** — replaced per-variant families (SHA-1/224/256/..., CRC-16/32,
+   HC-128/256) with single families using parameter segments
+5. **Segment additions** — controlled vocabulary extensions on existing canonical families
+   to cover additional modes, output lengths, or curve parameters
+6. **Standalone families** — concrete expanded names (SHAKE128, KMAC256, yescrypt)
+   registered as canonical families when the CycloneDX template notation
+   (choice-in-name without dash) cannot be structurally parsed
 
-The remaining 11 gaps require grammar-level extensions (choice-in-name expansion,
-underscore normalisation, leading-optional support) that go beyond registry additions.
+CycloneDX *template* patterns using choice-in-name notation (e.g., `SHAKE(128\|256)`)
+remain unparsable as templates, but this is a notation convention issue — all concrete
+instances derived from those templates are fully covered.
