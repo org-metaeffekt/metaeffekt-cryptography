@@ -353,7 +353,7 @@ Cryptographic Algorithms
 | `frodokem-976` | FrodoKEM-976 | PQC KEM (lattice, conservative) | — | `FrodoKEM-976-*` | FrodoKEM spec |
 | `frodokem-1344` | FrodoKEM-1344 | PQC KEM (lattice, conservative) | — | `FrodoKEM-1344-*` | FrodoKEM spec |
 
-### NIST Round 3 KEM finalists and alternates (not standardised)
+### NIST Round 3 KEM Finalists and Alternates (not standardised)
 
 The following were NIST Round 3 candidates. None were selected for standardisation by NIST (as of 2026), but they remain relevant as reference designs and are present in liboqs / Open Quantum Safe implementations.
 
@@ -472,7 +472,7 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 | `sqisign` | SQIsign (Special Quaternion Isogeny Signature) | PQC signature (isogeny) | — | `SQIsign-*` | NIST PQC Round 2; EUROCRYPT 2023 |
 | `sqisign2d` | SQIsign2D (2-dimensional variant) | PQC signature (isogeny) | — | `SQIsign2D-*` | NIST PQC Round 2; ASIACRYPT 2024 |
 
-### NIST Round 3 signature finalists and alternates (broken or not progressed)
+### NIST Round 3 Signature Finalists and Alternates (broken or not progressed)
 
 The following were NIST Round 3 signature candidates. They did not progress to standardisation, either due to security breaks or not being selected.
 
@@ -535,7 +535,7 @@ The following were NIST Round 3 signature candidates. They did not progress to s
 
 ---
 
-## 19. Non-Cryptographic PRNGs (Statistical Use Only)
+## 19. Non-Cryptographic PRNGs (statistical use only)
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -595,7 +595,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 ---
 
-## 22. Additional Symmetric Block Ciphers (Historical / Legacy)
+## 22. Additional Symmetric Block Ciphers (historical / legacy)
 
 > Included for SPDX coverage. These ciphers appear in legacy software, forensic analysis, and SBOM scanning contexts but are not approved for new use.
 
@@ -660,7 +660,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 ---
 
-## 24. Additional Hash Functions (Historical and Specialised)
+## 24. Additional Hash Functions (historical and specialised)
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -691,7 +691,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 ---
 
-## 26. Additional Asymmetric Schemes (Historical)
+## 26. Additional Asymmetric Schemes (historical)
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -791,7 +791,7 @@ SPDX entries not mapped (no standard cryptographic definition found): `dcc`, `ss
 
 Cross-referenced against the [CycloneDX Cryptography Registry](https://github.com/CycloneDX/specification/blob/master/schema/cryptography-defs.json) (Apache 2.0). CycloneDX defines a **pattern vocabulary** — parameterised template strings used in the `cryptographicProperties.algorithm` and `algorithmProperties.primitiveType` fields of CycloneDX SBOM documents. Unlike SPDX's flat enumeration, CycloneDX patterns cover entire algorithm families via `{placeholder}` variables and wildcard notation.
 
-### Coverage model
+### Coverage Model
 
 The `Pattern` column in this table directly uses CycloneDX pattern notation. Every entry with a non-empty Pattern value is CycloneDX-compatible. The `{placeholder}` parameters in Pattern values are documented in `cryptographic-parameters.md`.
 
@@ -803,7 +803,7 @@ The `Pattern` column in this table directly uses CycloneDX pattern notation. Eve
 
 The 7 entries with no CycloneDX pattern are structural or encoding constructs (padding, PKI containers) rather than cryptographic primitives; they are documented here for completeness.
 
-### Coverage by scope
+### Coverage by Scope
 
 | Scope | In CycloneDX? | Count | Notes |
 |:---|:---|:---|:---|
