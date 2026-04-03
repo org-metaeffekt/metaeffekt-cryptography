@@ -1503,6 +1503,93 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 
 ---
 
+## 10. BSI TR-02102-1 v2026-01 — Parameter Requirements
+
+> **Source:** BSI TR-02102-1 v2026-01 (January 23, 2026), "Cryptographic Mechanisms: Recommendations and Key Lengths".
+
+BSI defines minimum parameter requirements that differ from — and are in some cases stricter than — NIST recommendations. The BSI minimum security level is **120 bits** (§1.2).
+
+### Key length requirements (BSI TR-02102-1 Table 1.2)
+
+| Mechanism | BSI minimum key length | BSI section | Notes |
+|:---|:---|:---|:---|
+| Block cipher (AES, Camellia) | 128 bit | §3.3 | AES-128, AES-192, AES-256 all recommended |
+| MAC key | 128 bit | §5.2 | Matches symmetric key length |
+| RSA modulus (encryption) | **3000 bit** | §2.3.2 | Higher than NIST 2048; recommended until 2031 |
+| RSA modulus (signature) | **3000 bit** | §5.3.1 | Recommended until 2035 |
+| DH / DSA prime *p* | **3000 bit** | §2.3.3, §5.3.2 | DSA only until 2029 |
+| DH / DSA subgroup *q* | **250 bit** | §2.3.3, §5.3.2 | |
+| ECDH / ECDSA curve order | **250 bit** | §2.3.4, §5.3.3 | P-256 (256 bit) is minimum |
+| Hash output for general use | **256 bit** | §4 | SHA-256 minimum; SHA-224 not recommended |
+
+### Security level equivalence (BSI TR-02102-1 Table 1.1)
+
+| Security level | Symmetric | MAC | RSA / DH *p* | DSA / DH *q* | ECDSA / ECDH |
+|:---|:---|:---|:---|:---|:---|
+| 120 bit (BSI minimum) | 120 bit | 120 bit | 2800 bit | 2800 bit / 240 bit | 240 bit |
+| **128 bit (recommended)** | **128 bit** | **128 bit** | **3000 bit** | **3000 bit / 250 bit** | **250 bit** |
+
+### GCM / CCM tag and IV requirements (BSI TR-02102-1 §3.4)
+
+| Parameter | BSI requirement | Notes |
+|:---|:---|:---|
+| GCM tag length | 128 bit (full) | 96-bit tag acceptable in constrained scenarios |
+| GCM IV length | 96 bit | Strictly recommended; other lengths require careful analysis |
+| GCM max blocks per IV+key | 2³² − 2 blocks | Exceeding causes GCM security degradation |
+| CCM tag length | ≥ 64 bit | 128 bit recommended for general use |
+| GCM-SIV IV length | 96 bit | Per RFC 8452 |
+| CBC IV | Unpredictable (pseudorandom) | Predictable IV enables chosen-plaintext attacks |
+
+### PQC parameter requirements (BSI TR-02102-1 §2.4)
+
+| Algorithm | BSI-recommended parameters | BSI section | Notes |
+|:---|:---|:---|:---|
+| ML-KEM | ML-KEM-768, ML-KEM-1024 | §2.4.3 | ML-KEM-512 **not recommended** (below Category 3); **hybrid use required** |
+| HQC | HQC-128, HQC-192, HQC-256 | §2.4.4 | **Hybrid use required** |
+| FrodoKEM | FrodoKEM-976, FrodoKEM-1344 | §2.4.1 | Conservative LWE; **hybrid use required** |
+| Classic McEliece | mceliece6688128, mceliece8192128 | §2.4.2 | Code-based; **hybrid use required**; ISO standardisation pending |
+| ML-DSA | ML-DSA-44, ML-DSA-65, ML-DSA-87 | §5.3.4.2 | All parameter sets recommended |
+| SLH-DSA | All 12 parameter sets | §5.3.4.1 | Stateless; all recommended |
+| XMSS / XMSS^MT | Per SP 800-208 | §5.3.4.3 | Stateful; hardware state management required |
+| LMS / LMOTS | Per SP 800-208 | §5.3.4.3 | Stateful; hardware state management required |
+
+### Hybridisation requirements (BSI TR-02102-1 §2.2)
+
+| Mechanism | Description | BSI recommendation |
+|:---|:---|:---|
+| CatKDF | Concatenation KDF combining classical and PQC shared secrets | Use with KMAC or HKDF |
+| KeyCombine | SP 800-56C §4.6.1 Eq.9 + §4.6.2 Eq.15 | Use with KDF or KMAC from this TR |
+
+The hybrid key agreement must remain secure as long as **one** of the methods used is secure. Context-dependent information must be included in the key derivation to ensure this property.
+
+### Migration timeline (BSI TR-02102-1 §2.1)
+
+| Mechanism class | Sole use until | Hybrid from | Source |
+|:---|:---|:---|:---|
+| Classical key agreement | End of **2031** | 2032 | §2.1 |
+| Classical key agreement (high protection) | End of **2030** | 2031 | §2.1, EU joint recommendation |
+| Classical digital signatures | End of **2035** | 2036 | §2.1, EU roadmap |
+| DSA | End of **2029** | — | §5.3.2 |
+
+### Password hashing requirements (BSI TR-02102-1 §B.2)
+
+| Algorithm | BSI status | Notes |
+|:---|:---|:---|
+| Argon2id | ✅ Recommended | Preferred for new designs |
+| PBKDF2 | ✅ Recommended | With approved hash (SHA-256+) |
+| bcrypt | ✓ Acceptable | |
+| scrypt | ✓ Acceptable | |
+
+### Random number generator requirements (BSI AIS 20/31 v3)
+
+| BSI class | Description | Equivalent |
+|:---|:---|:---|
+| DRG.3 | Deterministic random generator with forward security | NIST SP 800-90A DRBG |
+| NTG.1 | Non-deterministic random generator (physical noise source) | SP 800-90B entropy source |
+| PTG.2 | Physical true random generator | **No longer recommended for general use** (since v2021-01) |
+
+---
+
 ## Sources
 
 ### Registries and community resources
