@@ -58,6 +58,7 @@ Please note that this content is based on public data sources. Primarily:
 * NIST SP 800-56A Rev 3 — *Recommendation for Pair-Wise Key-Establishment Schemes Using Discrete Logarithm Cryptography*, April 2018 — public domain
 * NIST SP 800-186 — *Recommendations for Discrete Logarithm-Based Cryptography: Elliptic Curve Domain Parameters*, February 2023 — public domain
 * NIST SP 800-208 — *Recommendation for Stateful Hash-Based Signature Schemes*, October 2020 — public domain
+* NIST SP 800-232 — *Ascon-Based Lightweight Cryptography Standards*, 2023 — public domain
 * BSI TR-02102-1 v2026-01, TR-02102-2 v2026-01, TR-02102-3 v2026-01, TR-02102-4 v2026-01 — public domain
 * NSA Cybersecurity Advisory PP-22-1338: *Announcing the Commercial National Security Algorithm Suite 2.0* (CNSA 2.0), September 2022, Version 1.0 — public domain
 * ENISA — *Post-Quantum Cryptography: Current state and quantum mitigation*, v2, May 2021. Authors: Ward Beullens et al. DOI: 10.2824/92307. © European Union Agency for Cybersecurity (ENISA), 2021 (reproduction authorised, source acknowledged).
@@ -65,6 +66,7 @@ Please note that this content is based on public data sources. Primarily:
 * RFC 9881 — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Digital Signature Algorithm (ML-DSA)*, October 2025 — IETF (Revised BSD License)
 * RFC 9935 — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)*, March 2026 — IETF (Revised BSD License)
 * draft-ietf-lamps-pq-composite-sigs-15 — *Composite ML-DSA for use in X.509 Public Key Infrastructure*, February 2026 — IETF Internet-Draft (work in progress); (Revised BSD License)
+* NIST IR 8545 — *Status Report on the Fourth Round of the NIST Post-Quantum Cryptography Standardization Process*, March 2025 — public domain
 * HQC submission team — *Hamming Quasi-Cyclic (HQC)*, specification document v2025-08-22, https://pqc-hqc.org (individual authors; code in the public domain)
 * and diverse public publications (such as special publications from NIST, FIPS and BSI guidance).
 

@@ -39,6 +39,9 @@ A modern password-hashing algorithm (RFC 9106) designed to resist brute-force at
 **ARIA**
 A 128-bit block cipher standardised in South Korea, used in Korean government and financial applications.
 
+**Ascon**
+A family of lightweight cryptographic algorithms standardised by NIST in **NIST SP 800-232**. Designed for constrained environments (IoT, embedded systems) where AES and SHA-3 carry too much overhead. Based on a sponge-permutation construction. Four variants: **Ascon-AEAD128** (authenticated encryption with associated data, 128-bit key/tag/nonce), **Ascon-Hash256** (fixed 256-bit hash), **Ascon-XOF128** (extendable output, 128-bit security), **Ascon-CXOF128** (customisable XOF). All four variants are in the CycloneDX registry. Ascon was the winner of the NIST Lightweight Cryptography competition (2023).
+
 **ASN.1 — Abstract Syntax Notation One**
 A standard interface description language (ITU-T X.680) for defining data structures. In cryptography, ASN.1 is used to describe certificate formats (X.509), key encodings (PKCS#8), and algorithm identifiers (OIDs). DER and BER are the binary encoding rules used to serialize ASN.1 structures in certificates and signed messages.
 
@@ -57,6 +60,9 @@ A set of CPU instructions (available on Intel/AMD processors since ~2013) that a
 
 **bcrypt**
 A password-hashing algorithm built on the Blowfish cipher. A "cost" parameter controls how many internal rounds are performed, so the algorithm can be tuned to remain slow as hardware improves. Cost 12 (= 4 096 rounds) is the 2024 minimum recommendation. Note: bcrypt truncates passwords at 72 bytes.
+
+**BIKE — Bit Flipping Key Encapsulation**
+A code-based post-quantum KEM that reached Round 4 of the NIST PQC standardisation process but was **not selected** (NIST IR 8545, March 2025). BIKE is based on the **QC-MDPC** (Quasi-Cyclic Moderate-Density Parity-Check) problem; IND-CPA security relies on the difficulty of decoding random QC-MDPC codes. During Round 4, a new structural weakness called the **gathering property** was discovered: a small but non-negligible fraction of BIKE private keys are "weak" in a way that causes the decapsulation algorithm to fail with probability ≥ 2⁻¹¹⁷ at NIST Level 1 — far above the required DFR bound of 2⁻¹²⁸. This defeats IND-CCA2 security for those keys. Fixing the issue would require increasing the ring size (r: 12 323 → 13 477, ~9% growth) and additional post-selection analysis. NIST judged the DFR analysis insufficiently mature for standardisation. Compared to HQC: BIKE key generation is 6–10× slower; decapsulation is 5–7× slower; public keys and ciphertexts are ~70%/~30% smaller than HQC. Available in liboqs.
 
 **Birthday Bound / Birthday Attack**
 An attack that exploits the fact that collisions in hash functions or counter values occur sooner than expected due to probability. Relevant for older 64-bit block ciphers (3DES, Blowfish): after approximately 2³² encrypted blocks (~32 GB of data), collisions become likely, leaking information. This is why AES (128-bit block) is required for large data volumes.
@@ -213,6 +219,9 @@ A 56-bit block cipher, once the US government standard. Its short key length mak
 **Deterministic Signing**
 A signing mode where the signature depends only on the private key and the message — no randomness is injected at signing time. While this avoids the risk of a weak random number generator, it can be vulnerable to fault-injection attacks (artificially induced hardware errors).
 
+**DFR — Decryption Failure Rate**
+The probability that a ciphertext produced by the encapsulation algorithm cannot be correctly decapsulated by the legitimate recipient, even without any attacker involvement. For a KEM claiming λ-bit IND-CCA2 security, the DFR must be ≤ 2⁻λ; otherwise an adversary can probe for weak keys and distinguish the KEM from a random function. HQC achieves a DFR of 2⁻¹²⁸ / 2⁻¹⁹² / 2⁻²⁵⁶ for HQC-128/192/256 via its RMRS concatenated code. BIKE's DFR analysis was found insufficient during NIST Round 4 (gathering property weak keys push DFR to ≥ 2⁻¹¹⁷ at Level 1), which was the decisive reason BIKE was not selected.
+
 **DH — Diffie-Hellman Key Exchange**
 The original protocol (1976) for two parties to establish a shared secret over an insecure channel without ever transmitting the secret itself. Think of it as mixing paint colours: each party has a secret colour, they share a common colour, and the shared result cannot be reverse-engineered. Superseded by ECDH for performance; use FFDH only when required by policy.
 
@@ -352,6 +361,12 @@ A one-way function that converts any input to a fixed-length fingerprint (digest
 **Hash_DRBG**
 A NIST SP 800-90A DRBG that uses a hash function (SHA-256, SHA-512, etc.) as its core operation. The internal state consists of a value V and a constant C, both updated at each step using iterative hashing.
 
+**HashML-DSA**
+A pre-hash variant of ML-DSA defined in FIPS 204 §6. Instead of signing the raw message M, the signer first hashes M with a contextually bound hash function (default SHA-512 for all parameter sets) to produce M′ = hash(context ∥ M), then signs M′. This allows signing arbitrarily large messages with a single hash pass before the lattice operations. OIDs: `id-hash-ml-dsa-44-with-sha512` (2.16.840.1.101.3.4.3.32), `…-65-…` (.33), `…-87-…` (.34). In CycloneDX: `HashML-DSA-(44|65|87)[-{hashAlgorithm}]`.
+
+**HashSLH-DSA**
+A pre-hash variant of SLH-DSA defined in FIPS 205 §10. Analogous to HashML-DSA: the message is first hashed, then the hash output is signed by the SLH-DSA core. Twelve parameter sets parallel the twelve pure SLH-DSA variants. OIDs assigned in the arc `2.16.840.1.101.3.4.3.35`–`.46`. In CycloneDX: `HashSLH-DSA-(SHA2|SHAKE)-(128s|128f|192s|192f|256s|256f)[-{hashAlgorithm}]`.
+
 **HAWK**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the Lattice Isomorphism Problem — a different hard problem from the lattices used in ML-DSA and ML-KEM.
 
@@ -383,7 +398,7 @@ The KEM construction defined in RFC 9180 §4.1 that builds a KEM from a Diffie-H
 A modern framework (RFC 9180, IRTF CFRG, February 2022) for public-key encryption combining: a **KEM** (key encapsulation — typically DHKEM), a **KDF** (key derivation — HKDF), and an **AEAD** (symmetric encryption — AES-GCM or ChaCha20-Poly1305). A ciphersuite is a triple (KEM, KDF, AEAD). The recipient holds a static key pair; the sender encapsulates an ephemeral shared secret with the recipient's public key and uses it to encrypt the payload. RFC 9180 defines four operational modes: **mode_base** (0x00, unauthenticated sender), **mode_psk** (0x01, PSK-authenticated sender), **mode_auth** (0x02, sender KEM-key authenticated via AuthEncap/AuthDecap), **mode_auth_psk** (0x03, both). Security: IND-CCA2 under classical assumptions (ROM). **Not post-quantum secure** — the KEM relies on ECDH; replace DHKEM with a PQC KEM (e.g. ML-KEM hybrid) for quantum resistance. Applications: TLS ECH (Encrypted Client Hello), MLS (Messaging Layer Security), email encryption (LAMPS WG), OHTTP (Oblivious HTTP).
 
 **HQC — Hamming Quasi-Cyclic**
-An IND-CCA2-secure post-quantum Key Encapsulation Mechanism (KEM) selected by NIST in March 2025 as the fifth PQC algorithm (code-based backup KEM). Security is based on the **Quasi-Cyclic Syndrome Decoding (QCSD)** problem — a variant of the NP-hard syndrome decoding problem for random linear codes over F₂, augmented by a quasi-cyclic structure that does not give adversaries a meaningful advantage beyond a small constant factor. HQC uses a double-circulant binary code with a concatenated **Reed-Muller / Reed-Solomon (RMRS)** error-correcting code for message encoding. IND-CCA2 security is obtained via the **Salted Fujisaki-Okamoto (SFO⊥) transform**. Hash functions: SHA3-512 (key/secret derivation), SHA3-256 (FO challenge), SHAKE256 (pseudorandom vector sampling). Three parameter sets target NIST levels 1/3/5 (HQC-128/192/256, also called HQC-1/3/5); encapsulation key sizes 2241/4514/7237 B; ciphertext sizes 4433/8978/14421 B; shared secret 32 B. A FIPS standard is expected in 2026; OIDs are not yet assigned.
+An IND-CCA2-secure post-quantum Key Encapsulation Mechanism (KEM) selected by NIST in March 2025 as the fifth PQC algorithm (code-based backup KEM). Security is based on the **Quasi-Cyclic Syndrome Decoding (QCSD)** problem — a variant of the NP-hard syndrome decoding problem for random linear codes over F₂, augmented by a quasi-cyclic structure that does not give adversaries a meaningful advantage beyond a small constant factor. HQC uses a double-circulant binary code with a concatenated **Reed-Muller / Reed-Solomon (RMRS)** error-correcting code for message encoding. IND-CCA2 security is obtained via the **Salted Fujisaki-Okamoto (SFO⊥) transform**. Hash functions: SHA3-512 (key/secret derivation), SHA3-256 (FO challenge), SHAKE256 (pseudorandom vector sampling). Three parameter sets target NIST levels 1/3/5 (HQC-128/192/256, also called HQC-1/3/5); encapsulation key sizes 2241/4514/7237 B; ciphertext sizes 4433/8978/14421 B; shared secret 32 B. A FIPS standard is expected ~2027 (NIST IR 8545 estimates draft + final ~2 years from the March 2025 announcement); SP 800-227 (draft, January 2025) will provide KEM usage guidance. OIDs are not yet assigned.
 
 ---
 
@@ -406,6 +421,9 @@ The standard security notion for public-key encryption schemes and KEMs. An encr
 
 **IND-CPA — Indistinguishability under Chosen-Plaintext Attack**
 A weaker PKE security notion than IND-CCA2: an adversary who can request encryptions of chosen plaintexts cannot distinguish between encryptions of two chosen messages. All NIST PQC KEM algorithms achieve at least IND-CPA security in their basic form. IND-CPA alone is not sufficient for most real-world protocols — the FO-transform upgrades IND-CPA schemes to IND-CCA2.
+
+**ISD — Information Set Decoding**
+A family of generic algorithms for solving the syndrome decoding problem over F₂ — the computational hardness assumption underlying code-based cryptography (HQC, BIKE, Classic McEliece). ISD algorithms search for a low-weight solution to a random linear system without exploiting any algebraic structure. The best classical ISD algorithms (Stern, BJMM, May-Ozerov) have sub-exponential but super-polynomial complexity; the best quantum ISD algorithms (using Grover-type speedups) provide a quadratic reduction in the exponent, roughly halving the classical security level (e.g., 128-bit classical → ~64-bit quantum, requiring doubled parameter sizes). HQC parameter sets are sized conservatively against the best known quantum ISD.
 
 **Integrity**
 The guarantee that data has not been modified in transit or storage. Achieved by message authentication codes (MACs) or digital signatures.
@@ -605,8 +623,8 @@ A block cipher mode that generates a keystream independently of the plaintext, t
 **One-Time Signature (OTS)**
 A signature key that can securely sign exactly one message. Using it for a second message reveals the private key. Used as a building block in hash-based signature schemes (LMS, XMSS, SLH-DSA).
 
-**OPAQUE**
-An asymmetric Password-Authenticated Key Exchange (aPAKE) protocol that allows a client to authenticate to a server using a password, without the server ever storing (or seeing) the plaintext password — even during registration. Uses OPRF and a KSF.
+**OPAQUE / OPAQUE-3DH**
+An asymmetric Password-Authenticated Key Exchange (aPAKE) protocol that allows a client to authenticate to a server using a password, without the server ever storing (or seeing) the plaintext password — even during registration. Uses OPRF and a KSF. The CycloneDX pattern `OPAQUE-3DH` refers to the 3DH (three-message Diffie-Hellman) instantiation described in the IETF CFRG draft (draft-irtf-cfrg-opaque).
 
 **OPRF — Oblivious Pseudorandom Function**
 A protocol where a client and server jointly compute a pseudorandom function on the client's input (e.g. a password), such that the server learns nothing about the input and the client learns nothing about the server's secret key. A core building block of OPAQUE.
@@ -828,6 +846,9 @@ The NIST standard digital signature algorithm (FIPS 205, August 2024), based on 
 **SM2, SM3, SM4**
 Chinese national cryptographic standards: SM2 (elliptic curve public-key), SM3 (hash, 256-bit), SM4 (block cipher, 128-bit). Required for Chinese government and financial systems.
 
+**SM9**
+Chinese national pairing-based cryptographic standard (GM/T 0044-2016; ISO/IEC 14888-3). Provides four schemes based on identity-based cryptography over bilinear pairings: **SM9-SIG** (identity-based digital signature), **SM9-KEX** (identity-based key exchange), **SM9-KEM** (key encapsulation), and **SM9-ENC** (identity-based encryption/PKE). Identity-based means that a user's public key is derived from their identity string (e.g. email address) rather than from a certificate; a trusted Private Key Generator (PKG) issues private keys. All four variants are in the CycloneDX registry.
+
 **SNOVA**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on multivariate polynomial cryptography.
 
@@ -997,6 +1018,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | CSRC | Computer Security Resource Center (NIST) |
 | CSPRNG | Cryptographically Secure Pseudorandom Number Generator |
 | CTR | Counter mode |
+| DFR | Decryption Failure Rate |
 | DH | Diffie-Hellman |
 | DHKEM | Diffie-Hellman Key Encapsulation Mechanism |
 | DRBG | Deterministic Random Bit Generator |
@@ -1025,6 +1047,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | IND-CCA2 | Indistinguishability under Adaptive Chosen-Ciphertext Attack |
 | IND-CPA | Indistinguishability under Chosen-Plaintext Attack |
 | IPsec | Internet Protocol Security |
+| ISD | Information Set Decoding |
 | IV | Initialisation Vector |
 | JCA | Java Cryptography Architecture |
 | JCE | Java Cryptography Extension |
@@ -1087,6 +1110,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | SIV | Synthetic Initialisation Vector |
 | SLH-DSA | Stateless Hash-Based Digital Signature Standard |
 | SM2/SM3/SM4 | ShāngMì (Chinese cryptographic standards) |
+| SM9 | ShāngMì 9 (Chinese pairing-based cryptographic standard) |
 | SPDX | Software Package Data Exchange |
 | SRP | Secure Remote Password |
 | SSH | Secure Shell |

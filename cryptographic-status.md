@@ -432,14 +432,16 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 10.5 Notable non-standardised PQC algorithms
 
+> **Source:** NIST IR 8545, *Status Report on the Fourth Round of the NIST Post-Quantum Cryptography Standardization Process*, March 2025 (doi:10.6028/NIST.IR.8545). Covers the Round 4 evaluation of HQC, BIKE, Classic McEliece, and SIKE.
+
 #### Key Encapsulation
 
 | Algorithm | Security | Status | Key sizes | Notes |
 |:---|:---|:---|:---|:---|
-| `HQC-128` / `HQC-192` / `HQC-256` | 128 / 192 / 256 bit | ⚠ Conditional | ek: 2241 / 4514 / 7237 B; dk: 2321 / 4602 / 7333 B (or 32 B compressed); ct: 4433 / 8978 / 14421 B; K: 32 B | NIST selected March 2025 as fifth PQC standard (code-based backup KEM); FIPS draft expected 2026 — not yet final; sizes from HQC spec v2025-08-22 |
+| `HQC-128` / `HQC-192` / `HQC-256` | 128 / 192 / 256 bit | ⚠ Conditional | ek: 2241 / 4514 / 7237 B; dk: 2321 / 4602 / 7333 B (or 32 B compressed); ct: 4433 / 8978 / 14421 B; K: 32 B | **NIST selected March 2025** (Round 4) as fifth PQC standard (code-based backup KEM); FIPS draft + final expected ~2027; SP 800-227 (draft Jan 2025) covers KEM usage guidance; sizes from HQC spec v2025-08-22 |
 | `FrodoKEM-640` / `976` / `1344` | 128 / 192 / 256 bit | ❌ Not standardised | pk: 9616 / 15632 / 21520 B; ct: 9720 / 15744 / 21632 B | Conservative plain-LWE basis (no ring/module structure); available in liboqs / OQS-OpenSSL |
-| `Classic McEliece` (all parameter sets) | 128–256 bit | ❌ Not standardised | pk: 261 KB–1.36 MB; ct: 128–240 B | 40+ year history of binary Goppa code analysis; smallest ciphertext of all PQC KEMs; public key is the main deployment obstacle; used in McTiny and post-quantum WireGuard |
-| `BIKE-L1` / `L3` / `L5` | 128 / 192 / 256 bit | ❌ Not standardised | pk: ~1.5–6 KB; ct: ~1.5–6 KB | Quasi-cyclic MDPC codes; key sizes similar to HQC; available in liboqs |
+| `Classic McEliece` (all parameter sets) | 128–256 bit | ❌ Not standardised by NIST | pk: 261 KB–1.36 MB; ct: 96–208 B | **Not selected Round 4 (NIST IR 8545)**: NIST skeptical of widespread adoption due to large public keys; mceliece460896/f fall short of claimed Category 3 (meet at least Category 2 per NIST); ISO/IEC 18033-2 concurrent standardisation effort ongoing — NIST may develop standard if ISO version gains wide use; ciphertext is smallest of all PQC KEMs; used in McTiny and post-quantum WireGuard |
+| `BIKE-L1` / `L3` / `L5` | 128 / 192 / 256 bit | ❌ Not standardised | pk: ~1541 / ~3083 / ~6162 B; ct: ~1573 / ~3115 / ~6194 B | **Not selected Round 4 (NIST IR 8545)**: decisive concern is immature DFR analysis — a new weak-key class (gathering property) found in Round 4 causes DFR ≥ 2⁻¹¹⁷ at Level 1, defeating IND-CCA2 security; would require ~9% block-size increase (r: 12 323 → 13 477) and post-selection tweaks; 6–10× slower key generation and 5–7× slower decapsulation than HQC; smaller keys/ciphertext than HQC (~70%/~30%); available in liboqs |
 | `NTRU-HPS-2048-677` (Level 1) | 128 bit | ❌ Not standardised | pk + ct: ~930 B | NTRU patents expired 2017; perfectly correct (no decryption failures); round 3 finalist not selected |
 | `LightSaber` / `Saber` / `FireSaber` | 128 / 192 / 256 bit | ❌ Not standardised | pk: 672 / 992 / 1312 B; ct: 736 / 1088 / 1472 B | Module-LWR (power-of-two moduli); Round 3 finalist not selected in favour of ML-KEM |
 

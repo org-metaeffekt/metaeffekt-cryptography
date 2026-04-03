@@ -38,6 +38,7 @@ Cryptographic Algorithms
 │   ├── SHA-2 family  (SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224, SHA-512/256)
 │   ├── SHA-3 / Keccak  (SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE128, SHAKE256, cSHAKE128, cSHAKE256)
 │   ├── BLAKE family  (BLAKE2b, BLAKE2s, BLAKE3)
+│   ├── Lightweight / Ascon  (Ascon-Hash256, Ascon-XOF128, Ascon-CXOF128 — NIST SP 800-232)
 │   ├── National / regional  (SM3, GOSTR3411-2012)
 │   └── Legacy / Deprecated  (SHA-1, MD5, MD4)
 │
@@ -53,16 +54,17 @@ Cryptographic Algorithms
 │   ├── Digital Signatures — Classical
 │   │   ├── RSA  (RSASSA-PSS, RSASSA-PKCS1)
 │   │   ├── Elliptic curve  (ECDSA, EdDSA / Ed25519 / Ed448)
+│   │   ├── Pairing-based  (SM9)
 │   │   └── Finite field  (DSA)
 │   ├── Digital Signatures — Stateful Hash-based  (LMS, LMOTS, XMSS, XMSS^MT)
-│   └── Key Agreement  (ECDH, FFDH, HPKE, MQV, BLS)
+│   └── Key Agreement  (ECDH, FFDH, HPKE, MQV, BLS, SPAKE2/SPAKE2+, OPAQUE-3DH)
 │
 ├── Post-Quantum Cryptography
 │   ├── KEM — Lattice  (ML-KEM / Kyber; NTRU; Saber; FrodoKEM; NTRU-Prime)
 │   ├── KEM — Code-based  (HQC, BIKE, Classic McEliece)
 │   ├── KEM — Isogeny  (SIKE — broken 2022)
-│   ├── Signatures — Lattice  (ML-DSA / Dilithium, FN-DSA / Falcon, HAWK)
-│   ├── Signatures — Hash-based stateless  (SLH-DSA / SPHINCS+)
+│   ├── Signatures — Lattice  (ML-DSA / Dilithium, HashML-DSA; FN-DSA / Falcon, HAWK)
+│   ├── Signatures — Hash-based stateless  (SLH-DSA / SPHINCS+, HashSLH-DSA)
 │   ├── Signatures — Multivariate  (MAYO, SNOVA, UOV / pqov, QR-UOV; Rainbow — broken 2022; GeMSS — broken)
 │   ├── Signatures — Code-based  (CROSS, LESS)
 │   ├── Signatures — MPC-in-the-Head  (FAEST, SDitH, MQOM, Mirath, PERK, RYDE; Picnic)
@@ -115,7 +117,7 @@ Cryptographic Algorithms
 | `chacha20` | ChaCha20 · ChaCha | Stream cipher | — | `ChaCha20-*` | RFC 8439; Bernstein 2008 |
 | `xchacha20` | XChaCha20 (extended nonce) | Stream cipher | — | `XChaCha20-*` | draft-irtf-cfrg-xchacha; 192-bit nonce |
 | `rc4` | RC4 · ARC4 · ARCFOUR | Stream cipher (disallowed) | — | `RC4-*` | RFC 7465 (banned in TLS); SP 800-131A (disallowed) |
-| `salsa20` | Salsa20 | Stream cipher | — | `Salsa20-*` | Bernstein 2007; eSTREAM portfolio |
+| `salsa20` | Salsa20 | Stream cipher | — | `Salsa20-*` | Bernstein 2007; eSTREAM portfolio (Salsa10 = 10-round reduced variant) |
 | `grain-128` | Grain-128AEAD | Stream cipher (lightweight) | — | `Grain-128-*` | ISO/IEC 29192-3 |
 
 ---
@@ -155,6 +157,7 @@ Cryptographic Algorithms
 | `chacha20-poly1305` | ChaCha20-Poly1305 | AEAD mode | `1.2.840.113549.1.9.16.3.18` (CMS) | `ChaCha20-Poly1305` | RFC 8439; BSI TR-02102-1 |
 | `xchacha20-poly1305` | XChaCha20-Poly1305 | AEAD mode | — | `XChaCha20-Poly1305` | draft-irtf-cfrg-xchacha |
 | `adiantum` | Adiantum (ChaCha12 + AES-HCTR2 + Poly1305) | Length-preserving AEAD mode (disk/storage) | — | `Adiantum-*` | Crowley & Biggers 2018; Android for ARMv7 devices |
+| `ascon-aead128` | Ascon-AEAD128 | Lightweight AEAD (sponge-based) | — | `Ascon-AEAD128` | NIST SP 800-232; Dobraunig et al. 2021; 128-bit key, 128-bit tag, 128-bit nonce |
 
 ---
 
@@ -180,6 +183,9 @@ Cryptographic Algorithms
 | `blake2b` | BLAKE2b · BLAKE2b-256 · BLAKE2b-512 | Hash function | `1.3.6.1.4.1.1722.12.2.1.8` (BLAKE2b-256) | `BLAKE2b-{outputLength}` | RFC 7693 |
 | `blake2s` | BLAKE2s · BLAKE2s-256 | Hash function | `1.3.6.1.4.1.1722.12.2.2.8` (BLAKE2s-256) | `BLAKE2s-{outputLength}` | RFC 7693 |
 | `blake3` | BLAKE3 | Hash function / XOF | — | `BLAKE3[-{outputLength}]` | BLAKE3 spec 2020 |
+| `ascon-hash256` | Ascon-Hash256 | Lightweight hash function (sponge-based) | — | `Ascon-Hash256` | NIST SP 800-232; fixed 256-bit output |
+| `ascon-xof128` | Ascon-XOF128 | Lightweight extendable-output function (sponge) | — | `Ascon-XOF128` | NIST SP 800-232; variable-length output, 128-bit security |
+| `ascon-cxof128` | Ascon-CXOF128 | Lightweight customisable XOF (sponge) | — | `Ascon-CXOF128` | NIST SP 800-232; customisation string support |
 | `sm3` | SM3 | Hash function | `1.2.156.10197.1.401` | `SM3` | GM/T 0004-2012; ISO/IEC 10118-3 |
 | `gostr3411-2012` | GOST R 34.11-2012 · Streebog | Hash function | `1.2.643.7.1.1.2.2` (256) · `1.2.643.7.1.1.2.3` (512) | `GOSTR3411-2012-[256\|512]` | RFC 6986; GOST R 34.11-2012 |
 | `md5` | MD5 | Hash function (broken) | `1.2.840.113549.2.5` | `MD5` | RFC 1321; SP 800-131A (disallowed) |
@@ -232,6 +238,10 @@ Cryptographic Algorithms
 | `ed448` | Ed448 · Ed448-Goldilocks | Digital signature | `1.3.101.113` | `Ed448` | RFC 8032; FIPS 186-5 |
 | `dsa` | DSA (Digital Signature Algorithm) | Digital signature (deprecated) | `1.2.840.10040.4.1` (key) · `1.2.840.10040.4.3` (SHA-1) · `2.16.840.1.101.3.4.3.1` (SHA-224) · `.2` (SHA-256) | `DSA-{keyLength}-{hashAlgorithm}` | FIPS 186-4 (withdrawn 2023); SP 800-131A |
 | `sm2` | SM2 (signature scheme) | Digital signature | `1.2.156.10197.1.501` | `SM2-*` | GM/T 0003-2012 |
+| `sm9-sig` | SM9 (signature) | Digital signature (pairing-based) | `1.2.156.10197.1.302.1` | `SM9-(SIG\|SIGNATURE)` | GM/T 0044-2016; ISO/IEC 14888-3; pairing-based identity-based signature |
+| `sm9-kex` | SM9 (key exchange) | Authenticated key agreement (pairing-based) | `1.2.156.10197.1.302.2` | `SM9-(KEX\|KEYEXCHANGE\|KEY-EXCHANGE\|KEYAGREE\|KEY-AGREE\|KEYAGREEMENT\|KEY-AGREEMENT)` | GM/T 0044-2016; identity-based key exchange |
+| `sm9-kem` | SM9 (KEM) | Key encapsulation (pairing-based) | `1.2.156.10197.1.302.3` | `SM9-(KEM\|KEYENCAPSULATION\|KEY-ENCAPSULATION)` | GM/T 0044-2016 |
+| `sm9-enc` | SM9 (encryption) | Asymmetric encryption (pairing-based) | `1.2.156.10197.1.302.4` | `SM9-(ENC\|ENCRYPTION\|PKE\|PUBLICKEY-ENCRYPTION\|PUBLIC-KEY-ENCRYPTION)` | GM/T 0044-2016; identity-based encryption |
 | `gostr3410-2012` | GOST R 34.10-2012 | Digital signature | `1.2.643.7.1.1.3.2` | `GOSTR3410-2012-*` | RFC 7091; GOST R 34.10-2012 |
 
 ---
@@ -263,6 +273,9 @@ Cryptographic Algorithms
 | `dhkem-x448-hkdf-sha512` | DHKEM(X448, HKDF-SHA512) | HPKE KEM | KEM ID 0x0021 | `DHKEM(X448,HKDF-SHA512)` | RFC 9180 §7.1; Nsecret=64B, Nenc=56B, Npk=56B |
 | `mqv` | MQV (Menezes-Qu-Vanstone) | Authenticated key agreement | — | `MQV-{curve}` | SP 800-56A Rev 3 |
 | `bls` | BLS (Boneh-Lynn-Shacham) pairing | Key agreement / signature | — | `BLS-{curve}` | IETF draft-irtf-cfrg-bls-signature |
+| `spake2` | SPAKE2 | Password-authenticated key exchange | — | `SPAKE2[-{group}][-{hashAlgorithm}][-{kdf}][-{mac}]` | RFC 9382 (SPAKE2+); Abdalla & Pointcheval 2005; augmented variant: SPAKE2+ |
+| `spake2plus` | SPAKE2+ | Password-authenticated key exchange (augmented) | — | `SPAKE2+[-{group}][-{hashAlgorithm}][-{kdf}][-{mac}]` | RFC 9382; server stores verifier, not password; used in Apple Homekit pairing |
+| `opaque-3dh` | OPAQUE-3DH | Password-authenticated key exchange (asymmetric PAKE) | — | `OPAQUE-3DH[-{group}][-{hashAlgorithm}][-{ksf}][-{kdf}][-{mac}]` | IETF draft-irtf-cfrg-opaque; Jarecki et al. 2018; strong security against pre-computation attacks |
 
 ---
 
@@ -346,14 +359,14 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
-| `classic-mceliece-348864` | Classic McEliece 348864 | PQC KEM (code-based, Goppa) — NIST Level 1 | — | `ClassicMcEliece-348864[f]` | Round 3 finalist; Niederreiter + binary Goppa codes; not standardised by NIST |
-| `classic-mceliece-460896` | Classic McEliece 460896 | PQC KEM (code-based, Goppa) — NIST Level 3 | — | `ClassicMcEliece-460896[f]` | Round 3 finalist |
-| `classic-mceliece-6688128` | Classic McEliece 6688128 | PQC KEM (code-based, Goppa) — NIST Level 5 | — | `ClassicMcEliece-6688128[f]` | Round 3 finalist; pk >1 MB |
-| `classic-mceliece-6960119` | Classic McEliece 6960119 | PQC KEM (code-based, Goppa) — NIST Level 5 | — | `ClassicMcEliece-6960119[f]` | Round 3 finalist; pk >1 MB |
-| `classic-mceliece-8192128` | Classic McEliece 8192128 | PQC KEM (code-based, Goppa) — NIST Level 5 | — | `ClassicMcEliece-8192128[f]` | Round 3 finalist; pk >1 MB |
-| `bike-l1` | BIKE Level 1 | PQC KEM (code-based, quasi-cyclic MDPC) — NIST Level 1 | — | `BIKE-L1` | Round 3 alternate; not standardised |
-| `bike-l3` | BIKE Level 3 | PQC KEM (code-based, quasi-cyclic MDPC) — NIST Level 3 | — | `BIKE-L3` | Round 3 alternate |
-| `bike-l5` | BIKE Level 5 | PQC KEM (code-based, quasi-cyclic MDPC) — NIST Level 5 | — | `BIKE-L5` | Round 3 alternate |
+| `classic-mceliece-348864` | Classic McEliece 348864 | PQC KEM (code-based, Goppa) — NIST Level 1 | — | `ClassicMcEliece-348864[f]` | Round 3 finalist; not selected Round 4 (NIST IR 8545); Niederreiter + binary Goppa codes; ISO/IEC 18033-2 parallel effort |
+| `classic-mceliece-460896` | Classic McEliece 460896 | PQC KEM (code-based, Goppa) — NIST Level 3 (meets ≥ Category 2) | — | `ClassicMcEliece-460896[f]` | Round 3 finalist; not selected Round 4; NIST IR 8545 notes independent estimates suggest Category 2 security, not Category 3 |
+| `classic-mceliece-6688128` | Classic McEliece 6688128 | PQC KEM (code-based, Goppa) — NIST Level 5 | — | `ClassicMcEliece-6688128[f]` | Round 3 finalist; not selected Round 4; pk >1 MB |
+| `classic-mceliece-6960119` | Classic McEliece 6960119 | PQC KEM (code-based, Goppa) — NIST Level 5 | — | `ClassicMcEliece-6960119[f]` | Round 3 finalist; not selected Round 4; pk >1 MB |
+| `classic-mceliece-8192128` | Classic McEliece 8192128 | PQC KEM (code-based, Goppa) — NIST Level 5 | — | `ClassicMcEliece-8192128[f]` | Round 3 finalist; not selected Round 4; pk >1 MB |
+| `bike-l1` | BIKE Level 1 | PQC KEM (code-based, quasi-cyclic MDPC) — NIST Level 1 | — | `BIKE-L1` | Round 3 alternate; not selected Round 4 (NIST IR 8545); DFR not sufficiently mature; gathering property weak-key attack found Round 4 |
+| `bike-l3` | BIKE Level 3 | PQC KEM (code-based, quasi-cyclic MDPC) — NIST Level 3 | — | `BIKE-L3` | Round 3 alternate; not selected Round 4 |
+| `bike-l5` | BIKE Level 5 | PQC KEM (code-based, quasi-cyclic MDPC) — NIST Level 5 | — | `BIKE-L5` | Round 3 alternate; not selected Round 4 |
 | `ntru-hps-2048677` | NTRU-HPS-2048-677 | PQC KEM (lattice, NTRU) — NIST Level 1 | — | `NTRU-HPS-2048-677` | Round 3 finalist; not standardised; Hoffstein-Pipher-Silverman 1998 |
 | `ntru-hps-2048821` | NTRU-HPS-2048-821 | PQC KEM (lattice, NTRU) — NIST Level 3 | — | `NTRU-HPS-2048-821` | Round 3 finalist |
 | `ntru-hrss-701` | NTRU-HRSS-701 | PQC KEM (lattice, NTRU) — NIST Level 3 | — | `NTRU-HRSS-701` | Round 3 finalist; merged with NTRUEncrypt submission |
@@ -388,8 +401,23 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 | `slh-dsa-shake-192f` | SLH-DSA-SHAKE-192f | PQC signature — L3 fast (SHAKE) | `2.16.840.1.101.3.4.3.29` | `SLH-DSA-SHAKE-192f` | FIPS 205 |
 | `slh-dsa-shake-256s` | SLH-DSA-SHAKE-256s | PQC signature — L5 small (SHAKE) | `2.16.840.1.101.3.4.3.30` | `SLH-DSA-SHAKE-256s` | FIPS 205 |
 | `slh-dsa-shake-256f` | SLH-DSA-SHAKE-256f | PQC signature — L5 fast (SHAKE) | `2.16.840.1.101.3.4.3.31` | `SLH-DSA-SHAKE-256f` | FIPS 205 |
-| `fn-dsa-512` | FN-DSA-512 · Falcon-512 | PQC signature (lattice/NTRU) — NIST Level 1 | `1.3.9999.3.6` (draft) | `FN-DSA-512` | FIPS 206 (IPD); final expected late 2026 |
-| `fn-dsa-1024` | FN-DSA-1024 · Falcon-1024 | PQC signature (lattice/NTRU) — NIST Level 5 | `1.3.9999.3.7` (draft) | `FN-DSA-1024` | FIPS 206 (IPD); final expected late 2026 |
+| `fn-dsa-512` | FN-DSA-512 · Falcon-512 | PQC signature (lattice/NTRU) — NIST Level 1 | `1.3.9999.3.6` (draft) | `FN-DSA-512` | FIPS 206 (IPD); final expected late 2026; not yet in CycloneDX registry |
+| `fn-dsa-1024` | FN-DSA-1024 · Falcon-1024 | PQC signature (lattice/NTRU) — NIST Level 5 | `1.3.9999.3.7` (draft) | `FN-DSA-1024` | FIPS 206 (IPD); final expected late 2026; not yet in CycloneDX registry |
+| `hash-ml-dsa-44` | HashML-DSA-44 (pre-hash, with SHA-512) | PQC signature (lattice) — NIST Level 2, pre-hash variant | `2.16.840.1.101.3.4.3.32` | `HashML-DSA-44[-{hashAlgorithm}]` | FIPS 204 §6; id-hash-ml-dsa-44-with-sha512; default hash: SHA-512 |
+| `hash-ml-dsa-65` | HashML-DSA-65 (pre-hash, with SHA-512) | PQC signature (lattice) — NIST Level 3, pre-hash variant | `2.16.840.1.101.3.4.3.33` | `HashML-DSA-65[-{hashAlgorithm}]` | FIPS 204 §6; id-hash-ml-dsa-65-with-sha512 |
+| `hash-ml-dsa-87` | HashML-DSA-87 (pre-hash, with SHA-512) | PQC signature (lattice) — NIST Level 5, pre-hash variant | `2.16.840.1.101.3.4.3.34` | `HashML-DSA-87[-{hashAlgorithm}]` | FIPS 204 §6; id-hash-ml-dsa-87-with-sha512 |
+| `hash-slh-dsa-sha2-128s` | HashSLH-DSA-SHA2-128s | PQC signature — L1 small, pre-hash | `2.16.840.1.101.3.4.3.35` | `HashSLH-DSA-SHA2-128s[-{hashAlgorithm}]` | FIPS 205 §10; default hash: SHA-256 |
+| `hash-slh-dsa-sha2-128f` | HashSLH-DSA-SHA2-128f | PQC signature — L1 fast, pre-hash | `2.16.840.1.101.3.4.3.36` | `HashSLH-DSA-SHA2-128f[-{hashAlgorithm}]` | FIPS 205 §10 |
+| `hash-slh-dsa-sha2-192s` | HashSLH-DSA-SHA2-192s | PQC signature — L3 small, pre-hash | `2.16.840.1.101.3.4.3.37` | `HashSLH-DSA-SHA2-192s[-{hashAlgorithm}]` | FIPS 205 §10; default hash: SHA-512 |
+| `hash-slh-dsa-sha2-192f` | HashSLH-DSA-SHA2-192f | PQC signature — L3 fast, pre-hash | `2.16.840.1.101.3.4.3.38` | `HashSLH-DSA-SHA2-192f[-{hashAlgorithm}]` | FIPS 205 §10 |
+| `hash-slh-dsa-sha2-256s` | HashSLH-DSA-SHA2-256s | PQC signature — L5 small, pre-hash | `2.16.840.1.101.3.4.3.39` | `HashSLH-DSA-SHA2-256s[-{hashAlgorithm}]` | FIPS 205 §10 |
+| `hash-slh-dsa-sha2-256f` | HashSLH-DSA-SHA2-256f | PQC signature — L5 fast, pre-hash | `2.16.840.1.101.3.4.3.40` | `HashSLH-DSA-SHA2-256f[-{hashAlgorithm}]` | FIPS 205 §10 |
+| `hash-slh-dsa-shake-128s` | HashSLH-DSA-SHAKE-128s | PQC signature — L1 small, pre-hash (SHAKE) | `2.16.840.1.101.3.4.3.41` | `HashSLH-DSA-SHAKE-128s[-{hashAlgorithm}]` | FIPS 205 §10; default hash: SHAKE128 |
+| `hash-slh-dsa-shake-128f` | HashSLH-DSA-SHAKE-128f | PQC signature — L1 fast, pre-hash (SHAKE) | `2.16.840.1.101.3.4.3.42` | `HashSLH-DSA-SHAKE-128f[-{hashAlgorithm}]` | FIPS 205 §10 |
+| `hash-slh-dsa-shake-192s` | HashSLH-DSA-SHAKE-192s | PQC signature — L3 small, pre-hash (SHAKE) | `2.16.840.1.101.3.4.3.43` | `HashSLH-DSA-SHAKE-192s[-{hashAlgorithm}]` | FIPS 205 §10; default hash: SHAKE256 |
+| `hash-slh-dsa-shake-192f` | HashSLH-DSA-SHAKE-192f | PQC signature — L3 fast, pre-hash (SHAKE) | `2.16.840.1.101.3.4.3.44` | `HashSLH-DSA-SHAKE-192f[-{hashAlgorithm}]` | FIPS 205 §10 |
+| `hash-slh-dsa-shake-256s` | HashSLH-DSA-SHAKE-256s | PQC signature — L5 small, pre-hash (SHAKE) | `2.16.840.1.101.3.4.3.45` | `HashSLH-DSA-SHAKE-256s[-{hashAlgorithm}]` | FIPS 205 §10 |
+| `hash-slh-dsa-shake-256f` | HashSLH-DSA-SHAKE-256f | PQC signature — L5 fast, pre-hash (SHAKE) | `2.16.840.1.101.3.4.3.46` | `HashSLH-DSA-SHAKE-256f[-{hashAlgorithm}]` | FIPS 205 §10 |
 
 ---
 
@@ -418,7 +446,7 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
-| `cross` | CROSS (Codes and Restricted Objects Signature Scheme) | PQC signature (code-based) | — | `CROSS-*` | NIST PQC Round 2; NIST IR 8545 |
+| `cross` | CROSS (Codes and Restricted Objects Signature Scheme) | PQC signature (code-based) | — | `CROSS-*` | NIST PQC Round 2 (Additional Signatures); NIST IR 8528 |
 | `less` | LESS (Linear Equivalence Signature Scheme) | PQC signature (code-based) | — | `LESS-*` | NIST PQC Round 2 |
 
 ### MPC-in-the-Head / Symmetric
@@ -618,6 +646,17 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | `wake` | WAKE (Word Auto Key Encryption) | Stream cipher | — | `WAKE-*` | Wheeler 1993 |
 | `cmea` | CMEA (Cellular Message Encryption Algorithm) | Stream cipher (broken) | — | `CMEA-*` | CTIA standard; broken 1997 |
 | `gea` | GEA (GPRS Encryption Algorithm) | Stream cipher (telecom, weak) | — | `GEA-[0\|1\|2\|3\|4\|5]-*` | 3GPP GPRS; GEA-1 intentionally weakened (2021 disclosure) |
+| `a5-1` | A5/1 | Stream cipher (GSM, weak) | — | `A5/1` | 3GPP TS 55.205; used in 2G GSM calls; practically broken |
+| `a5-2` | A5/2 | Stream cipher (GSM, broken) | — | `A5/2` | 3GPP TS 55.206; intentionally weakened export variant; prohibited since 2006 |
+| `128-eea1` | 128-EEA1 (SNOW 3G confidentiality) | Confidentiality algorithm (3GPP) | — | `128-EEA1` | 3GPP TS 33.401; 4G LTE encryption using SNOW 3G |
+| `128-eia1` | 128-EIA1 (SNOW 3G integrity) | Integrity algorithm (3GPP) | — | `128-EIA1` | 3GPP TS 33.401; 4G LTE integrity using SNOW 3G |
+| `128-eea3` | 128-EEA3 (ZUC confidentiality) | Confidentiality algorithm (3GPP) | — | `128-EEA3` | 3GPP TS 33.401; 4G/5G LTE encryption using ZUC |
+| `128-eia3` | 128-EIA3 (ZUC integrity) | Integrity algorithm (3GPP) | — | `128-EIA3` | 3GPP TS 33.401; 4G/5G LTE integrity using ZUC |
+| `3gpp-xor` | 3GPP-XOR (null/XOR algorithm) | Test/null algorithm (3GPP) | — | `3GPP-XOR[-MAC]` / `3GPP-XOR[-KDF]` | 3GPP TS 35.208; reference implementation only; not for production use |
+| `milenage` | MILENAGE | Authentication and key generation (3GPP AKA) | — | `MILENAGE[-MAC]` / `MILENAGE[-KDF]` | 3GPP TS 35.206; used in 3G/4G/5G USIM authentication; based on AES-128 |
+| `tuak` | TUAK | Authentication and key generation (3GPP AKA) | — | `TUAK[-MAC]` / `TUAK[-KDF]` | 3GPP TS 35.231; alternative to MILENAGE; based on Keccak (SHA-3) |
+| `sapphire` | Sapphire / Sapphire-II | Stream cipher (historical) | — | `Sapphire-*` | Mister & Adams 1996; variable key length |
+| `rc4-hmac` | RC4-HMAC | Authenticated encryption (Kerberos legacy) | — | `RC4-HMAC[-{variant}]` | Windows Kerberos (RC4 + HMAC-MD5); ARCFOUR-HMAC; deprecated (RFC 8429) |
 
 ---
 
@@ -704,16 +743,16 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Category | Count |
 |:---|:---|
 | Symmetric block ciphers (approved + legacy) | 40 |
-| Symmetric stream ciphers | 21 |
-| Block cipher modes (inc. AEAD, FPE, tweakable) | 35 |
-| Hash functions and XOFs | 34 |
+| Symmetric stream ciphers (incl. 3GPP: A5, EEA/EIA, MILENAGE, TUAK) | 32 |
+| Block cipher modes (inc. AEAD, FPE, tweakable, Ascon-AEAD128) | 36 |
+| Hash functions and XOFs (incl. Ascon-Hash256/XOF128/CXOF128) | 37 |
 | Non-cryptographic checksums | 4 |
 | Message authentication codes | 15 |
 | Asymmetric encryption and key exchange | 11 |
 | HPKE ciphersuites (DHKEM variants) | 5 |
-| Classical digital signatures | 9 |
+| Classical digital signatures (incl. SM9) | 13 |
 | Stateful hash-based signatures | 4 |
-| Key agreement algorithms | 7 |
+| Key agreement algorithms (incl. SPAKE2+, OPAQUE-3DH) | 10 |
 | Named elliptic curves and groups | 20 |
 | Key derivation functions | 9 |
 | Password hashing (incl. Windows) | 10 |
@@ -721,7 +760,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | PKCS / protocol frameworks | 7 |
 | PQC KEMs — standardised / selected | 9 |
 | PQC KEMs — Round 3 notable non-standardised (incl. broken) | 22 |
-| PQC signatures — NIST standardised | 17 |
+| PQC signatures — NIST standardised (incl. HashML-DSA, HashSLH-DSA) | 32 |
 | PQC signatures — Round 2 candidates | 20 |
 | PQC signatures — Round 3 non-standardised / broken | 9 |
 | NIST SP 800-90A DRBGs | 12 |
@@ -730,19 +769,19 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Non-cryptographic PRNGs | 6 |
 | Padding / encoding schemes | 5 |
 | Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
-| **Total** | **~337** |
+| **Total** | **~385** |
 
 ---
 
 ## SPDX Coverage Notes
 
-Cross-referenced against the [SPDX Cryptographic Algorithm List](https://github.com/spdx/cryptographic-algorithm-list/tree/main/yaml) (CC0 1.0, 127 entries). SPDX defines a flat enumeration of named algorithm identifiers used in SPDX SBOM documents.
+Cross-referenced against the [SPDX Cryptographic Algorithm List](https://github.com/spdx/cryptographic-algorithm-list/tree/main/yaml) (CC0 1.0, 127 entries as of April 2026). SPDX defines a flat enumeration of named algorithm identifiers used in SPDX SBOM documents.
 
 | Status | Count |
 |:---|:---|
 | SPDX entries covered in this table | ~127 |
-| Entries added to this table solely for SPDX coverage (sections 22–29) | ~72 |
-| Entries present in this table not in the SPDX list | ~210 (PQC, HPKE/DHKEM, modes, curves, RNGs, KDFs, Composite ML-DSA) |
+| Entries added to this table solely for SPDX coverage (sections 22–29) | ~74 |
+| Entries present in this table not in the SPDX list | ~258 (PQC, HPKE/DHKEM, modes, curves, RNGs, KDFs, Composite ML-DSA, Ascon, HashML-DSA, HashSLH-DSA, SM9, SPAKE2/+, OPAQUE-3DH, 3GPP AKA/EEA/EIA) |
 
 SPDX entries not mapped (no standard cryptographic definition found): `dcc`, `ssha` (salted SHA — implementation convention, not an algorithm), `blakex` (BLAKE umbrella — covered by BLAKE2/3 entries in this table).
 
@@ -768,7 +807,9 @@ The 7 entries with no CycloneDX pattern are structural or encoding constructs (p
 
 | Scope | In CycloneDX? | Count | Notes |
 |:---|:---|:---|:---|
-| Core approved algorithms (§1–§14, §16–§20) | ✅ Yes | ~220 | AES, SHA-2/3, RSA, ECDSA, ECDH, HPKE, ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC, LMS, XMSS, DRBGs, CSPRNGs, etc. All CycloneDX-defined pattern families represented. |
+| Core approved algorithms (§1–§14, §16–§20) | ✅ Yes | ~245 | AES, SHA-2/3, Ascon, RSA, ECDSA, ECDH, SM9, HPKE, ML-KEM, ML-DSA, HashML-DSA, SLH-DSA, HashSLH-DSA, LMS, XMSS, DRBGs, CSPRNGs, SPAKE2, OPAQUE-3DH, 3GPP AKA algorithms (MILENAGE, TUAK, 128-EEA*/EIA*, 3GPP-XOR), A5/1, A5/2, etc. |
+| FN-DSA / Falcon (§14) | ❌ No | 2 | FIPS 206 IPD pending; OIDs draft only; not yet in CycloneDX registry as of April 2026. |
+| HQC (§13) | ❌ No | 3 | NIST selected March 2025; FIPS pending (~2027); no OIDs assigned yet; not yet in CycloneDX registry as of April 2026. |
 | NIST Round 2 additional PQC signature candidates (§15) | ❌ No | 24 | MAYO, SNOVA, UOV, QR-UOV, HAWK, CROSS, LESS, FAEST, SDitH, MQOM, Mirath, PERK, RYDE, SQIsign — not in current CycloneDX registry. |
 | NIST Round 3 non-standardised / broken signatures (§15) | ❌ No | 9 | Rainbow (broken), Picnic, GeMSS (broken) — not standardised, not in CycloneDX. |
 | NIST Round 3 non-standardised KEMs (§13 sub-section) | ❌ No | 20 | Classic McEliece, BIKE, NTRU, Saber, NTRU-Prime, SIKE (broken) — not in CycloneDX. |
@@ -779,7 +820,7 @@ The 7 entries with no CycloneDX pattern are structural or encoding constructs (p
 | Pre-standard hybrid KEMs (§21 generic) | ❌ No | 3 | `x25519kyber768` (pre-FIPS 203), `p256mlkem768`, `composite-sig` (generic) — not in CycloneDX. (`x25519mlkem768` is in CycloneDX.) |
 | ristretto255, decaf448 (§10) | ❌ No | 2 | Point-compression abstractions for Curve25519/448; no CycloneDX pattern defined. |
 | Historical / legacy + SPDX-only (§22–§29) | ❌ No | 72 | Obscure historical ciphers, eSTREAM portfolio, legacy hashes, protocol containers. Many are in the SPDX list but absent from CycloneDX. |
-| **Total not in CycloneDX registry** | | **158** | |
+| **Total not in CycloneDX registry** | | **163** | |
 
 ### Relationship to `cryptographic-parameters.md`
 
