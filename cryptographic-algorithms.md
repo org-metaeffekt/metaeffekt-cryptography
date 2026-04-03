@@ -90,7 +90,8 @@ Cryptographic Algorithms
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
 | `aes` | AES (Advanced Encryption Standard) · Rijndael | Symmetric block cipher | `2.16.840.1.101.3.4.1` (arc) | `AES-[128\|192\|256]-*` | FIPS 197; SP 800-38 series; SP 800-57 |
-| `3des` | Triple DES · 3DES · TDEA | Symmetric block cipher (legacy) | `1.2.840.113549.3.7` | `3DES-*` | SP 800-131A Rev 2 (disallowed for enc after 2023); NIST IR 8214C |
+| `2tdea` | 2TDEA (Two-Key Triple DES) | Symmetric block cipher (disallowed) | — | `2TDEA` | SP 800-57 Table 2 (≤80-bit security); SP 800-131A (disallowed for applying protection) |
+| `3des` | Triple DES · 3DES · 3TDEA · TDEA | Symmetric block cipher (legacy) | `1.2.840.113549.3.7` | `3DES-*` | SP 800-131A Rev 2 (disallowed for enc after 2023); NIST IR 8214C |
 | `des` | DES (Data Encryption Standard) | Symmetric block cipher (broken) | `1.3.14.3.2.7` | `DES-*` | FIPS 46-3 (withdrawn); SP 800-131A (disallowed) |
 | `camellia` | Camellia | Symmetric block cipher | `1.2.392.200011.61.1.1.1` (arc) | `CAMELLIA-[128\|256]-*` | ISO/IEC 18033-3; BSI TR-02102-1 |
 | `aria` | ARIA | Symmetric block cipher | `1.2.410.200004.1.1.1` (arc) | `ARIA-[128\|192\|256]-*` | Korean standard KS X 1213; RFC 5794 |
@@ -190,6 +191,15 @@ Cryptographic Algorithms
 | `gostr3411-2012` | GOST R 34.11-2012 · Streebog | Hash function | `1.2.643.7.1.1.2.2` (256) · `1.2.643.7.1.1.2.3` (512) | `GOSTR3411-2012-[256\|512]` | RFC 6986; GOST R 34.11-2012 |
 | `md5` | MD5 | Hash function (broken) | `1.2.840.113549.2.5` | `MD5` | RFC 1321; SP 800-131A (disallowed) |
 | `md4` | MD4 | Hash function (broken) | `1.2.840.113549.2.4` | `MD4` | RFC 1320 (disallowed) |
+| `tuplehash128` | TupleHash128 | Keccak-based hash (tuple of strings) | — | `TupleHash128[-{outputLength}]` | NIST SP 800-185 |
+| `tuplehash256` | TupleHash256 | Keccak-based hash (tuple of strings) | — | `TupleHash256[-{outputLength}]` | NIST SP 800-185 |
+| `tuplehashxof128` | TupleHashXOF128 | Keccak-based XOF (tuple of strings) | — | `TupleHashXOF128` | NIST SP 800-185 |
+| `tuplehashxof256` | TupleHashXOF256 | Keccak-based XOF (tuple of strings) | — | `TupleHashXOF256` | NIST SP 800-185 |
+| `parallelhash128` | ParallelHash128 | Keccak-based parallelisable hash | — | `ParallelHash128[-{outputLength}]` | NIST SP 800-185 |
+| `parallelhash256` | ParallelHash256 | Keccak-based parallelisable hash | — | `ParallelHash256[-{outputLength}]` | NIST SP 800-185 |
+| `parallelhashxof128` | ParallelHashXOF128 | Keccak-based parallelisable XOF | — | `ParallelHashXOF128` | NIST SP 800-185 |
+| `parallelhashxof256` | ParallelHashXOF256 | Keccak-based parallelisable XOF | — | `ParallelHashXOF256` | NIST SP 800-185 |
+| `gostr3411` | GOST R 34.11-94 | Hash function (deprecated) | `1.2.643.2.2.9` | `GOSTR3411-*` | GOST R 34.11-94 (superseded by GOST R 34.11-2012) |
 | `siphash` | SipHash · SipHash-2-4 | Keyed hash / PRF (non-cryptographic use only) | — | `SipHash-{outputLength}` | Aumasson & Bernstein 2012 |
 
 ---
@@ -209,6 +219,8 @@ Cryptographic Algorithms
 | `aes-cmac` | AES-CMAC · OMAC1 | Block cipher MAC | `0.4.0.127.0.7.1.1.4.1.2` | `AES-CMAC[-{keyLength}]` | SP 800-38B; RFC 4493 |
 | `kmac128` | KMAC128 | Keccak-based MAC | `2.16.840.1.101.3.4.2.19` | `KMAC128[-{outputLength}]` | NIST SP 800-185 |
 | `kmac256` | KMAC256 | Keccak-based MAC | `2.16.840.1.101.3.4.2.20` | `KMAC256[-{outputLength}]` | NIST SP 800-185 |
+| `kmacxof128` | KMACXOF128 | Keccak-based MAC (XOF mode) | — | `KMACXOF128` | NIST SP 800-185 |
+| `kmacxof256` | KMACXOF256 | Keccak-based MAC (XOF mode) | — | `KMACXOF256` | NIST SP 800-185 |
 | `poly1305` | Poly1305 · Poly1305-AES | One-time polynomial MAC | — | `Poly1305[-{cipherAlgorithm}]` | RFC 8439; Bernstein 2005 |
 | `gmac` | GMAC (GCM used as MAC) | Block cipher MAC | — | `AES-[128\|192\|256]-GMAC` | SP 800-38D |
 | `umac` | UMAC | Universal hash-based MAC | — | `UMAC-[32\|64\|96\|128]` | RFC 4418 |
@@ -222,6 +234,7 @@ Cryptographic Algorithms
 |:---|:---|:---|:---|:---|:---|
 | `rsaes-oaep` | RSAES-OAEP (RSA with Optimal Asymmetric Encryption Padding) | Asymmetric encryption | `1.2.840.113549.1.1.7` | `RSAES-OAEP-{keyLength}-{hashAlgorithm}` | RFC 8017; SP 800-131A |
 | `rsaes-pkcs1` | RSAES-PKCS1-v1.5 | Asymmetric encryption (deprecated) | `1.2.840.113549.1.1.1` | `RSAES-PKCS1-{keyLength}` | RFC 8017 (deprecated for encryption) |
+| `dlies` | DLIES (Discrete Logarithm Integrated Encryption Scheme) | Asymmetric encryption | — | `DLIES-{keyLength}-{hashAlgorithm}` | BSI TR-02102-1 §2.3.3; ISO/IEC 18033-2 |
 | `ecies` | ECIES (Elliptic Curve Integrated Encryption Scheme) | Asymmetric encryption | — | `ECIES-{curve}-{hashAlgorithm}` | SEC 1; ISO/IEC 18033-2 |
 
 ---
@@ -242,6 +255,7 @@ Cryptographic Algorithms
 | `sm9-kex` | SM9 (key exchange) | Authenticated key agreement (pairing-based) | `1.2.156.10197.1.302.2` | `SM9-(KEX\|KEYEXCHANGE\|KEY-EXCHANGE\|KEYAGREE\|KEY-AGREE\|KEYAGREEMENT\|KEY-AGREEMENT)` | GM/T 0044-2016; identity-based key exchange |
 | `sm9-kem` | SM9 (KEM) | Key encapsulation (pairing-based) | `1.2.156.10197.1.302.3` | `SM9-(KEM\|KEYENCAPSULATION\|KEY-ENCAPSULATION)` | GM/T 0044-2016 |
 | `sm9-enc` | SM9 (encryption) | Asymmetric encryption (pairing-based) | `1.2.156.10197.1.302.4` | `SM9-(ENC\|ENCRYPTION\|PKE\|PUBLICKEY-ENCRYPTION\|PUBLIC-KEY-ENCRYPTION)` | GM/T 0044-2016; identity-based encryption |
+| `gostr3410` | GOST R 34.10-2001 | Digital signature (deprecated) | `1.2.643.2.2.19` | `GOSTR3410-*` | GOST R 34.10-2001 (superseded by GOST R 34.10-2012) |
 | `gostr3410-2012` | GOST R 34.10-2012 | Digital signature | `1.2.643.7.1.1.3.2` | `GOSTR3410-2012-*` | RFC 7091; GOST R 34.10-2012 |
 
 ---
@@ -276,6 +290,8 @@ Cryptographic Algorithms
 | `spake2` | SPAKE2 | Password-authenticated key exchange | — | `SPAKE2[-{group}][-{hashAlgorithm}][-{kdf}][-{mac}]` | RFC 9382 (SPAKE2+); Abdalla & Pointcheval 2005; augmented variant: SPAKE2+ |
 | `spake2plus` | SPAKE2+ | Password-authenticated key exchange (augmented) | — | `SPAKE2+[-{group}][-{hashAlgorithm}][-{kdf}][-{mac}]` | RFC 9382; server stores verifier, not password; used in Apple Homekit pairing |
 | `opaque-3dh` | OPAQUE-3DH | Password-authenticated key exchange (asymmetric PAKE) | — | `OPAQUE-3DH[-{group}][-{hashAlgorithm}][-{ksf}][-{kdf}][-{mac}]` | IETF draft-irtf-cfrg-opaque; Jarecki et al. 2018; strong security against pre-computation attacks |
+| `mls` | MLS (Messaging Layer Security) | Secure group messaging protocol | — | `MLS-*` | RFC 9420; uses HPKE, AES-GCM, HMAC-SHA-256 internally |
+| `srtp` | SRTP (Secure Real-time Transport Protocol) | Authenticated encryption for media | — | `SRTP-*` | RFC 3711; BSI TR-02102-1 §3.6; uses AES-CTR + HMAC-SHA-1 or AES-GCM |
 
 ---
 
@@ -321,6 +337,8 @@ Cryptographic Algorithms
 | `tls-kdf-13` | TLS 1.3 HKDF | Protocol-specific KDF | — | `TLS13-HKDF-{hashAlgorithm}` | RFC 8446 |
 | `ikev2-prf` | IKEv2 PRF | Protocol-specific KDF | — | `IKEv2-PRF-{hashAlgorithm}` | RFC 7296 |
 | `ssh-kdf` | SSH Key Derivation | Protocol-specific KDF | — | `SSH-KDF-{hashAlgorithm}` | RFC 4253 |
+| `catkdf` | CatKDF (Concatenation KDF) | Hybrid key derivation | — | `CatKDF[-{mac}]` | BSI TR-02102-1 §2.2; SP 800-56C; recommended for hybrid PQC key combination |
+| `keycombine` | KeyCombine | Key combination function | — | `KeyCombine` | BSI TR-02102-1 §2.2; SP 800-56C §4.6.1 Eq.9 + §4.6.2 Eq.15 |
 
 ---
 
@@ -541,6 +559,7 @@ The following were NIST Round 3 signature candidates. They did not progress to s
 |:---|:---|:---|:---|:---|:---|
 | `mt19937` | Mersenne Twister (MT19937) | Non-cryptographic PRNG | — | `MT19937` | Matsumoto & Nishimura 1998; **not crypto-safe** |
 | `xoshiro256` | Xoshiro256 (++/+/**) | Non-cryptographic PRNG | — | `Xoshiro(256\|512)(+\|++\|**)` | Blackman & Vigna 2018; **not crypto-safe** |
+| `xoroshiro` | Xoroshiro128 (++/+/**) | Non-cryptographic PRNG | — | `Xoroshiro(128\|64)(+\|++\|**)` | Blackman & Vigna 2018; **not crypto-safe** |
 | `pcg` | PCG (Permuted Congruential Generator) | Non-cryptographic PRNG | — | `PCG-*` | O'Neill 2014; **not crypto-safe** |
 | `lcg` | LCG (Linear Congruential Generator) | Non-cryptographic PRNG | — | `LCG-*` | Knuth 1968; **not crypto-safe** |
 | `splitmix64` | SplitMix64 | Non-cryptographic PRNG | — | `SplitMix64` | Guy Steele et al.; **not crypto-safe** |
@@ -742,19 +761,19 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 | Category | Count |
 |:---|:---|
-| Symmetric block ciphers (approved + legacy) | 40 |
+| Symmetric block ciphers (approved + legacy, incl. 2TDEA) | 41 |
 | Symmetric stream ciphers (incl. 3GPP: A5, EEA/EIA, MILENAGE, TUAK) | 32 |
 | Block cipher modes (inc. AEAD, FPE, tweakable, Ascon-AEAD128) | 36 |
-| Hash functions and XOFs (incl. Ascon-Hash256/XOF128/CXOF128) | 37 |
+| Hash functions and XOFs (incl. SP 800-185 TupleHash/ParallelHash, GOSTR3411) | 46 |
 | Non-cryptographic checksums | 4 |
-| Message authentication codes | 15 |
-| Asymmetric encryption and key exchange | 11 |
+| Message authentication codes (incl. KMACXOF128/256) | 17 |
+| Asymmetric encryption and key exchange (incl. DLIES) | 12 |
 | HPKE ciphersuites (DHKEM variants) | 5 |
-| Classical digital signatures (incl. SM9) | 13 |
+| Classical digital signatures (incl. SM9, GOSTR3410) | 14 |
 | Stateful hash-based signatures | 4 |
-| Key agreement algorithms (incl. SPAKE2+, OPAQUE-3DH) | 10 |
+| Key agreement algorithms (incl. SPAKE2+, OPAQUE-3DH, MLS, SRTP) | 12 |
 | Named elliptic curves and groups | 20 |
-| Key derivation functions | 9 |
+| Key derivation functions (incl. CatKDF, KeyCombine) | 11 |
 | Password hashing (incl. Windows) | 10 |
 | Password-based encryption frameworks | 3 |
 | PKCS / protocol frameworks | 7 |
@@ -766,10 +785,10 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | NIST SP 800-90A DRBGs | 12 |
 | Accumulator-based CSPRNGs | 2 |
 | OS entropy APIs and hardware RNGs | 10 |
-| Non-cryptographic PRNGs | 6 |
+| Non-cryptographic PRNGs (incl. Xoroshiro) | 7 |
 | Padding / encoding schemes | 5 |
 | Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
-| **Total** | **~385** |
+| **Total** | **~424** |
 
 ---
 
