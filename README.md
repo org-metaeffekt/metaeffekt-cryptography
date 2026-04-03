@@ -105,6 +105,12 @@ that adjustments can be applied accordingly.
 
 - **[inventory/ae-cryptography-inventory.xlsx](inventory/ae-cryptography-inventory.xlsx)** — Structured inventory of cryptographic libraries and implementations in spreadsheet form (93 entries). Each row records the library identifier, version, repository URL, source-download archive URL, description, version status, repository licence (SPDX expression), CycloneDX algorithm patterns supported, and patent references. Intended as a machine-readable companion to the narrative documents above.
 
+## Pattern Validator
+
+- **[ae-pattern-validator/](ae-pattern-validator/)** — Maven-based Java module that validates CycloneDX cryptographic algorithm pattern strings against a YAML-based controlled vocabulary registry. Combines an ANTLR4 structural grammar (`CryptographyPattern.g4`, unified from `AlgorithmPattern` and `RngPattern`) with a data-driven validation registry covering AES, ML-KEM, ML-DSA, SLH-DSA, CTR_DRBG, HMAC_DRBG, HMAC, and ChaCha20 families. Supports two modes: **instance** validation (concrete strings like `AES-256-GCM`) and **template** validation (patterns with wildcards and enumerations like `AES-[128|192|256]-*`). Reports structured deviations including unknown values, deprecated/disallowed primitives, and missing required parameters. Build: `cd ae-pattern-validator && mvn clean verify`. (NOT YET PUBLISHED; UNDER EVALUATION)
+
+- **[registry-naming-inconsistencies.md](registry-naming-inconsistencies.md)** — Cross-reference of naming ambiguities and inconsistencies between the CycloneDX cryptography registry, the SPDX algorithm list, and this repository's taxonomy. Documents 15 concrete issues: RSA naming (scheme vs operation prefix), dash-vs-underscore separators (SP 800-108, IKE, GOST), choice-in-name notation (SHAKE, KMAC), case sensitivity, duplicate algorithm names (AES-Wrap/KW), and patterns missing from either registry. Includes recommendations for alias mapping and upstream alignment.
+
 ## Grammars
 
 The grammars are fully experimental.

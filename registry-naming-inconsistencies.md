@@ -6,7 +6,7 @@ markdown taxonomy (`cryptographic-algorithms.md`), and the YAML validation regis
 (`algorithms.yaml`).
 
 Each entry describes a concrete inconsistency, its impact on tooling interoperability,
-and a recommendation.
+and a recommendation. Where alias resolution has been implemented, this is noted.
 
 ---
 
@@ -27,9 +27,9 @@ the padding scheme name alone (`PSS` = sign, `OAEP` = encrypt). The RFC 8017 nam
 with `RSA-` prefix and vice versa. The PKCS1-v1.5 ambiguity means a CBOM entry
 cannot distinguish signature from encryption without additional context.
 
-**Recommendation:** Accept both forms; map `RSA-PSS` to `RSASSA-PSS` and `RSA-OAEP`
-to `RSAES-OAEP` as aliases. For `RSA-PKCS1-1.5`, require the consuming tool to
-disambiguate via the CycloneDX `cryptoProperties.algorithmProperties.primitive` field.
+**Resolution:** Aliases registered: `RSA-PSS` &rarr; `RSASSA-PSS`, `RSA-OAEP` &rarr;
+`RSAES-OAEP`, `RSA-PKCS1` &rarr; `RSAES-PKCS1` / `RSASSA-PKCS1`. Validator emits
+`ALIAS_USED` warning when the short form is used.
 
 ---
 
@@ -55,9 +55,8 @@ separators, `SP800_108_CounterKDF` parses as a single NAME token whereas
 using the other convention without normalisation. Validators must either normalise
 underscores to dashes before parsing, or register both forms.
 
-**Recommendation:** Define a canonical form using dashes (consistent with the
-CycloneDX algorithm name field and NIST document numbers). Provide underscore
-variants as aliases in the registry or apply a pre-parse normalisation step.
+**Resolution:** Not yet aliased. Requires either a pre-parse normalisation step or
+registering underscore variants as aliases.
 
 ---
 
@@ -79,9 +78,9 @@ registers three separate families: `EdDSA` (with curve as parameter), `Ed25519`,
 `Ed(25519|448)` pattern without expansion. `EdDSA-Ed25519` is a valid instance in this
 repo but not a CycloneDX pattern.
 
-**Recommendation:** Accept all three forms. Map `Ed25519` and `Ed448` as aliases for
-`EdDSA-Ed25519` and `EdDSA-Ed448`. Add `ph` and `ctx` variants to the EdDSA segment
-vocabulary.
+**Resolution:** Not yet aliased. Would require registering `Ed25519` and `Ed448` as
+aliases for `EdDSA` with appropriate curve inference, plus adding `ph` and `ctx`
+variants to the EdDSA segment vocabulary.
 
 ---
 
@@ -103,10 +102,9 @@ concatenated form (KMAC128, not KMAC-128).
 `SHAKE` alone is not registered and the choice group is not part of the prefix. The
 validator identifies no family for these patterns.
 
-**Recommendation:** Register `SHAKE`, `KMAC`, `KMACXOF`, `TupleHash`, `TupleHashXOF`,
-`ParallelHash`, and `ParallelHashXOF` as additional families with a single choice
-segment. Alternatively, add a pre-parse expansion step that converts `SHAKE(128|256)`
-to two patterns: `SHAKE128`, `SHAKE256`.
+**Resolution:** Not yet aliased. Requires either registering `SHAKE`, `KMAC`, etc. as
+families with a choice segment, or implementing a pre-parse expansion step that converts
+`SHAKE(128|256)` to two patterns: `SHAKE128`, `SHAKE256`.
 
 ---
 
@@ -127,8 +125,8 @@ prevents prefix matching.
 **Impact:** The CycloneDX SHA pattern cannot be validated against the per-variant
 registry entries without expanding the choice group first.
 
-**Recommendation:** Add a generic `SHA` family covering the SHA-2 variants with a
-choice segment, or implement choice-group expansion in the validator so that
+**Resolution:** Not yet aliased. Recommend adding a generic `SHA` family covering the
+SHA-2 variants with a choice segment, or implementing choice-group expansion so that
 `SHA-(224|256)` is tested as `SHA-224` and `SHA-256` individually.
 
 ---
@@ -146,10 +144,9 @@ this repo's taxonomy includes the year (`GOSTR3410-2012`) to distinguish the 201
 revision from the superseded 2001 and 1994 versions. Both forms are valid references
 to the same algorithm.
 
-**Impact:** Minor — resolved by registering both the base prefix and the year-qualified
-prefix in the YAML registry.
-
-**Recommendation:** Already addressed. Keep both registrations.
+**Resolution:** Both base prefix (`GOSTR3410`, `GOSTR3411`) and year-qualified prefix
+(`GOSTR3410-2012`, `GOSTR3411-2012`) are registered as separate families. The base
+prefix matches when no year suffix is provided.
 
 ---
 
@@ -167,12 +164,9 @@ under the `ECDH` family with `Curve25519` and `Curve448` as curve parameter valu
 The CycloneDX `ECDH[E]` pattern includes an optional `E` suffix for ephemeral mode,
 which this repo does not model.
 
-**Impact:** A CBOM entry using `x25519` will not match the `ECDH-Curve25519` pattern.
-Lowercase `x25519` vs `X25519` is also a case sensitivity issue.
-
-**Recommendation:** Register `X25519` and `X448` as standalone families (aliases for
-`ECDH-Curve25519` and `ECDH-Curve448`). Add `E` (ephemeral) as an optional segment
-to the `ECDH` family. Establish case-insensitive matching or normalise to uppercase.
+**Resolution:** `X25519` and `X448` registered as aliases for `ECDH`. Validator emits
+`ALIAS_USED` warning and resolves to canonical family `ECDH`. Note: lowercase `x25519`
+vs `X25519` remains a case-sensitivity issue (see item 9).
 
 ---
 
@@ -191,29 +185,24 @@ repo uses a single `SM2` family with wildcard parameters.
 operations, which the single-family registration cannot do. The `-256` suffix (the
 only SM2 curve size) adds no information but is syntactically present.
 
-**Recommendation:** Add operation and curve segments to the SM2 family vocabulary, or
-register `SM2-ENC`, `SM2-KEX` as separate families mirroring the CycloneDX split.
+**Resolution:** Not yet aliased. Recommend adding operation and curve segments to the
+SM2 family vocabulary, or registering `SM2-ENC`, `SM2-KEX` as separate families.
 
 ---
 
-## 9. Case Sensitivity: RABBIT vs Rabbit, CAMELLIA vs Camellia
+## 9. Case Sensitivity: RABBIT vs Rabbit
 
-| Algorithm | CycloneDX | This repo (MD) | This repo (YAML) |
-|-----------|-----------|-----------------|-------------------|
-| Rabbit | `RABBIT` | `Rabbit-*` | `Rabbit` and `RABBIT` |
-| Camellia | `CAMELLIA-(128\|...)` | `CAMELLIA-[128\|256]-*` | `CAMELLIA` |
+| Algorithm | CycloneDX | This repo |
+|-----------|-----------|-----------|
+| Rabbit | `RABBIT` | `Rabbit` |
 
-**Issue:** CycloneDX uses all-uppercase for some algorithm names (`RABBIT`, `CAMELLIA`),
-while conventional English capitalisation or mixed case is used elsewhere (`Rabbit`,
-`Camellia`). The ANTLR4 grammar is case-sensitive by default.
+**Issue:** CycloneDX uses all-uppercase for some algorithm names (`RABBIT`), while
+conventional English capitalisation is used elsewhere (`Rabbit`). The ANTLR4 grammar
+is case-sensitive by default.
 
-**Impact:** `RABBIT` does not match a family registered as `Rabbit` without
-case-insensitive matching. The YAML registry currently registers both forms for Rabbit
-as a workaround.
-
-**Recommendation:** Implement case-insensitive family matching in the validator, or
-define a canonical casing convention and normalise input before matching. Registering
-duplicate entries for each casing variant does not scale.
+**Resolution:** `RABBIT` registered as alias for canonical `Rabbit`. Validator emits
+`ALIAS_USED` warning. Long-term recommendation: implement case-insensitive family
+matching to avoid registering casing variants individually.
 
 ---
 
@@ -225,21 +214,13 @@ duplicate entries for each casing variant does not scale.
 | IETF draft-lamps | `MLDSA44-RSA2048-PSS-SHA256` |
 | This repo | `MLDSA44-RSA2048-PSS-SHA256` |
 
-**Issue:** Composite ML-DSA signatures from draft-ietf-lamps-pq-composite-sigs use a
-flat dash-concatenated naming convention (`MLDSA44-RSA2048-PSS-SHA256`) where each
-component (ML-DSA parameter set, RSA key length, padding scheme, hash) is joined by
-dashes. This conflicts with the structured dash-separator grammar because "RSA2048"
-is a single NAME token (no dash between "RSA" and "2048"), breaking the segment
-boundary model used elsewhere.
+**Issue:** Composite ML-DSA signatures use a flat dash-concatenated naming convention
+where each component is joined by dashes. This prevents structural decomposition — a
+validator cannot extract "RSA key length = 2048" from the pattern without knowing the
+composite naming convention.
 
-**Impact:** The flat naming works because each composite variant is registered as a
-fixed compound value. But it prevents structured decomposition — a validator cannot
-extract "RSA key length = 2048" from the pattern without knowing the composite naming
-convention.
-
-**Recommendation:** Accept the IETF flat naming as-is for composite signatures. Register
-each variant as a compound value under the `MLDSA44`, `MLDSA65`, `MLDSA87` families.
-This is already implemented.
+**Resolution:** Accepted as-is. Each composite variant is registered as a compound
+value under the `MLDSA44`, `MLDSA65`, `MLDSA87` families.
 
 ---
 
@@ -251,16 +232,11 @@ This is already implemented.
 | This repo | `HPKE-{kemVariant}-{kdfVariant}-{aeadVariant}` |
 | RFC 9180 | mode: 0x00 (Base), 0x01 (PSK), 0x02 (Auth), 0x03 (AuthPSK) |
 
-**Issue:** CycloneDX encodes the HPKE mode as a `mode_` prefixed underscore-separated
-name inside an optional choice group. This repo uses variable placeholders without
-the mode parameter. The underscore-containing values (`mode_base`, `mode_psk`) are
-parsed as single NAME tokens in the grammar.
+**Issue:** CycloneDX encodes the HPKE mode as `mode_` prefixed underscore-separated
+names. This repo uses variable placeholders without the mode parameter.
 
-**Impact:** A validator checking HPKE patterns would need to recognise `mode_base` etc.
-as valid mode values.
-
-**Recommendation:** Add HPKE mode as a segment with the four RFC 9180 mode values.
-Accept both underscore (`mode_base`) and dash (`mode-base`) forms.
+**Resolution:** Not yet aliased. Recommend adding HPKE mode as a segment with the four
+RFC 9180 mode values, accepting both underscore and dash forms.
 
 ---
 
@@ -273,15 +249,10 @@ Accept both underscore (`mode_base`) and dash (`mode-base`) forms.
 | NIST SP 800-38F | AES Key Wrap (KW), AES Key Wrap with Padding (KWP) |
 
 **Issue:** CycloneDX registers both `AES-KW` and `AES-Wrap` as valid patterns for
-the same NIST SP 800-38F algorithm. The `-Wrap` variant adds an optional `-PKCS7`
-suffix not present in the `KW` variant.
+the same NIST SP 800-38F algorithm.
 
-**Impact:** Two different pattern strings refer to the same algorithm. A CBOM tool
-using `AES-256-Wrap` and another using `AES-256-KW` are expressing the same thing
-but will not match without alias mapping.
-
-**Recommendation:** Designate `AES-KW` / `AES-KWP` as canonical (matching the NIST
-abbreviations). Accept `AES-Wrap` as an alias.
+**Resolution:** `AES-Wrap` registered as alias for canonical `AES-KW`. Validator emits
+`ALIAS_USED` warning when `Wrap` form is used.
 
 ---
 
@@ -292,16 +263,13 @@ abbreviations). Accept `AES-Wrap` as an alias.
 | CycloneDX | `TLS1-PRF[-RFC7627]`, `TLS12-PRF[-RFC7627][-{hash}]`, `TLS13-PRF[-{hash}]` |
 | This repo | `TLS12-PRF-{hash}`, `TLS13-HKDF-{hash}` |
 
-**Issue:** CycloneDX distinguishes TLS 1.0/1.1 PRF (`TLS1-PRF`) from TLS 1.2
-(`TLS12-PRF`) and TLS 1.3 (`TLS13-PRF`). This repo uses `TLS12-PRF` and `TLS13-HKDF`
-(reflecting that TLS 1.3 uses HKDF, not a standalone PRF). CycloneDX's `TLS13-PRF`
-differs from this repo's `TLS13-HKDF` — same algorithm, different name.
+**Issue:** CycloneDX uses `TLS13-PRF` while this repo uses `TLS13-HKDF` (reflecting
+that TLS 1.3 uses HKDF, not a standalone PRF). `TLS1-PRF` (for TLS 1.0/1.1) is not
+registered in this repo at all.
 
-**Impact:** `TLS13-PRF` does not match `TLS13-HKDF` without alias mapping. `TLS1-PRF`
-is not registered in this repo at all.
-
-**Recommendation:** Register `TLS1-PRF` as a deprecated family. Add `TLS13-PRF` as an
-alias for `TLS13-HKDF`, or register both prefixes pointing to the same family.
+**Resolution:** `TLS13-PRF` registered as alias for canonical `TLS13-HKDF`. Validator
+emits `ALIAS_USED` warning. `TLS1-PRF` is not yet registered (recommend adding as
+a deprecated family).
 
 ---
 
@@ -323,52 +291,87 @@ The following algorithms are in this repository's taxonomy but **not** in the Cy
 
 ## 15. Missing from This Repository
 
-The following CycloneDX patterns have **no corresponding family** in this repo:
+The following CycloneDX patterns have **no corresponding family** in this repository's
+validation registry. They are grouped by resolution status.
 
-| CycloneDX pattern | Category | Notes |
-|--------------------|----------|-------|
-| `KMACXOF(128\|256)` | XOF MAC | NIST SP 800-185 |
-| `TupleHash(128\|256)` | Hash | NIST SP 800-185 |
-| `TupleHashXOF(128\|256)` | XOF | NIST SP 800-185 |
-| `ParallelHash(128\|256)` | Hash | NIST SP 800-185 |
-| `ParallelHashXOF(128\|256)` | XOF | NIST SP 800-185 |
-| `PBMAC1[-{mac}][-{hash}][-{iter}][-{dkLen}]` | MAC KDF | PKCS #5 v2.1 |
-| `X3DH[-{hash}]` | Key agreement | Signal protocol |
-| `J-PAKE[-{group}][-{kdf}][-{mac}]` | PAKE | RFC 8236 |
-| `ECMQV[-{curve}]` | Key agreement | NIST SP 800-56A |
-| `FFMQV[-{group}]` | Key agreement | NIST SP 800-56A |
-| `EC-ElGamal[-{curve}]` | Asymmetric enc | EC variant |
-| `WOTSP-(SHA2\|SHAKE)` | One-time signature | Component of XMSS |
-| `IKE_PRF_DERIVE[-{hash}]` | KDF | IKEv1/v2 |
-| `IKE1_(PRF\|Extended)_DERIVE[-{hash}]` | KDF | IKEv1 |
-| `IKE2_PRF_PLUS_DERIVE[-{hash}]` | KDF | IKEv2 |
-| `x25519`, `x448` | Key agreement | RFC 7748 (lowercase) |
-| `FFDH(E)[-{group}]` | Key agreement | With optional ephemeral flag |
-| `SRP-3[-{hash}][-{group}]` | PAKE | SRP version 3 |
-| `SRP-6[-{hash}][-{group}]` | PAKE | SRP version 6/6a |
-| `BLS(13-381\|13-377\|BN254)` | Pairing curve | Specific curve choice |
-| `AES-CTR-HMAC-SHA1[-96]` | AEAD composite | Non-standard |
-| `AES-Wrap[-PKCS7]` | Key wrapping | Alias for AES-KW |
-| `AES-XCBC_MAC[_96]` | MAC | RFC 3566 |
-| `BLAKE2b-*-HMAC`, `BLAKE2s-*-HMAC` | MAC | BLAKE2 keyed mode |
-| `SEED-128-(CCM\|GCM)` | AEAD | Korean standard |
-| `SEED-128-*-HMAC-*` | Encrypt-then-MAC | Korean standard |
-| `Salsa20-Poly1305` | AEAD | NaCl |
+### 15.1 Resolved via Aliases
+
+These patterns are now matched through the alias mechanism. The validator identifies the
+canonical family and emits an `ALIAS_USED` warning.
+
+| CycloneDX pattern | Alias resolves to | Notes |
+|--------------------|-------------------|-------|
+| `RSA-PSS[-{hash}][-{mgf}][-{salt}][-{keyLen}]` | `RSASSA-PSS` | RFC 8017 naming |
+| `RSA-OAEP[-{hash}][-{mgf}][-{keyLen}]` | `RSAES-OAEP` | RFC 8017 naming |
+| `RSA-PKCS1-1.5[-{hash}][-{keyLen}]` | `RSAES-PKCS1` / `RSASSA-PKCS1` | Ambiguous sign/encrypt |
+| `x25519` | `ECDH` | RFC 7748 standalone name |
+| `x448` | `ECDH` | RFC 7748 standalone name |
+| `TLS13-PRF[-{hash}]` | `TLS13-HKDF` | CycloneDX naming |
+| `AES-Wrap[-PKCS7]` | `AES-KW` | Duplicate wrapping name |
+| `RABBIT` | `Rabbit` | Case variant |
+
+### 15.2 Parsable but Not Yet Registered
+
+These patterns parse without syntax errors but no family is registered in the YAML.
+They require new family entries or structural extensions.
+
+| CycloneDX pattern | Category | Action needed |
+|--------------------|----------|---------------|
+| `KMACXOF(128\|256)` | XOF MAC | Register `KMACXOF128`, `KMACXOF256` families (NIST SP 800-185) |
+| `TupleHash(128\|256)` | Hash | Register `TupleHash128`, `TupleHash256` families (NIST SP 800-185) |
+| `TupleHashXOF(128\|256)` | XOF | Register `TupleHashXOF128`, `TupleHashXOF256` families |
+| `ParallelHash(128\|256)` | Hash | Register `ParallelHash128`, `ParallelHash256` families |
+| `ParallelHashXOF(128\|256)` | XOF | Register `ParallelHashXOF128`, `ParallelHashXOF256` families |
+| `PBMAC1[-{mac}][-{hash}][-{iter}][-{dkLen}]` | MAC KDF | Register `PBMAC1` family (PKCS #5 v2.1) |
+| `X3DH[-{hash}]` | Key agreement | Register `X3DH` family (Signal protocol) |
+| `J-PAKE[-{group}][-{kdf}][-{mac}]` | PAKE | Register `J-PAKE` family (RFC 8236) |
+| `ECMQV[-{curve}]` | Key agreement | Register `ECMQV` family (NIST SP 800-56A) |
+| `FFMQV[-{group}]` | Key agreement | Register `FFMQV` family (NIST SP 800-56A) |
+| `EC-ElGamal[-{curve}]` | Asymmetric enc | Register `EC-ElGamal` family |
+| `WOTSP-(SHA2\|SHAKE)` | One-time sig | Register `WOTSP` family (XMSS component) |
+| `BLS(13-381\|13-377\|BN254)` | Pairing curve | Register `BLS` with specific curve choices |
+| `BLAKE2b-*-HMAC`, `BLAKE2s-*-HMAC` | MAC | Register as BLAKE2 keyed-mode variants |
+| `Salsa20-Poly1305` | AEAD | Register as `Salsa20` mode value or separate family (NaCl) |
+| `SEED-128-(CCM\|GCM)` | AEAD | Expand `SEED` family with AEAD mode segments |
+| `SEED-128-*-HMAC-*` | Encrypt-then-MAC | Expand `SEED` family |
+| `AES-CTR-HMAC-SHA1[-96]` | AEAD composite | Register as AES mode compound value |
+| `AES-XCBC_MAC[_96]` | MAC | Register `AES-XCBC_MAC` family (RFC 3566) |
+
+### 15.3 Require Grammar or Validator Extensions
+
+These patterns cannot be matched with the current architecture due to structural
+limitations, not just missing registry entries.
+
+| CycloneDX pattern | Issue | Extension needed |
+|--------------------|-------|------------------|
+| `FFDH(E)[-{group}]` | Optional `E` suffix inside the family name | Support optional name suffixes in prefix matching |
+| `ECDH[E][-{curve}]` | Optional `E` suffix | Same |
+| `Ed(25519\|448)[(ph\|ctx)]` | Choice group embedded in name, no dash separator | Choice-in-name expansion or pre-parse normalisation |
+| `SHA-(224\|256\|...)` | Choice group as parameter set selector across separate families | Choice-group expansion in the validator |
+| `SHAKE(128\|256)`, `KMAC(128\|256)` | Choice appended to name without dash | Pre-parse concatenation or name-level choice expansion |
+| `[{hashAlgorithm}-]yescrypt[...]` | Pattern starts with an optional prefix, not a fixed family name | Support leading-optional patterns |
+| `SP800_108_(CounterKDF\|...)` | Underscore separator parsed as single NAME token | Pre-parse underscore-to-dash normalisation |
+| `IKE_PRF_DERIVE[-{hash}]` | Same underscore issue | Same |
+| `IKE1_(PRF\|Extended)_DERIVE[-{hash}]` | Same | Same |
+| `IKE2_PRF_PLUS_DERIVE[-{hash}]` | Same | Same |
+| `GOST38147[-{mode}]`, `GOST38147_MAC` | Same | Same |
+| `GOSTR3411_HMAC` | Same | Same |
+| `SRP-3[-{hash}][-{group}]` | Registered as `SRP` but CycloneDX splits by version | Register `SRP-3` and `SRP-6` as families |
 
 ---
 
 ## Summary
 
-| Category | Count |
-|----------|-------|
-| Naming convention conflicts (RSA, SP800, IKE, GOST separators) | 5 |
-| Structural notation differences (choice-in-name, curve-in-name) | 4 |
-| Case sensitivity issues | 1 |
-| Duplicate names for same algorithm (AES-Wrap/KW, TLS13-PRF/HKDF) | 2 |
-| Missing from CycloneDX registry | 6+ families |
-| Missing from this repository | 25+ CycloneDX patterns |
+| Category | Count | Status |
+|----------|-------|--------|
+| Naming convention conflicts (RSA, AES-Wrap, TLS13, case) | 5 | 4 resolved via aliases, 1 pending |
+| Structural notation differences (choice-in-name, underscore separator) | 6 | Require grammar/validator extensions |
+| Duplicate names for same algorithm | 2 | Resolved via aliases |
+| Missing from CycloneDX registry | 6+ families | Upstream gap |
+| Missing from this repo — resolved via aliases | 8 patterns | Resolved |
+| Missing from this repo — need new families | 18 patterns | Registry additions needed |
+| Missing from this repo — need architecture changes | 13 patterns | Grammar/validator extensions needed |
 
-The most impactful inconsistencies for CBOM tooling interoperability are items 1 (RSA
-naming), 2 (dash vs underscore), 4 (choice-in-name), and 7 (ECDH/X25519 namespace).
-These should be prioritised for resolution through either alias mapping in the
-validation registry or upstream alignment with the CycloneDX specification maintainers.
+The most impactful inconsistencies for CBOM tooling interoperability are items 2 (dash
+vs underscore), 4 (choice-in-name), and 5 (SHA choice scope). These require grammar-
+level or pre-parse normalisation extensions that go beyond alias mapping.
