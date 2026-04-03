@@ -3,10 +3,17 @@
 Cross-reference of naming conventions between the CycloneDX cryptography registry
 (`cryptography-defs.json`), the SPDX cryptographic algorithm list, this repository's
 markdown taxonomy (`cryptographic-algorithms.md`), and the YAML validation registry
-(`algorithms.yaml`).
+(split across `cr-*.yaml` files in `src/main/resources/registry/`).
 
 Each entry describes a concrete inconsistency, its impact on tooling interoperability,
-and a recommendation. Where alias resolution has been implemented, this is noted.
+and the current resolution status. Three mechanisms are used:
+
+1. **Aliases** on canonical families — simple name remapping; emits `ALIAS_USED` warning
+2. **Deprecated CycloneDX families** in `cr-cdx.yaml` — structural naming alternatives
+   marked `status: deprecated` with a `note` explaining the preferred canonical form;
+   emits `DEPRECATED_VALUE` warning with the rationale
+3. **New CycloneDX families** in `cr-cdx.yaml` — algorithms only present in the
+   CycloneDX registry with no canonical equivalent; no deprecation warning
 
 ---
 
@@ -296,8 +303,8 @@ validation registry. They are grouped by resolution status.
 
 ### 15.1 Resolved via Aliases
 
-These patterns are now matched through the alias mechanism. The validator identifies the
-canonical family and emits an `ALIAS_USED` warning.
+These patterns are matched through the alias mechanism on canonical families. The
+validator identifies the canonical family and emits an `ALIAS_USED` warning.
 
 | CycloneDX pattern | Alias resolves to | Notes |
 |--------------------|-------------------|-------|
@@ -310,53 +317,71 @@ canonical family and emits an `ALIAS_USED` warning.
 | `AES-Wrap[-PKCS7]` | `AES-KW` | Duplicate wrapping name |
 | `RABBIT` | `Rabbit` | Case variant |
 
-### 15.2 Parsable but Not Yet Registered
+### 15.2 Resolved via Deprecated CycloneDX Families (cr-cdx.yaml)
 
-These patterns parse without syntax errors but no family is registered in the YAML.
-They require new family entries or structural extensions.
+These patterns are now matched through dedicated CycloneDX-specific family entries in
+`cr-cdx.yaml`. Families that duplicate a canonical entry are marked `status: deprecated`
+with a `note` field explaining the preferred canonical name. The validator emits a
+`DEPRECATED_VALUE` warning with the rationale included in the message.
 
-| CycloneDX pattern | Category | Action needed |
-|--------------------|----------|---------------|
-| `KMACXOF(128\|256)` | XOF MAC | Register `KMACXOF128`, `KMACXOF256` families (NIST SP 800-185) |
-| `TupleHash(128\|256)` | Hash | Register `TupleHash128`, `TupleHash256` families (NIST SP 800-185) |
-| `TupleHashXOF(128\|256)` | XOF | Register `TupleHashXOF128`, `TupleHashXOF256` families |
-| `ParallelHash(128\|256)` | Hash | Register `ParallelHash128`, `ParallelHash256` families |
-| `ParallelHashXOF(128\|256)` | XOF | Register `ParallelHashXOF128`, `ParallelHashXOF256` families |
-| `PBMAC1[-{mac}][-{hash}][-{iter}][-{dkLen}]` | MAC KDF | Register `PBMAC1` family (PKCS #5 v2.1) |
-| `X3DH[-{hash}]` | Key agreement | Register `X3DH` family (Signal protocol) |
-| `J-PAKE[-{group}][-{kdf}][-{mac}]` | PAKE | Register `J-PAKE` family (RFC 8236) |
-| `ECMQV[-{curve}]` | Key agreement | Register `ECMQV` family (NIST SP 800-56A) |
-| `FFMQV[-{group}]` | Key agreement | Register `FFMQV` family (NIST SP 800-56A) |
-| `EC-ElGamal[-{curve}]` | Asymmetric enc | Register `EC-ElGamal` family |
-| `WOTSP-(SHA2\|SHAKE)` | One-time sig | Register `WOTSP` family (XMSS component) |
-| `BLS(13-381\|13-377\|BN254)` | Pairing curve | Register `BLS` with specific curve choices |
-| `BLAKE2b-*-HMAC`, `BLAKE2s-*-HMAC` | MAC | Register as BLAKE2 keyed-mode variants |
-| `Salsa20-Poly1305` | AEAD | Register as `Salsa20` mode value or separate family (NaCl) |
-| `SEED-128-(CCM\|GCM)` | AEAD | Expand `SEED` family with AEAD mode segments |
-| `SEED-128-*-HMAC-*` | Encrypt-then-MAC | Expand `SEED` family |
-| `AES-CTR-HMAC-SHA1[-96]` | AEAD composite | Register as AES mode compound value |
-| `AES-XCBC_MAC[_96]` | MAC | Register `AES-XCBC_MAC` family (RFC 3566) |
+**Deprecated alternatives** (canonical equivalent exists in another registry file):
 
-### 15.3 Require Grammar or Validator Extensions
+| CycloneDX pattern | cdx family | Canonical family | Rationale |
+|--------------------|------------|------------------|-----------|
+| `SHA-(224\|256\|384\|512\|...)` | `cdx:SHA` | `SHA-224`, `SHA-256`, etc. | CycloneDX generic; prefer per-variant families |
+| `Ed(25519\|448)` | `cdx:Ed` | `EdDSA`, `Ed25519`, `Ed448` | CycloneDX short form |
+| `CMAC[-{cipher}][-{length}]` | `cdx:CMAC` | `AES-CMAC` | Prefer cipher-qualified form |
+| `ECMQV[-{curve}]` | `cdx:ECMQV` | `MQV` | CycloneDX EC-specific split |
+| `FFMQV[-{group}]` | `cdx:FFMQV` | `MQV` | CycloneDX FF-specific split |
+| `EC-ElGamal[-{curve}]` | `cdx:EC-ElGamal` | `ElGamal` | CycloneDX EC variant |
+| `SRP-3[-{hash}][-{group}]` | `cdx:SRP-3` | `SRP` | CycloneDX version-specific |
+| `SRP-6[-{hash}][-{group}]` | `cdx:SRP-6` | `SRP` | CycloneDX version-specific |
+| `SP800_108_CounterKDF[-...]` | `cdx:SP800_108_CounterKDF` | `SP800-108` | Underscore form |
+| `SP800_108_FeedbackKDF[-...]` | `cdx:SP800_108_FeedbackKDF` | `SP800-108` | Underscore form |
+| `SP800_108_DoublePipelineKDF[-...]` | `cdx:SP800_108_DoublePipelineKDF` | `SP800-108` | Underscore form |
+| `SP800_108_KMAC[-...]` | `cdx:SP800_108_KMAC` | `SP800-108` | Underscore form |
+| `SP800_56C_OneStep[-...]` | `cdx:SP800_56C_OneStep` | `SP800-56C` | Underscore form |
+| `SP800_56C_TwoStep_*[-...]` | `cdx:SP800_56C_TwoStep_*` (3 variants) | `SP800-56C` | Underscore form |
+| `IKE_PRF_DERIVE[-{hash}]` | `cdx:IKE_PRF_DERIVE` | `IKEv2-PRF` | Underscore form |
+| `IKE1_PRF_DERIVE[-{hash}]` | `cdx:IKE1_PRF_DERIVE` | `IKEv2-PRF` | Underscore form |
+| `IKE1_Extended_DERIVE[-{hash}]` | `cdx:IKE1_Extended_DERIVE` | `IKEv2-PRF` | Underscore form |
+| `IKE2_PRF_PLUS_DERIVE[-{hash}]` | `cdx:IKE2_PRF_PLUS_DERIVE` | `IKEv2-PRF` | Underscore form |
+| `GOST38147[-{mode}]` | `cdx:GOST38147` | `GOST-28147` | CycloneDX compact form |
+| `GOST38147_MAC` | `cdx:GOST38147_MAC` | `GOST-28147` | Underscore form |
+| `GOSTR3411_HMAC` | `cdx:GOSTR3411_HMAC` | `HMAC` + `GOSTR3411` | Underscore form |
+| `TLS1-PRF[-RFC7627]` | `cdx:TLS1-PRF` | *(none)* | TLS 1.0/1.1 deprecated per RFC 8996 |
 
-These patterns cannot be matched with the current architecture due to structural
-limitations, not just missing registry entries.
+**New families** (no canonical equivalent — not deprecated):
 
-| CycloneDX pattern | Issue | Extension needed |
-|--------------------|-------|------------------|
-| `FFDH(E)[-{group}]` | Optional `E` suffix inside the family name | Support optional name suffixes in prefix matching |
+| CycloneDX pattern | cdx family | Notes |
+|--------------------|------------|-------|
+| `KMACXOF(128\|256)` | `cdx:KMACXOF128`, `cdx:KMACXOF256` | NIST SP 800-185 |
+| `TupleHash(128\|256)` | `cdx:TupleHash128`, `cdx:TupleHash256` | NIST SP 800-185 |
+| `TupleHashXOF(128\|256)` | `cdx:TupleHashXOF128`, `cdx:TupleHashXOF256` | NIST SP 800-185 |
+| `ParallelHash(128\|256)` | `cdx:ParallelHash128`, `cdx:ParallelHash256` | NIST SP 800-185 |
+| `ParallelHashXOF(128\|256)` | `cdx:ParallelHashXOF128`, `cdx:ParallelHashXOF256` | NIST SP 800-185 |
+| `PBMAC1[-{mac}][-{hash}][-{iter}][-{dkLen}]` | `cdx:PBMAC1` | PKCS #5 v2.1 |
+| `X3DH[-{hash}]` | `cdx:X3DH` | Signal protocol |
+| `J-PAKE[-{group}][-{kdf}][-{mac}]` | `cdx:J-PAKE` | RFC 8236 |
+| `WOTSP-(SHA2\|SHAKE)` | `cdx:WOTSP` | Winternitz OTS (XMSS component) |
+
+### 15.3 Remaining Gaps
+
+These CycloneDX patterns are not yet covered by any resolution mechanism.
+
+| CycloneDX pattern | Issue | Notes |
+|--------------------|-------|-------|
+| `FFDH(E)[-{group}]` | Optional `E` suffix inside the family name | Requires optional name suffix support |
 | `ECDH[E][-{curve}]` | Optional `E` suffix | Same |
-| `Ed(25519\|448)[(ph\|ctx)]` | Choice group embedded in name, no dash separator | Choice-in-name expansion or pre-parse normalisation |
-| `SHA-(224\|256\|...)` | Choice group as parameter set selector across separate families | Choice-group expansion in the validator |
-| `SHAKE(128\|256)`, `KMAC(128\|256)` | Choice appended to name without dash | Pre-parse concatenation or name-level choice expansion |
-| `[{hashAlgorithm}-]yescrypt[...]` | Pattern starts with an optional prefix, not a fixed family name | Support leading-optional patterns |
-| `SP800_108_(CounterKDF\|...)` | Underscore separator parsed as single NAME token | Pre-parse underscore-to-dash normalisation |
-| `IKE_PRF_DERIVE[-{hash}]` | Same underscore issue | Same |
-| `IKE1_(PRF\|Extended)_DERIVE[-{hash}]` | Same | Same |
-| `IKE2_PRF_PLUS_DERIVE[-{hash}]` | Same | Same |
-| `GOST38147[-{mode}]`, `GOST38147_MAC` | Same | Same |
-| `GOSTR3411_HMAC` | Same | Same |
-| `SRP-3[-{hash}][-{group}]` | Registered as `SRP` but CycloneDX splits by version | Register `SRP-3` and `SRP-6` as families |
+| `Ed(25519\|448)[(ph\|ctx)]` | `ph`/`ctx` variants not modelled | `Ed` prefix covered by `cdx:Ed`; `ph`/`ctx` need segment extension |
+| `SHAKE(128\|256)`, `KMAC(128\|256)` | Choice appended to name without dash | Pre-parse concatenation needed; SHAKE128/256, KMAC128/256 exist as canonical families |
+| `[{hashAlgorithm}-]yescrypt[...]` | Starts with an optional prefix | Requires leading-optional support |
+| `BLS(13-381\|13-377\|BN254)` | Choice group with dashes inside alternatives | BLS family exists but specific curve choices need expansion |
+| `BLAKE2b-*-HMAC`, `BLAKE2s-*-HMAC` | HMAC suffix after output-length parameter | BLAKE2 families exist but HMAC mode needs segment extension |
+| `SEED-128-(CCM\|GCM)` | AEAD modes for SEED | SEED family exists but needs AEAD mode segments |
+| `AES-CTR-HMAC-SHA1[-96]` | Composite AEAD construction | AES family exists but compound mode not registered |
+| `AES-XCBC_MAC[_96]` | Underscore in mode name | Needs `AES-XCBC_MAC` family or underscore normalisation |
+| `IKE1_(PRF\|Extended)_DERIVE` | Choice group between underscores | Template-level underscore patterns |
 
 ---
 
@@ -364,14 +389,20 @@ limitations, not just missing registry entries.
 
 | Category | Count | Status |
 |----------|-------|--------|
-| Naming convention conflicts (RSA, AES-Wrap, TLS13, case) | 5 | 4 resolved via aliases, 1 pending |
-| Structural notation differences (choice-in-name, underscore separator) | 6 | Require grammar/validator extensions |
+| Naming convention conflicts (RSA, AES-Wrap, TLS13, case) | 5 | Resolved via aliases |
+| CycloneDX naming alternatives with canonical equivalent | 24 | Resolved via deprecated cdx families (cr-cdx.yaml) |
+| CycloneDX-only families (no canonical equivalent) | 9 | Registered in cr-cdx.yaml (not deprecated) |
 | Duplicate names for same algorithm | 2 | Resolved via aliases |
 | Missing from CycloneDX registry | 6+ families | Upstream gap |
-| Missing from this repo — resolved via aliases | 8 patterns | Resolved |
-| Missing from this repo — need new families | 18 patterns | Registry additions needed |
-| Missing from this repo — need architecture changes | 13 patterns | Grammar/validator extensions needed |
+| Remaining structural gaps | 11 | Require grammar/validator extensions |
 
-The most impactful inconsistencies for CBOM tooling interoperability are items 2 (dash
-vs underscore), 4 (choice-in-name), and 5 (SHA choice scope). These require grammar-
-level or pre-parse normalisation extensions that go beyond alias mapping.
+Three resolution mechanisms are now in place:
+1. **Aliases** (on canonical families) — for simple name mappings; emit `ALIAS_USED` warning
+2. **Deprecated cdx families** (in `cr-cdx.yaml`) — for CycloneDX patterns that differ
+   structurally from canonical families; emit `DEPRECATED_VALUE` warning with a `note`
+   explaining the preferred canonical form
+3. **New cdx families** (in `cr-cdx.yaml`) — for algorithms only present in the CycloneDX
+   registry with no canonical equivalent; no deprecation warning
+
+The remaining 11 gaps require grammar-level extensions (choice-in-name expansion,
+underscore normalisation, leading-optional support) that go beyond registry additions.
