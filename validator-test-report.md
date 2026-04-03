@@ -21,9 +21,12 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `TemplateValidationTest` | 28 | Templates, constraints, normalisation, choice groups, fixed identifiers |
 | `CycloneDxRegistryCoverageTest` | 201 | Full CycloneDX cryptography-defs.json coverage + all 33 cdx families |
 | `SpdxCoverageTest` | 159 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
+| `CertificateAnalyserTest` | 5 | X.509 certificate analysis (RSA-2048, EC-P256) |
+| `CmsAnalyserTest` | 4 | CMS/PKCS#7 SignedData analysis |
+| `CBomAnalyserTest` | 8 | CycloneDX CBOM validation (6 components, compliance check) |
 | `MainTest` | 18 | CLI integration, OID output, OID reverse lookup |
 | `AlgorithmRegistryTest` | 11 | Registry loading, duplicate detection, OID index |
-| **Total** | **698** | |
+| **Total** | **715** | |
 
 ---
 
