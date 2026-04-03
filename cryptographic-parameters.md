@@ -21,6 +21,10 @@
 > minimal stub to full parameter tables covering all SP 800-208 LMS (20 sets), LMOTS (16 sets),
 > HSS, XMSS (18 sets), and XMSS^MT parameter sets. Added security strengths, signing capacity
 > guidance, LMOTS signature sizes, and the SP 800-208 §5.3 hardware module mandate.
+>
+> **Revision note (2026-04-04):** §11 added covering SP 800-57 cryptoperiod and key management
+> parameters (Part 1 Rev 5 Table 1/2, effective security strength chain rule). SP 800-57 Parts
+> 1/2/3 added to Sources.
 
 ## Pattern notation conventions
 
@@ -1590,6 +1594,34 @@ The hybrid key agreement must remain secure as long as **one** of the methods us
 
 ---
 
+## 11. SP 800-57 Cryptoperiod and Key Management Parameters
+
+> **Source:** NIST SP 800-57 Part 1 Rev 5 (May 2020), §5.3 Table 1 and §5.6 Table 2.
+
+### Cryptoperiod parameters
+
+Cryptoperiods define maximum time spans for key usage. These are policy parameters, not algorithm parameters — they constrain operational key lifetime rather than algorithm configuration.
+
+| Parameter | Description | Typical range | Source |
+|:---|:---|:---|:---|
+| `{originator-usage-period}` | Maximum time a key may be used to apply protection (encrypt, sign) | 1–3 years (signatures); ≤ 2 years (symmetric) | SP 800-57 Pt 1 §5.3 Table 1 |
+| `{recipient-usage-period}` | Maximum time a key may be used to process protected data (decrypt, verify) | OUP + 3 years (symmetric); several years (public keys) | SP 800-57 Pt 1 §5.3 Table 1 |
+
+### Effective security strength
+
+The effective security strength of a cryptographic operation is determined by the **weakest** component in the chain. SP 800-57 Part 1 §5.6.1:
+
+| Configuration example | Component strengths | Effective strength |
+|:---|:---|:---|
+| ECDSA P-256 key + SHA-256 certificate | 128 bit (ECC) + 128 bit (hash) | 128 bit |
+| ECDSA P-224 key + SHA-256 certificate | 112 bit (ECC) + 128 bit (hash) | 112 bit |
+| RSA-2048 key encrypting AES-256 session key | 112 bit (RSA) + 256 bit (AES) | 112 bit |
+| RSA-3072 key encrypting AES-128 session key | 128 bit (RSA) + 128 bit (AES) | 128 bit |
+
+> ℹ The common assumption that "RSA-2048 + AES-256 = 256-bit security" is incorrect. The RSA-2048 key provides only 112 bits, making the effective security 112 bits regardless of the AES key size.
+
+---
+
 ## Sources
 
 ### Registries and community resources
@@ -1623,6 +1655,18 @@ The hybrid key agreement must remain secure as long as **one** of the methods us
 
 ### NIST Special Publications
 
+- NIST SP 800-57 Part 1 Rev 5 — Recommendation for Key Management: Part 1 — General (May 2020)
+    - [CSRC landing page](https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final)
+    - [PDF](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf)
+    - DOI: [10.6028/NIST.SP.800-57pt1r5](https://doi.org/10.6028/NIST.SP.800-57pt1r5)
+- NIST SP 800-57 Part 2 Rev 1 — Recommendation for Key Management: Part 2 — Best Practices for Key-Management Organizations (May 2019)
+    - [CSRC landing page](https://csrc.nist.gov/pubs/sp/800/57/pt2/r1/final)
+    - [PDF](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt2r1.pdf)
+    - DOI: [10.6028/NIST.SP.800-57pt2r1](https://doi.org/10.6028/NIST.SP.800-57pt2r1)
+- NIST SP 800-57 Part 3 Rev 1 — Recommendation for Key Management: Part 3 — Application-Specific Key-Management Guidance (January 2015)
+    - [CSRC landing page](https://csrc.nist.gov/pubs/sp/800/57/pt3/r1/final)
+    - [PDF](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57Pt3r1.pdf)
+    - DOI: [10.6028/NIST.SP.800-57Pt3r1](https://doi.org/10.6028/NIST.SP.800-57Pt3r1)
 - NIST SP 800-90Ar1 — Recommendation for Random Number Generation Using Deterministic Random Bit Generators (DRBGs)
     - [CSRC landing page](https://csrc.nist.gov/pubs/sp/800/90/a/r1/final)
     - [PDF](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf)

@@ -4,7 +4,8 @@
 > Algorithms and RNGs are expressed using the CycloneDX pattern notation extended with two
 > wildcard conventions defined below.
 >
-> **Primary sources:** NIST SP 800-57 Pt 1 Rev 5 (Rev 6 IPD Dec 2025) · SP 800-131A Rev 2 (Rev 3 IPD Oct 2024) · SP 800-38 series ·
+> **Primary sources:** NIST SP 800-57 Pt 1 Rev 5 (May 2020; Rev 6 IPD Dec 2025) · SP 800-57 Pt 2 Rev 1 (May 2019) · SP 800-57 Pt 3 Rev 1 (Jan 2015) ·
+> SP 800-131A Rev 2 (Rev 3 IPD Oct 2024) · SP 800-38 series ·
 > SP 800-56A Rev 3 · SP 800-56B/C · SP 800-90A Rev 1 (Rev 2 pre-draft 2025) · SP 800-90B · SP 800-132 · SP 800-135 ·
 > SP 800-186 · SP 800-208 · FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (IPD) ·
 > BSI TR-02102-1 v2026-01 (2026-01-23) · BSI TR-02102-2 v2026-01 (2025-12-27) ·
@@ -537,6 +538,20 @@ SP 800-57 Rev 5 §5.6.2–§5.6.3 and SP 800-131A Rev 2:
 | 192 | ✅ Recommended | Exceeds minimum requirements; appropriate for high-assurance applications. |
 | 256 | ✅ Recommended | Highest tier; recommended for long-term protection and quantum-resilient symmetric designs. |
 
+**Table 4 — Security strength time frames** (SP 800-57 Rev 5 §5.6.3):
+
+| Security strength | Through 2030 — Applying protection | Through 2030 — Processing | 2031 and beyond — Applying protection | 2031 and beyond — Processing |
+|:---|:---|:---|:---|:---|
+| < 112 | 🚫 Disallowed | Legacy use | 🚫 Disallowed | Legacy use |
+| 112 | Acceptable | Acceptable | 🚫 Disallowed | Legacy use |
+| 128 | Acceptable | Acceptable | Acceptable | Acceptable |
+| 192 | Acceptable | Acceptable | Acceptable | Acceptable |
+| 256 | Acceptable | Acceptable | Acceptable | Acceptable |
+
+- **Applying protection:** Using an algorithm/key to encrypt, sign, or generate a MAC.
+- **Processing:** Decrypting, verifying a signature, or verifying a MAC on data that was previously protected.
+- **Legacy use:** The algorithm/key may be used only to process already-protected data, not to protect new data.
+
 ### 13.3 Approved algorithms per security-strength tier
 
 Based on SP 800-57 Rev 5 §5.6.1 and the referenced FIPS standards.
@@ -582,6 +597,63 @@ The equivalence table in §13.1 assumes classical (non-quantum) adversaries. Gro
 | ML-DSA-65 | — | ~192 bit (NIST Level 3) | NIST-standardised PQC |
 
 > ⚠ **Harvest-now-decrypt-later:** Data encrypted today with RSA or ECDH may be stored by adversaries and decrypted once a cryptographically relevant quantum computer is available. SP 800-57 Rev 5 does not yet address quantum threat timelines, but NIST's PQC programme (FIPS 203/204/205) and the forthcoming SP 800-57 Rev 6 provide the migration path.
+
+### 13.6 Cryptoperiod recommendations (SP 800-57 Rev 5 §5.3)
+
+A *cryptoperiod* is the time span during which a specific key is authorised for use. SP 800-57 Part 1 §5.3, Table 1:
+
+| Key type | Originator-usage period | Recipient-usage period |
+|:---|:---|:---|
+| Private signature key | 1–3 years | — |
+| Public signature-verification key | Several years (depends on key size and security strength) | |
+| Symmetric authentication key | ≤ 2 years | ≤ OUP + 3 years |
+| Private authentication key | 1–2 years | |
+| Symmetric data-encryption key | ≤ 2 years | ≤ OUP + 3 years |
+| Symmetric key-wrapping key | ≤ 2 years | ≤ OUP + 3 years |
+| Symmetric RBG key | Per SP 800-90 | — |
+| Symmetric master / key-derivation key | ~1 year | — |
+| Private key-transport key | ≤ 2 years | |
+| Symmetric key-agreement key | 1–2 years | |
+| Private static key-agreement key | 1–2 years | |
+| Private ephemeral key-agreement key | One transaction | |
+
+Key rules:
+- A single key **shall** be used for only one purpose (§5.2).
+- Private signature keys **shall** be destroyed at the end of their cryptoperiod.
+- Ephemeral private keys **shall** be destroyed immediately after use.
+- Key update (deriving a new key from the current key to replace it) is **disallowed** for federal applications.
+
+### 13.7 FIPS 140 validation requirements (SP 800-57 Part 2 Rev 1)
+
+SP 800-57 Part 2 Rev 1 (May 2019) establishes key management policy requirements for federal agencies. All cryptographic functions **shall** be performed using FIPS 140-validated cryptographic modules.
+
+| FIPS 199 impact level | Required FIPS 140 level | Notes |
+|:---|:---|:---|
+| Low | Level 1+ | |
+| Moderate | Level 3+ | Cryptographic module must provide physical tamper evidence/response |
+| High | Level 3+ | |
+
+Application-specific requirements (SP 800-57 Part 3 Rev 1):
+
+| System role | FIPS 140 level | Source |
+|:---|:---|:---|
+| Certificate Authority (CA), Key Recovery Server | Level 3+ | Part 3 §2 |
+| Registration Authority (RA) | Level 2+ | Part 3 §2 |
+| OCSP Responder | Level 3+ | Part 3 §2 |
+| End-user / relying party | Level 1+ | Part 3 §2 |
+
+### 13.8 Key protection requirements (SP 800-57 Rev 5 §6)
+
+| Key/information type | Confidentiality | Integrity | Backup | Archive |
+|:---|:---|:---|:---|:---|
+| Private signature key | Required | Required | No | No |
+| Private key-agreement key | Required | Required | Yes | Yes |
+| Symmetric encryption key | Required | Required | Yes | Yes |
+| Symmetric authentication key | Required | Required | Yes | No |
+| Public key (any) | — | Required | Yes | Yes |
+| Shared secret | Required | Required | No | No |
+| RBG seed | Required | Required | No | No |
+| Ephemeral private key | Required | Required | No | No |
 
 ---
 
@@ -915,4 +987,127 @@ The BSI defines explicit end-dates for the sole use of classical asymmetric mech
 
 ---
 
-*Last updated: 2026-04-04 (§5.1 SP 800-186 elliptic curve catalogue added; §5.2 SP 800-56A Rev.3 key establishment scheme taxonomy and FFC group tables added; §6.2 LMS/XMSS expanded with full parameter patterns and SP 800-208 §5.3 hardware mandate; §16 CNSA 2.0 added from PP-22-1338 source document; §16.4 RFC 9881/RFC 9935 PKIX encoding and Composite ML-DSA draft added; RFC 9180 HPKE ciphersuite tables added to cryptographic-parameters.md; §17 Quantum Threat and Migration Context added from ENISA PQC report v2, May 2021). Consult current NIST SP 800-131A, BSI TR-02102, and NSA CNSA advisory editions for horizon dates and any post-publication amendments.*
+## 18. PKI Key Management (SP 800-57 Part 3 Rev 1 §2)
+
+> **Source:** NIST SP 800-57 Part 3 Rev 1, January 2015. Note: this predates NIST PQC standardisation (2024) and current BSI guidance (2026). Algorithm-specific parameters should be cross-referenced with §13 (security strength equivalence) and SP 800-131A for current approval status.
+
+### 18.1 CA and OCSP responder signing
+
+| Public key algorithm / key size | Hash | Padding | Status |
+|:---|:---|:---|:---|
+| RSA-2048 | SHA-256 | PKCS#1 v1.5 or PSS | ✓ Approved |
+| RSA-3072 | SHA-256 | PKCS#1 v1.5 or PSS | ✅ Recommended |
+| ECDSA P-256 | SHA-256 | — | ✓ Approved |
+| ECDSA P-384 | SHA-384 | — | ✅ Recommended |
+
+### 18.2 End-entity key recommendations
+
+| Authentication key | Signature key | Key establishment key | Symmetric cipher |
+|:---|:---|:---|:---|
+| RSA-2048 | RSA-2048 | RSA-2048 or DH-2048 | AES-128 |
+| ECDSA P-256 | ECDSA P-256 | ECDH P-256 | AES-128 |
+| ECDSA P-256 | ECDSA P-384 | ECDH P-384 | AES-256 |
+| ECDSA P-384 | ECDSA P-384 | ECDH P-384 | AES-256 |
+
+- Components supporting P-384 and SHA-384 **shall** support AES-256.
+- Legacy RSA components **should** support 3-key 3DES (deprecated).
+- Key-usage extension in X.509v3 certificates **shall** restrict keys to a single cryptographic function (signatures OR key establishment, not both).
+- CA signing key security strength **shall** be ≥ subject public key strength for signature certificates.
+
+---
+
+## 19. S/MIME (SP 800-57 Part 3 Rev 1 §5)
+
+> **Source:** NIST SP 800-57 Part 3 Rev 1, January 2015.
+
+### 19.1 Cipher suites
+
+**Cipher Suite 1 (mandatory for federal systems):**
+
+| Mechanism | Algorithm |
+|:---|:---|
+| Digital signatures | DSA ≥ 2048 bits |
+| Hash | SHA-256 |
+| Key agreement | DH ≥ 2048 bits |
+| Encryption | AES-128-CBC |
+
+**Suite B Level 1 (128-bit security):**
+
+| Mechanism | Algorithm |
+|:---|:---|
+| Digital signatures | ECDSA P-256 |
+| Hash | SHA-256 |
+| Key agreement | ECDH P-256 |
+| Key wrap | AES-128 (RFC 3394) |
+| Encryption | AES-128-CBC |
+
+**Suite B Level 2 (192-bit security):**
+
+| Mechanism | Algorithm |
+|:---|:---|
+| Digital signatures | ECDSA P-384 |
+| Hash | SHA-384 |
+| Key agreement | ECDH P-384 |
+| Key wrap | AES-256 (RFC 3394) |
+| Encryption | AES-256-CBC |
+
+### 19.2 Restrictions
+
+- SHA-1 **shall not** be used for digital signature generation (verification of legacy signatures permitted).
+- RC2 **may** be supported only for receiving (decrypting) legacy messages.
+- Federal systems **shall** support Cipher Suite 1; procurements **should** support Suite B.
+
+---
+
+## 20. Kerberos (SP 800-57 Part 3 Rev 1 §6)
+
+> **Source:** NIST SP 800-57 Part 3 Rev 1, January 2015.
+
+| Mechanism | Algorithm | Status | Notes |
+|:---|:---|:---|:---|
+| Encryption | AES (RFC 3962) | ✅ Mandatory | **Shall** be used |
+| Encryption | DES | 🚫 Disallowed | RFC 6649; **shall not** be used |
+| Encryption | RC4 | 🚫 Disallowed | RFC 6649 |
+| Integrity (MAC) | HMAC-SHA-1 | ✓ Approved | Minimum |
+| Integrity (MAC) | HMAC-SHA-256-128 | ✅ Recommended | |
+| Key exchange (PKINIT) | DH ≥ 2048 bits | ✓ Approved | ≥ 112-bit security |
+| Key transport (PKINIT) | RSA ≥ 2048 bits | ✓ Approved | RFC 4556 |
+| Password RNG | SP 800-90A DRBG | ✅ Mandatory | For random password generation |
+
+---
+
+## 21. DNSSEC (SP 800-57 Part 3 Rev 1 §8)
+
+> **Source:** NIST SP 800-57 Part 3 Rev 1, January 2015.
+
+### 21.1 Zone data signing algorithms
+
+| Suite | Authentication | Hash | Federal status |
+|:---|:---|:---|:---|
+| RSA_SHA-256 | RSA | SHA-256 | ✓ Approved |
+| RSA_SHA-512 | RSA | SHA-512 | ✓ Approved |
+| ECDSAP256SHA256 | ECDSA P-256 | SHA-256 | ✅ Recommended |
+| ECDSAP384SHA384 | ECDSA P-384 | SHA-384 | ✅ Recommended |
+
+### 21.2 TSIG message authentication
+
+| Suite | Federal status | Notes |
+|:---|:---|:---|
+| HMAC-SHA-1 | ✓ Approved | IETF mandatory |
+| HMAC-SHA-224 | ✓ Approved | |
+| HMAC-SHA-256 | ✅ Recommended | IETF mandatory |
+| HMAC-SHA-384 | ✓ Approved | |
+| HMAC-SHA-512 | ✓ Approved | |
+| GSS-TSIG | ✓ Approved | |
+| HMAC-MD5 | 🚫 Disallowed | **Shall not** be used |
+
+### 21.3 Key management
+
+- RSA-2048 keys strongly recommended; 1024-bit RSA ZSKs were allowed only until October 2015.
+- KSK (Key Signing Key) **shall** follow SP 800-57 Part 1 key size guidance.
+- Migration to ECDSA recommended for smaller key/signature sizes (solves DNS UDP packet size constraints).
+- NSEC3 uses SHA-1 for hashing; transition to SHA-256 recommended.
+
+---
+
+*Last updated: 2026-04-04 (§13.2 Table 4 security strength time frames expanded; §13.6 cryptoperiod recommendations added from SP 800-57 Part 1; §13.7 FIPS 140 validation requirements added from SP 800-57 Part 2; §13.8 key protection requirements added; §18 PKI key management added from SP 800-57 Part 3; §19 S/MIME cipher suites added from SP 800-57 Part 3; §20 Kerberos added from SP 800-57 Part 3; §21 DNSSEC added from SP 800-57 Part 3). Consult current NIST SP 800-131A, BSI TR-02102, and NSA CNSA advisory editions for horizon dates and any post-publication amendments.*
