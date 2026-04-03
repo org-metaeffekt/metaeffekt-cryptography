@@ -101,9 +101,9 @@ that adjustments can be applied accordingly.
 
 ## Inventory of Implementations
 
-- **[inventory/README.md](inventory/README.md)** — Curated list of reference implementations, production-quality libraries, test-vector repositories, and analysis tools identified from the NIST PQC forum (pqc-forum@list.nist.gov). Covers NIST-standardised algorithms (FIPS 203/204/205, FIPS 206 IPD, HQC), Round 2 additional signature candidates, and ecosystem libraries. Includes source-download archive URLs for each entry.
+- **[inventory/README.md](inventory/README.md)** — Curated list of reference implementations, production-quality libraries, test-vector repositories, and analysis tools. Covers NIST-standardised PQC algorithms (FIPS 203/204/205, FIPS 206 IPD, HQC), Round 2 additional signature candidates, ecosystem libraries, Ascon lightweight crypto (NIST SP 800-232), Chinese national standards (SM9 via GmSSL), password-authenticated key exchange (SPAKE2/SPAKE2+, OPAQUE), and 3GPP authentication algorithms (MILENAGE, TUAK, A5/x). Includes source-download archive URLs for each entry.
 
-- **[inventory/ae-cryptography-inventory.xlsx](inventory/ae-cryptography-inventory.xlsx)** — Structured inventory of cryptographic libraries and implementations in spreadsheet form. Each row records the library identifier, version, repository URL, source-download archive URL, version status, repository licence (SPDX expression), and CycloneDX algorithm patterns supported. Intended as a machine-readable companion to the narrative documents above.
+- **[inventory/ae-cryptography-inventory.xlsx](inventory/ae-cryptography-inventory.xlsx)** — Structured inventory of cryptographic libraries and implementations in spreadsheet form (93 entries). Each row records the library identifier, version, repository URL, source-download archive URL, description, version status, repository licence (SPDX expression), CycloneDX algorithm patterns supported, and patent references. Intended as a machine-readable companion to the narrative documents above.
 
 ## Grammars
 

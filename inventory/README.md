@@ -376,7 +376,98 @@ items as of Q1 2026.
 
 ---
 
-## 6. Remarks
+## 6. Lightweight Cryptography (NIST SP 800-232 — Ascon)
+
+### 6.1 Ascon Reference Implementations
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| ascon-c | UNRELEASED | C | `Ascon-AEAD128, Ascon-Hash256, Ascon-XOF128, Ascon-CXOF128` | https://github.com/ascon/ascon-c |
+| pyascon | UNRELEASED | Python | `Ascon-AEAD128, Ascon-Hash256, Ascon-XOF128, Ascon-CXOF128` | https://github.com/meichlseder/pyascon |
+| xkcp | UNRELEASED | C / ASM | `SHA3-*, SHAKE*, cSHAKE*, KMAC*, Ascon-AEAD128, Ascon-Hash256, Ascon-XOF128, Ascon-CXOF128` | https://github.com/XKCP/XKCP |
+
+Ascon was selected as NIST's lightweight cryptography standard (NIST SP 800-232) in 2023. It provides
+four variants: an AEAD construction (`Ascon-AEAD128`), a fixed-output hash (`Ascon-Hash256`), an
+extendable-output function (`Ascon-XOF128`), and a customisable XOF (`Ascon-CXOF128`). All are
+based on a sponge permutation optimised for constrained devices (IoT, embedded).
+
+`ascon-c` is the official reference maintained by the Ascon design team (Dobraunig, Eichlseder,
+Mendel, Schläffer). `pyascon` provides Python test-vector compatibility. `xkcp` (eXtended Keccak
+Code Package) includes Ascon alongside the SHA-3/SHAKE/KMAC family and is widely used as the
+reference implementation base for NIST hash standards.
+
+---
+
+## 7. Chinese National Standards (SM-series)
+
+### 7.1 GmSSL
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| gmssl-3.1.1 | 3.1.1 | C | `SM9-(SIG\|KEM\|ENC\|KEX), SM2-*, SM3, SM4-*` | https://github.com/guanzhi/GmSSL |
+| gmssl-3.0.x | UNRELEASED | C | `SM9-(SIG\|KEM\|ENC\|KEX), SM2-*, SM3, SM4-*` | https://github.com/guanzhi/GmSSL |
+
+GmSSL is the canonical open-source implementation of the Chinese national cryptographic standards
+(GB/T, GM/T series). v3.1.1 is the current stable release; the master branch tracks active
+development. Coverage includes: SM2 (signature and key exchange), SM3 (hash), SM4 (block cipher),
+SM9 (all four pairing-based constructs: signature, key exchange, KEM, and encryption).
+
+SM9 is an identity-based cryptography standard (GM/T 0044-2016; ISO/IEC 14888-3). It is mandatory
+for certain Chinese government and financial deployments. The CycloneDX patterns for SM9 reflect the
+four distinct operations (`SM9-(SIG|SIGNATURE)`, `SM9-(KEM|...)`, etc.) with alias variants included
+for tool interoperability.
+
+---
+
+## 8. Password-Authenticated Key Exchange (PAKE)
+
+### 8.1 SPAKE2 / SPAKE2+
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| python-spake2-0.9.0 | 0.9.0 | Python | `SPAKE2-*, SPAKE2+-*` | https://github.com/warner/python-spake2 |
+
+SPAKE2 and SPAKE2+ are password-authenticated key exchange protocols standardised in RFC 9382.
+SPAKE2+ provides an augmented variant where the server stores a verifier derived from the password
+rather than the password itself, preventing server compromise from yielding usable credentials.
+Used in Apple HomeKit pairing and various IoT authentication scenarios.
+
+### 8.2 OPAQUE
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| opaque-ke-2.0.0 | 2.0.0 | Rust | `OPAQUE-3DH-*` | https://github.com/facebook/opaque-ke |
+
+OPAQUE (Oblivious PRF + Asymmetric Password-Authenticated KE) is an asymmetric PAKE providing
+strong security guarantees: the server never has access to the plaintext password, even during
+the initial registration. `opaque-ke` implements the IETF CFRG draft (draft-irtf-cfrg-opaque).
+The `OPAQUE-3DH` CycloneDX pattern name reflects the 3DH (three-message Diffie-Hellman)
+instantiation defined in the draft.
+
+---
+
+## 9. 3GPP Authentication and Telecom Algorithms
+
+### 9.1 Osmocom and Open5GS
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| libosmocore | UNRELEASED | C | `MILENAGE[-MAC], A5/1, A5/2, GEA-[0\|1\|2\|3\|4\|5]-*` | https://gitea.osmocom.org/osmocom/libosmocore |
+| open5gs-2.7.6 | 2.7.6 | C | `MILENAGE[-MAC], TUAK[-MAC], 128-EEA1, 128-EEA3, 128-EIA1, 128-EIA3` | https://github.com/open5gs/open5gs |
+
+`libosmocore` is the Osmocom project's GSM/3GPP utility library, providing reference implementations
+of MILENAGE (3GPP TS 35.206, AES-128-based), the A5/1 and A5/2 GSM stream ciphers, and the GEA
+GPRS encryption algorithms. A5/1 and A5/2 are included for historical SBOM scanning completeness;
+A5/2 was prohibited by 3GPP from 2006 and A5/1 is considered practically broken.
+
+`open5gs` is a full 5G/4G SA core network implementation. It supports MILENAGE and TUAK for
+3GPP AKA (Authentication and Key Agreement), the 128-EEA1/EEA3 confidentiality algorithms (based
+on SNOW 3G and ZUC respectively), and the 128-EIA1/EIA3 integrity algorithms. TUAK (3GPP TS 35.231)
+is the Keccak-based alternative to MILENAGE introduced for 4G and 5G systems.
+
+---
+
+## 10. Remarks
 
 1. **pq-crystals/kyber and pq-crystals/dilithium** — These are the official CRYSTALS reference
    implementations. NIST's FIPS 203/204 were derived from these but the repos themselves have
