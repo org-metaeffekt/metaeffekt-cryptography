@@ -5,9 +5,10 @@
 > wildcard conventions defined below.
 >
 > **Primary sources:** NIST SP 800-57 Pt 1 Rev 5 (May 2020; Rev 6 IPD Dec 2025) · SP 800-57 Pt 2 Rev 1 (May 2019) · SP 800-57 Pt 3 Rev 1 (Jan 2015) ·
-> SP 800-131A Rev 2 (Rev 3 IPD Oct 2024) · SP 800-38 series ·
+> SP 800-107 Rev 1 · SP 800-131A Rev 2 (Rev 3 IPD Oct 2024) · SP 800-38 series ·
 > SP 800-56A Rev 3 · SP 800-56B/C · SP 800-90A Rev 1 (Rev 2 pre-draft 2025) · SP 800-90B · SP 800-132 · SP 800-135 ·
-> SP 800-186 · SP 800-208 · FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (IPD) ·
+> SP 800-186 · SP 800-208 · NIST IR 8214C · FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (IPD) ·
+> NSA CNSA 2.0 (PP-22-1338, Sep 2022) ·
 > BSI TR-02102-1 v2026-01 (2026-01-23) · BSI TR-02102-2 v2026-01 (2025-12-27) ·
 > BSI TR-02102-3 v2026-01 (2026-01-27) · BSI TR-02102-4 v2026-01 (2026-01-27) · BSI AIS 20/31 v3 (2022) ·
 > ENISA "Post-Quantum Cryptography: Current state and quantum mitigation" v2 (May 2021)

@@ -788,7 +788,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Non-cryptographic PRNGs (incl. Xoroshiro) | 7 |
 | Padding / encoding schemes | 5 |
 | Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
-| **Total** | **~424** |
+| **Total** | **~422** |
 
 ---
 
