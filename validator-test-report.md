@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (9 files, 303 registered algorithm families, 159 OIDs).
+registry (9 files, 309 registered algorithm families, 154 unique OIDs indexed).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 
@@ -12,11 +12,11 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 
 | Test class | Tests | Scope |
 |------------|------:|-------|
-| `InstanceValidationSymmetricTest` | 85 | All 76 symmetric families |
-| `InstanceValidationHashMacTest` | 55 | All 40 hash + 9 MAC families (incl. NIST SP 800-185) |
-| `InstanceValidationAsymmetricTest` | 41 | All 34 asymmetric families |
+| `InstanceValidationSymmetricTest` | 87 | All 77 symmetric families (incl. 2TDEA, RC4-HMAC-EXP) |
+| `InstanceValidationHashMacTest` | 56 | All 40 hash + 9 MAC families (incl. HMAC-MD5) |
+| `InstanceValidationAsymmetricTest` | 44 | All 37 asymmetric families (incl. DLIES, MLS, SRTP) |
 | `InstanceValidationPqcTest` | 50 | All 39 PQC families |
-| `InstanceValidationKdfTest` | 23 | All 23 KDF families |
+| `InstanceValidationKdfTest` | 25 | All 25 KDF families (incl. CatKDF, KeyCombine) |
 | `InstanceValidationRngTest` | 27 | All 21 RNG families |
 | `TemplateValidationTest` | 28 | Templates, constraints, normalisation, choice groups, fixed identifiers |
 | `CycloneDxRegistryCoverageTest` | 201 | Full CycloneDX cryptography-defs.json coverage + all 33 cdx families |
@@ -27,7 +27,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `CBomGeneratorTest` | 4 | CBOM JSON generation from cert/CMS analysis |
 | `MainTest` | 24 | CLI integration (all modes incl. cert, cms, cbom) |
 | `AlgorithmRegistryTest` | 11 | Registry loading, duplicate detection, OID index |
-| **Total** | **728** | |
+| **Total** | **736** | |
 
 ---
 
@@ -35,24 +35,24 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 
 | Registry file | Families | With segments | Fixed identifiers | Wildcard |
 |---------------|:--------:|:-------------:|:-----------------:|:--------:|
-| `cr-symmetric-ciphers.yaml` | 76 | 28 | 9 | 39 |
+| `cr-symmetric-ciphers.yaml` | 77 | 28 | 10 | 39 |
 | `cr-hash-functions.yaml` | 40 | 20 | 19 | 1 |
 | `cr-macs.yaml` | 9 | 7 | 2 | 0 |
-| `cr-asymmetric.yaml` | 34 | 27 | 2 | 5 |
+| `cr-asymmetric.yaml` | 37 | 27 | 4 | 6 |
 | `cr-pqc.yaml` | 39 | 20 | 5 | 14 |
-| `cr-kdfs.yaml` | 23 | 20 | 0 | 3 |
+| `cr-kdfs.yaml` | 25 | 21 | 1 | 3 |
 | `cr-rngs.yaml` | 21 | 8 | 11 | 2 |
 | `cr-cdx.yaml` | 33 | 3 | 30 | 0 |
 | `cr-spdx.yaml` | 28 | 0 | 28 | 0 |
-| **Total** | **303** | **141** | **106** | **56** |
+| **Total** | **309** | **142** | **110** | **57** |
 
 ### Family validation modes
 
 | Mode | Count | Behaviour |
 |------|:-----:|-----------|
-| Segments defined | 141 | Parameters validated against controlled vocabulary + constraints |
-| Fixed identifiers (`segments: []`) | 106 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
-| Wildcard (no `segments` field) | 56 | Any trailing parameters accepted |
+| Segments defined | 142 | Parameters validated against controlled vocabulary + constraints |
+| Fixed identifiers (`segments: []`) | 110 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
+| Wildcard (no `segments` field) | 57 | Any trailing parameters accepted |
 
 ### Status Distribution
 
@@ -60,7 +60,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 |--------|:-----:|---------|
 | Approved (default) | 221 | AES, ML-KEM, SHA, ECDH |
 | Deprecated | 64 | 3DES, SHA variant 1, Blowfish, cdx:ECDHE, spdx:shs, spdx:rsa |
-| Disallowed | 3 | RC2, RC4, Dual_EC_DRBG |
+| Disallowed | 5 | RC2, RC4, Dual_EC_DRBG, 2TDEA, RC4-HMAC |
 | Broken | 8 | DES, MD5, MD4, FEAL, CMEA, A5/2 |
 
 ---
@@ -88,11 +88,11 @@ matched — zero unmatched. Split into two test sets.
 
 ---
 
-## Appendix A: All Instance Patterns Tested (267)
+## Appendix A: All Instance Patterns Tested (275)
 
 Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 
-### Symmetric Ciphers (89 patterns)
+### Symmetric Ciphers (91 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -100,6 +100,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `128-EEA3` | `128-EEA3` |
 | `128-EIA1` | `128-EIA1` |
 | `128-EIA3` | `128-EIA3` |
+| `2TDEA` | `2TDEA` |
 | `3DES` | `3DES` |
 | `3DES-TKW` | `3DES-TKW` |
 | `3GPP-XOR` | `3GPP-XOR` |
@@ -157,6 +158,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `RC2-40` | `RC2` |
 | `RC4` | `RC4` |
 | `RC4-HMAC` | `RC4-HMAC` |
+| `RC4-HMAC-EXP` | `RC4-HMAC` |
 | `RC5` | `RC5` |
 | `RC6-128` | `RC6` |
 | `Rabbit` | `Rabbit` |
@@ -226,7 +228,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `cSHAKE128-256` | `cSHAKE128` |
 | `cSHAKE256-256` | `cSHAKE256` |
 
-### Message Authentication Codes (10 patterns)
+### Message Authentication Codes (11 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -234,6 +236,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `AES-CMAC-PRF-128` | `AES-CMAC` |
 | `CBC-MAC` | `CBC-MAC` |
 | `HMAC-SHA-224` | `HMAC` |
+| `HMAC-MD5` | `HMAC` |
 | `HMAC-SHA-256` | `HMAC` |
 | `KMAC128-256` | `KMAC128` |
 | `KMAC256-256` | `KMAC256` |
@@ -241,12 +244,13 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `Poly1305-AES` | `Poly1305` |
 | `UMAC-128` | `UMAC` |
 
-### Asymmetric Cryptography (39 patterns)
+### Asymmetric Cryptography (42 patterns)
 
 | Pattern | Family |
 |---------|--------|
 | `BLS-BLS12-381` | `BLS` |
 | `BlumGoldwasser` | `BlumGoldwasser` |
+| `DLIES-2048-SHA-256` | `DLIES` |
 | `DSA-2048-test` | `DSA` |
 | `ECDH-Curve25519` | `ECDH` |
 | `ECDH-P-256` | `ECDH` |
@@ -266,6 +270,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `LUC-2048` | `LUC` |
 | `MQV-test` | `MQV` |
 | `McEliece` | `McEliece` |
+| `MLS` | `MLS` |
 | `NTRUEncrypt-test` | `NTRUEncrypt` |
 | `OPAQUE-3DH` | `OPAQUE-3DH` |
 | `RSA-OAEP-3072` | `RSAES-OAEP` |
@@ -280,6 +285,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `SPAKE2` | `SPAKE2` |
 | `SPAKE2+` | `SPAKE2+` |
 | `SRP-6a-test` | `SRP` |
+| `SRTP` | `SRTP` |
 | `X25519` | `ECDH` |
 | `XMSS-test` | `XMSS` |
 | `XMSSMT-test` | `XMSSMT` |
@@ -334,7 +340,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `ntrulpr761` | `ntrulpr761` |
 | `sntrup761` | `sntrup761` |
 
-### Key Derivation and Password Hashing (23 patterns)
+### Key Derivation and Password Hashing (25 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -342,9 +348,11 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `ANSI-KDF-X9.63-SHA-256` | `ANSI-KDF-X9.63` |
 | `Argon2d` | `Argon2d` |
 | `Argon2i` | `Argon2i` |
+| `CatKDF-KMAC` | `CatKDF` |
 | `Argon2id` | `Argon2id` |
 | `HKDF-SHA-256` | `HKDF` |
 | `IKEv2-PRF-SHA-256` | `IKEv2-PRF` |
+| `KeyCombine` | `KeyCombine` |
 | `MGF1-SHA-256` | `MGF1` |
 | `MSCash` | `MSCash` |
 | `MSCash2` | `MSCash2` |
