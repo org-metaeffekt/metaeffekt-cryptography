@@ -7,33 +7,43 @@
 ## Dependency Tree
 
 ```
-Phase 1.1 (algorithm coverage)
-├── Phase 1.2 (parameter coverage)    ── depends on finalised family list
-├── Phase 1.3 (status sync)           ── depends on finalised family list
-├── Phase 1.4 (OID audit)             ── depends on finalised family list
-├── Phase 2.1 (CycloneDX)             ── may add families → feeds back to 1.1
-├── Phase 2.2 (SPDX)                  ── may add families → feeds back to 1.1
+Phase 1 (Registry ↔ Markdown Sync)
+│ ├── 1.1 (Algorithm Coverage)        ── entry point; no dependencies
+│ ├── 1.2 (Parameter Coverage)        ── depends on 1.1
+│ ├── 1.3 (Status Sync)               ── depends on 1.1
+│ └── 1.4 (OID Audit)                 ── depends on 1.1
 │
-├─► Phase 3.1 (missing tests)         ── depends on 1.1 + 2.1 + 2.2
-│   └─► Phase 3.2 (test report)       ── depends on 3.1
+├─► Phase 2 (External Registries)     ── may add families → feeds back to 1.1
+│   ├── 2.1 (CycloneDX)
+│   └── 2.2 (SPDX)
 │
-├─► Phase 4 (glossary)                ── depends on 1.1 (finalised algorithm names)
+├─► Phase 3 (Tests and Reports)       ── depends on Phase 1 + Phase 2
+│   ├── 3.1 (Missing Tests)
+│   └── 3.2 (Test Report)             ── depends on 3.1
 │
-├─► Phase 5 (inventory)               ── depends on 1.1 (finalised family list)
+├─► Phase 4 (Glossary)                ── depends on Phase 1 (finalised names)
+│   ├── 4.1 (Completeness)
+│   └── 4.2 (Accuracy)
 │
-├─► Phase 6 (diagrams)                ── depends on 1.2 (finalised parameters)
+├─► Phase 5 (Inventory)               ── depends on Phase 1 (finalised families)
+│   ├── 5.1 (Implementation Coverage)
+│   └── 5.2 (README Sync)
 │
-└─► Phase 7 (cross-file consistency)  ── depends on ALL above phases
-    ├── 7.1 (number sync)
-    ├── 7.2 (coverage tables)
-    ├── 7.3 (cross-references)
-    └── 7.4 (naming consistency)
+├─► Phase 6 (Diagrams)                ── depends on Phase 1 (finalised parameters)
+│   ├── 6.1 (Grammar Diagrams)
+│   └── 6.2 (Parameter Set Diagrams)
+│
+└─► Phase 7 (Cross-File Consistency)  ── depends on ALL above phases
+    ├── 7.1 (Number Sync)
+    ├── 7.2 (Coverage Tables)
+    ├── 7.3 (Cross-References)
+    └── 7.4 (Naming Consistency)
 
-Phase 8 (improvements)                ── independent; can run last or in parallel
-├── 8.1 (new sources)                 ── independent
-├── 8.2 (markdown structure)          ── depends on 7 (see full picture first)
-├── 8.3 (compactness)                 ── depends on 7
-└── 8.4 (tooling)                     ── independent
+Phase 8 (Improvements)                ── independent; can run last or in parallel
+├── 8.1 (New Sources)                 ── independent
+├── 8.2 (Markdown Structure)          ── depends on Phase 7
+├── 8.3 (Compactness)                 ── depends on Phase 7
+└── 8.4 (Tooling)                     ── independent
 ```
 
 **Critical Path:** 1.1 → 2.1/2.2 → 3.1 → 7 → 8.2/8.3
