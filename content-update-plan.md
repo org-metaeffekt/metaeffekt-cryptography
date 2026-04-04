@@ -186,13 +186,14 @@ Phase 8 (Improvements)                ── independent; can run last or in par
 - [ ] Research and add missing implementations
 - [ ] Verify existing entries are still current (versions, URLs, licences)
 
-### 5.2 README Sync
+### 5.2 README and XLSX Sync
 
 > [!NOTE]
 > The inventory README and the XLSX spreadsheet are dual representations of the same data. Ensure they agree — preventing users from seeing different information depending on which file they consult.
 
 - [ ] Verify `inventory/README.md` matches the XLSX
-- [ ] Update stale entries
+- [ ] Update XLSX to reflect any new entries or coverage added to the README (requires explicit instruction; provide reminde)
+- [ ] Update stale entries in both README and XLSX
 
 ---
 

@@ -467,7 +467,139 @@ is the Keccak-based alternative to MILENAGE introduced for 4G and 5G systems.
 
 ---
 
-## 10. Remarks
+## 10. Classical Algorithm Coverage by Production Library
+
+The production libraries in §5 implement a broad range of classical algorithms beyond their
+PQC support. This section maps algorithm families from the YAML registry to their primary
+production implementations.
+
+### 10.1 Symmetric Ciphers
+
+| Algorithm family | OpenSSL | Bouncy Castle | Crypto++ | libsodium | libgcrypt | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| AES (all modes, KW, KWP) | Yes | Yes | Yes | — | Yes | |
+| AES-FF1, AES-FF3-1 (FPE) | — | Yes | — | — | — | Format-preserving encryption |
+| 3DES, 2TDEA, DES | Yes | Yes | Yes | — | Yes | Deprecated/disallowed |
+| Camellia | Yes | Yes | Yes | — | Yes | |
+| ARIA | Yes | Yes | — | — | — | |
+| SEED | Yes | Yes | — | — | Yes | |
+| SM4 | Yes | — | — | — | — | Also: GmSSL |
+| Blowfish | Yes | Yes | Yes | — | Yes | |
+| Twofish | — | Yes | Yes | — | Yes | |
+| IDEA | Yes | Yes | Yes | — | Yes | |
+| CAST5/CAST6 | Yes | Yes | Yes | — | Yes | |
+| RC2, RC4, RC5 | Yes | Yes | Yes | — | Yes (RC2, RC4) | |
+| RC6, Serpent | — | Yes | Yes | — | Yes (Serpent) | |
+| ChaCha20 | Yes | Yes | — | Yes | — | |
+| ChaCha20-Poly1305 | Yes | Yes | — | Yes | — | |
+| XChaCha20 | — | — | — | Yes | — | |
+| Salsa20 | — | Yes | Yes | Yes | — | |
+| GOST-28147, Grasshopper | — | Yes | — | — | — | |
+| Skipjack | — | Yes | Yes | — | — | |
+| Ascon-AEAD128 | — | Yes | — | — | — | Also: ascon-c, XKCP |
+
+### 10.2 Hash Functions and MACs
+
+| Algorithm family | OpenSSL | Bouncy Castle | Crypto++ | XKCP | Notes |
+|:---|:---|:---|:---|:---|:---|
+| SHA (all variants) | Yes | Yes | Yes | Yes | |
+| SHA3, SHAKE128/256 | Yes | Yes | Yes | Yes | |
+| cSHAKE128/256 | — | Yes | — | Yes | |
+| TupleHash, ParallelHash (all) | — | — | — | Yes | SP 800-185 |
+| KMAC128/256, KMACXOF128/256 | — | Yes | — | Yes | SP 800-185 |
+| BLAKE2b, BLAKE2s | Yes | Yes | Yes | Yes | |
+| BLAKE3 | — | — | — | — | blake3-team/BLAKE3 (Rust/C) |
+| MD5, MD4, MD2 | Yes | Yes | Yes | — | |
+| RIPEMD | Yes | Yes | Yes | — | |
+| Whirlpool | Yes | Yes | Yes | — | |
+| Tiger | — | Yes | Yes | — | |
+| SM3 | Yes | — | — | — | Also: GmSSL |
+| HMAC (all hashes) | Yes | Yes | Yes | — | |
+| AES-CMAC | Yes | Yes | Yes | — | |
+| Poly1305 | Yes | Yes | — | Yes | |
+| UMAC | — | — | — | — | OpenSSH (internal) |
+| CBC-MAC | Yes | Yes | Yes | — | |
+
+### 10.3 Key Agreement and Signatures
+
+| Algorithm family | OpenSSL | Bouncy Castle | Crypto++ | libsodium | Notes |
+|:---|:---|:---|:---|:---|:---|
+| RSA (OAEP, PKCS1, PSS) | Yes | Yes | Yes | — | |
+| ECDSA, ECDH | Yes | Yes | Yes | — | |
+| EdDSA, Ed25519, Ed448 | Yes | Yes | — | Yes (Ed25519) | |
+| DSA | Yes | Yes | Yes | — | Deprecated |
+| FFDH | Yes | Yes | Yes | — | |
+| HPKE | Yes (3.5+) | Yes | — | — | Also: OpenJDK 26 |
+| MQV, ECMQV | — | Yes | Yes | — | |
+| ElGamal | — | Yes | Yes | — | |
+| DLIES, ECIES | — | Yes | Yes | — | |
+| SRP | Yes | — | — | — | RFC 5054 |
+| BLS | — | — | — | — | blst (Supranational); Ethereum libs |
+| GOSTR3410 | Yes | Yes | — | — | |
+
+### 10.4 KDFs and Password Hashing
+
+| Algorithm family | OpenSSL | Bouncy Castle | libsodium | Notes |
+|:---|:---|:---|:---|:---|
+| HKDF | Yes | Yes | — | Also: RustCrypto |
+| SP800-108, SP800-56C | Yes (3.0+) | Yes | — | |
+| ANSI-KDF-X9.42/X9.63 | Yes | Yes | — | |
+| TLS12-PRF, TLS13-HKDF | Yes | Yes | — | Protocol-internal |
+| IKEv2-PRF, SSH-KDF | Yes | Yes | — | Protocol-internal |
+| MGF1 | Yes | Yes | — | Part of RSA-OAEP/PSS |
+| PBKDF1, PBKDF2 | Yes | Yes | — | |
+| PBES1, PBES2, PBE | Yes | Yes | — | PKCS#5/PKCS#12 |
+| bcrypt | — | Yes | — | Also: OpenBSD libc |
+| scrypt | Yes | Yes | Yes | |
+| Argon2i, Argon2d, Argon2id | — | Yes | Yes (Argon2id) | Also: libargon2 |
+| yescrypt | — | — | — | Linux glibc (libcrypt) |
+| CatKDF, KeyCombine | — | — | — | Not yet in production libraries; BSI TR-02102-1 §2.2 |
+| MSCash, MSCash2 | — | — | — | Hashcat, John the Ripper (attack tools only) |
+
+### 10.5 Random Number Generators
+
+RNGs are typically OS or hardware facilities, not standalone libraries:
+
+| Algorithm family | Implementation | Notes |
+|:---|:---|:---|
+| Hash_DRBG, HMAC_DRBG, CTR_DRBG | OpenSSL, Bouncy Castle, libgcrypt | SP 800-90A |
+| Fortuna | macOS/iOS (SecRandomCopyBytes) | Apple Security framework |
+| Yarrow | FreeBSD (random(4)) | Legacy; replaced by Fortuna on macOS |
+| BCryptGenRandom | Windows CNG | OS API |
+| RDRAND, RDSEED | Intel/AMD CPUs | Hardware instruction |
+| TPM_RNG | TPM 2.0 hardware | TPM2_GetRandom command |
+| MT19937, PCG, LCG, Xoshiro, Xoroshiro | Standard libraries (C, Java, Rust) | Non-cryptographic |
+| ISAAC | OpenBSD arc4random (historical) | Replaced by ChaCha20 |
+| A5/1, A5/2 | libosmocore | GSM historical; A5/2 broken |
+
+### 10.6 Broken/Historical PQC
+
+| Algorithm family | Implementation | Notes |
+|:---|:---|:---|
+| ClassicMcEliece | liboqs | Round 4 candidate (not selected) |
+| BIKE | liboqs | Round 4 candidate (not selected) |
+| NTRU-HPS, NTRU-HRSS | liboqs (historical) | Removed after Round 3 |
+| sntrup761, ntrulpr761 | libsodium, OpenSSH | NTRU Prime; used in OpenSSH hybrid |
+| LightSaber, Saber, FireSaber | PQClean (historical) | Eliminated in Round 3 |
+| SIKE | PQClean (historical) | Broken July 2022 |
+| Rainbow | PQClean (historical) | Broken 2022 |
+| Picnic | liboqs (historical) | Not advanced to Round 4 |
+| GeMSS | PQClean (historical) | Broken |
+| NTRUEncrypt | NTRU reference (historical) | Superseded by NTRU-HPS/HRSS |
+
+### 10.7 Protocol and Composite Constructs
+
+| Algorithm family | Implementation | Notes |
+|:---|:---|:---|
+| MLS | OpenMLS (Rust), mlspp (C++) | RFC 9420 Messaging Layer Security |
+| SRTP | libsrtp (Cisco) | RFC 3711 |
+| HashML-DSA, HashSLH-DSA | Bouncy Castle | Pre-hash signature variants |
+| MLDSA44, MLDSA65, MLDSA87 | Bouncy Castle | Composite ML-DSA (draft-ietf-lamps-pq-composite-sigs) |
+| OTAR | Proprietary radio systems | Not open-source |
+
+---
+
+## 11. Remarks
 
 1. **pq-crystals/kyber and pq-crystals/dilithium** — These are the official CRYSTALS reference
    implementations. NIST's FIPS 203/204 were derived from these but the repos themselves have
