@@ -235,7 +235,7 @@ Cryptographic Algorithms
 | `rsaes-oaep` | RSAES-OAEP (RSA with Optimal Asymmetric Encryption Padding) | Asymmetric encryption | `1.2.840.113549.1.1.7` | `RSAES-OAEP-{keyLength}-{hashAlgorithm}` | RFC 8017; SP 800-131A |
 | `rsaes-pkcs1` | RSAES-PKCS1-v1.5 | Asymmetric encryption (deprecated) | `1.2.840.113549.1.1.1` | `RSAES-PKCS1-{keyLength}` | RFC 8017 (deprecated for encryption) |
 | `dlies` | DLIES (Discrete Logarithm Integrated Encryption Scheme) | Asymmetric encryption | — | `DLIES-{keyLength}-{hashAlgorithm}` | BSI TR-02102-1 §2.3.3; ISO/IEC 18033-2 |
-| `ecies` | ECIES (Elliptic Curve Integrated Encryption Scheme) | Asymmetric encryption | — | `ECIES-{curve}-{hashAlgorithm}` | SEC 1; ISO/IEC 18033-2 |
+| `ecies` | ECIES (Elliptic Curve Integrated Encryption Scheme) | Asymmetric encryption | — | `ECIES-{ellipticCurve}-{hashAlgorithm}` | SEC 1; ISO/IEC 18033-2 |
 
 ---
 
@@ -245,7 +245,7 @@ Cryptographic Algorithms
 |:---|:---|:---|:---|:---|:---|
 | `rsassa-pss` | RSASSA-PSS (RSA with Probabilistic Signature Scheme) | Digital signature | `1.2.840.113549.1.1.10` | `RSASSA-PSS-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5; SP 800-131A |
 | `rsassa-pkcs1` | RSASSA-PKCS1-v1.5 | Digital signature (legacy) | `1.2.840.113549.1.1.5` (SHA-1) · `.11` (SHA-256) · `.12` (SHA-384) · `.13` (SHA-512) · `.14` (SHA-224) | `RSASSA-PKCS1-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5 (deprecated for new use) |
-| `ecdsa` | ECDSA (Elliptic Curve Digital Signature Algorithm) | Digital signature | `1.2.840.10045.2.1` (id-ecPublicKey) · `1.2.840.10045.4.3.1` (SHA-224) · `.2` (SHA-256) · `.3` (SHA-384) · `.4` (SHA-512) · `2.16.840.1.101.3.4.3.9` (SHA3-224) · `.10` (SHA3-256) · `.11` (SHA3-384) · `.12` (SHA3-512) | `ECDSA-{curve}-{hashAlgorithm}` | FIPS 186-5; SP 800-186; RFC 5758; RFC 5480; NIST CSOR |
+| `ecdsa` | ECDSA (Elliptic Curve Digital Signature Algorithm) | Digital signature | `1.2.840.10045.2.1` (id-ecPublicKey) · `1.2.840.10045.4.3.1` (SHA-224) · `.2` (SHA-256) · `.3` (SHA-384) · `.4` (SHA-512) · `2.16.840.1.101.3.4.3.9` (SHA3-224) · `.10` (SHA3-256) · `.11` (SHA3-384) · `.12` (SHA3-512) | `ECDSA-{ellipticCurve}-{hashAlgorithm}` | FIPS 186-5; SP 800-186; RFC 5758; RFC 5480; NIST CSOR |
 | `eddsa` | EdDSA (Edwards-curve Digital Signature Algorithm) | Digital signature | `1.3.101.112` (Ed25519) · `1.3.101.113` (Ed448) | `EdDSA-(Ed25519\|Ed448)` | RFC 8032; FIPS 186-5 |
 | `ed25519` | Ed25519 | Digital signature | `1.3.101.112` | `Ed25519` | RFC 8032; FIPS 186-5 |
 | `ed448` | Ed448 · Ed448-Goldilocks | Digital signature | `1.3.101.113` | `Ed448` | RFC 8032; FIPS 186-5 |
@@ -275,18 +275,18 @@ Cryptographic Algorithms
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
-| `ecdh` | ECDH (Elliptic Curve Diffie-Hellman) | Key agreement | `1.3.132.1.12` | `ECDH-{curve}` | SP 800-56A Rev 3; FIPS 186-5 |
+| `ecdh` | ECDH (Elliptic Curve Diffie-Hellman) | Key agreement | `1.3.132.1.12` | `ECDH-{ellipticCurve}` | SP 800-56A Rev 3; FIPS 186-5 |
 | `x25519` | X25519 (ECDH over Curve25519) | Key agreement | `1.3.101.110` | `ECDH-Curve25519` | RFC 7748; SP 800-186 |
 | `x448` | X448 (ECDH over Curve448) | Key agreement | `1.3.101.111` | `ECDH-Curve448` | RFC 7748; SP 800-186 |
 | `ffdh` | FFDH (Finite Field Diffie-Hellman) | Key agreement | — | `FFDH-{groupName}` | SP 800-56A Rev 3; RFC 7919 |
-| `hpke` | HPKE (Hybrid Public-Key Encryption) | Key agreement + encryption framework | — (IANA ciphersuite registry) | `HPKE-{kemVariant}-{kdfVariant}-{aeadVariant}` | RFC 9180; IANA HPKE Parameters |
+| `hpke` | HPKE (Hybrid Public-Key Encryption) | Key agreement + encryption framework | — (IANA ciphersuite registry) | `HPKE-{kemVariant}-{kdf}-{aeadVariant}` | RFC 9180; IANA HPKE Parameters |
 | `dhkem-p256-hkdf-sha256` | DHKEM(P-256, HKDF-SHA256) | HPKE KEM | KEM ID 0x0010 | `DHKEM(P-256,HKDF-SHA256)` | RFC 9180 §7.1; Nsecret=32B, Nenc=65B, Npk=65B |
 | `dhkem-p384-hkdf-sha384` | DHKEM(P-384, HKDF-SHA384) | HPKE KEM | KEM ID 0x0011 | `DHKEM(P-384,HKDF-SHA384)` | RFC 9180 §7.1; Nsecret=48B, Nenc=97B, Npk=97B |
 | `dhkem-p521-hkdf-sha512` | DHKEM(P-521, HKDF-SHA512) | HPKE KEM | KEM ID 0x0012 | `DHKEM(P-521,HKDF-SHA512)` | RFC 9180 §7.1; Nsecret=64B, Nenc=133B, Npk=133B |
 | `dhkem-x25519-hkdf-sha256` | DHKEM(X25519, HKDF-SHA256) | HPKE KEM | KEM ID 0x0020 | `DHKEM(X25519,HKDF-SHA256)` | RFC 9180 §7.1; Nsecret=32B, Nenc=32B, Npk=32B; most common |
 | `dhkem-x448-hkdf-sha512` | DHKEM(X448, HKDF-SHA512) | HPKE KEM | KEM ID 0x0021 | `DHKEM(X448,HKDF-SHA512)` | RFC 9180 §7.1; Nsecret=64B, Nenc=56B, Npk=56B |
-| `mqv` | MQV (Menezes-Qu-Vanstone) | Authenticated key agreement | — | `MQV-{curve}` | SP 800-56A Rev 3 |
-| `bls` | BLS (Boneh-Lynn-Shacham) pairing | Key agreement / signature | — | `BLS-{curve}` | IETF draft-irtf-cfrg-bls-signature |
+| `mqv` | MQV (Menezes-Qu-Vanstone) | Authenticated key agreement | — | `MQV-{ellipticCurve}` | SP 800-56A Rev 3 |
+| `bls` | BLS (Boneh-Lynn-Shacham) pairing | Key agreement / signature | — | `BLS-{ellipticCurve}` | IETF draft-irtf-cfrg-bls-signature |
 | `spake2` | SPAKE2 | Password-authenticated key exchange | — | `SPAKE2[-{group}][-{hashAlgorithm}][-{kdf}][-{mac}]` | RFC 9382 (SPAKE2+); Abdalla & Pointcheval 2005; augmented variant: SPAKE2+ |
 | `spake2plus` | SPAKE2+ | Password-authenticated key exchange (augmented) | — | `SPAKE2+[-{group}][-{hashAlgorithm}][-{kdf}][-{mac}]` | RFC 9382; server stores verifier, not password; used in Apple Homekit pairing |
 | `opaque-3dh` | OPAQUE-3DH | Password-authenticated key exchange (asymmetric PAKE) | — | `OPAQUE-3DH[-{group}][-{hashAlgorithm}][-{ksf}][-{kdf}][-{mac}]` | IETF draft-irtf-cfrg-opaque; Jarecki et al. 2018; strong security against pre-computation attacks |
@@ -715,7 +715,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
 | `elgamal` | ElGamal | Asymmetric encryption / signature | — | `ElGamal-{keyLength}` | Taher ElGamal 1985; used in OpenPGP (RFC 4880) |
-| `ntruencrypt` | NTRUEncrypt | Asymmetric encryption (lattice, historical) | — | `NTRUEncrypt-{paramSet}` | NTRU Cryptosystems 1996; patents in public domain (Security Innovation, 2017) |
+| `ntruencrypt` | NTRUEncrypt | Asymmetric encryption (lattice, historical) | — | `NTRUEncrypt-{parameterSet}` | NTRU Cryptosystems 1996; patents in public domain (Security Innovation, 2017) |
 | `rabin` | Rabin | Asymmetric encryption | — | `Rabin-{keyLength}` | Rabin 1979 |
 | `blum-goldwasser` | Blum-Goldwasser | Asymmetric encryption (probabilistic) | — | `BlumGoldwasser-*` | Blum & Goldwasser 1984 |
 | `luc` | LUC | Asymmetric encryption (Lucas sequence) | — | `LUC-{keyLength}` | Smith & Lennon 1993 |
@@ -730,7 +730,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
 | `pbes1` | PBES1 (Password-Based Encryption Scheme 1) | Password-based encryption (deprecated) | `1.2.840.113549.1.5.3` (arc) | `PBES1-{hashAlgorithm}-{cipherAlgorithm}` | RFC 8018 §6.1; deprecated in favour of PBES2 |
-| `pbes2` | PBES2 (Password-Based Encryption Scheme 2) | Password-based encryption | `1.2.840.113549.1.5.13` | `PBES2-{kdfAlgorithm}-{encAlgorithm}` | RFC 8018 §6.2; PKCS#5 v2.1 |
+| `pbes2` | PBES2 (Password-Based Encryption Scheme 2) | Password-based encryption | `1.2.840.113549.1.5.13` | `PBES2-{kdf}-{encryptionAlgorithm}` | RFC 8018 §6.2; PKCS#5 v2.1 |
 | `pbe` | PBE (Password-Based Encryption, generic) | Password-based encryption framework | — | `PBE-*` | PKCS#5; RFC 8018 |
 | `pkcs12` | PKCS#12 (PFX) | Key/certificate bundle format | `1.2.840.113549.1.12` | — | RFC 7292; certificate + private key containers |
 | `x509` | X.509 | PKI certificate framework | `2.5.4` (arc) | — | ITU-T X.509; RFC 5280 |
@@ -816,7 +816,7 @@ The `Pattern` column in this table directly uses CycloneDX pattern notation. Eve
 
 | Pattern type | Count | Example |
 |:---|:---|:---|
-| Parameterised (`{placeholder}`) | ~62 | `AES-{keyLength}-{mode}`, `ECDSA-{curve}-{hashAlgorithm}` |
+| Parameterised (`{placeholder}`) | ~62 | `AES-{keyLength}-{mode}`, `ECDSA-{ellipticCurve}-{hashAlgorithm}` |
 | Fixed name / wildcard (`*`) | ~295 | `SHA-256`, `ML-KEM-768`, `FAEST-128s` |
 | No CycloneDX pattern defined | 7 | `ristretto255`, `decaf448`, `pkcs7`, `pkcs12`, `x509`, `cms`, `asn1` |
 

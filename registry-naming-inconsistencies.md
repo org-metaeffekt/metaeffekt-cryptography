@@ -238,7 +238,7 @@ value under the `MLDSA44`, `MLDSA65`, `MLDSA87` families.
 | Source | Pattern |
 |--------|---------|
 | CycloneDX | `HPKE[-(mode_base\|mode_psk\|mode_auth\|mode_auth_psk)]-{kem}-{kdf}-{aead}` |
-| This repo | `HPKE-{kemVariant}-{kdfVariant}-{aeadVariant}` |
+| This repo | `HPKE-{kemVariant}-{kdf}-{aeadVariant}` |
 | RFC 9180 | mode: 0x00 (Base), 0x01 (PSK), 0x02 (Auth), 0x03 (AuthPSK) |
 
 **Issue:** CycloneDX encodes the HPKE mode as `mode_` prefixed underscore-separated
@@ -332,9 +332,9 @@ with a `note` field explaining the preferred canonical name. The validator emits
 |--------------------|------------|------------------|-----------|
 | `Ed(25519\|448)` | `cdx:Ed` | `EdDSA`, `Ed25519`, `Ed448` | CycloneDX short form |
 | `CMAC[-{cipher}][-{length}]` | `cdx:CMAC` | `AES-CMAC` | Prefer cipher-qualified form |
-| `ECMQV[-{curve}]` | `cdx:ECMQV` | `MQV` | CycloneDX EC-specific split |
+| `ECMQV[-{ellipticCurve}]` | `cdx:ECMQV` | `MQV` | CycloneDX EC-specific split |
 | `FFMQV[-{group}]` | `cdx:FFMQV` | `MQV` | CycloneDX FF-specific split |
-| `EC-ElGamal[-{curve}]` | `cdx:EC-ElGamal` | `ElGamal` | CycloneDX EC variant |
+| `EC-ElGamal[-{ellipticCurve}]` | `cdx:EC-ElGamal` | `ElGamal` | CycloneDX EC variant |
 | `SRP-3[-{hash}][-{group}]` | `cdx:SRP-3` | `SRP` | CycloneDX version-specific |
 | `SRP-6[-{hash}][-{group}]` | `cdx:SRP-6` | `SRP` | CycloneDX version-specific |
 | `SP800_108_CounterKDF[-...]` | `cdx:SP800_108_CounterKDF` | `SP800-108` | Underscore form |
@@ -406,7 +406,7 @@ additional registration.
 
 | CycloneDX pattern | Families | File | Status |
 |--------------------|----------|------|--------|
-| `ECDH[E][-{curve}]` | `cdx:ECDHE` | cr-cdx.yaml | Deprecated; prefer `ECDH` — ephemeral is a protocol property |
+| `ECDH[E][-{ellipticCurve}]` | `cdx:ECDHE` | cr-cdx.yaml | Deprecated; prefer `ECDH` — ephemeral is a protocol property |
 | `FFDH(E)[-{group}]` | `cdx:FFDHE` | cr-cdx.yaml | Deprecated; prefer `FFDH` — ephemeral is a protocol property |
 | `Ed(25519\|448)[(ph\|ctx)]` | `cdx:Ed25519ph`, `cdx:Ed25519ctx`, `cdx:Ed448ph`, `cdx:Ed448ctx` | cr-cdx.yaml | Deprecated; prefer `Ed25519`/`Ed448` with context parameter |
 | `SHAKE(128\|256)` | `SHAKE128`, `SHAKE256` | cr-hash-functions.yaml | Canonical; already existed |
@@ -525,7 +525,7 @@ in CycloneDX. They are registered in `cr-spdx.yaml` without deprecation:
 | Missing from CycloneDX registry | 6+ families | Upstream gap |
 
 All CycloneDX and SPDX algorithm identifiers are now covered for **instance validation**.
-The registry uses 320 families across 9 YAML files. Eight resolution mechanisms are in place:
+The registry uses 324 families across 9 YAML files. Eight resolution mechanisms are in place:
 
 1. **CycloneDX aliases** — RSA-PSS, X25519, AES-Wrap, RABBIT, TLS13-PRF
 2. **SPDX aliases** — rijndael, desede, tdes, sms4, chacha, diffiehellman, dhe, kazumi
