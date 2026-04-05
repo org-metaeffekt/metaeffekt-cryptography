@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (9 files, 309 registered algorithm families, 154 unique OIDs indexed).
+registry (9 files, 310 registered algorithm families, 154 unique OIDs indexed).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 
@@ -13,12 +13,12 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | Test class | Tests | Scope |
 |------------|------:|-------|
 | `InstanceValidationSymmetricTest` | 87 | All 77 symmetric families (incl. 2TDEA, RC4-HMAC-EXP) |
-| `InstanceValidationHashMacTest` | 56 | All 40 hash + 9 MAC families (incl. HMAC-MD5) |
+| `InstanceValidationHashMacTest` | 57 | All 40 hash + 10 MAC families (incl. HMAC-MD5, GMAC) |
 | `InstanceValidationAsymmetricTest` | 44 | All 37 asymmetric families (incl. DLIES, MLS, SRTP) |
 | `InstanceValidationPqcTest` | 50 | All 39 PQC families |
 | `InstanceValidationKdfTest` | 25 | All 25 KDF families (incl. CatKDF, KeyCombine) |
 | `InstanceValidationRngTest` | 27 | All 21 RNG families |
-| `TemplateValidationTest` | 28 | Templates, constraints, normalisation, choice groups, fixed identifiers |
+| `TemplateValidationTest` | 30 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
 | `CycloneDxRegistryCoverageTest` | 201 | Full CycloneDX cryptography-defs.json coverage + all 33 cdx families |
 | `SpdxCoverageTest` | 159 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
 | `CertificateAnalyserTest` | 5 | X.509 certificate analysis (RSA-2048, EC-P256) |
@@ -27,7 +27,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `CBomGeneratorTest` | 4 | CBOM JSON generation from cert/CMS analysis |
 | `MainTest` | 24 | CLI integration (all modes incl. cert, cms, cbom) |
 | `AlgorithmRegistryTest` | 11 | Registry loading, duplicate detection, OID index |
-| **Total** | **736** | |
+| **Total** | **739** | |
 
 ---
 
@@ -37,20 +37,20 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 |---------------|:--------:|:-------------:|:-----------------:|:--------:|
 | `cr-symmetric-ciphers.yaml` | 77 | 28 | 10 | 39 |
 | `cr-hash-functions.yaml` | 40 | 20 | 19 | 1 |
-| `cr-macs.yaml` | 9 | 7 | 2 | 0 |
+| `cr-macs.yaml` | 10 | 8 | 2 | 0 |
 | `cr-asymmetric.yaml` | 37 | 27 | 4 | 6 |
 | `cr-pqc.yaml` | 39 | 20 | 5 | 14 |
 | `cr-kdfs.yaml` | 25 | 21 | 1 | 3 |
 | `cr-rngs.yaml` | 21 | 8 | 11 | 2 |
 | `cr-cdx.yaml` | 33 | 3 | 30 | 0 |
 | `cr-spdx.yaml` | 28 | 0 | 28 | 0 |
-| **Total** | **309** | **142** | **110** | **57** |
+| **Total** | **310** | **143** | **110** | **57** |
 
 ### Family validation modes
 
 | Mode | Count | Behaviour |
 |------|:-----:|-----------|
-| Segments defined | 142 | Parameters validated against controlled vocabulary + constraints |
+| Segments defined | 143 | Parameters validated against controlled vocabulary + constraints |
 | Fixed identifiers (`segments: []`) | 110 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
 | Wildcard (no `segments` field) | 57 | Any trailing parameters accepted |
 
@@ -59,7 +59,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | Status | Count | Examples |
 |--------|:-----:|---------|
 | Approved (default) | 221 | AES, ML-KEM, SHA, ECDH |
-| Deprecated | 64 | 3DES, SHA variant 1, Blowfish, cdx:ECDHE, spdx:shs, spdx:rsa |
+| Deprecated | 65 | 3DES, SHA variant 1, Blowfish, GMAC, cdx:ECDHE, spdx:shs, spdx:rsa |
 | Disallowed | 5 | RC2, RC4, Dual_EC_DRBG, 2TDEA, RC4-HMAC |
 | Broken | 8 | DES, MD5, MD4, FEAL, CMEA, A5/2 |
 
@@ -88,7 +88,7 @@ matched — zero unmatched. Split into two test sets.
 
 ---
 
-## Appendix A: All Instance Patterns Tested (275)
+## Appendix A: All Instance Patterns Tested (276)
 
 Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 
@@ -228,13 +228,14 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `cSHAKE128-256` | `cSHAKE128` |
 | `cSHAKE256-256` | `cSHAKE256` |
 
-### Message Authentication Codes (11 patterns)
+### Message Authentication Codes (12 patterns)
 
 | Pattern | Family |
 |---------|--------|
 | `AES-CMAC-128` | `AES-CMAC` |
 | `AES-CMAC-PRF-128` | `AES-CMAC` |
 | `CBC-MAC` | `CBC-MAC` |
+| `GMAC-128` | `GMAC` |
 | `HMAC-SHA-224` | `HMAC` |
 | `HMAC-MD5` | `HMAC` |
 | `HMAC-SHA-256` | `HMAC` |

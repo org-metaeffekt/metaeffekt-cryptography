@@ -106,11 +106,11 @@ that adjustments can be applied accordingly.
 
 ## Pattern Validator
 
-- **[ae-pattern-validator/](ae-pattern-validator/)** — Maven-based Java 17 module (Bouncy Castle 1.83, Spring Boot 4.1.0-M4) that validates cryptographic algorithm patterns, X.509 certificates, CMS/PKCS#7 structures, and CycloneDX CBOM files. Generates CycloneDX 1.6 CBOM JSON from certificate and CMS analysis. Registry: 309 algorithm families, 9 taxonomy files, 154 unique OIDs, full CycloneDX + SPDX coverage. CLI modes: `--cert`, `--cms`, `--cbom`, `--generate-cbom`, `--oid`, pattern instance/template validation. Build: `cd ae-pattern-validator && mvn clean verify`. (NOT YET PUBLISHED; UNDER EVALUATION)
+- **[ae-pattern-validator/](ae-pattern-validator/)** — Maven-based Java 17 module (Bouncy Castle 1.83, Spring Boot 4.1.0-M4) that validates cryptographic algorithm patterns, X.509 certificates, CMS/PKCS#7 structures, and CycloneDX CBOM files. Generates CycloneDX 1.6 CBOM JSON from certificate and CMS analysis. Registry: 310 algorithm families, 9 taxonomy files, 154 unique OIDs, full CycloneDX + SPDX coverage. CLI modes: `--cert`, `--cms`, `--cbom`, `--generate-cbom`, `--oid`, pattern instance/template validation. Build: `cd ae-pattern-validator && mvn clean verify`. (NOT YET PUBLISHED; UNDER EVALUATION)
 
 - **[registry-naming-inconsistencies.md](registry-naming-inconsistencies.md)** — Cross-reference of naming ambiguities and inconsistencies between the CycloneDX cryptography registry, the SPDX algorithm list, and this repository's taxonomy. Documents 16 concrete issues with eight resolution mechanisms. All CycloneDX and SPDX instance patterns are covered.
 
-- **[validator-test-report.md](validator-test-report.md)** — Test statistics for the pattern validator: 736 tests across 15 test classes covering instance validation by taxonomy, template/constraint validation, CycloneDX coverage (201 tests), SPDX coverage (159 tests), X.509 certificate analysis (5 tests), CMS analysis (7 tests), CBOM validation (8 tests), and CBOM generation (4 tests). Registry: 309 families, 9 files, 154 unique OIDs.
+- **[validator-test-report.md](validator-test-report.md)** — Test statistics for the pattern validator: 739 tests across 15 test classes covering instance validation by taxonomy, template/constraint validation, CycloneDX coverage (201 tests), SPDX coverage (159 tests), X.509 certificate analysis (5 tests), CMS analysis (7 tests), CBOM validation (8 tests), and CBOM generation (4 tests). Registry: 310 families, 9 files, 154 unique OIDs.
 
 ## Grammars
 
