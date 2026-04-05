@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1358" height="2476" viewBox="0 0 1358 2476">
+<rect width="1358" height="2476" fill="#fafafa"/>
+<text x="20" y="42" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">Cryptographic Algorithm Parameter Taxonomy</text>
+<text x="20" y="62" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#666666">Grouped by taxonomy section; each block is self-contained.</text>
+<rect x="20" y="80" width="1318" height="810" fill="#f5f5f5" stroke="#666666" stroke-width="2" rx="4"/>
+<text x="32" y="101" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a">§1–§8  General Parameters</text>
+<rect x="32" y="124" width="316" height="335" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="40" y="141" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§1 Size &amp; Length</text>
+<rect x="40" y="158" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="171" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{keyLength}</text>
+<text x="48" y="185" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">symmetric key / modulus size</text>
+<rect x="40" y="195" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="208" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{saltLength}</text>
+<text x="48" y="222" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">PSS / PBKDF salt (bytes)</text>
+<rect x="40" y="232" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="245" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{dkLen}</text>
+<text x="48" y="259" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">derived key length</text>
+<rect x="40" y="269" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="282" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{tagLenBytes}</text>
+<text x="48" y="296" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">AEAD tag length (bytes)</text>
+<rect x="40" y="306" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="319" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{outputLength}</text>
+<text x="48" y="333" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">XOF / hash output length</text>
+<rect x="40" y="343" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="356" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{dkmLength}</text>
+<text x="48" y="370" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">derived keying material length</text>
+<rect x="40" y="380" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="393" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{length}</text>
+<text x="48" y="407" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">generic length parameter</text>
+<rect x="40" y="417" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="430" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="48" y="444" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">algorithm parameter set</text>
+<rect x="358" y="124" width="316" height="298" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="366" y="141" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§2 Mode &amp; Variant</text>
+<rect x="366" y="158" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="171" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{mode}</text>
+<text x="374" y="185" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">cipher mode (GCM, CBC, CTR, …)</text>
+<rect x="366" y="195" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="208" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{symmetricCipher}</text>
+<text x="374" y="222" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">cipher name</text>
+<rect x="366" y="232" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="245" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{cipherAlgorithm}</text>
+<text x="374" y="259" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">block cipher algorithm</text>
+<rect x="366" y="269" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="282" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{blockCipher}</text>
+<text x="374" y="296" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">underlying block cipher</text>
+<rect x="366" y="306" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="319" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{encryptionAlgorithm}</text>
+<text x="374" y="333" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">encryption primitive</text>
+<rect x="366" y="343" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="356" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{kem}</text>
+<text x="374" y="370" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">KEM algorithm</text>
+<rect x="366" y="380" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="393" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{otherBlockCipher}</text>
+<text x="374" y="407" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">secondary block cipher</text>
+<rect x="684" y="124" width="316" height="224" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="692" y="141" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§3 Hash &amp; Digest</text>
+<rect x="692" y="158" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="171" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{hashAlgorithm}</text>
+<text x="700" y="185" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">hash function (SHA-256, …)</text>
+<rect x="692" y="195" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="208" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{maskGenAlgorithm}</text>
+<text x="700" y="222" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">MGF (typically MGF1)</text>
+<rect x="692" y="232" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="245" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{prfFunction}</text>
+<text x="700" y="259" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">pseudorandom function</text>
+<rect x="692" y="269" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="282" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{auxFunction}</text>
+<text x="700" y="296" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">auxiliary function</text>
+<rect x="692" y="306" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="319" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{hashfun}/{nbits}/{treeHeight}</text>
+<text x="700" y="333" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">LMS/XMSS parameter triple</text>
+<rect x="1010" y="124" width="316" height="150" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="1018" y="141" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§4 Curve &amp; Group</text>
+<rect x="1018" y="158" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="1026" y="171" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{ellipticCurve}</text>
+<text x="1026" y="185" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">elliptic curve name</text>
+<rect x="1018" y="195" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="1026" y="208" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{namedGroup}</text>
+<text x="1026" y="222" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">DH named group</text>
+<rect x="1018" y="232" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="1026" y="245" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{group}</text>
+<text x="1026" y="259" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">generic group identifier</text>
+<rect x="32" y="469" width="316" height="224" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="40" y="486" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§5 Auth &amp; Tag</text>
+<rect x="40" y="503" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="516" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{tagLength}</text>
+<text x="48" y="530" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">MAC / AEAD tag length (bits)</text>
+<rect x="40" y="540" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="553" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{ivLength}</text>
+<text x="48" y="567" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">IV / nonce length</text>
+<rect x="40" y="577" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="590" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{mac}</text>
+<text x="48" y="604" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">MAC algorithm</text>
+<rect x="40" y="614" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="627" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{macAlgorithm}</text>
+<text x="48" y="641" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">MAC primitive</text>
+<rect x="40" y="651" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="664" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{aead}</text>
+<text x="48" y="678" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">AEAD algorithm</text>
+<rect x="358" y="469" width="316" height="409" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="366" y="486" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§6 KDF &amp; Password</text>
+<rect x="366" y="503" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="516" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{kdf}</text>
+<text x="374" y="530" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">key derivation function</text>
+<rect x="366" y="540" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="553" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{iterations}</text>
+<text x="374" y="567" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">PBKDF iteration count</text>
+<rect x="366" y="577" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="590" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{memoryKiB}</text>
+<text x="374" y="604" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">Argon2 memory cost</text>
+<rect x="366" y="614" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="627" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{passes}</text>
+<text x="374" y="641" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">Argon2 time cost</text>
+<rect x="366" y="651" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="664" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parallelism}</text>
+<text x="374" y="678" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">Argon2 threads</text>
+<rect x="366" y="688" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="701" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{saltLenBytes}</text>
+<text x="374" y="715" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">salt length (bytes)</text>
+<rect x="366" y="725" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="738" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{N}/{r}/{p}</text>
+<text x="374" y="752" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">scrypt cost parameters</text>
+<rect x="366" y="762" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="775" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{cost}</text>
+<text x="374" y="789" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">bcrypt cost factor</text>
+<rect x="366" y="799" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{ksf}</text>
+<text x="374" y="826" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">key stretching function</text>
+<rect x="366" y="836" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="849" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{N_log2}/{t}</text>
+<text x="374" y="863" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">yescrypt cost/time</text>
+<rect x="684" y="469" width="316" height="76" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="692" y="486" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§7 Padding &amp; IV</text>
+<rect x="692" y="503" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="516" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{padding}</text>
+<text x="700" y="530" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">padding scheme</text>
+<rect x="1010" y="469" width="316" height="113" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="1018" y="486" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§8 Protocol &amp; Misc</text>
+<rect x="1018" y="503" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="1026" y="516" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{compressionRounds}/{finalizationRounds}</text>
+<text x="1026" y="530" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">SipHash rounds</text>
+<rect x="1018" y="540" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="1026" y="553" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{SRP version}</text>
+<text x="1026" y="567" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">SRP-3 | SRP-6 | SRP-6a</text>
+<rect x="20" y="906" width="992" height="847" fill="#e8f0fe" stroke="#4285f4" stroke-width="2" rx="4"/>
+<text x="32" y="927" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a">§9  PQC Internal Parameters  (FIPS 203 / 204 / 205 / 206 / HQC)</text>
+<rect x="32" y="950" width="316" height="298" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="40" y="967" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">ML-KEM  (FIPS 203)</text>
+<rect x="40" y="984" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="997" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="48" y="1011" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">512 | 768 | 1024</text>
+<rect x="40" y="1021" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1034" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{k}</text>
+<text x="48" y="1048" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">module rank (2 | 3 | 4)</text>
+<rect x="40" y="1058" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1071" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{eta1}</text>
+<text x="48" y="1085" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">noise parameter (keygen)</text>
+<rect x="40" y="1095" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1108" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{eta2}</text>
+<text x="48" y="1122" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">noise parameter (encryption)</text>
+<rect x="40" y="1132" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1145" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{du}</text>
+<text x="48" y="1159" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">ciphertext compression u</text>
+<rect x="40" y="1169" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1182" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{dv}</text>
+<text x="48" y="1196" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">ciphertext compression v</text>
+<rect x="40" y="1206" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1219" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{q}</text>
+<text x="48" y="1233" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">modulus (3329)</text>
+<rect x="358" y="950" width="316" height="483" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="366" y="967" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">ML-DSA  (FIPS 204)</text>
+<rect x="366" y="984" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="997" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="374" y="1011" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">44 | 65 | 87</text>
+<rect x="366" y="1021" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1034" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{k}, {l}</text>
+<text x="374" y="1048" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">lattice matrix dimensions</text>
+<rect x="366" y="1058" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1071" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{eta}</text>
+<text x="374" y="1085" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">secret key coefficient bound</text>
+<rect x="366" y="1095" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1108" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{gamma1}</text>
+<text x="374" y="1122" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">masking range</text>
+<rect x="366" y="1132" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1145" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{gamma2}</text>
+<text x="374" y="1159" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">low-order rounding range</text>
+<rect x="366" y="1169" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1182" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{tau}</text>
+<text x="374" y="1196" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">challenge polynomial weight</text>
+<rect x="366" y="1206" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1219" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{lambda}</text>
+<text x="374" y="1233" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">collision strength (bits)</text>
+<rect x="366" y="1243" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1256" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{beta}</text>
+<text x="374" y="1270" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">norm bound (tau·eta)</text>
+<rect x="366" y="1280" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1293" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{omega}</text>
+<text x="374" y="1307" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">hint weight bound</text>
+<rect x="366" y="1317" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1330" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{q}</text>
+<text x="374" y="1344" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">modulus (8380417)</text>
+<rect x="366" y="1354" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1367" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{context}</text>
+<text x="374" y="1381" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">domain separation</text>
+<rect x="366" y="1391" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1404" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{deterministicSigning}</text>
+<text x="374" y="1418" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">hedged | deterministic</text>
+<rect x="684" y="950" width="316" height="409" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="692" y="967" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">SLH-DSA  (FIPS 205)</text>
+<rect x="692" y="984" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="997" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="700" y="1011" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">128s|128f|192s|192f|256s|256f</text>
+<rect x="692" y="1021" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1034" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{n}</text>
+<text x="700" y="1048" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">security parameter (bytes)</text>
+<rect x="692" y="1058" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1071" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{h} / {d}</text>
+<text x="700" y="1085" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">total height / layer count</text>
+<rect x="692" y="1095" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1108" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{h_prime}</text>
+<text x="700" y="1122" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">subtree height (h/d)</text>
+<rect x="692" y="1132" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1145" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{a}</text>
+<text x="700" y="1159" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">FORS tree height</text>
+<rect x="692" y="1169" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1182" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{k}</text>
+<text x="700" y="1196" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">number of FORS trees</text>
+<rect x="692" y="1206" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1219" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{w} / {lg_w}</text>
+<text x="700" y="1233" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">Winternitz parameter</text>
+<rect x="692" y="1243" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1256" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{m}</text>
+<text x="700" y="1270" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">message digest blocks</text>
+<rect x="692" y="1280" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1293" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{context}</text>
+<text x="700" y="1307" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">domain separation</text>
+<rect x="692" y="1317" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1330" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{deterministicSigning}</text>
+<text x="700" y="1344" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">hedged | deterministic</text>
+<rect x="32" y="1443" width="316" height="298" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="40" y="1460" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">FN-DSA  (FIPS 206 IPD / Falcon)</text>
+<rect x="40" y="1477" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1490" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="48" y="1504" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">FN-DSA-512 | FN-DSA-1024</text>
+<rect x="40" y="1514" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1527" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{n}</text>
+<text x="48" y="1541" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">ring dimension (512 | 1024)</text>
+<rect x="40" y="1551" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1564" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{q}</text>
+<text x="48" y="1578" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">modulus (12289)</text>
+<rect x="40" y="1588" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1601" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{sigma}</text>
+<text x="48" y="1615" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">Gaussian standard deviation</text>
+<rect x="40" y="1625" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1638" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{floatingPointMode}</text>
+<text x="48" y="1652" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">IEEE 754 | integer-only</text>
+<rect x="40" y="1662" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1675" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{context}</text>
+<text x="48" y="1689" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">domain separation</text>
+<rect x="40" y="1699" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1712" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{deterministicSigning}</text>
+<text x="48" y="1726" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">hedged | deterministic</text>
+<rect x="358" y="1443" width="316" height="113" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="366" y="1460" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">HQC  (NIST Round 4, FIPS pending)</text>
+<rect x="366" y="1477" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1490" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="374" y="1504" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">128 | 192 | 256 (L1 | L3 | L5)</text>
+<rect x="366" y="1514" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1527" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">internal params</text>
+<text x="374" y="1541" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">n, k, w, wr, we (fixed per set)</text>
+<rect x="684" y="1443" width="316" height="76" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="692" y="1460" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">Pre-Hash Variants</text>
+<rect x="692" y="1477" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1490" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{preHashVariant}</text>
+<text x="700" y="1504" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">HashML-DSA | HashSLH-DSA</text>
+<rect x="20" y="1769" width="992" height="280" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="4"/>
+<text x="32" y="1790" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a">§10  Lightweight &amp; National Standards</text>
+<rect x="32" y="1813" width="316" height="187" fill="#fff8e1" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="40" y="1830" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">Ascon  (NIST SP 800-232)</text>
+<rect x="40" y="1847" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1860" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">Ascon-AEAD128</text>
+<text x="48" y="1874" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">128-bit key/tag/nonce</text>
+<rect x="40" y="1884" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1897" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">Ascon-Hash256</text>
+<text x="48" y="1911" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">fixed 256-bit output</text>
+<rect x="40" y="1921" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1934" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">Ascon-XOF128</text>
+<text x="48" y="1948" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">variable output, 128-bit sec</text>
+<rect x="40" y="1958" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="1971" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">Ascon-CXOF128</text>
+<text x="48" y="1985" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">customisable XOF</text>
+<rect x="358" y="1813" width="316" height="224" fill="#fff8e1" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="366" y="1830" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">SM9  (GM/T 0044-2016)</text>
+<rect x="366" y="1847" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1860" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{masterPublicKey}</text>
+<text x="374" y="1874" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">SM9 BN curve element</text>
+<rect x="366" y="1884" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1897" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">SM9-SIG</text>
+<text x="374" y="1911" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">signature</text>
+<rect x="366" y="1921" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1934" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">SM9-KEX</text>
+<text x="374" y="1948" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">key exchange</text>
+<rect x="366" y="1958" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="1971" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">SM9-KEM</text>
+<text x="374" y="1985" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">key encapsulation</text>
+<rect x="366" y="1995" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="2008" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">SM9-ENC</text>
+<text x="374" y="2022" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">identity-based encryption</text>
+<rect x="684" y="1813" width="316" height="224" fill="#fff8e1" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="692" y="1830" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">3GPP AKA  (TS 35.206 / 35.231)</text>
+<rect x="692" y="1847" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1860" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">MILENAGE</text>
+<text x="700" y="1874" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">AES-128-based AKA</text>
+<rect x="692" y="1884" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1897" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">TUAK</text>
+<text x="700" y="1911" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">Keccak-based AKA</text>
+<rect x="692" y="1921" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1934" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">128-EEA1/EEA3</text>
+<text x="700" y="1948" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">confidentiality</text>
+<rect x="692" y="1958" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="1971" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">128-EIA1/EIA3</text>
+<text x="700" y="1985" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">integrity</text>
+<rect x="692" y="1995" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="700" y="2008" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">3GPP-XOR</text>
+<text x="700" y="2022" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">test vector algorithm</text>
+<rect x="20" y="2065" width="340" height="169" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" rx="4"/>
+<text x="32" y="2086" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a">§11  SP 800-57 Key Management</text>
+<rect x="32" y="2109" width="316" height="113" fill="#fce4ec" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="40" y="2126" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">Cryptoperiod</text>
+<rect x="40" y="2143" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="2156" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{originator-usage-period}</text>
+<text x="48" y="2170" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">max time to apply protection (1-3 yrs)</text>
+<rect x="40" y="2180" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="2193" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{recipient-usage-period}</text>
+<text x="48" y="2207" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">max time to process (OUP + 3 yrs)</text>
+<rect x="20" y="2250" width="666" height="206" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="4"/>
+<text x="32" y="2271" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a">Hybrid &amp; Composite Constructions</text>
+<rect x="32" y="2294" width="316" height="113" fill="#e8f5e9" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="40" y="2311" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">Hybrid KEM</text>
+<rect x="40" y="2328" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="2341" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{hybridKemCombiner}</text>
+<text x="48" y="2355" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">concat | xor | HKDF</text>
+<rect x="40" y="2365" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="48" y="2378" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">Classical + PQC KEM pair</text>
+<text x="48" y="2392" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">X25519+ML-KEM, P-256+HQC, …</text>
+<rect x="358" y="2294" width="316" height="150" fill="#e8f5e9" stroke="#cccccc" stroke-width="1" rx="3"/>
+<text x="366" y="2311" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">Composite Signatures</text>
+<rect x="366" y="2328" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="2341" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">Composite ML-DSA</text>
+<text x="374" y="2355" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">draft-ietf-lamps-pq-composite-sigs</text>
+<rect x="366" y="2365" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="2378" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">ML-DSA + classical</text>
+<text x="374" y="2392" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">RSA-PSS | RSA-PKCS1 | ECDSA | EdDSA</text>
+<rect x="366" y="2402" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
+<text x="374" y="2415" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">18 registered OIDs</text>
+<text x="374" y="2429" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">arc 1.3.6.1.5.5.7.6.37–54</text>
+</svg>
