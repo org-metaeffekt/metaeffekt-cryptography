@@ -2,7 +2,7 @@
 
 > Plan for ensuring all artefacts in the metaeffekt-cryptography repository are consistent,
 > complete, and synchronised. Covers markdown documents, YAML registry, ANTLR4 grammars,
-> drawio diagrams, inventory, glossary, test suite, and external registry alignment.
+> generated diagrams, inventory, glossary, test suite, and external registry alignment.
 
 ## Dependency Tree
 
