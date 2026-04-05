@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (9 files, 320 registered algorithm families, 148 unique OIDs indexed).
+registry (9 files, 324 registered algorithm families, 178 unique OIDs indexed).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 
@@ -17,8 +17,8 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `InstanceValidationAsymmetricTest` | 44 | All 37 asymmetric families (incl. DLIES, MLS, SRTP) |
 | `InstanceValidationPqcTest` | 50 | All 39 PQC families |
 | `InstanceValidationKdfTest` | 25 | All 25 KDF families (incl. CatKDF, KeyCombine) |
-| `InstanceValidationRngTest` | 27 | All 21 RNG families |
-| `TemplateValidationTest` | 30 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
+| `InstanceValidationRngTest` | 31 | All 25 RNG families (incl. OS entropy APIs) |
+| `TemplateValidationTest` | 33 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
 | `CycloneDxRegistryCoverageTest` | 204 | Full CycloneDX cryptography-defs.json coverage (as of 2026-02-24) + all 33 cdx families |
 | `SpdxCoverageTest` | 169 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
 | `CertificateAnalyserTest` | 5 | X.509 certificate analysis (RSA-2048, EC-P256) |
@@ -26,8 +26,8 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `CBomAnalyserTest` | 8 | CycloneDX CBOM validation (6 components, compliance check) |
 | `CBomGeneratorTest` | 4 | CBOM JSON generation from cert/CMS analysis |
 | `MainTest` | 24 | CLI integration (all modes incl. cert, cms, cbom) |
-| `AlgorithmRegistryTest` | 11 | Registry loading, duplicate detection, OID index |
-| **Total** | **752** | |
+| `AlgorithmRegistryTest` | 12 | Registry loading, duplicate detection, OID index |
+| **Total** | **760** | |
 
 ---
 
@@ -41,27 +41,31 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `cr-asymmetric.yaml` | 37 | 27 | 4 | 6 |
 | `cr-pqc.yaml` | 39 | 20 | 5 | 14 |
 | `cr-kdfs.yaml` | 25 | 21 | 1 | 3 |
-| `cr-rngs.yaml` | 21 | 8 | 11 | 2 |
+| `cr-rngs.yaml` | 25 | 8 | 15 | 2 |
 | `cr-cdx.yaml` | 33 | 3 | 30 | 0 |
 | `cr-spdx.yaml` | 38 | 0 | 38 | 0 |
-| **Total** | **320** | **143** | **120** | **57** |
+| **Total** | **324** | **143** | **124** | **57** |
 
 ### Family validation modes
 
 | Mode | Count | Behaviour |
 |------|:-----:|-----------|
-| Segments defined | 143 | Parameters validated against controlled vocabulary + constraints |
-| Fixed identifiers (`segments: []`) | 120 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
-| Wildcard (no `segments` field) | 57 | Any trailing parameters accepted |
+| Parameters defined | 143 | Parameters validated against controlled vocabulary + constraints |
+| Fixed identifiers (`parameters: []`) | 124 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
+| Wildcard (no `parameters` field) | 57 | Any trailing parameters accepted |
 
 ### Status Distribution
 
+Family-level `status:` (security posture of the algorithm — canonical families only):
+
 | Status | Count | Examples |
 |--------|:-----:|---------|
-| Approved (default) | 221 | AES, ML-KEM, SHA, ECDH |
-| Deprecated | 75 | 3DES, SHA variant 1, Blowfish, GMAC, cdx:ECDHE, spdx:shs, spdx:adler32, spdx:crc16 |
-| Disallowed | 5 | RC2, RC4, Dual_EC_DRBG, 2TDEA, RC4-HMAC |
-| Broken | 8 | DES, MD5, MD4, FEAL, CMEA, A5/2 |
+| Approved (implicit default) | 217 | AES, ML-KEM, SHA, ECDH, ChaCha20 |
+| Deprecated | 10 | DSA, MD6, 3DES, Blowfish, IDEA, CAST5, RC5, Yarrow, RC4-PRNG, ANSIX931 |
+| Disallowed | 14 | RC2, RC4, RC4-HMAC, 2TDEA, PBKDF1, Dual_EC_DRBG, A5/1, MT19937, PCG, LCG, SplitMix64, ISAAC, Xoshiro, Xoroshiro |
+| Broken | 8 | DES, MD5, MD4, MD2, FEAL, CMEA, PANAMA, A5/2 |
+
+In addition, `cdx:` and `spdx:` naming-alternative entries carry `patternStatus: deprecated` (pattern canonicity — separate from security posture).
 
 ---
 

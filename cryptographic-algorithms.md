@@ -245,7 +245,7 @@ Cryptographic Algorithms
 |:---|:---|:---|:---|:---|:---|
 | `rsassa-pss` | RSASSA-PSS (RSA with Probabilistic Signature Scheme) | Digital signature | `1.2.840.113549.1.1.10` | `RSASSA-PSS-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5; SP 800-131A |
 | `rsassa-pkcs1` | RSASSA-PKCS1-v1.5 | Digital signature (legacy) | `1.2.840.113549.1.1.5` (SHA-1) · `.11` (SHA-256) · `.12` (SHA-384) · `.13` (SHA-512) · `.14` (SHA-224) | `RSASSA-PKCS1-{keyLength}-{hashAlgorithm}` | RFC 8017; FIPS 186-5 (deprecated for new use) |
-| `ecdsa` | ECDSA (Elliptic Curve Digital Signature Algorithm) | Digital signature | `1.2.840.10045.4.3.1` (SHA-224) · `.2` (SHA-256) · `.3` (SHA-384) · `.4` (SHA-512) · `2.16.840.1.101.3.4.3.9` (SHA3-224) · `.10` (SHA3-256) · `.11` (SHA3-384) · `.12` (SHA3-512) | `ECDSA-{curve}-{hashAlgorithm}` | FIPS 186-5; SP 800-186; RFC 5758; NIST CSOR |
+| `ecdsa` | ECDSA (Elliptic Curve Digital Signature Algorithm) | Digital signature | `1.2.840.10045.2.1` (id-ecPublicKey) · `1.2.840.10045.4.3.1` (SHA-224) · `.2` (SHA-256) · `.3` (SHA-384) · `.4` (SHA-512) · `2.16.840.1.101.3.4.3.9` (SHA3-224) · `.10` (SHA3-256) · `.11` (SHA3-384) · `.12` (SHA3-512) | `ECDSA-{curve}-{hashAlgorithm}` | FIPS 186-5; SP 800-186; RFC 5758; RFC 5480; NIST CSOR |
 | `eddsa` | EdDSA (Edwards-curve Digital Signature Algorithm) | Digital signature | `1.3.101.112` (Ed25519) · `1.3.101.113` (Ed448) | `EdDSA-(Ed25519\|Ed448)` | RFC 8032; FIPS 186-5 |
 | `ed25519` | Ed25519 | Digital signature | `1.3.101.112` | `Ed25519` | RFC 8032; FIPS 186-5 |
 | `ed448` | Ed448 · Ed448-Goldilocks | Digital signature | `1.3.101.113` | `Ed448` | RFC 8032; FIPS 186-5 |
