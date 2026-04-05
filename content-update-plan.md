@@ -200,25 +200,35 @@ Phase 8 (Improvements)                ── independent; can run last or in par
 ## Phase 6: Diagrams
 
 > [!NOTE]
-> The drawio diagrams are visual documentation of the pattern grammar and parameter taxonomy. This phase ensures they reflect the current state of the ANTLR4 grammar and parameter definitions — so the diagrams remain a trustworthy visual reference rather than a stale snapshot.
+> Diagrams are visual documentation of the parameter taxonomy and RNG classification. They are generated deterministically from `resources/generate_diagrams.py`, which emits SVG directly (no layout engine). This phase ensures the Python data structures reflect the current state of the parameter definitions and YAML registry — so the rendered SVGs remain a trustworthy visual reference.
 
-### 6.1 Grammar Diagrams
-
-> [!NOTE]
-> Verify the algorithm pattern diagram accurately represents the current ANTLR4 grammar productions for both instance and template modes, including any grammar changes made during the project.
-
-- [ ] Compare `resources/cryptographic-algorithms.drawio` against `CryptographyPattern.g4`
-- [ ] Verify all grammar productions (instance + template mode) are represented
-- [ ] Check parameter sections §1-§10 match `cryptographic-parameters.md`
-
-### 6.2 Parameter Set Diagrams
+### 6.1 Parameter Taxonomy Diagram
 
 > [!NOTE]
-> Verify the parameter taxonomy sections in the diagrams cover all algorithm families added since the diagrams were last updated — especially PQC, Ascon, SM9, 3GPP, and hybrid constructs.
+> Verify the parameter taxonomy sections in `generate_diagrams.py` cover all algorithm families and parameters — especially PQC, Ascon, SM9, 3GPP, hybrid constructs, and any newly added sections.
 
-- [ ] Check PQC sections are current (ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC)
-- [ ] Verify new families (Ascon, SM9, 3GPP, HashML-DSA, HashSLH-DSA) are represented
-- [ ] Verify RNG diagram (`random-number-generators.drawio`) matches `cr-rngs.yaml`
+- [ ] Review `build_parameters_diagram()` in `resources/generate_diagrams.py`
+- [ ] Check sections §1-§11 match `cryptographic-parameters.md` structure
+- [ ] Verify PQC blocks are current (ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC parameters)
+- [ ] Verify parameter ordering follows logical/specification order per algorithm
+- [ ] Re-render: `python3 resources/generate_diagrams.py`
+
+### 6.2 RNG Taxonomy Diagram
+
+> [!NOTE]
+> Verify the RNG classification in `generate_diagrams.py` covers all families from `cr-rngs.yaml`.
+
+- [ ] Review `build_rng_diagram()` in `resources/generate_diagrams.py`
+- [ ] Verify all `cr-rngs.yaml` families are represented (CSPRNG, OS/hardware, non-crypto PRNGs, historical)
+- [ ] Re-render: `python3 resources/generate_diagrams.py`
+
+### 6.3 Layout Constants
+
+> [!NOTE]
+> Adjust layout constants in `generate_diagrams.py` when the diagrams grow too tall, need wider parameter boxes, or require different color schemes. Deterministic layout means changes are reproducible.
+
+- [ ] Tune `PARAM_WIDTH`, section column counts, or spacing constants as content grows
+- [ ] Ensure both diagrams remain visually consistent (same parameter width, font sizes, color conventions)
 
 ---
 
