@@ -525,7 +525,7 @@ in CycloneDX. They are registered in `cr-spdx.yaml` without deprecation:
 | Missing from CycloneDX registry | 6+ families | Upstream gap |
 
 All CycloneDX and SPDX algorithm identifiers are now covered for **instance validation**.
-The registry uses 310 families across 9 YAML files. Eight resolution mechanisms are in place:
+The registry uses 320 families across 9 YAML files. Eight resolution mechanisms are in place:
 
 1. **CycloneDX aliases** — RSA-PSS, X25519, AES-Wrap, RABBIT, TLS13-PRF
 2. **SPDX aliases** — rijndael, desede, tdes, sms4, chacha, diffiehellman, dhe, kazumi

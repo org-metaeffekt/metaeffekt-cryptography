@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (9 files, 310 registered algorithm families, 154 unique OIDs indexed).
+registry (9 files, 320 registered algorithm families, 154 unique OIDs indexed).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 
@@ -19,15 +19,15 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `InstanceValidationKdfTest` | 25 | All 25 KDF families (incl. CatKDF, KeyCombine) |
 | `InstanceValidationRngTest` | 27 | All 21 RNG families |
 | `TemplateValidationTest` | 30 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
-| `CycloneDxRegistryCoverageTest` | 201 | Full CycloneDX cryptography-defs.json coverage + all 33 cdx families |
-| `SpdxCoverageTest` | 159 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
+| `CycloneDxRegistryCoverageTest` | 204 | Full CycloneDX cryptography-defs.json coverage (as of 2026-02-24) + all 33 cdx families |
+| `SpdxCoverageTest` | 169 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
 | `CertificateAnalyserTest` | 5 | X.509 certificate analysis (RSA-2048, EC-P256) |
 | `CmsAnalyserTest` | 7 | CMS/PKCS#7 SignedData + EnvelopedData analysis |
 | `CBomAnalyserTest` | 8 | CycloneDX CBOM validation (6 components, compliance check) |
 | `CBomGeneratorTest` | 4 | CBOM JSON generation from cert/CMS analysis |
 | `MainTest` | 24 | CLI integration (all modes incl. cert, cms, cbom) |
 | `AlgorithmRegistryTest` | 11 | Registry loading, duplicate detection, OID index |
-| **Total** | **739** | |
+| **Total** | **752** | |
 
 ---
 
@@ -43,15 +43,15 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `cr-kdfs.yaml` | 25 | 21 | 1 | 3 |
 | `cr-rngs.yaml` | 21 | 8 | 11 | 2 |
 | `cr-cdx.yaml` | 33 | 3 | 30 | 0 |
-| `cr-spdx.yaml` | 28 | 0 | 28 | 0 |
-| **Total** | **310** | **143** | **110** | **57** |
+| `cr-spdx.yaml` | 38 | 0 | 38 | 0 |
+| **Total** | **320** | **143** | **120** | **57** |
 
 ### Family validation modes
 
 | Mode | Count | Behaviour |
 |------|:-----:|-----------|
 | Segments defined | 143 | Parameters validated against controlled vocabulary + constraints |
-| Fixed identifiers (`segments: []`) | 110 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
+| Fixed identifiers (`segments: []`) | 120 | Trailing parameters rejected (`EXTRA_SEGMENT`) |
 | Wildcard (no `segments` field) | 57 | Any trailing parameters accepted |
 
 ### Status Distribution
@@ -59,7 +59,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | Status | Count | Examples |
 |--------|:-----:|---------|
 | Approved (default) | 221 | AES, ML-KEM, SHA, ECDH |
-| Deprecated | 65 | 3DES, SHA variant 1, Blowfish, GMAC, cdx:ECDHE, spdx:shs, spdx:rsa |
+| Deprecated | 75 | 3DES, SHA variant 1, Blowfish, GMAC, cdx:ECDHE, spdx:shs, spdx:adler32, spdx:crc16 |
 | Disallowed | 5 | RC2, RC4, Dual_EC_DRBG, 2TDEA, RC4-HMAC |
 | Broken | 8 | DES, MD5, MD4, FEAL, CMEA, A5/2 |
 
