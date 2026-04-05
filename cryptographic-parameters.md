@@ -17,7 +17,7 @@
 > completed the SLH-DSA parameter table to all 12 parameter sets; added key/signature/ciphertext
 > size reference tables for all four PQC algorithm families.
 >
-> **Revision note (2026-04-02):** `{hashfun}/{nbits}/{treeHeight}` entry (§3) expanded from a
+> **Revision note (2026-04-02):** `{hashFunction}/{nbits}/{treeHeight}` entry (§3) expanded from a
 > minimal stub to full parameter tables covering all SP 800-208 LMS (20 sets), LMOTS (16 sets),
 > HSS, XMSS (18 sets), and XMSS^MT parameter sets. Added security strengths, signing capacity
 > guidance, LMOTS signature sizes, and the SP 800-208 §5.3 hardware module mandate.
@@ -362,7 +362,7 @@ Parameters that identify a hash function or PRF used as a sub-component within a
 ---
 
 
-### `{hashfun}` / `{nbits}` / `{treeHeight}`
+### `{hashFunction}` / `{nbits}` / `{treeHeight}`
 
 | Aspect | Detail |
 |:---|:---|
@@ -1447,7 +1447,7 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 | `{maskGenAlgorithm}` | Hash & digest | algorithm ref | RSAES-OAEP, RSASSA-PSS |
 | `{prfFunction}` | Hash & digest | algorithm ref | SP800-108 |
 | `{auxFunction}` | Hash & digest | algorithm ref | SP800-56C |
-| `{hashfun}/{nbits}/{treeHeight}` | Hash & digest | composite integers | LMS, LMOTS, XMSS, XMSSMT |
+| `{hashFunction}/{nbits}/{treeHeight}` | Hash & digest | composite integers | LMS, LMOTS, XMSS, XMSSMT |
 | `{ellipticCurve}` | Curve & group | curve identifier | ECDSA, ECDH, ECIES, EdDSA, BLS, SM2… |
 | `{namedGroup}` | Curve & group | group identifier | FFDH, J-PAKE, SRP, SPAKE2, HPKE |
 | `{group}` | Curve & group | group identifier | OPAQUE, SPAKE2, SPAKE2PLUS, J-PAKE |

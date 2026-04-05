@@ -210,7 +210,7 @@ def build_parameters_diagram() -> str:
                 Param("{maskGenAlgorithm}", "MGF (typically MGF1)"),
                 Param("{prfFunction}", "pseudorandom function"),
                 Param("{auxFunction}", "auxiliary function"),
-                Param("{hashfun}/{nbits}/{treeHeight}", "LMS/XMSS parameter triple"),
+                Param("{hashFunction}/{nbits}/{treeHeight}", "LMS/XMSS parameter triple"),
             ]),
             Subsection("§4 Curve & Group", [
                 Param("{ellipticCurve}", "elliptic curve name"),

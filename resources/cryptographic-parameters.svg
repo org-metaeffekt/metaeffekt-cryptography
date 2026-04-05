@@ -69,7 +69,7 @@
 <text x="700" y="282" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{auxFunction}</text>
 <text x="700" y="296" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">auxiliary function</text>
 <rect x="692" y="306" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
-<text x="700" y="319" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{hashfun}/{nbits}/{treeHeight}</text>
+<text x="700" y="319" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{hashFunction}/{nbits}/{treeHeight}</text>
 <text x="700" y="333" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">LMS/XMSS parameter triple</text>
 <rect x="1010" y="124" width="316" height="150" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
 <text x="1018" y="141" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§4 Curve &amp; Group</text>
