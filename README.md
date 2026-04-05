@@ -53,22 +53,21 @@ Please note that this content is based on public data sources. Primarily:
 * https://github.com/spdx/cryptographic-algorithm-list (Creative Commons Zero Universal 1.0)
 * https://github.com/CycloneDX/specification/blob/master/schema/cryptography-defs.json (Apache License 2.0)
 * https://groups.google.com/a/list.nist.gov/g/pqc-forum (individual copyrights, licenses and trademarks apply)
-* NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 IPD (FN-DSA) — public domain
-* NIST SP 800-57 Part 1 Rev 5, SP 800-131A Rev 2 — public domain
-* NIST SP 800-56A Rev 3 — *Recommendation for Pair-Wise Key-Establishment Schemes Using Discrete Logarithm Cryptography*, April 2018 — public domain
-* NIST SP 800-186 — *Recommendations for Discrete Logarithm-Based Cryptography: Elliptic Curve Domain Parameters*, February 2023 — public domain
-* NIST SP 800-208 — *Recommendation for Stateful Hash-Based Signature Schemes*, October 2020 — public domain
-* NIST SP 800-232 — *Ascon-Based Lightweight Cryptography Standards*, 2023 — public domain
-* BSI TR-02102-1 v2026-01, TR-02102-2 v2026-01, TR-02102-3 v2026-01, TR-02102-4 v2026-01 — public domain
-* NSA Cybersecurity Advisory PP-22-1338: *Announcing the Commercial National Security Algorithm Suite 2.0* (CNSA 2.0), September 2022, Version 1.0 — public domain
-* ENISA — *Post-Quantum Cryptography: Current state and quantum mitigation*, v2, May 2021. Authors: Ward Beullens et al. DOI: 10.2824/92307. © European Union Agency for Cybersecurity (ENISA), 2021 (reproduction authorised, source acknowledged).
-* RFC 9180 — *Hybrid Public Key Encryption (HPKE)*, February 2022 — IETF (Revised BSD License)
-* RFC 9881 — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Digital Signature Algorithm (ML-DSA)*, October 2025 — IETF (Revised BSD License)
-* RFC 9935 — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)*, March 2026 — IETF (Revised BSD License)
-* draft-ietf-lamps-pq-composite-sigs-15 — *Composite ML-DSA for use in X.509 Public Key Infrastructure*, February 2026 — IETF Internet-Draft (work in progress); (Revised BSD License)
-* NIST IR 8545 — *Status Report on the Fourth Round of the NIST Post-Quantum Cryptography Standardization Process*, March 2025 — public domain
-* HQC submission team — *Hamming Quasi-Cyclic (HQC)*, specification document v2025-08-22, https://pqc-hqc.org (individual authors; code in the public domain)
-* and diverse public publications (such as special publications from NIST, FIPS and BSI guidance).
+* [NIST FIPS 203](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.203.pdf) (ML-KEM), [FIPS 204](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.204.pdf) (ML-DSA), [FIPS 205](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.205.pdf) (SLH-DSA), [FIPS 206 IPD](https://csrc.nist.gov/pubs/fips/206/ipd) (FN-DSA) — public domain
+* [NIST SP 800-57 Part 1 Rev 5](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf), [SP 800-57 Part 2 Rev 1](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt2r1.pdf), [SP 800-57 Part 3 Rev 1](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57Pt3r1.pdf), [SP 800-131A Rev 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-131Ar2.pdf) — public domain
+* [NIST SP 800-56A Rev 3](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Ar3.pdf) — *Recommendation for Pair-Wise Key-Establishment Schemes Using Discrete Logarithm Cryptography*, April 2018 — public domain
+* [NIST SP 800-186](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-186.pdf) — *Recommendations for Discrete Logarithm-Based Cryptography: Elliptic Curve Domain Parameters*, February 2023 — public domain
+* [NIST SP 800-208](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-208.pdf) — *Recommendation for Stateful Hash-Based Signature Schemes*, October 2020 — public domain
+* [NIST SP 800-232](https://csrc.nist.gov/pubs/sp/800/232/final) — *Ascon-Based Lightweight Cryptography Standards*, 2023 — public domain
+* [BSI TR-02102-1](https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.html) v2026-01, [TR-02102-2](https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.html) v2026-01, [TR-02102-3](https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-3.html) v2026-01, [TR-02102-4](https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-4.html) v2026-01 — public domain
+* [NSA Cybersecurity Advisory PP-22-1338](https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF): *Announcing the Commercial National Security Algorithm Suite 2.0* (CNSA 2.0), September 2022, Version 1.0 — public domain
+* [ENISA — *Post-Quantum Cryptography: Current state and quantum mitigation*](https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation), v2, May 2021. Authors: Ward Beullens et al. DOI: [10.2824/92307](https://doi.org/10.2824/92307). © European Union Agency for Cybersecurity (ENISA), 2021 (reproduction authorised, source acknowledged).
+* [RFC 9180](https://www.rfc-editor.org/info/rfc9180) — *Hybrid Public Key Encryption (HPKE)*, February 2022 — IETF (Revised BSD License)
+* [RFC 9881](https://www.rfc-editor.org/info/rfc9881) — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Digital Signature Algorithm (ML-DSA)*, October 2025 — IETF (Revised BSD License)
+* [RFC 9935](https://www.rfc-editor.org/info/rfc9935) — *Internet X.509 Public Key Infrastructure — Algorithm Identifiers for the Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)*, March 2026 — IETF (Revised BSD License)
+* [draft-ietf-lamps-pq-composite-sigs-15](https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/) — *Composite ML-DSA for use in X.509 Public Key Infrastructure*, February 2026 — IETF Internet-Draft (work in progress); (Revised BSD License)
+* [NIST IR 8545](https://nvlpubs.nist.gov/nistpubs/ir/2025/NIST.IR.8545.pdf) — *Status Report on the Fourth Round of the NIST Post-Quantum Cryptography Standardization Process*, March 2025 — public domain
+* HQC submission team — *Hamming Quasi-Cyclic (HQC)*, specification document v2025-08-22, [pqc-hqc.org](https://pqc-hqc.org) (individual authors; code in the public domain)
 
 The aggregation and enhancement of the content are provided under Creative Commons BY-SA 4.0, 
 Copyright (c) 2026 metaeffekt GmbH.
