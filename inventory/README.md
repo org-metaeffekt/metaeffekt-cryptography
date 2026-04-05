@@ -467,13 +467,124 @@ is the Keccak-based alternative to MILENAGE introduced for 4G and 5G systems.
 
 ---
 
-## 10. Classical Algorithm Coverage by Production Library
+## 10. Classical Algorithm Reference Implementations
+
+Standalone reference implementations for classical cryptographic primitives, protocol libraries,
+and password-hashing functions that are tracked in the inventory but do not fit into the PQC
+or production-library sections above.
+
+### 10.1 Hash Functions
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| blake3 | 1.8.2 | Rust + C | `BLAKE3[-{outputLength}]` | https://github.com/BLAKE3-team/BLAKE3 |
+
+BLAKE3 is a cryptographic hash function designed by Jack O'Connell, Jean-Philippe Aumasson,
+Samuel Neves, and Zooko Wilcox-O'Hearn. It is based on Bao tree hashing and the BLAKE2
+compression function. The reference implementation (Rust + C) is dual-licensed CC0-1.0 / Apache-2.0.
+
+### 10.2 Pairing-based Cryptography
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| blst-0.3.13 | 0.3.13 | C | `BLS-BLS12-381` | https://github.com/supranational/blst |
+
+`blst` (pronounced "blast") is Supranational's BLS12-381 signature library, widely used in
+Ethereum 2.0 clients for BLS aggregate signatures. Apache-2.0 licensed.
+
+### 10.3 Password Hashing
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| libargon2 | 20190702 | C | `Argon2i-*, Argon2d-*, Argon2id-*` | https://github.com/P-H-C/phc-winner-argon2 |
+| yescrypt-11.0.2 | 11.0.2 | C | `yescrypt-*` | https://github.com/openwall/yescrypt |
+
+`libargon2` is the official reference C implementation of the PHC (Password Hashing Competition)
+winner. Dual-licensed CC0-1.0 / Apache-2.0.
+
+`yescrypt` is an Openwall password-hashing scheme designed for high memory cost. It is used in
+modern Linux distributions as a glibc crypt(3) hash method. BSD-2-Clause licensed.
+
+### 10.4 Protocol Libraries
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| libsrtp-2.6.0 | 2.6.0 | C | `SRTP-*` | https://github.com/cisco/libsrtp |
+| openmls-0.6.0 | 0.6.0 | Rust | `MLS-*` | https://github.com/openmls/openmls |
+
+`libsrtp` is Cisco's implementation of the Secure Real-time Transport Protocol (RFC 3711),
+widely used in WebRTC and VoIP systems. BSD-3-Clause licensed.
+
+`openmls` is a Rust implementation of the Messaging Layer Security protocol (RFC 9420).
+MIT licensed.
+
+### 10.5 Classical Cipher Coverage (2TDEA)
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| openssl-des-ede | 3.6.1 | C | `2TDEA, 3TDEA, DES, 3DES` | https://github.com/openssl/openssl |
+
+OpenSSL's `des-ede` cipher implements 2-key Triple DES (2TDEA). 2TDEA is deprecated per
+NIST SP 800-131A Rev 2 and disallowed after 2023 for encryption; included for SBOM scanning
+completeness. Apache-2.0 licensed.
+
+### 10.6 Key Derivation Functions (CatKDF, KeyCombine)
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| aws-lc-kdf | 1.71.0 | C | `CatKDF, KeyCombine` | https://github.com/aws/aws-lc |
+
+CatKDF (Concatenation KDF) and KeyCombine are defined in NIST SP 800-56Cr2. No standalone
+libraries exist; they are implemented as part of AWS-LC and BoringSSL. These KDFs are referenced
+in BSI TR-02102-1 section 2.2. Apache-2.0 licensed.
+
+### 10.7 DLIES
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| bc-java-dlies | 1.83 | Java | `DLIES, ECIES` | https://github.com/bcgit/bc-java |
+
+Bouncy Castle implements DLIES (Discrete Logarithm Integrated Encryption Scheme) and its
+elliptic-curve variant ECIES. MIT licensed.
+
+### 10.8 OS Entropy Sources
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| linux-dev-random | N/A | C (kernel) | `dev-random, dev-urandom` | https://www.kernel.org/ |
+| glibc-getentropy | N/A | C | `getentropy` | https://sourceware.org/glibc/ |
+| linux-getrandom | N/A | C (kernel) | `getrandom` | https://www.kernel.org/ |
+
+`/dev/random` and `/dev/urandom` are the Linux kernel's character devices for cryptographic
+randomness. Since Linux 5.6 both draw from the same CSPRNG pool. `getrandom()` is the
+preferred syscall interface (added in Linux 3.17). `getentropy()` is the POSIX-standardised
+glibc wrapper around `getrandom()`.
+
+### 10.9 Non-cryptographic PRNGs
+
+| Id | Version | Language | Patterns | URL |
+|:---|:---|:---|:---|:---|
+| mt19937-stdlibs | N/A | C++ / Python | `MT19937` | https://en.wikipedia.org/wiki/Mersenne_Twister |
+| pcg-reference | UNRELEASED | C | `PCG` | https://www.pcg-random.org/ |
+| xoshiro-reference | UNRELEASED | C | `Xoshiro, Xoroshiro` | https://prng.di.unimi.it/ |
+
+MT19937 (Mersenne Twister) is the default PRNG in Python's `random` module and C++ `<random>`.
+PCG (Permuted Congruential Generator) is a family of fast, statistically excellent PRNGs by
+Melissa O'Neill. Xoshiro and Xoroshiro are fast PRNGs by David Blackman and Sebastiano Vigna,
+used as the default PRNG in several language runtimes (Rust, Julia, .NET 6+).
+
+All three are **non-cryptographic** and must not be used for key generation or security-sensitive
+randomness.
+
+---
+
+## 11. Classical Algorithm Coverage by Production Library
 
 The production libraries in §5 implement a broad range of classical algorithms beyond their
 PQC support. This section maps algorithm families from the YAML registry to their primary
 production implementations.
 
-### 10.1 Symmetric Ciphers
+### 11.1 Symmetric Ciphers
 
 | Algorithm family | OpenSSL | Bouncy Castle | Crypto++ | libsodium | libgcrypt | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -498,7 +609,7 @@ production implementations.
 | Skipjack | — | Yes | Yes | — | — | |
 | Ascon-AEAD128 | — | Yes | — | — | — | Also: ascon-c, XKCP |
 
-### 10.2 Hash Functions and MACs
+### 11.2 Hash Functions and MACs
 
 | Algorithm family | OpenSSL | Bouncy Castle | Crypto++ | XKCP | Notes |
 |:---|:---|:---|:---|:---|:---|
@@ -520,7 +631,7 @@ production implementations.
 | UMAC | — | — | — | — | OpenSSH (internal) |
 | CBC-MAC | Yes | Yes | Yes | — | |
 
-### 10.3 Key Agreement and Signatures
+### 11.3 Key Agreement and Signatures
 
 | Algorithm family | OpenSSL | Bouncy Castle | Crypto++ | libsodium | Notes |
 |:---|:---|:---|:---|:---|:---|
@@ -537,7 +648,7 @@ production implementations.
 | BLS | — | — | — | — | blst (Supranational); Ethereum libs |
 | GOSTR3410 | Yes | Yes | — | — | |
 
-### 10.4 KDFs and Password Hashing
+### 11.4 KDFs and Password Hashing
 
 | Algorithm family | OpenSSL | Bouncy Castle | libsodium | Notes |
 |:---|:---|:---|:---|:---|
@@ -556,7 +667,7 @@ production implementations.
 | CatKDF, KeyCombine | — | — | — | Not yet in production libraries; BSI TR-02102-1 §2.2 |
 | MSCash, MSCash2 | — | — | — | Hashcat, John the Ripper (attack tools only) |
 
-### 10.5 Random Number Generators
+### 11.5 Random Number Generators
 
 RNGs are typically OS or hardware facilities, not standalone libraries:
 
@@ -572,7 +683,7 @@ RNGs are typically OS or hardware facilities, not standalone libraries:
 | ISAAC | OpenBSD arc4random (historical) | Replaced by ChaCha20 |
 | A5/1, A5/2 | libosmocore | GSM historical; A5/2 broken |
 
-### 10.6 Broken/Historical PQC
+### 11.6 Broken/Historical PQC
 
 | Algorithm family | Implementation | Notes |
 |:---|:---|:---|
@@ -587,7 +698,7 @@ RNGs are typically OS or hardware facilities, not standalone libraries:
 | GeMSS | PQClean (historical) | Broken |
 | NTRUEncrypt | NTRU reference (historical) | Superseded by NTRU-HPS/HRSS |
 
-### 10.7 Protocol and Composite Constructs
+### 11.7 Protocol and Composite Constructs
 
 | Algorithm family | Implementation | Notes |
 |:---|:---|:---|
@@ -599,7 +710,7 @@ RNGs are typically OS or hardware facilities, not standalone libraries:
 
 ---
 
-## 11. Remarks
+## 12. Remarks
 
 1. **pq-crystals/kyber and pq-crystals/dilithium** — These are the official CRYSTALS reference
    implementations. NIST's FIPS 203/204 were derived from these but the repos themselves have
