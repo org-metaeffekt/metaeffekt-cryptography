@@ -510,7 +510,7 @@ in CycloneDX. They are registered in `cr-spdx.yaml` without deprecation:
 | **CycloneDX** | | |
 | Naming convention conflicts (RSA, AES-Wrap, TLS13, case) | 5 | Resolved via aliases |
 | CycloneDX naming alternatives with canonical equivalent | 29 | Resolved via deprecated cdx families (cr-cdx.yaml) |
-| CycloneDX-only families (no canonical equivalent) | 9 | Registered in cr-cdx.yaml (not deprecated) |
+| CycloneDX-only families (no canonical equivalent) | 4 | Registered in cr-cdx.yaml (not deprecated): PBMAC1, X3DH, J-PAKE, WOTSP |
 | Remaining CycloneDX template notation gaps | 0 | All instance patterns covered |
 | **SPDX** | | |
 | SPDX aliases on canonical families | 8 | rijndael, desede, tdes, sms4, chacha, diffiehellman, dhe, kazumi |
@@ -525,7 +525,7 @@ in CycloneDX. They are registered in `cr-spdx.yaml` without deprecation:
 | Missing from CycloneDX registry | 6+ families | Upstream gap |
 
 All CycloneDX and SPDX algorithm identifiers are now covered for **instance validation**.
-The registry uses 303 families across 9 YAML files. Eight resolution mechanisms are in place:
+The registry uses 309 families across 9 YAML files. Eight resolution mechanisms are in place:
 
 1. **CycloneDX aliases** — RSA-PSS, X25519, AES-Wrap, RABBIT, TLS13-PRF
 2. **SPDX aliases** — rijndael, desede, tdes, sms4, chacha, diffiehellman, dhe, kazumi
@@ -533,8 +533,8 @@ The registry uses 303 families across 9 YAML files. Eight resolution mechanisms 
    naming (underscore separators, ECDHE/FFDHE, Ed25519ph/ctx, GOST compact forms)
 4. **Deprecated SPDX families** (`cr-spdx.yaml`) — 24 families for SPDX-specific naming
    (generic names, variant names, encoding frameworks)
-5. **New CycloneDX families** (`cr-cdx.yaml`) — 9 families only in CycloneDX (TupleHash,
-   ParallelHash, KMACXOF, PBMAC1, X3DH, J-PAKE, WOTSP)
+5. **New CycloneDX families** (`cr-cdx.yaml`) — 4 families only in CycloneDX
+   (PBMAC1, X3DH, J-PAKE, WOTSP); TupleHash/ParallelHash/KMACXOF were moved to canonical files
 6. **New SPDX families** (`cr-spdx.yaml`) — 4 families only in SPDX (dcc, ubi, uffizi, uxn)
 7. **Family consolidation** — SHA, CRC, Adler, HC consolidated from per-variant to
    single families with parameter segments
