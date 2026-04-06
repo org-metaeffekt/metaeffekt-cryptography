@@ -40,6 +40,9 @@ A standardised way to encrypt (wrap) one cryptographic key inside another, so th
 **AIS 20/31**
 A BSI technical guideline defining requirements for random number generators in security modules. Version 3 (2022) classifies generators into functionality classes: DRG.2-4 for deterministic generators, PTG.2-3 for physical TRNGs, and NTG.1 for non-deterministic RBGs. Referenced in cryptographic module evaluations (Common Criteria, BSI certification).
 
+**Adiantum**
+A length-preserving encryption construction designed by Google (2018) for storage encryption on low-end devices lacking AES hardware acceleration. Internally combines ChaCha12 (a reduced-round ChaCha variant), AES-HCTR2 (a wide-block mode), and Poly1305 hashing. Used in Android for full-disk encryption on ARMv7 devices. Not an AEAD cipher — it provides confidentiality only, not authentication.
+
 **Agility, Cryptographic**
 The design property of a system that allows its cryptographic algorithms to be swapped out without redesigning the system. Important for migrating away from algorithms that are broken or deprecated.
 
@@ -189,6 +192,9 @@ General term for an algorithm that transforms data to keep it secret (encryption
 **Ciphertext**
 The scrambled, unreadable form of data after encryption. Without the key, ciphertext appears as random noise.
 
+**CMVP — Cryptographic Module Validation Program**
+A joint US-Canadian program (NIST and CCCS) that validates complete cryptographic modules against the FIPS 140-3 standard. CMVP builds on CAVP (which validates individual algorithm implementations) by evaluating the module's physical security, key management, self-tests, and operational environment. A CMVP certificate is required for cryptographic modules used in US and Canadian federal systems.
+
 **CMAC — Cipher-Based Message Authentication Code**
 A MAC algorithm using a block cipher (typically AES) as its core. Defined in NIST SP 800-38B. An alternative to HMAC when AES hardware acceleration is available.
 
@@ -224,6 +230,9 @@ A compact binary counterpart to JSON-based JOSE, designed for constrained IoT en
 
 **Cost Factor (bcrypt / Argon2)**
 A parameter that controls how expensive (time and/or memory) a password-hashing operation is. Increasing the cost by 1 roughly doubles the time required. This allows administrators to keep the algorithm slow as hardware improves.
+
+**cSHAKE — Customisable SHAKE**
+A variant of SHAKE (NIST SP 800-185) that accepts two additional inputs: a function-name string and a customisation string. These inputs provide built-in domain separation, ensuring that different applications using the same key or input produce independent outputs. cSHAKE128 and cSHAKE256 are the base building blocks for KMAC, TupleHash, and ParallelHash.
 
 **CSPRNG — Cryptographically Secure Pseudorandom Number Generator**
 A pseudorandom number generator whose output is indistinguishable from true randomness for any computationally bounded attacker, and whose internal state cannot be recovered from observing its outputs. Required for key generation, nonce generation, and all other security-sensitive random values.
@@ -285,6 +294,9 @@ A random number generator that produces output deterministically from an initial
 
 **DSA — Digital Signature Algorithm**
 A US government signature standard (FIPS 186). Uses a discrete-logarithm problem over a finite field. Key sizes below 2048 bits are deprecated; superseded by ECDSA and EdDSA for new designs.
+
+**Dual_EC_DRBG — Dual Elliptic Curve Deterministic Random Bit Generator**
+A DRBG mechanism originally included in NIST SP 800-90A that used elliptic curve operations to generate pseudorandom output. Withdrawn from SP 800-90A Rev. 1 (June 2015) after Snowden documents (2013) confirmed a deliberate NSA kleptographic backdoor via the choice of default elliptic curve points. Must never be used. Its inclusion in RSA BSAFE via a $10M contract (Reuters, 2013) made it the most widely deployed backdoored random number generator in history.
 
 **du / dv (ML-KEM compression)**
 Parameters controlling how aggressively ciphertext components are compressed in ML-KEM. Higher values reduce compression (and therefore decryption failure probability) but increase ciphertext size. Fixed by the parameter set — implementers do not choose these.
@@ -415,6 +427,9 @@ The polynomial-hash function used inside GCM to compute the authentication tag. 
 **GOST 28147-89 / GOST R 34.12**
 Russian block cipher standards. Mandatory for Russian government systems; rarely used elsewhere.
 
+**Grain-128AEAD**
+A lightweight stream cipher with built-in authentication, standardised in ISO/IEC 29192-3. Designed for constrained environments (IoT, embedded, RFID) where AES-based constructions carry too much overhead. Uses a 128-bit key and 96-bit nonce. The authenticated variant (Grain-128AEAD) was a finalist in the NIST Lightweight Cryptography competition. In CycloneDX: `Grain-128-*`.
+
 **Group (cryptographic)**
 A mathematical structure — a set of elements with an operation (like multiplication) — used as the foundation for key exchange and signature algorithms. In cryptography, the security comes from a "hard problem" in the group (finding discrete logarithms, factoring, etc.).
 
@@ -448,6 +463,12 @@ A MAC construction (RFC 2104) built around any hash function. Computed as HMAC(K
 
 **HMAC_DRBG**
 A NIST SP 800-90A DRBG using HMAC as its core update function. Considered the best-proven of the three approved DRBGs — it has a machine-verified security proof. The standard choice for applications requiring FIPS 140-3 validation.
+
+**HRNG — Hardware Random Number Generator**
+A dedicated hardware chip or circuit that generates random numbers from a physical entropy source (thermal noise, shot noise, metastable circuits). Distinguished from CPU-integrated entropy instructions (RDRAND/RDSEED) by being a separate component, often with its own certification (Common Criteria, FIPS 140-3). Used to seed software DRBGs in high-security applications.
+
+**HSM — Hardware Security Module**
+A tamper-resistant physical device that safeguards cryptographic keys, performs cryptographic operations (signing, decryption, key wrapping), and enforces access policies. HSMs are required for stateful signature key management (LMS/XMSS per SP 800-208), certificate authority root keys, and payment card processing. Validated to FIPS 140-3 Level 3 or higher.
 
 **HSS — Hierarchical Signature Scheme**
 A multi-level extension of LMS (RFC 8554, NIST SP 800-208). An HSS key pair consists of L levels of LMS trees, where each tree's root public key is signed by the OTS key of the level above. The total signing capacity is the product of the capacities at each level: 2^(h₁ + h₂ + … + hₗ). HSS allows very large signing capacities while keeping tree heights manageable — for example, two levels of h=10 yield 2^20 signatures. The private key state must be managed by a FIPS 140-2/3 Level 3+ hardware module (SP 800-208 §5.3). Used for code and firmware signing where long-lived root keys are required.
@@ -533,6 +554,9 @@ A family of IETF standards for signing and encrypting JSON data, including JWT (
 **Kerberos**
 A network authentication protocol (RFC 4120) using symmetric-key tickets issued by a trusted Key Distribution Center (KDC) to mutually authenticate clients and services. Uses AES encryption (RFC 3962); DES and RC4-HMAC are deprecated (RFC 6649). PKINIT extension (RFC 4556) adds public-key authentication.
 
+**Keccak**
+The cryptographic sponge function family designed by Guido Bertoni, Joan Daemen, Michaël Peeters, and Gilles Van Assche. Winner of the NIST hash function competition (2012). Keccak is the basis of the SHA-3 hash functions (FIPS 202), the SHAKE extendable-output functions, and the SP 800-185 derived functions (cSHAKE, KMAC, TupleHash, ParallelHash). Also used in the TUAK 3GPP authentication algorithm. The sponge construction absorbs input into a fixed-size internal state and squeezes output, enabling both fixed-length and arbitrary-length output modes.
+
 **KAT — Known Answer Test**
 A set of pre-computed input/output pairs used to verify that a cryptographic implementation produces the correct results. If an implementation passes all KATs, it is more likely to be correct.
 
@@ -562,6 +586,12 @@ The processes and infrastructure for generating, distributing, storing, rotating
 
 **Key Wrap / Key Wrapping**
 Encrypting a cryptographic key with another key for secure storage or transmission (AES-KW, AES-KWP).
+
+**KMAC — Keccak Message Authentication Code**
+A MAC construction (NIST SP 800-185) built on cSHAKE (the customisable variant of SHA-3). Two variants: KMAC128 (128-bit security) and KMAC256 (256-bit security). Unlike HMAC, KMAC has a built-in domain-separation mechanism via the cSHAKE customisation string, and can produce variable-length output (KMACXOF128, KMACXOF256). Recommended alongside HKDF for hybrid PQC key combination in BSI TR-02102-1.
+
+**KSF — Key-Stretching Function**
+A function that deliberately slows down key derivation from a password to make brute-force attacks expensive. KSFs are a subset of KDFs specifically designed for password-based inputs. Examples: PBKDF2, bcrypt, scrypt, Argon2. The term is used in OPAQUE to refer to the function applied to the password before key agreement.
 
 **KeyCombine**
 A function that merges two or more shared secrets (e.g., one classical and one post-quantum) into a single session key. Defined in NIST SP 800-56C §4.6.1 Eq.9 and §4.6.2 Eq.15. Used alongside CatKDF for hybrid PQC key agreement (BSI TR-02102-1 §2.2).
@@ -596,6 +626,9 @@ A stateful hash-based signature scheme (RFC 8554, NIST SP 800-208). Uses a Merkl
 
 **LMOTS — Leighton-Micali One-Time Signature**
 The one-time signature primitive underlying LMS (RFC 8554, SP 800-208). Each LMOTS key can sign exactly one message. Parameterised by a Winternitz parameter w ∈ {1, 2, 4, 8} that trades signature size for computation time. CNSA 2.0 recommends w=4 (default) with SHA-256/192 (n=24) hash function parameters.
+
+**LWE — Learning With Errors**
+A computational problem where the task is to distinguish noisy linear equations over a finite field from uniformly random samples. The hardness of LWE (and its structured variants Ring-LWE and Module-LWE) is the security foundation of the NIST PQC lattice-based algorithms: ML-KEM and ML-DSA use Module-LWE; FrodoKEM uses plain LWE. LWE is believed to be hard even for quantum computers, and has a worst-case-to-average-case reduction from lattice problems (GapSVP).
 
 **LUC**
 A public-key cryptosystem based on Lucas sequences, proposed as an alternative to RSA. Uses properties of Lucas functions rather than modular exponentiation. Historically significant but not widely deployed.
@@ -748,6 +781,9 @@ Data added to a message so its length matches the block cipher's expected input 
 **PAKE — Password-Authenticated Key Exchange**
 A key exchange protocol where both parties authenticate using a shared password, without either party transmitting the password. Provides mutual authentication. Examples: J-PAKE, SPAKE2, OPAQUE.
 
+**ParallelHash**
+A hash function (NIST SP 800-185) based on cSHAKE that splits its input into fixed-size blocks and hashes them independently before combining the results. Two variants: ParallelHash128 (128-bit security) and ParallelHash256 (256-bit security). Designed for efficient parallel processing on multi-core hardware. Both fixed-output and extendable-output (XOF) variants exist.
+
 **Parallelism (Argon2)**
 The number of independent computation threads Argon2 uses. Increasing parallelism allows attackers to use more CPU cores in parallel without extra memory cost, so it should reflect the attacker's thread count, not the defender's.
 
@@ -792,6 +828,9 @@ A CPU subsystem that provides hardware counters for events such as cache misses,
 
 **Post-Quantum Cryptography (PQC)**
 Cryptographic algorithms designed to resist attacks from quantum computers. Classical algorithms (RSA, ECDSA, ECDH) are broken by Shor's algorithm on a sufficiently powerful quantum computer. NIST published three PQC standards in August 2024: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205). FN-DSA (FIPS 206) is in the Initial Public Draft stage (expected late 2026/early 2027). HQC was selected as a fifth PQC standard in March 2025 (FIPS standard pending).
+
+**PQCA — Post-Quantum Cryptography Alliance**
+A Linux Foundation project bringing together industry and academic stakeholders to accelerate the development, testing, and deployment of production-quality post-quantum cryptographic implementations. Members include AWS, Cisco, Google, IBM, and others. The PQ Code Package (PQCP) initiative operates under PQCA.
 
 **PQC Forum**
 The official NIST mailing list (`pqc-forum@list.nist.gov`) where researchers, implementers, and standards bodies discuss post-quantum cryptography. Referenced throughout this repository for active implementation and standardisation discussions.
@@ -958,6 +997,12 @@ Chinese national cryptographic standards: SM2 (elliptic curve public-key), SM3 (
 **SM9**
 Chinese national pairing-based cryptographic standard (GM/T 0044-2016; ISO/IEC 14888-3). Provides four schemes based on identity-based cryptography over bilinear pairings: **SM9-SIG** (identity-based digital signature), **SM9-KEX** (identity-based key exchange), **SM9-KEM** (key encapsulation), and **SM9-ENC** (identity-based encryption/PKE). Identity-based means that a user's public key is derived from their identity string (e.g. email address) rather than from a certificate; a trusted Private Key Generator (PKG) issues private keys. All four variants are in the CycloneDX registry.
 
+**SNOW 3G**
+A word-oriented stream cipher used in 3GPP mobile networks (4G LTE) for confidentiality (128-EEA1) and integrity (128-EIA1). Standardised in 3GPP TS 35.216. Uses a 128-bit key and 128-bit IV. "SNOW" stands for "a new word-oriented stream cipher."
+
+**SNOW-V**
+A next-generation stream cipher designed as a candidate replacement for SNOW 3G in 5G networks. Proposed by Ekdahl, Johansson, and others (2019). Targets 256-bit security with higher throughput on modern processors. Not yet standardised by 3GPP.
+
 **SNOVA**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on multivariate polynomial cryptography.
 
@@ -1033,6 +1078,9 @@ The hardware random number generator inside a TPM, accessed via the `TPM2_GetRan
 
 **TRNG — True Random Number Generator**
 A random number generator drawing from genuine physical entropy sources (thermal noise, quantum shot noise, metastable circuits, radioactive decay). Non-deterministic — the same device will never produce the same sequence twice. Used to seed DRBGs.
+
+**TupleHash**
+A hash function (NIST SP 800-185) based on cSHAKE that hashes a sequence of input strings such that the hash unambiguously encodes the boundaries between strings. Two variants: TupleHash128 (128-bit security) and TupleHash256 (256-bit security). Prevents an adversary from shifting bytes between adjacent inputs to produce a collision — a property that plain concatenation-then-hashing does not provide.
 
 **Twofish**
 A 128-bit block cipher (AES finalist, 1997–2001) designed by Bruce Schneier. Considered secure but not standardised by NIST for general use; superseded by AES in new designs.
@@ -1112,6 +1160,9 @@ A memory-hard KDF extending scrypt with additional parameters (t for extra time 
 
 ## Z
 
+**ZUC**
+A stream cipher specified for 3GPP mobile networks (3GPP TS 35.221), used for confidentiality (128-EEA3) and integrity (128-EIA3) in 4G LTE and 5G NR. Designed by the Data Assurance and Communication Security Research Center (DACAS) of the Chinese Academy of Sciences. Uses a 128-bit key and 128-bit IV. ZUC is one of three cipher families available in 3GPP alongside SNOW 3G and AES-based algorithms.
+
 **Zero-Knowledge Proof**
 A cryptographic protocol where one party proves knowledge of a secret without revealing the secret itself. Several post-quantum signature schemes (FAEST, SDitH, CROSS, Mirath) use MPC-in-the-Head, which is a form of zero-knowledge proof system based on simulating a multi-party computation.
 
@@ -1140,10 +1191,12 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | CC | Common Criteria |
 | CFRG | Crypto Forum Research Group |
 | CMAC | Cipher-Based Message Authentication Code |
+| CMVP | Cryptographic Module Validation Program |
 | CMS | Cryptographic Message Syntax |
 | CNSA | Commercial National Security Algorithm Suite |
 | COSE | Concise Object Signing and Encryption |
 | CSRC | Computer Security Resource Center (NIST) |
+| cSHAKE | Customisable SHAKE |
 | CSPRNG | Cryptographically Secure Pseudorandom Number Generator |
 | CTR | Counter mode |
 | DFR | Decryption Failure Rate |
@@ -1172,6 +1225,8 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | GCM | Galois/Counter Mode |
 | GHASH | Galois Hash (authentication in GCM) |
 | GMAC | Galois Message Authentication Code |
+| HRNG | Hardware Random Number Generator |
+| HSM | Hardware Security Module |
 | HKDF | HMAC-Based Key Derivation Function |
 | HMAC | Keyed-Hash Message Authentication Code |
 | HNDL | Harvest Now, Decrypt Later |
@@ -1249,6 +1304,8 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | SCA | Software Composition Analysis |
 | SHA | Secure Hash Algorithm |
 | SHAKE | Secure Hash Algorithm Keccak (extendable output) |
+| SNOW 3G | Stream cipher for 3GPP (4G LTE) |
+| SNOW-V | Stream cipher candidate for 5G |
 | SIS | Short Integer Solution |
 | SIV | Synthetic Initialisation Vector |
 | SLH-DSA | Stateless Hash-Based Digital Signature Standard |
@@ -1265,6 +1322,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | TRNG | True Random Number Generator |
 | UMAC | Universal Message Authentication Code |
 | UOV | Unbalanced Oil and Vinegar |
+| ZUC | Stream cipher for 3GPP (128-EEA3/128-EIA3) |
 | VOLEitH | Vector Oblivious Linear Evaluation in the Head |
 | WOTS+ | Winternitz One-Time Signature Plus |
 | X3DH | Extended Triple Diffie-Hellman |
