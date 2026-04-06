@@ -1557,7 +1557,7 @@ BSI defines minimum parameter requirements that differ from — and are in some 
 | XMSS / XMSS^MT | Per SP 800-208 | §5.3.4.3 | Stateful; hardware state management required |
 | LMS / LMOTS | Per SP 800-208 | §5.3.4.3 | Stateful; hardware state management required |
 
-For BSI hybridisation mechanisms (CatKDF, KeyCombine), migration timelines (classical key agreement through 2031, signatures through 2035), password hashing requirements (Argon2id, PBKDF2, bcrypt, scrypt), and random number generator class recommendations (AIS 20/31), see `cryptographic-status.md` §17 (BSI TR-02102-1).
+For BSI hybridisation mechanisms (CatKDF, KeyCombine), migration timelines (classical key agreement through 2031, signatures through 2035), password hashing requirements (Argon2id, PBKDF2, bcrypt, scrypt), and random number generator class recommendations (AIS 20/31), see `cryptographic-protocol-status.md` §4.6 (BSI TR-02102-1).
 
 ---
 
@@ -1565,7 +1565,7 @@ For BSI hybridisation mechanisms (CatKDF, KeyCombine), migration timelines (clas
 
 > **Source:** NIST SP 800-57 Part 1 Rev 5 (May 2020), §5.3 Table 1 and §5.6 Table 2.
 
-For full cryptoperiod tables per key type (originator-usage and recipient-usage periods), see `cryptographic-status.md` §13.6.
+For full cryptoperiod tables per key type (originator-usage and recipient-usage periods), see `cryptographic-algorithm-status.md` §13.6.
 
 ### Effective Security Strength
 

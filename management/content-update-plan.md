@@ -269,7 +269,7 @@ Reconcile these numbers across all documents:
 > Documents reference each other's sections, source publications, and naming-inconsistency resolutions. Verify these references are still valid after all content changes — broken cross-references mislead readers.
 
 - [ ] Check section number references between documents are valid
-- [ ] Verify source citations match the primary sources list in `cryptographic-status.md` header
+- [ ] Verify source citations match the primary sources list in `cryptographic-algorithm-status.md` header
 - [ ] Check `cryptographic-registry-inconsistencies.md` reflects current resolution state
 
 ### 7.4 Naming Consistency
@@ -309,7 +309,7 @@ Reconcile these numbers across all documents:
 - [ ] Evaluate merging `random-number-generators.md` into `cryptographic-algorithms.md` (RNGs already §16-§19 there)
 - [ ] Evaluate whether `cryptographic-registry-inconsistencies.md` should become an appendix of `cryptographic-algorithms.md`
 - [ ] Check `cryptographic-governance.md` for updates needed after all ingestion work
-- [ ] Consider splitting `cryptographic-status.md` §13-§21 (SP 800-57 / protocol-specific) into a separate file if it grows further
+- [ ] Consider splitting `cryptographic-algorithm-status.md` §13-§21 (SP 800-57 / protocol-specific) into a separate file if it grows further
 - [ ] Review chapter ordering within each markdown file for logical flow
 
 ### 8.3 Compactness Review
@@ -317,7 +317,7 @@ Reconcile these numbers across all documents:
 > [!NOTE]
 > Identify and eliminate redundant content across files — duplicate paragraphs, overly verbose prose that could be tables, and scope overlaps between documents — keeping content compact yet complete.
 
-- [ ] Check for duplicate content between `cryptographic-status.md` and `cryptographic-parameters.md` (BSI migration timeline appears in both)
+- [ ] Check for duplicate content between `cryptographic-algorithm-status.md` and `cryptographic-parameters.md` (BSI migration timeline appears in both)
 - [ ] Identify verbose prose sections that could become tables
 - [ ] Ensure each file has a clear, non-overlapping scope:
 
@@ -325,7 +325,7 @@ Reconcile these numbers across all documents:
 |:---|:---|
 | `cryptographic-algorithms.md` | What exists — algorithm catalogue with patterns, OIDs, references |
 | `cryptographic-parameters.md` | What varies — parameter taxonomy, value ranges, constraints |
-| `cryptographic-status.md` | What to use — recommendations, status, migration timelines |
+| `cryptographic-algorithm-status.md` | What to use — recommendations, status, migration timelines |
 | `cryptographic-governance.md` | Why it matters — regulatory context, compliance drivers |
 | `random-number-generators.md` | RNG deep-dive (candidate for merge) |
 | `cryptographic-glossary.md` | Definitions |

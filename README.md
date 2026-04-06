@@ -96,7 +96,9 @@ that adjustments can be applied accordingly.
 
 - **[random-number-generators.md](random-number-generators.md)** — Catalogue of deterministic and non-deterministic random number generators (DRBGs and TRNGs). Covers SP 800-90A/B/C families, OS entropy sources, and platform-specific APIs. Each entry lists construction type, security strength, seeding requirements, and CycloneDX RNG pattern strings.
 
-- **[cryptographic-status.md](cryptographic-status.md)** — Status on algorithms and key-length choices derived from NIST SP 800-57 Part 1 Rev 5, SP 800-131A Rev 2, BSI TR-02102-1 through -4, NSA CNSA 2.0, and related standards. Organises algorithms by security strength tier, highlights deprecated and disallowed primitives, and cross-references the FIPS post-quantum standards. Includes security strength equivalence tables (SP 800-57 Table 2), SSH recommendations (BSI TR-02102-4), IPsec/IKEv2 recommendations (BSI TR-02102-3), and CNSA 2.0 algorithm requirements and migration timeline.
+- **[cryptographic-algorithm-status.md](cryptographic-algorithm-status.md)** — Algorithm-level security status (approved/deprecated/disallowed/broken) derived from NIST SP 800-57, SP 800-131A Rev 2, BSI TR-02102-1, and related standards. Covers symmetric, hash, MAC, asymmetric, key agreement, signatures, KDFs, RNGs, and PQC. Includes security strength equivalence tables (SP 800-57 Table 2) and cryptoperiod recommendations.
+
+- **[cryptographic-protocol-status.md](cryptographic-protocol-status.md)** — Protocol-specific deployment guidance: SSH cipher suites (BSI TR-02102-4), IPsec/IKEv2 (BSI TR-02102-3), NSA CNSA 2.0 algorithm requirements and migration timeline, quantum threat context (ENISA), PKI key management (SP 800-57 Part 3), S/MIME, Kerberos, and DNSSEC.
 
 - **[cryptographic-glossary.md](cryptographic-glossary.md)** — Plain-language explanations of all terms and abbreviations used across this repository, written for readers without a mathematics background. Covers cryptographic primitives, protocol concepts, standardisation bodies, post-quantum terminology, and SBOM/CycloneDX notation. Includes an abbreviation quick-reference table.
 
