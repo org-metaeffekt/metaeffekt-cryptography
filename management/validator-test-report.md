@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (9 files, 324 registered algorithm families, 178 unique OIDs indexed).
+registry (9 files, 325 registered algorithm families, 178 unique OIDs indexed).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 
@@ -39,12 +39,12 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `cr-hash-functions.yaml` | 40 | 20 | 19 | 1 |
 | `cr-macs.yaml` | 10 | 8 | 2 | 0 |
 | `cr-asymmetric.yaml` | 37 | 27 | 4 | 6 |
-| `cr-pqc.yaml` | 39 | 20 | 5 | 14 |
+| `cr-pqc.yaml` | 40 | 20 | 5 | 15 |
 | `cr-kdfs.yaml` | 25 | 21 | 1 | 3 |
 | `cr-rngs.yaml` | 25 | 8 | 15 | 2 |
 | `cr-cdx.yaml` | 33 | 3 | 30 | 0 |
 | `cr-spdx.yaml` | 38 | 0 | 38 | 0 |
-| **Total** | **324** | **143** | **124** | **57** |
+| **Total** | **325** | **143** | **124** | **58** |
 
 ### Family validation modes
 
