@@ -306,7 +306,7 @@ def build_parameters_diagram() -> str:
     )
 
     national = Section(
-        title="§10  Lightweight & National Standards",
+        title="Lightweight & National Standards",
         fill="#fff3e0", stroke="#ff9800",
         columns=3,
         subsections=[
@@ -330,6 +330,27 @@ def build_parameters_diagram() -> str:
                 Param("128-EIA1/EIA3", "integrity"),
                 Param("3GPP-XOR", "test vector algorithm"),
             ], fill="#fff8e1"),
+        ],
+    )
+
+    bsi = Section(
+        title="§10  BSI TR-02102-1 Parameter Requirements",
+        fill="#e0f2f1", stroke="#00897b",
+        columns=2,
+        subsections=[
+            Subsection("Key Length Minimums (BSI)", [
+                Param("Block cipher key", "128 bit minimum (AES, Camellia)"),
+                Param("RSA modulus", "3000 bit (enc & sig)"),
+                Param("DH / DSA prime p", "3000 bit"),
+                Param("ECDH / ECDSA curve order", "250 bit (P-256 minimum)"),
+                Param("Hash output", "256 bit minimum (SHA-256+)"),
+            ], fill="#e0f7fa"),
+            Subsection("PQC Requirements (BSI)", [
+                Param("ML-KEM", "768 / 1024 only; 512 not recommended"),
+                Param("ML-DSA", "all parameter sets recommended"),
+                Param("SLH-DSA", "all 12 parameter sets recommended"),
+                Param("HQC / FrodoKEM / McEliece", "hybrid use required"),
+            ], fill="#e0f7fa"),
         ],
     )
 
@@ -365,7 +386,7 @@ def build_parameters_diagram() -> str:
     return render_diagram(
         "Cryptographic Algorithm Parameter Taxonomy",
         "Grouped by taxonomy section; each block is self-contained.",
-        [general, pqc, national, key_mgmt, hybrid],
+        [general, pqc, national, bsi, key_mgmt, hybrid],
     )
 
 # ─────────────────────────────────────────────────────────────────────────
