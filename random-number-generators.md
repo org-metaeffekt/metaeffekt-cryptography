@@ -1,4 +1,4 @@
-# Random Number Generator Taxonomy
+# Random Number Generators
 
 > A structured reference for identifying, classifying, and parameterising
 > random and pseudo-random number generators used in cryptographic systems.

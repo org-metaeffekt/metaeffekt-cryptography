@@ -46,6 +46,8 @@ This repository aggregates information on cryptographic materials. It tries to c
 explain the complexity of the domain. It is intended to foster discussion on how to collaboratively 
 organize this data and make it usable to all concerned parties.
 
+For a summary of questions tried to answer see [cryptographic-governance.md](cryptographic-governance.md).
+
 ## License
 
 Please note that this content is based on public data sources. Primarily:
@@ -108,13 +110,16 @@ that adjustments can be applied accordingly.
 
 - **[ae-pattern-validator/](ae-pattern-validator/)** — Maven-based Java 17 module (Bouncy Castle 1.83, Spring Boot 4.1.0-M4) that validates cryptographic algorithm patterns, X.509 certificates, CMS/PKCS#7 structures, and CycloneDX CBOM files. Generates CycloneDX 1.6 CBOM JSON from certificate and CMS analysis. Registry: 324 algorithm families, 9 taxonomy files, 178 unique OIDs, full CycloneDX + SPDX coverage. CLI modes: `--cert`, `--cms`, `--cbom`, `--generate-cbom`, `--oid`, pattern instance/template validation. Build: `cd ae-pattern-validator && mvn clean verify`. (NOT YET PUBLISHED; UNDER EVALUATION)
 
-- **[registry-naming-inconsistencies.md](registry-naming-inconsistencies.md)** — Cross-reference of naming ambiguities and inconsistencies between the CycloneDX cryptography registry, the SPDX algorithm list, and this repository's taxonomy. Documents 16 concrete issues with eight resolution mechanisms. All CycloneDX and SPDX instance patterns are covered.
+- **[cryptographic-registry-inconsistencies.md](cryptographic-registry-inconsistencies.md)** — Cross-reference of naming ambiguities and inconsistencies between the CycloneDX cryptography registry, the SPDX algorithm list, and this repository's taxonomy. Documents 16 concrete issues with eight resolution mechanisms. All CycloneDX and SPDX instance patterns are covered.
 
-- **[validator-test-report.md](validator-test-report.md)** — Test statistics for the pattern validator: 760 tests across 15 test classes covering instance validation by taxonomy, template/constraint validation, CycloneDX coverage (204 tests), SPDX coverage (169 tests), X.509 certificate analysis (5 tests), CMS analysis (7 tests), CBOM validation (8 tests), and CBOM generation (4 tests). Registry: 324 families, 9 files, 178 unique OIDs.
+- **[management/validator-test-report.md](management/validator-test-report.md)** — Test statistics for the pattern validator: 769 tests across 15 test classes covering instance validation by taxonomy, template/constraint validation, CycloneDX coverage (213 tests), SPDX coverage (169 tests), X.509 certificate analysis (5 tests), CMS analysis (7 tests), CBOM validation (8 tests), and CBOM generation (4 tests). Registry: 324 families, 9 files, 178 unique OIDs.
+
+- **[management/content-update-plan.md](management/content-update-plan.md)** — Content consistency, integrity, and synchronisation plan across all repository artefacts.
 
 ## Grammars
 
-The grammars are fully experimental.
+The grammars are fully experimental. An update grammar covering both algorithms and
+RNGs is currently under evaluation in the unpublished parts.
 
 - **[grammar/AlgorithmPattern.g4](grammar/AlgorithmPattern.g4)** — ANTLR4 grammar for parsing CycloneDX cryptographic algorithm pattern strings. Handles variable placeholders (`{x}`), required-choice groups (`(a|b)`), optional components (`[x]`), wildcards (`*`), and enumeration brackets (`[v1|v2]`).
 

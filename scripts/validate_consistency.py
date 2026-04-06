@@ -79,7 +79,7 @@ def check_family_count(families: list[dict], base: Path) -> bool:
     targets = {
         "registry README": base / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "README.md",
         "top-level README": base / "README.md",
-        "validator-test-report": base / "validator-test-report.md",
+        "validator-test-report": base / "management" / "validator-test-report.md",
     }
 
     for label, path in targets.items():
@@ -262,9 +262,9 @@ def check_oid_format(families: list[dict]) -> bool:
 
 def check_test_count(base: Path) -> bool:
     """Check 8: total test count in validator-test-report.md vs sum of per-class counts."""
-    report = base / "validator-test-report.md"
+    report = base / "management" / "validator-test-report.md"
     if not report.exists():
-        print(f"  SKIP  validator-test-report.md not found")
+        print(f"  SKIP  management/validator-test-report.md not found")
         return True
 
     text = report.read_text()

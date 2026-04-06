@@ -1,4 +1,4 @@
-# Cryptographic Algorithm Table
+# Cryptographic Algorithms
 
 > Complete taxonomy of cryptographic algorithms, hash functions, MACs, KDFs, KEMs, signature schemes,
 > and random number generators covered in this repository.

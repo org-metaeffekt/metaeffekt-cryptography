@@ -143,7 +143,7 @@ Phase 8 (Improvements)                ── independent; can run last or in par
 > Regenerate the test report document so it matches the actual test suite output — keeping the documented test statistics in sync with reality.
 
 - [ ] Run `mvn test`, capture results
-- [ ] Update `validator-test-report.md` counts and taxonomy breakdown
+- [ ] Update `management/validator-test-report.md` counts and taxonomy breakdown
 
 ---
 
@@ -248,7 +248,7 @@ Reconcile these numbers across all documents:
 |:---|:---|
 | Total YAML families | registry README, runtime log, top-level README, test report |
 | Total markdown algorithms | `cryptographic-algorithms.md` summary table |
-| Total tests | `validator-test-report.md`, CI output |
+| Total tests | `management/validator-test-report.md`, CI output |
 | Total OIDs | registry README vs runtime log — reconcile |
 | CycloneDX coverage | test count, coverage notes in `cryptographic-algorithms.md` |
 | SPDX coverage | test count, coverage notes in `cryptographic-algorithms.md` |
@@ -270,7 +270,7 @@ Reconcile these numbers across all documents:
 
 - [ ] Check section number references between documents are valid
 - [ ] Verify source citations match the primary sources list in `cryptographic-status.md` header
-- [ ] Check `registry-naming-inconsistencies.md` reflects current resolution state
+- [ ] Check `cryptographic-registry-inconsistencies.md` reflects current resolution state
 
 ### 7.4 Naming Consistency
 
@@ -307,7 +307,7 @@ Reconcile these numbers across all documents:
 > Evaluate whether the current file organisation (7 markdown files) is optimal or whether merges/splits would improve navigability and reduce maintenance burden. Also review chapter ordering within each file.
 
 - [ ] Evaluate merging `random-number-generators.md` into `cryptographic-algorithms.md` (RNGs already §16-§19 there)
-- [ ] Evaluate whether `registry-naming-inconsistencies.md` should become an appendix of `cryptographic-algorithms.md`
+- [ ] Evaluate whether `cryptographic-registry-inconsistencies.md` should become an appendix of `cryptographic-algorithms.md`
 - [ ] Check `cryptographic-governance.md` for updates needed after all ingestion work
 - [ ] Consider splitting `cryptographic-status.md` §13-§21 (SP 800-57 / protocol-specific) into a separate file if it grows further
 - [ ] Review chapter ordering within each markdown file for logical flow
@@ -329,7 +329,7 @@ Reconcile these numbers across all documents:
 | `cryptographic-governance.md` | Why it matters — regulatory context, compliance drivers |
 | `random-number-generators.md` | RNG deep-dive (candidate for merge) |
 | `glossary.md` | Definitions |
-| `registry-naming-inconsistencies.md` | CycloneDX/SPDX naming deviations and resolutions |
+| `cryptographic-registry-inconsistencies.md` | CycloneDX/SPDX naming deviations and resolutions |
 
 ### 8.4 Tooling Improvements
 
@@ -354,5 +354,5 @@ Final verification checklist:
 - [ ] `grep -c 'family:' cr-*.yaml` total matches registry README
 - [ ] Summary counts in `cryptographic-algorithms.md` are accurate
 - [ ] No broken cross-references between documents
-- [ ] `validator-test-report.md` matches actual test output
+- [ ] `management/validator-test-report.md` matches actual test output
 - [ ] OID count in registry README matches runtime log
