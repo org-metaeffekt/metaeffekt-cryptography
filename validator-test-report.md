@@ -60,9 +60,9 @@ Family-level `status:` (security posture of the algorithm — canonical families
 
 | Status | Count | Examples |
 |--------|:-----:|---------|
-| Approved (implicit default) | 221 | AES, ML-KEM, SHA, ECDH, ChaCha20 |
-| Deprecated | 10 | DSA, MD6, 3DES, Blowfish, IDEA, CAST5, RC5, Yarrow, RC4-PRNG, ANSIX931 |
-| Disallowed | 14 | RC2, RC4, RC4-HMAC, 2TDEA, PBKDF1, Dual_EC_DRBG, A5/1, MT19937, PCG, LCG, SplitMix64, ISAAC, Xoshiro, Xoroshiro |
+| Approved (implicit default) | 219 | AES, ML-KEM, SHA, ECDH, ChaCha20 |
+| Deprecated | 8 | DSA, MD6, Blowfish, IDEA, CAST5, RC5, Yarrow, RC4-PRNG |
+| Disallowed | 18 | 3DES, 3DES-TKW, Skipjack, RC2, RC4, RC4-HMAC, 2TDEA, PBKDF1, Dual_EC_DRBG, ANSIX931, A5/1, MT19937, PCG, LCG, SplitMix64, ISAAC, Xoshiro, Xoroshiro |
 | Broken | 8 | DES, MD5, MD4, MD2, FEAL, CMEA, PANAMA, A5/2 |
 
 In addition, `cdx:` and `spdx:` naming-alternative entries carry `patternStatus: deprecated` (pattern canonicity — separate from security posture).
