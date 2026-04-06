@@ -134,7 +134,7 @@ A complete reference must cover:
 - **~15 MAC constructions** with differing key management and authentication guarantees
 - **32 post-quantum signature parameter sets** (ML-DSA, HashML-DSA, SLH-DSA, HashSLH-DSA) plus 2 FN-DSA variants — each with different security levels, performance profiles, and OIDs
 - **9 post-quantum KEM variants** — standardised, selected, and under migration guidance
-- **12 random number generator families**, from NIST SP 800-90A DRBGs to OS entropy APIs to non-cryptographic PRNGs that must not be used for security purposes
+- **25 random number generator families**, from NIST SP 800-90A DRBGs to OS entropy APIs to non-cryptographic PRNGs that must not be used for security purposes
 - **Cross-cutting parameter dimensions**: key lengths, hash functions, curves, padding schemes, tag lengths, iteration counts — each affecting security strength independently
 
 This taxonomy spans multiple dimensions simultaneously. An algorithm entry in a CBOM is not
@@ -152,10 +152,13 @@ community-maintainable form. It cross-references:
 - **CycloneDX CBOM pattern strings** — the machine-readable identifiers used in software bills of materials
 - **SPDX algorithm identifiers** — the parallel vocabulary used in SPDX SBOM documents
 - **ASN.1 OIDs** — the protocol-level identifiers embedded in certificates, CMS structures, and algorithm negotiation
-- **NIST FIPS standards** — FIPS 140-3 approved algorithms, key length requirements, deprecation timelines
-- **BSI TR-02102** — German federal algorithm recommendations (v2026)
+- **NIST FIPS standards** — FIPS 140-3 approved algorithms and FIPS 140-3 Implementation Guidance, key length requirements, deprecation timelines
+- **BSI TR-02102** — German federal algorithm recommendations: Part 1 (general, v2026), Part 2 (TLS, v2026-01), Part 3 (IPsec/IKEv2), Part 4 (SSH)
 - **NSA CNSA 2.0** — US national security system migration requirements
-- **NIST SP 800-57 / SP 800-131A** — Algorithm transition timelines
+- **NIST SP 800-131A Rev 2** — Algorithm transition timelines (post-2023 deadlines enforced)
+- **NIST SP 800-57 Part 1 Rev 5** — Key management and security strength tables (Rev 6 IPD tracked)
+- **NIST SP 800-52 Rev 2** — TLS implementation guidelines for federal systems
+- **NIST SP 800-56A Rev 3** — Discrete logarithm key-agreement schemes (DH, MQV, ECDH)
 - **Post-quantum standards** — FIPS 203/204/205 parameter tables, HQC specification, Round 4 selection rationale (NIST IR 8545)
 
 The goal is not to replicate the authority of any of these sources, but to make their combined

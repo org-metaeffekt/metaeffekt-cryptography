@@ -462,7 +462,8 @@ def build_rng_diagram() -> str:
 
 if __name__ == "__main__":
     import sys, os
-    out_dir = os.path.dirname(os.path.abspath(__file__))
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    out_dir = os.path.normpath(os.path.join(script_dir, "..", "resources"))
 
     with open(os.path.join(out_dir, "cryptographic-parameters.svg"), "w") as f:
         f.write(build_parameters_diagram())

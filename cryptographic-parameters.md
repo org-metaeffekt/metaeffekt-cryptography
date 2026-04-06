@@ -1557,40 +1557,7 @@ BSI defines minimum parameter requirements that differ from — and are in some 
 | XMSS / XMSS^MT | Per SP 800-208 | §5.3.4.3 | Stateful; hardware state management required |
 | LMS / LMOTS | Per SP 800-208 | §5.3.4.3 | Stateful; hardware state management required |
 
-### Hybridisation requirements (BSI TR-02102-1 §2.2)
-
-| Mechanism | Description | BSI recommendation |
-|:---|:---|:---|
-| CatKDF | Concatenation KDF combining classical and PQC shared secrets | Use with KMAC or HKDF |
-| KeyCombine | SP 800-56C §4.6.1 Eq.9 + §4.6.2 Eq.15 | Use with KDF or KMAC from this TR |
-
-The hybrid key agreement must remain secure as long as **one** of the methods used is secure. Context-dependent information must be included in the key derivation to ensure this property.
-
-### Migration timeline (BSI TR-02102-1 §2.1)
-
-| Mechanism class | Sole use until | Hybrid from | Source |
-|:---|:---|:---|:---|
-| Classical key agreement | End of **2031** | 2032 | §2.1 |
-| Classical key agreement (high protection) | End of **2030** | 2031 | §2.1, EU joint recommendation |
-| Classical digital signatures | End of **2035** | 2036 | §2.1, EU roadmap |
-| DSA | End of **2029** | — | §5.3.2 |
-
-### Password hashing requirements (BSI TR-02102-1 §B.2)
-
-| Algorithm | BSI status | Notes |
-|:---|:---|:---|
-| Argon2id | ✅ Recommended | Preferred for new designs |
-| PBKDF2 | ✅ Recommended | With approved hash (SHA-256+) |
-| bcrypt | ✓ Acceptable | |
-| scrypt | ✓ Acceptable | |
-
-### Random number generator requirements (BSI AIS 20/31 v3)
-
-| BSI class | Description | Equivalent |
-|:---|:---|:---|
-| DRG.3 | Deterministic random generator with forward security | NIST SP 800-90A DRBG |
-| NTG.1 | Non-deterministic random generator (physical noise source) | SP 800-90B entropy source |
-| PTG.2 | Physical true random generator | **No longer recommended for general use** (since v2021-01) |
+For BSI hybridisation mechanisms (CatKDF, KeyCombine), migration timelines (classical key agreement through 2031, signatures through 2035), password hashing requirements (Argon2id, PBKDF2, bcrypt, scrypt), and random number generator class recommendations (AIS 20/31), see `cryptographic-status.md` §17 (BSI TR-02102-1).
 
 ---
 
@@ -1598,16 +1565,9 @@ The hybrid key agreement must remain secure as long as **one** of the methods us
 
 > **Source:** NIST SP 800-57 Part 1 Rev 5 (May 2020), §5.3 Table 1 and §5.6 Table 2.
 
-### Cryptoperiod parameters
+For full cryptoperiod tables per key type (originator-usage and recipient-usage periods), see `cryptographic-status.md` §13.6.
 
-Cryptoperiods define maximum time spans for key usage. These are policy parameters, not algorithm parameters — they constrain operational key lifetime rather than algorithm configuration.
-
-| Parameter | Description | Typical range | Source |
-|:---|:---|:---|:---|
-| `{originator-usage-period}` | Maximum time a key may be used to apply protection (encrypt, sign) | 1–3 years (signatures); ≤ 2 years (symmetric) | SP 800-57 Pt 1 §5.3 Table 1 |
-| `{recipient-usage-period}` | Maximum time a key may be used to process protected data (decrypt, verify) | OUP + 3 years (symmetric); several years (public keys) | SP 800-57 Pt 1 §5.3 Table 1 |
-
-### Effective security strength
+### Effective Security Strength
 
 The effective security strength of a cryptographic operation is determined by the **weakest** component in the chain. SP 800-57 Part 1 §5.6.1:
 

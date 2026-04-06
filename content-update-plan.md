@@ -200,27 +200,27 @@ Phase 8 (Improvements)                ── independent; can run last or in par
 ## Phase 6: Diagrams
 
 > [!NOTE]
-> Diagrams are visual documentation of the parameter taxonomy and RNG classification. They are generated deterministically from `resources/generate_diagrams.py`, which emits SVG directly (no layout engine). This phase ensures the Python data structures reflect the current state of the parameter definitions and YAML registry — so the rendered SVGs remain a trustworthy visual reference.
+> Diagrams are visual documentation of the parameter taxonomy and RNG classification. They are generated deterministically from `scripts/generate_diagrams.py`, which emits SVG directly (no layout engine). This phase ensures the Python data structures reflect the current state of the parameter definitions and YAML registry — so the rendered SVGs remain a trustworthy visual reference.
 
 ### 6.1 Parameter Taxonomy Diagram
 
 > [!NOTE]
 > Verify the parameter taxonomy sections in `generate_diagrams.py` cover all algorithm families and parameters — especially PQC, Ascon, SM9, 3GPP, hybrid constructs, and any newly added sections.
 
-- [ ] Review `build_parameters_diagram()` in `resources/generate_diagrams.py`
+- [ ] Review `build_parameters_diagram()` in `scripts/generate_diagrams.py`
 - [ ] Check sections §1-§11 match `cryptographic-parameters.md` structure
 - [ ] Verify PQC blocks are current (ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC parameters)
 - [ ] Verify parameter ordering follows logical/specification order per algorithm
-- [ ] Re-render: `python3 resources/generate_diagrams.py`
+- [ ] Re-render: `python3 scripts/generate_diagrams.py`
 
 ### 6.2 RNG Taxonomy Diagram
 
 > [!NOTE]
 > Verify the RNG classification in `generate_diagrams.py` covers all families from `cr-rngs.yaml`.
 
-- [ ] Review `build_rng_diagram()` in `resources/generate_diagrams.py`
+- [ ] Review `build_rng_diagram()` in `scripts/generate_diagrams.py`
 - [ ] Verify all `cr-rngs.yaml` families are represented (CSPRNG, OS/hardware, non-crypto PRNGs, historical)
-- [ ] Re-render: `python3 resources/generate_diagrams.py`
+- [ ] Re-render: `python3 scripts/generate_diagrams.py`
 
 ### 6.3 Layout Constants
 

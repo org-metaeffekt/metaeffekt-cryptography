@@ -126,4 +126,4 @@ The grammars are fully experimental.
 
 - **[resources/random-number-generators.svg](resources/random-number-generators.svg)** — RNG classification: CSPRNG/DRBG (NIST SP 800-90A, accumulator-based, stream-cipher-based), OS entropy APIs, hardware RNG, non-cryptographic PRNGs, and historical/broken algorithms.
 
-Both diagrams are generated from `resources/generate_diagrams.py` — edit the Python data structures and re-run to regenerate. This replaces the previous draw.io diagrams which did not scale with frequent content changes.
+Both diagrams are generated from `scripts/generate_diagrams.py` — edit the Python data structures and re-run to regenerate. This replaces the previous draw.io diagrams which did not scale with frequent content changes.
