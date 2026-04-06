@@ -1,4 +1,4 @@
-# Naming Ambiguities and Inconsistencies
+# Cryptographic Registry Ambiguities and Inconsistencies
 
 Cross-reference of naming conventions between the CycloneDX cryptography registry
 (`cryptography-defs.json`), the SPDX cryptographic algorithm list, this repository's

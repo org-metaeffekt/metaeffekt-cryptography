@@ -158,7 +158,7 @@ Phase 8 (Improvements)                ── independent; can run last or in par
 > Identify terms used in the markdown documents that lack a glossary entry, particularly those introduced during recent ingestion sessions.
 
 - [ ] Scan all markdown files for acronyms and technical terms
-- [ ] Compare against `glossary.md` entries
+- [ ] Compare against `cryptographic-glossary.md` entries
 - [ ] Add missing terms
 
 ### 4.2 Accuracy
@@ -328,7 +328,7 @@ Reconcile these numbers across all documents:
 | `cryptographic-status.md` | What to use — recommendations, status, migration timelines |
 | `cryptographic-governance.md` | Why it matters — regulatory context, compliance drivers |
 | `random-number-generators.md` | RNG deep-dive (candidate for merge) |
-| `glossary.md` | Definitions |
+| `cryptographic-glossary.md` | Definitions |
 | `cryptographic-registry-inconsistencies.md` | CycloneDX/SPDX naming deviations and resolutions |
 
 ### 8.4 Tooling Improvements

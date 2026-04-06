@@ -1,4 +1,4 @@
-# Cryptography Glossary
+# Cryptographic Glossary
 
 > Plain-language explanations of every term, abbreviation, and acronym used in this repository.
 > Entries are sorted alphabetically. Mathematical details are kept to a minimum.

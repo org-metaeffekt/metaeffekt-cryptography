@@ -1,4 +1,4 @@
-# The Cryptographic Governance Challenge
+# Cryptographic Governance Challenge
 
 ## Five Questions every Organization should be able to answer
 
