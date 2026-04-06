@@ -25,9 +25,9 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `CmsAnalyserTest` | 7 | CMS/PKCS#7 SignedData + EnvelopedData analysis |
 | `CBomAnalyserTest` | 8 | CycloneDX CBOM validation (6 components, compliance check) |
 | `CBomGeneratorTest` | 4 | CBOM JSON generation from cert/CMS analysis |
-| `MainTest` | 24 | CLI integration (all modes incl. cert, cms, cbom) |
+| `MainTest` | 26 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
 | `AlgorithmRegistryTest` | 12 | Registry loading, duplicate detection, OID index |
-| **Total** | **769** | |
+| **Total** | **771** | |
 
 ---
 
