@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (9 files, 325 registered algorithm families, 178 unique OIDs indexed).
+registry (9 files, 338 registered algorithm families, 178 unique OIDs indexed).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 
@@ -26,8 +26,8 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `CBomAnalyserTest` | 8 | CycloneDX CBOM validation (6 components, compliance check) |
 | `CBomGeneratorTest` | 4 | CBOM JSON generation from cert/CMS analysis |
 | `MainTest` | 26 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
-| `AlgorithmRegistryTest` | 12 | Registry loading, duplicate detection, OID index |
-| **Total** | **771** | |
+| `AlgorithmRegistryTest` | 15 | Registry loading, duplicate detection, OID index, cross-validation, coverage |
+| **Total** | **774** | |
 
 ---
 
@@ -36,15 +36,15 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | Registry file | Families | With segments | Fixed identifiers | Wildcard |
 |---------------|:--------:|:-------------:|:-----------------:|:--------:|
 | `cr-symmetric-ciphers.yaml` | 77 | 28 | 10 | 39 |
-| `cr-hash-functions.yaml` | 40 | 20 | 19 | 1 |
-| `cr-macs.yaml` | 10 | 8 | 2 | 0 |
+| `cr-hash-functions.yaml` | 49 | 20 | 28 | 1 |
+| `cr-macs.yaml` | 14 | 8 | 6 | 0 |
 | `cr-asymmetric.yaml` | 37 | 27 | 4 | 6 |
 | `cr-pqc.yaml` | 40 | 20 | 5 | 15 |
 | `cr-kdfs.yaml` | 25 | 21 | 1 | 3 |
 | `cr-rngs.yaml` | 25 | 8 | 15 | 2 |
 | `cr-cdx.yaml` | 33 | 3 | 30 | 0 |
 | `cr-spdx.yaml` | 38 | 0 | 38 | 0 |
-| **Total** | **325** | **143** | **124** | **58** |
+| **Total** | **338** | **143** | **137** | **58** |
 
 ### Family validation modes
 
