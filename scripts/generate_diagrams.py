@@ -194,7 +194,7 @@ def build_parameters_diagram() -> str:
                 Param("{outputLength}", "XOF / hash output length"),
                 Param("{dkmLength}", "derived keying material length"),
                 Param("{length}", "generic length parameter"),
-                Param("{parameterSetIdentifier}", "algorithm parameter set"),
+                Param("{parameterSet}", "algorithm parameter set"),
             ]),
             Subsection("§2 Mode & Variant", [
                 Param("{mode}", "cipher mode (GCM, CBC, CTR, …)"),
@@ -208,7 +208,7 @@ def build_parameters_diagram() -> str:
             Subsection("§3 Hash & Digest", [
                 Param("{hashAlgorithm}", "hash function (SHA-256, …)"),
                 Param("{maskGenAlgorithm}", "MGF (typically MGF1)"),
-                Param("{prfFunction}", "pseudorandom function"),
+                Param("{prf}", "pseudorandom function"),
                 Param("{auxFunction}", "auxiliary function"),
                 Param("{hashFunction}/{nbits}/{treeHeight}", "LMS/XMSS parameter triple"),
             ]),
@@ -252,7 +252,7 @@ def build_parameters_diagram() -> str:
         columns=3,
         subsections=[
             Subsection("ML-KEM  (FIPS 203)", [
-                Param("{parameterSetIdentifier}", "512 | 768 | 1024"),
+                Param("{parameterSet}", "512 | 768 | 1024"),
                 Param("{k}", "module rank (2 | 3 | 4)"),
                 Param("{eta1}", "noise parameter (keygen)"),
                 Param("{eta2}", "noise parameter (encryption)"),
@@ -261,7 +261,7 @@ def build_parameters_diagram() -> str:
                 Param("{q}", "modulus (3329)"),
             ], fill="#f0f6ff"),
             Subsection("ML-DSA  (FIPS 204)", [
-                Param("{parameterSetIdentifier}", "44 | 65 | 87"),
+                Param("{parameterSet}", "44 | 65 | 87"),
                 Param("{k}, {l}", "lattice matrix dimensions"),
                 Param("{eta}", "secret key coefficient bound"),
                 Param("{gamma1}", "masking range"),
@@ -275,7 +275,7 @@ def build_parameters_diagram() -> str:
                 Param("{deterministicSigning}", "hedged | deterministic"),
             ], fill="#f0f6ff"),
             Subsection("SLH-DSA  (FIPS 205)", [
-                Param("{parameterSetIdentifier}", "128s|128f|192s|192f|256s|256f"),
+                Param("{parameterSet}", "128s|128f|192s|192f|256s|256f"),
                 Param("{n}", "security parameter (bytes)"),
                 Param("{h} / {d}", "total height / layer count"),
                 Param("{h_prime}", "subtree height (h/d)"),
@@ -287,7 +287,7 @@ def build_parameters_diagram() -> str:
                 Param("{deterministicSigning}", "hedged | deterministic"),
             ], fill="#f0f6ff"),
             Subsection("FN-DSA  (FIPS 206 IPD / Falcon)", [
-                Param("{parameterSetIdentifier}", "FN-DSA-512 | FN-DSA-1024"),
+                Param("{parameterSet}", "FN-DSA-512 | FN-DSA-1024"),
                 Param("{n}", "ring dimension (512 | 1024)"),
                 Param("{q}", "modulus (12289)"),
                 Param("{sigma}", "Gaussian standard deviation"),
@@ -296,7 +296,7 @@ def build_parameters_diagram() -> str:
                 Param("{deterministicSigning}", "hedged | deterministic"),
             ], fill="#f0f6ff"),
             Subsection("HQC  (NIST Round 4, FIPS pending)", [
-                Param("{parameterSetIdentifier}", "128 | 192 | 256 (L1 | L3 | L5)"),
+                Param("{parameterSet}", "128 | 192 | 256 (L1 | L3 | L5)"),
                 Param("internal params", "n, k, w, wr, we (fixed per set)"),
             ], fill="#f0f6ff"),
             Subsection("Pre-Hash Variants", [

@@ -15,7 +15,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `InstanceValidationSymmetricTest` | 87 | All 77 symmetric families (incl. 2TDEA, RC4-HMAC-EXP) |
 | `InstanceValidationHashMacTest` | 57 | All 40 hash + 10 MAC families (incl. HMAC-MD5, GMAC) |
 | `InstanceValidationAsymmetricTest` | 44 | All 37 asymmetric families (incl. DLIES, MLS, SRTP) |
-| `InstanceValidationPqcTest` | 50 | All 39 PQC families |
+| `InstanceValidationPqcTest` | 51 | All 40 PQC families (incl. ALTEQ) |
 | `InstanceValidationKdfTest` | 25 | All 25 KDF families (incl. CatKDF, KeyCombine) |
 | `InstanceValidationRngTest` | 31 | All 25 RNG families (incl. OS entropy APIs) |
 | `TemplateValidationTest` | 33 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
@@ -27,7 +27,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `CBomGeneratorTest` | 4 | CBOM JSON generation from cert/CMS analysis |
 | `MainTest` | 26 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
 | `AlgorithmRegistryTest` | 15 | Registry loading, duplicate detection, OID index, cross-validation, coverage |
-| **Total** | **774** | |
+| **Total** | **775** | |
 
 ---
 

@@ -144,8 +144,8 @@ def check_parameter_name_coverage(families: list[dict], base: Path) -> bool:
         return True
 
     text = params_file.read_text()
-    # Match ### `{name}` headings
-    md_names = set(re.findall(r"^### `\{([^}]+)\}`", text, re.MULTILINE))
+    # Match ### or #### `{name}` headings
+    md_names = set(re.findall(r"^#{3,4} `\{([^}]+)\}`", text, re.MULTILINE))
 
     in_yaml_only = yaml_names - md_names
     in_md_only = md_names - yaml_names

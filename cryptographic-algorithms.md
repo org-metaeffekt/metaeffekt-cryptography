@@ -279,7 +279,7 @@ Cryptographic Algorithms
 | `x25519` | X25519 (ECDH over Curve25519) | Key agreement | `1.3.101.110` | `ECDH-Curve25519` | RFC 7748; SP 800-186 |
 | `x448` | X448 (ECDH over Curve448) | Key agreement | `1.3.101.111` | `ECDH-Curve448` | RFC 7748; SP 800-186 |
 | `ffdh` | FFDH (Finite Field Diffie-Hellman) | Key agreement | — | `FFDH-{groupName}` | SP 800-56A Rev 3; RFC 7919 |
-| `hpke` | HPKE (Hybrid Public-Key Encryption) | Key agreement + encryption framework | — (IANA ciphersuite registry) | `HPKE-{kemVariant}-{kdf}-{aeadVariant}` | RFC 9180; IANA HPKE Parameters |
+| `hpke` | HPKE (Hybrid Public-Key Encryption) | Key agreement + encryption framework | — (IANA ciphersuite registry) | `HPKE-{kem}-{kdf}-{aead}` | RFC 9180; IANA HPKE Parameters |
 | `dhkem-p256-hkdf-sha256` | DHKEM(P-256, HKDF-SHA256) | HPKE KEM | KEM ID 0x0010 | `DHKEM(P-256,HKDF-SHA256)` | RFC 9180 §7.1; Nsecret=32B, Nenc=65B, Npk=65B |
 | `dhkem-p384-hkdf-sha384` | DHKEM(P-384, HKDF-SHA384) | HPKE KEM | KEM ID 0x0011 | `DHKEM(P-384,HKDF-SHA384)` | RFC 9180 §7.1; Nsecret=48B, Nenc=97B, Npk=97B |
 | `dhkem-p521-hkdf-sha512` | DHKEM(P-521, HKDF-SHA512) | HPKE KEM | KEM ID 0x0012 | `DHKEM(P-521,HKDF-SHA512)` | RFC 9180 §7.1; Nsecret=64B, Nenc=133B, Npk=133B |

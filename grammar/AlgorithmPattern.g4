@@ -117,7 +117,7 @@ component
 
 /**
  * A CycloneDX variable placeholder: {identifierName}
- * Examples: {keyLength}, {hashAlgorithm}, {parameterSetIdentifier}
+ * Examples: {keyLength}, {hashAlgorithm}, {parameterSet}
  */
 variable
     : LBRACE VARNAME RBRACE

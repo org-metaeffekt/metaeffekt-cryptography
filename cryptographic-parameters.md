@@ -72,20 +72,6 @@ Parameters that specify numeric bit or byte quantities, directly determining sec
 ---
 
 
-### `{dkLen}`
-
-| Aspect | Detail |
-|:---|:---|
-| **Short** | Derived key length in bytes |
-| **Description** | The desired length of the output keying material from a KDF. |
-| **Type** | integer (bytes) |
-| **Canonical values** | `16` `24` `32` `48` `64` `128` |
-| **Implementation note** | Must match the consuming algorithm (e.g. dkLen=32 for AES-256). PBKDF2 supports arbitrary length via PRF chaining. |
-| **Used in** | PBKDF1, PBKDF2, PBES1, PBES2 |
-
----
-
-
 ### `{tagLenBytes}`
 
 | Aspect | Detail |
@@ -114,35 +100,7 @@ Parameters that specify numeric bit or byte quantities, directly determining sec
 ---
 
 
-### `{dkmLength}`
-
-| Aspect | Detail |
-|:---|:---|
-| **Short** | Derived keying material length |
-| **Description** | Total length of output keying material from SP 800-108 or SP 800-56C KDF, before splitting into individual keys. |
-| **Type** | integer (bits) |
-| **Canonical values** | `128` `192` `256` `384` `512` |
-| **Implementation note** | SP 800-108: DKM must not exceed 2^32 × h bits (h = PRF output). Typically ≤512 bits covers all practical split-key scenarios. |
-| **Used in** | SP800-108, SP800-56C |
-
----
-
-
-### `{length}`
-
-| Aspect | Detail |
-|:---|:---|
-| **Short** | Generic output / truncation length |
-| **Description** | A truncation length or output size used in contexts where the algorithm supports variable output (CMAC truncation, UMAC variants). |
-| **Type** | integer (bits) |
-| **Canonical values** | `32` `64` `96` `128` |
-| **Implementation note** | UMAC (RFC 4418) variants: UMAC-32, UMAC-64, UMAC-96, UMAC-128. CMAC output can be truncated but minimum 64 bits recommended. |
-| **Used in** | CMAC, UMAC |
-
----
-
-
-### `{parameterSetIdentifier}`
+### `{parameterSet}`
 
 | Aspect | Detail |
 |:---|:---|
@@ -152,6 +110,47 @@ Parameters that specify numeric bit or byte quantities, directly determining sec
 | **Canonical values** | `44` `65` `87` `512` `768` `1024` `128s` `128f` `192s` `192f` `256s` `256f` `FN-DSA-512` `FN-DSA-1024` |
 | **Implementation note** | ML-DSA: 44=L2 (k×l=4×4), 65=L3 (k×l=6×5), 87=L5 (k×l=8×7) — the numbers encode the matrix dimensions used in key generation. ML-KEM: 512=L1 (k=2), 768=L3 (k=3), 1024=L5 (k=4). SLH-DSA: `s` suffix = small signatures / slower signing; `f` suffix = fast signing / larger signatures — this distinction is the subject of ongoing NIST requests for additional parameter sets (NIST PQC Forum, 87-message thread, Nov 2025). FN-DSA: 512=L1 (n=512, pk=897B, sig=666B), 1024=L5 (n=1024, pk=1793B, sig=1280B). |
 | **Used in** | ML-DSA, ML-KEM, SLH-DSA, FN-DSA |
+
+---
+
+### `{blockSize}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Block size in bits |
+| **Description** | The internal block size of a block cipher or permutation-based primitive. |
+| **Type** | integer (bits) |
+| **Canonical values** | `256` `512` `1024` |
+| **Implementation note** | Threefish supports three block sizes: 256 (for Skein-256), 512 (for Skein-512), and 1024 (for Skein-1024). Block size equals key size. |
+| **Used in** | Threefish |
+
+---
+
+
+### `{width}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Checksum width in bits |
+| **Description** | The output width of a non-cryptographic checksum. |
+| **Type** | integer (bits) |
+| **Canonical values** | CRC: `8` `16` `32` `64` · Adler: `32` · Fletcher: `16` `32` |
+| **Implementation note** | CRC-32 (ISO 3309, ITU-T V.42) is the most common. Adler-32 is used in zlib. These are error-detection codes, not cryptographic hashes. |
+| **Used in** | CRC, Adler, Fletcher |
+
+---
+
+
+### `{stateSize}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Skein internal state size in bits |
+| **Description** | The internal state width of the Skein hash function, which determines the Threefish block cipher variant used internally. |
+| **Type** | integer (bits) |
+| **Canonical values** | `256` `512` `1024` |
+| **Implementation note** | Skein-512 (512-bit state) is the primary recommendation. Skein-256 for constrained environments. Skein-1024 for maximum security margin. |
+| **Used in** | Skein |
 
 ---
 
@@ -190,43 +189,29 @@ Parameters that select among structural variants or sub-primitive choices for an
 ---
 
 
-### `{symmetricCipher}`
-
-| Aspect | Detail |
-|:---|:---|
-| **Short** | Symmetric cipher sub-component |
-| **Description** | Names the symmetric cipher used within a hybrid or composite scheme (ECIES data encryption, PBES encryption). |
-| **Type** | algorithm reference |
-| **Canonical values** | `AES-128-GCM` `AES-256-GCM` `AES-128-CBC` `AES-256-CBC` `ChaCha20-Poly1305` `3DES-CBC` |
-| **Implementation note** | ECIES traditionally uses AES-CBC + HMAC or AES-GCM. Modern recommendations: AES-256-GCM or ChaCha20-Poly1305. |
-| **Used in** | ECIES, HPKE, PBES1, PBES2 |
-
----
-
-
 ### `{cipherAlgorithm}`
 
 | Aspect | Detail |
 |:---|:---|
-| **Short** | Cipher for CMAC / key-wrap |
-| **Description** | Identifies the block cipher used as the underlying primitive in CMAC, key-wrap, or other cipher-based constructions. |
+| **Short** | Cipher for CMAC / key-wrap / encryption |
+| **Description** | Identifies the block cipher or symmetric algorithm used as the underlying primitive in CMAC, key-wrap, password-based encryption, ECIES, or other cipher-based constructions. |
 | **Type** | algorithm reference |
-| **Canonical values** | `AES-128` `AES-192` `AES-256` `3DES` `CAMELLIA-128` `CAMELLIA-256` `SM4` |
-| **Implementation note** | CMAC (SP 800-38B) most commonly uses AES-128 or AES-256. Key-wrap (SP 800-38F) requires AES. |
-| **Used in** | CMAC, AES-KW, AES-KWP, PBMAC1 |
+| **Canonical values** | `AES-128` `AES-192` `AES-256` `AES-128-GCM` `AES-256-GCM` `AES-128-CBC` `AES-256-CBC` `3DES` `3DES-CBC` `ChaCha20-Poly1305` `CAMELLIA-128` `CAMELLIA-256` `SM4` `RC2-40-CBC` |
+| **Implementation note** | CMAC (SP 800-38B) most commonly uses AES-128 or AES-256. Key-wrap (SP 800-38F) requires AES. ECIES traditionally uses AES-CBC + HMAC or AES-GCM. Modern recommendations: AES-256-GCM or ChaCha20-Poly1305. |
+| **Used in** | CMAC, AES-KW, AES-KWP, PBMAC1, ECIES, PBES1, CBC-MAC, Poly1305 |
 
 ---
 
 
-### `{cipherAlgorithm}` (CTR_DRBG)
+### `{cipher}`
 
 | Aspect | Detail |
 |:---|:---|
-| **Short** | Block cipher for CTR_DRBG |
+| **Short** | Cipher for CTR_DRBG |
 | **Description** | Selects the block cipher used as the core of CTR_DRBG. Determines security strength, seed length, and block size. |
 | **Type** | algorithm reference |
-| **Canonical values** | `AES-128` `AES-192` `AES-256` `3DES` |
-| **Implementation note** | SP 800-90Ar1 CTR_DRBG: AES-256 provides 256-bit security. 3DES deprecated. AES-128 provides 128-bit security. |
+| **Canonical values** | `AES` `3DES` |
+| **Implementation note** | SP 800-90Ar1 CTR_DRBG: AES-256 provides 256-bit security. 3DES disallowed (SP 800-131Ar2). AES-128 provides 128-bit security. |
 | **Used in** | CTR_DRBG |
 
 ---
@@ -286,16 +271,141 @@ Nenc = encapsulated key size (ephemeral public key sent to recipient). Npk = rec
 ---
 
 
-### `{otherBlockCipher}`
+### `{variant}`
 
 | Aspect | Detail |
 |:---|:---|
-| **Short** | Alternative cipher in ChaCha hybrid |
-| **Description** | Identifies an alternative block cipher combined with ChaCha as the keystream cipher in a hybrid construction. |
-| **Type** | algorithm reference |
-| **Canonical values** | `AES` |
-| **Implementation note** | ChaCha with AES (ChaCha-AES) is a theoretical construction combining the differential resistance of AES with the ARX speed of ChaCha. Not widely deployed. |
-| **Used in** | ChaCha |
+| **Short** | Algorithm variant or output selector |
+| **Description** | Selects among named variants or output sizes within an algorithm family. Semantics are family-specific. |
+| **Type** | numeric or name |
+| **Canonical values** | SHA: `1` `224` `256` `384` `512` `512-224` `512-256` · HAVAL: `128` `160` `192` `224` `256` · PCG: (open-ended) |
+| **Implementation note** | For SHA families, the variant identifies the hash output size. For HAVAL, it selects the digest length. For PCG, it identifies the PRNG variant. |
+| **Used in** | SHA (via spdx redirect families), HAVAL, PCG |
+
+---
+
+
+### `{function}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | 3GPP function type |
+| **Description** | Identifies whether a 3GPP algorithm is used for message authentication (MAC) or key derivation (KDF). |
+| **Type** | enumeration |
+| **Canonical values** | `MAC` `KDF` |
+| **Implementation note** | MILENAGE and TUAK support both authentication (MAC) and key derivation functions. 3GPP-XOR uses MAC and KDF modes. |
+| **Used in** | 3GPP-XOR, MILENAGE, TUAK |
+
+---
+
+
+### `{operation}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | SM9 operation mode |
+| **Description** | Selects the SM9 identity-based cryptography operation. SM9 is a Chinese national standard (GB/T 38635) supporting multiple operations over bilinear pairings. |
+| **Type** | enumeration |
+| **Canonical values** | `SIG` `KEX` `KEM` `ENC` |
+| **Implementation note** | SIG = digital signature, KEX = key exchange, KEM = key encapsulation, ENC = encryption. Each operation uses different algorithms over the BN256 curve. |
+| **Used in** | SM9 |
+
+---
+
+
+### `{option}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | DRBG option flag |
+| **Description** | Optional configuration flag for CTR_DRBG. Controls whether the derivation function is used during instantiation and reseeding. |
+| **Type** | enumeration |
+| **Canonical values** | `noDF` |
+| **Implementation note** | SP 800-90Ar1: CTR_DRBG can operate with or without a derivation function (DF). Using DF is recommended for entropy sources that do not provide full-entropy input. |
+| **Used in** | CTR_DRBG |
+
+---
+
+
+### `{radix}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | FPE alphabet size |
+| **Description** | The radix (alphabet size) for format-preserving encryption. Determines the character set of the plaintext domain. |
+| **Type** | integer (2–65536) |
+| **Canonical values** | `2` `10` `26` `36` `62` `256` |
+| **Implementation note** | SP 800-38Gr1: radix=10 for numeric data (credit cards, SSNs), radix=26 for alphabetic, radix=36 for alphanumeric. Minimum domain size: radix^minlen ≥ 1,000,000. |
+| **Used in** | AES-FF1, AES-FF3-1 |
+
+---
+
+
+### `{profile}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | SRTP protection profile |
+| **Description** | Selects the cipher and authentication combination for Secure Real-time Transport Protocol. |
+| **Type** | enumeration |
+| **Canonical values** | `AES-128-CM-HMAC-SHA1-80` `AES-128-CM-HMAC-SHA1-32` `AES-256-CM-HMAC-SHA1-80` `AES-256-CM-HMAC-SHA1-32` `AEAD-AES-128-GCM` `AEAD-AES-256-GCM` |
+| **Implementation note** | RFC 3711 defines base profiles. RFC 7714 adds AEAD-GCM profiles. DTLS-SRTP (RFC 5764) negotiates profiles during handshake. |
+| **Used in** | SRTP |
+
+---
+
+
+### `{algorithm}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | PBE algorithm identifier |
+| **Description** | Identifies the combined algorithm used in password-based encryption (PBE) schemes. |
+| **Type** | name |
+| **Canonical values** | (open-ended — implementation-dependent) |
+| **Implementation note** | PBE combines a KDF (e.g. PBKDF1, PBKDF2) with a symmetric cipher. Legacy PBE algorithms are defined in PKCS#5 and PKCS#12. |
+| **Used in** | PBE |
+
+---
+
+
+### `{level}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Security level (BIKE) |
+| **Description** | Selects the NIST security level for BIKE (Bit Flipping Key Encapsulation). |
+| **Type** | enumeration |
+| **Canonical values** | `L1` `L3` `L5` |
+| **Implementation note** | L1 targets 128-bit security (AES-128 equivalent), L3 targets 192-bit, L5 targets 256-bit. BIKE is a code-based KEM selected by NIST for standardization. |
+| **Used in** | BIKE |
+
+---
+
+
+### `{classicalAlgorithm}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Classical algorithm in composite PQC signature |
+| **Description** | Identifies the classical (pre-quantum) algorithm combined with ML-DSA in a composite signature scheme. |
+| **Type** | compound |
+| **Canonical values** | `RSA2048-PSS-SHA256` `RSA3072-PSS-SHA512` `RSA4096-PSS-SHA512` `ECDSA-P256-SHA256` `ECDSA-P384-SHA384` `ECDSA-P384-SHA512` `Ed25519` `Ed448` |
+| **Implementation note** | Composite ML-DSA (draft-ietf-lamps-pq-composite-sigs) produces a signature that is valid only if both the PQC and classical components verify. Provides protection during the quantum transition. |
+| **Used in** | MLDSA44, MLDSA65, MLDSA87 |
+
+---
+
+### `{cipherSuite}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | MLS cipher suite identifier |
+| **Description** | Selects the cipher suite for Messaging Layer Security (RFC 9420). Each suite combines a KEM, AEAD, hash, and signature algorithm. |
+| **Type** | compound |
+| **Canonical values** | `128-DHKEMP256-AES128GCM-SHA256-P256` `256-DHKEMP384-AES256GCM-SHA384-P384` `256-DHKEMP521-AES256GCM-SHA512-P521` |
+| **Implementation note** | RFC 9420 uses underscore-separated identifiers internally (e.g., MLS_128_DHKEMP256_AES128GCM_SHA256_P256); the dash form is the canonical pattern form. BSI TR-02102-1 Appendix C.2 recommends the 256-bit suites. |
+| **Used in** | MLS |
 
 ---
 
@@ -334,7 +444,7 @@ Parameters that identify a hash function or PRF used as a sub-component within a
 ---
 
 
-### `{prfFunction}`
+### `{prf}`
 
 | Aspect | Detail |
 |:---|:---|
@@ -344,6 +454,20 @@ Parameters that identify a hash function or PRF used as a sub-component within a
 | **Canonical values** | `HMAC-SHA256` `HMAC-SHA384` `HMAC-SHA512` `AES-CMAC` `KMAC128` `KMAC256` |
 | **Implementation note** | SP 800-108r1 approves HMAC and CMAC-based PRFs. KMAC variants added in 2022 revision. |
 | **Used in** | SP800-108 |
+
+---
+
+
+### `{hashFamily}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Hash family selector (SHA2 / SHAKE) |
+| **Description** | Selects the hash function family for stateless hash-based signatures. FIPS 205 defines SLH-DSA parameter sets in two families: SHA2-based (using SHA-256/512 and MGF1) and SHAKE-based (using SHAKE256). |
+| **Type** | enumeration |
+| **Canonical values** | `SHA2` `SHAKE` |
+| **Implementation note** | SHA2 parameter sets are preferred for interoperability. SHAKE parameter sets enable simpler implementations (single primitive). The choice is baked into the parameter set name (e.g., SLH-DSA-SHA2-128s vs SLH-DSA-SHAKE-128s). |
+| **Used in** | SLH-DSA, HashSLH-DSA, WOTSP |
 
 ---
 
@@ -482,30 +606,16 @@ Parameters that select the algebraic structure for asymmetric operations.
 ---
 
 
-### `{namedGroup}`
-
-| Aspect | Detail |
-|:---|:---|
-| **Short** | Named DH / TLS group identifier |
-| **Description** | Selects a named finite-field or elliptic curve group for key exchange, as registered in IANA TLS Named Groups or RFC 7919. |
-| **Type** | group identifier |
-| **Canonical values** | `ffdhe2048` `ffdhe3072` `ffdhe4096` `ffdhe6144` `ffdhe8192` `x25519` `x448` `secp256r1` `secp384r1` `secp521r1` `brainpoolP256r1tls13` |
-| **Implementation note** | TLS 1.3 mandates x25519 and secp256r1 as minimum. RFC 7919 ffdhe groups for FIPS-compliant DH. x448 for 224-bit security. |
-| **Used in** | FFDH, J-PAKE, SRP, OPAQUE, SPAKE2, SPAKE2PLUS, HPKE |
-
----
-
-
 ### `{group}`
 
 | Aspect | Detail |
 |:---|:---|
-| **Short** | PAKE group / curve identifier |
-| **Description** | Identifies the algebraic group used in password-authenticated key exchange protocols. Can be a named elliptic curve or a named DH group. |
+| **Short** | Group / curve identifier for key exchange |
+| **Description** | Selects the algebraic group for key exchange or password-authenticated key exchange protocols. Covers both named finite-field DH groups (RFC 7919, IANA TLS Named Groups) and elliptic curve groups. |
 | **Type** | group identifier |
-| **Canonical values** | `P-256` `P-384` `P-521` `x25519` `x448` `ristretto255` `decaf448` |
-| **Implementation note** | OPAQUE and SPAKE2+ use ristretto255 or P-256. Ristretto255 eliminates cofactor issues on Curve25519. |
-| **Used in** | OPAQUE, SPAKE2, SPAKE2PLUS, J-PAKE |
+| **Canonical values** | `P-256` `P-384` `P-521` `x25519` `x448` `ristretto255` `decaf448` `ffdhe2048` `ffdhe3072` `ffdhe4096` `ffdhe6144` `ffdhe8192` |
+| **Implementation note** | TLS 1.3 mandates x25519 and secp256r1 as minimum. RFC 7919 ffdhe groups for FIPS-compliant DH. OPAQUE and SPAKE2+ use ristretto255 or P-256. Ristretto255 eliminates cofactor issues on Curve25519. |
+| **Used in** | FFDH, HPKE, OPAQUE, SPAKE2, SPAKE2PLUS, J-PAKE, SRP |
 
 ---
 
@@ -549,25 +659,11 @@ Parameters related to authentication tags, AEAD construction identifiers, and MA
 | Aspect | Detail |
 |:---|:---|
 | **Short** | MAC algorithm reference |
-| **Description** | Identifies a MAC sub-component inside a composite scheme (ECIES, J-PAKE, PBES, HPKE AEAD). |
+| **Description** | Identifies a MAC sub-component inside a composite scheme (ECIES, J-PAKE, PBES, HPKE AEAD, PBMAC1, CatKDF). |
 | **Type** | algorithm reference |
-| **Canonical values** | `HMAC-SHA256` `HMAC-SHA384` `HMAC-SHA512` `AES-CMAC` `Poly1305` `GMAC-128` `KMAC128` |
-| **Implementation note** | HPKE AEAD IDs: AES-128-GCM (0x0001), AES-256-GCM (0x0002), ChaCha20-Poly1305 (0x0003). |
-| **Used in** | HPKE, ECIES, J-PAKE, SPAKE2, SPAKE2PLUS, OPAQUE, PBES1, PBMAC1 |
-
----
-
-
-### `{macAlgorithm}`
-
-| Aspect | Detail |
-|:---|:---|
-| **Short** | MAC algorithm (PBMAC1) |
-| **Description** | The MAC algorithm used in PBMAC1 (password-based MAC, RFC 8018). Applies a password-derived key to produce a MAC tag. |
-| **Type** | algorithm reference |
-| **Canonical values** | `HMAC-SHA256` `HMAC-SHA512` |
-| **Implementation note** | RFC 8018 §7: PBMAC1 uses PBKDF2 to derive the MAC key, then applies the MAC function. SHA-256 and SHA-512 variants are standard. |
-| **Used in** | PBMAC1 |
+| **Canonical values** | `HMAC-SHA256` `HMAC-SHA384` `HMAC-SHA512` `AES-CMAC` `Poly1305` `GMAC-128` `KMAC128` `HKDF` `HMAC` |
+| **Implementation note** | HPKE AEAD IDs: AES-128-GCM (0x0001), AES-256-GCM (0x0002), ChaCha20-Poly1305 (0x0003). PBMAC1 (RFC 8018 §7): derives MAC key via PBKDF2, then applies the MAC function. CatKDF uses KMAC, HKDF, or HMAC as the MAC building block. |
+| **Used in** | HPKE, ECIES, J-PAKE, SPAKE2, SPAKE2PLUS, OPAQUE, PBES1, PBMAC1, CatKDF |
 
 ---
 
@@ -831,16 +927,30 @@ Construction-specific or protocol-level parameters that do not fit a general cat
 ---
 
 
-### `{SRP version}`
+### `{version}`
 
 | Aspect | Detail |
 |:---|:---|
-| **Short** | SRP protocol version |
-| **Description** | SRP-3 (original, RFC 2945) vs SRP-6 (revised, improved against server forgery). SRP-6a is the most widely deployed variant. |
-| **Type** | enumeration |
-| **Canonical values** | `3` `6` `6a` |
-| **Implementation note** | SRP-6 fixes a 2-for-1 guessing attack in SRP-3. SRP-6a (augmented) is the standard in TLS-SRP (RFC 5054). SRP-3 considered obsolete. |
-| **Used in** | SRP |
+| **Short** | Protocol or algorithm version |
+| **Description** | Selects the version of a protocol or algorithm variant. Context-dependent: SRP protocol version, GEA cipher version, or SHACAL version. |
+| **Type** | enumeration or numeric |
+| **Canonical values** | SRP: `3` `6` `6a` · GEA: `0`–`5` · SHACAL: `1` `2` |
+| **Implementation note** | SRP-6a (augmented) is the standard in TLS-SRP (RFC 5054). SRP-3 considered obsolete. GEA-0/1/2 broken; GEA-3 deprecated. |
+| **Used in** | SRP, GEA, SHACAL |
+
+---
+
+
+### `{modulus}`
+
+| Aspect | Detail |
+|:---|:---|
+| **Short** | Generator modulus (LCG) |
+| **Description** | The modulus parameter for a linear congruential generator. Determines the period and output range. |
+| **Type** | positive integer |
+| **Canonical values** | (open-ended — implementation-dependent) |
+| **Implementation note** | LCGs are not cryptographically secure. Common moduli: 2^31−1 (Lehmer), 2^32 (glibc), 2^48 (Java). |
+| **Used in** | LCG |
 
 ---
 
@@ -1428,38 +1538,45 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 |:---|:---|:---|:---|
 | `{keyLength}` | Size & length | integer (bits) | AES, RSA, DH, DES, RC-family |
 | `{saltLength}` | Size & length | integer (bytes) | RSASSA-PSS |
-| `{dkLen}` | Size & length | integer (bytes) | PBKDF1, PBKDF2, PBES |
 | `{tagLenBytes}` | Size & length | integer (bytes) | BLAKE3, SHAKE, KMAC |
-| `{outputLength}` | Size & length | integer (bytes) | BLAKE3, SHAKE, cSHAKE |
-| `{dkmLength}` | Size & length | integer (bits) | SP800-108, SP800-56C |
-| `{length}` | Size & length | integer (bits) | CMAC, UMAC |
-| `{parameterSetIdentifier}` | Size & length | enumeration | ML-DSA, ML-KEM, SLH-DSA, FN-DSA |
+| `{outputLength}` | Size & length | integer (bytes) | BLAKE3, SHAKE, cSHAKE, SHA3 |
+| `{parameterSet}` | Size & length | enumeration | ML-DSA, ML-KEM, SLH-DSA, FN-DSA, HQC, BIKE, HAWK… |
+| `{blockSize}` | Size & length | integer (bits) | Threefish |
+| `{width}` | Size & length | integer (bits) | CRC, Adler, Fletcher |
+| `{stateSize}` | Size & length | integer (bits) | Skein |
 | `{mode}` | Mode & variant | enumeration | AES, 3DES, all block ciphers |
 | `{mode}` (HPKE) | Mode & variant | enumeration | HPKE |
-| `{symmetricCipher}` | Mode & variant | algorithm ref | ECIES, HPKE, PBES |
-| `{cipherAlgorithm}` | Mode & variant | algorithm ref | CMAC, AES-KW |
-| `{cipherAlgorithm}` (DRBG) | Mode & variant | algorithm ref | CTR_DRBG |
+| `{cipherAlgorithm}` | Mode & variant | algorithm ref | CMAC, AES-KW, ECIES, PBES, CBC-MAC |
+| `{cipher}` | Mode & variant | algorithm ref | CTR_DRBG |
 | `{blockCipher}` (DRBG) | Mode & variant | algorithm ref | Fortuna, Yarrow |
 | `{encryptionAlgorithm}` | Mode & variant | algorithm ref | PBES1, PBES2 |
 | `{kem}` | Mode & variant | KEM identifier | HPKE |
-| `{otherBlockCipher}` | Mode & variant | algorithm ref | ChaCha |
+| `{variant}` | Mode & variant | numeric/name | SHA (spdx), HAVAL, PCG |
+| `{function}` | Mode & variant | enumeration | 3GPP-XOR, MILENAGE, TUAK |
+| `{operation}` | Mode & variant | enumeration | SM9 |
+| `{option}` | Mode & variant | enumeration | CTR_DRBG |
+| `{radix}` | Mode & variant | integer (2–65536) | AES-FF1, AES-FF3-1 |
+| `{profile}` | Mode & variant | enumeration | SRTP |
+| `{algorithm}` | Mode & variant | name | PBE |
+| `{level}` | Mode & variant | enumeration | BIKE |
+| `{classicalAlgorithm}` | Mode & variant | compound | MLDSA44, MLDSA65, MLDSA87 |
+| `{cipherSuite}` | Mode & variant | compound | MLS |
 | `{hashAlgorithm}` | Hash & digest | algorithm ref | HMAC, HKDF, PBKDF2, ECDSA, DSA, LMS, XMSS, SLH-DSA… |
+| `{hashFamily}` | Hash & digest | enumeration | SLH-DSA, HashSLH-DSA, WOTSP |
 | `{maskGenAlgorithm}` | Hash & digest | algorithm ref | RSAES-OAEP, RSASSA-PSS |
-| `{prfFunction}` | Hash & digest | algorithm ref | SP800-108 |
+| `{prf}` | Hash & digest | algorithm ref | SP800-108 |
 | `{auxFunction}` | Hash & digest | algorithm ref | SP800-56C |
 | `{hashFunction}/{nbits}/{treeHeight}` | Hash & digest | composite integers | LMS, LMOTS, XMSS, XMSSMT |
 | `{ellipticCurve}` | Curve & group | curve identifier | ECDSA, ECDH, ECIES, EdDSA, BLS, SM2… |
-| `{namedGroup}` | Curve & group | group identifier | FFDH, J-PAKE, SRP, SPAKE2, HPKE |
-| `{group}` | Curve & group | group identifier | OPAQUE, SPAKE2, SPAKE2PLUS, J-PAKE |
+| `{group}` | Curve & group | group identifier | FFDH, HPKE, OPAQUE, SPAKE2, SPAKE2PLUS, J-PAKE, SRP |
 | `{tagLength}` | Auth & tag | integer (bits) | AES-GCM, AES-CCM, HMAC, UMAC, KMAC |
 | `{ivLength}` | Auth & tag | integer (bits) | AES-GCM, AES-CCM, ChaCha20-Poly1305 |
-| `{mac}` | Auth & tag | algorithm ref | HPKE, ECIES, J-PAKE, OPAQUE |
-| `{macAlgorithm}` | Auth & tag | algorithm ref | PBMAC1 |
+| `{mac}` | Auth & tag | algorithm ref | HPKE, ECIES, J-PAKE, OPAQUE, PBMAC1, CatKDF |
 | `{aead}` | Auth & tag | AEAD identifier | HPKE |
 | `{kdf}` | KDF & password | algorithm ref | HPKE, ECIES, OPAQUE, X3DH |
 | `{iterations}` | KDF & password | positive integer | PBKDF1, PBKDF2, bcrypt, PBES |
 | `{memoryKiB}` | KDF & password | positive integer (KiB) | Argon2 |
-| `{passes}` | KDF & password | positive integer | Argon2 |
+| `{passes}` | KDF & password | positive integer | Argon2, HAVAL |
 | `{parallelism}` | KDF & password | positive integer | Argon2 |
 | `{saltLenBytes}` | KDF & password | integer (bytes) | Argon2, PBKDF2, scrypt, bcrypt |
 | `{N}` | KDF & password | power of 2 | scrypt |
@@ -1471,7 +1588,8 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 | `{t}` (yescrypt) | KDF & password | non-negative integer | yescrypt |
 | `{padding}` | Padding & IV | enumeration | AES-CBC, CAMELLIA, ARIA, SEED, RSA |
 | `{compressionRounds}/{finalizationRounds}` | Protocol & misc | integer pair | SipHash |
-| `{SRP version}` | Protocol & misc | enumeration | SRP |
+| `{version}` | Protocol & misc | enumeration/numeric | SRP, GEA, SHACAL |
+| `{modulus}` | Protocol & misc | positive integer | LCG |
 | `{k}` (ML-DSA) | PQC internal | integer | ML-DSA |
 | `{l}` (ML-DSA) | PQC internal | integer | ML-DSA |
 | `{eta}` (ML-DSA) | PQC internal | integer | ML-DSA |

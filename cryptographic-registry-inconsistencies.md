@@ -238,7 +238,7 @@ value under the `MLDSA44`, `MLDSA65`, `MLDSA87` families.
 | Source | Pattern |
 |--------|---------|
 | CycloneDX | `HPKE[-(mode_base\|mode_psk\|mode_auth\|mode_auth_psk)]-{kem}-{kdf}-{aead}` |
-| This repo | `HPKE-{kemVariant}-{kdf}-{aeadVariant}` |
+| This repo | `HPKE-{kem}-{kdf}-{aead}` |
 | RFC 9180 | mode: 0x00 (Base), 0x01 (PSK), 0x02 (Auth), 0x03 (AuthPSK) |
 
 **Issue:** CycloneDX encodes the HPKE mode as `mode_` prefixed underscore-separated

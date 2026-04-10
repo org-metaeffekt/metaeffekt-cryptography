@@ -29,7 +29,7 @@
 <text x="48" y="393" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{length}</text>
 <text x="48" y="407" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">generic length parameter</text>
 <rect x="40" y="417" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
-<text x="48" y="430" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="48" y="430" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSet}</text>
 <text x="48" y="444" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">algorithm parameter set</text>
 <rect x="358" y="124" width="316" height="298" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="3"/>
 <text x="366" y="141" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">§2 Mode &amp; Variant</text>
@@ -63,7 +63,7 @@
 <text x="700" y="208" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{maskGenAlgorithm}</text>
 <text x="700" y="222" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">MGF (typically MGF1)</text>
 <rect x="692" y="232" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
-<text x="700" y="245" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{prfFunction}</text>
+<text x="700" y="245" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{prf}</text>
 <text x="700" y="259" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">pseudorandom function</text>
 <rect x="692" y="269" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
 <text x="700" y="282" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{auxFunction}</text>
@@ -149,7 +149,7 @@
 <rect x="32" y="950" width="316" height="298" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
 <text x="40" y="967" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">ML-KEM  (FIPS 203)</text>
 <rect x="40" y="984" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
-<text x="48" y="997" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="48" y="997" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSet}</text>
 <text x="48" y="1011" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">512 | 768 | 1024</text>
 <rect x="40" y="1021" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
 <text x="48" y="1034" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{k}</text>
@@ -172,7 +172,7 @@
 <rect x="358" y="950" width="316" height="483" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
 <text x="366" y="967" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">ML-DSA  (FIPS 204)</text>
 <rect x="366" y="984" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
-<text x="374" y="997" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="374" y="997" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSet}</text>
 <text x="374" y="1011" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">44 | 65 | 87</text>
 <rect x="366" y="1021" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
 <text x="374" y="1034" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{k}, {l}</text>
@@ -210,7 +210,7 @@
 <rect x="684" y="950" width="316" height="409" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
 <text x="692" y="967" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">SLH-DSA  (FIPS 205)</text>
 <rect x="692" y="984" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
-<text x="700" y="997" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="700" y="997" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSet}</text>
 <text x="700" y="1011" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">128s|128f|192s|192f|256s|256f</text>
 <rect x="692" y="1021" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
 <text x="700" y="1034" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{n}</text>
@@ -242,7 +242,7 @@
 <rect x="32" y="1443" width="316" height="298" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
 <text x="40" y="1460" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">FN-DSA  (FIPS 206 IPD / Falcon)</text>
 <rect x="40" y="1477" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
-<text x="48" y="1490" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="48" y="1490" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSet}</text>
 <text x="48" y="1504" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">FN-DSA-512 | FN-DSA-1024</text>
 <rect x="40" y="1514" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
 <text x="48" y="1527" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{n}</text>
@@ -265,7 +265,7 @@
 <rect x="358" y="1443" width="316" height="113" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
 <text x="366" y="1460" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">HQC  (NIST Round 4, FIPS pending)</text>
 <rect x="366" y="1477" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
-<text x="374" y="1490" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSetIdentifier}</text>
+<text x="374" y="1490" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSet}</text>
 <text x="374" y="1504" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">128 | 192 | 256 (L1 | L3 | L5)</text>
 <rect x="366" y="1514" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
 <text x="374" y="1527" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">internal params</text>
