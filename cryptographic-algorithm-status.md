@@ -41,38 +41,67 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ---
 
+## Authorities Compared
+
+This document compares cryptographic primitives against three authorities that issue
+**algorithm-level** normative guidance: **NIST**, **BSI**, and **NSA CNSA 2.0**.
+
+| Authority | Role | Document |
+|:---|:---|:---|
+| **NIST** | US civilian / federal | SP 800-131A Rev 2, FIPS 197/180-4/186-5/202/203/204/205 |
+| **BSI** | German / EU civilian | TR-02102-1 v2026-01 |
+| **CNSA** | US military / National Security Systems | NSA CNSA 2.0 (PP-22-1338, Sep 2022) |
+
+> **Why no IETF column at the algorithm level?** IETF rarely issues normative
+> requirements at the primitive level — most IETF cryptographic RFCs either
+> *specify* an algorithm (e.g., RFC 8017 for RSA, RFC 5869 for HKDF) without
+> mandating its use, or are *informational* (RFC 6151 for MD5, RFC 6194 for SHA-1).
+> Where IETF does tabulate algorithm requirements (RFC 9142 for SSH, RFC 8221/8247
+> for IPsec, RFC 8624 for DNSSEC, RFC 8945 for TSIG), the scope is *protocol-level*
+> and is documented in [`cryptographic-protocol-status.md`](cryptographic-protocol-status.md)
+> instead.
+
+> **CNSA 2.0 column conventions:**
+> - **✅ Mandatory** — explicitly named in CNSA 2.0 as the required algorithm and parameter set
+> - **🔜 Transitional** — permitted only during the 2025-2030 transition window; will be replaced by PQC
+> - **🚫 Not in CNSA** — not part of the CNSA 2.0 suite (effectively disallowed for NSS use)
+> - **—** — no CNSA position (out-of-scope: e.g., non-cryptographic checksums, password hashes)
+
+---
+
 ## 1. Symmetric Encryption
 
 ### 1.1 Block cipher — key length
 
-| Pattern | Security | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `AES-[128\|192\|256]-*` | 128–256 bit | ✅ Recommended | ✅ Recommended | FIPS 197; SP 800-57; BSI TR-02102-1 §3.3 | AES-128 sufficient for most uses; AES-256 recommended for quantum-resilient designs |
-| `CAMELLIA-[128\|256]-*` | 128–256 bit | ✓ Approved | ✅ Recommended | BSI TR-02102-1 §3.3 | Approved by BSI; not in NIST FIPS approved list |
-| `3DES-*` | ≤112 bit | ❌ Deprecated | 🚫 Not recommended (TR-02102-1) | SP 800-131A Rev 2 §2; NIST IR 8214C | Disallowed for encryption after 2023; 64-bit block causes birthday-bound issues at ≥ 2³² blocks |
-| `DES-*` | 56 bit | 🚫 Disallowed | 🚫 Not recommended (TR-02102-1) | SP 800-131A Rev 2 | Cryptographically broken |
-| `RC2-*` | ≤128 bit | 🚫 Disallowed | 🚫 Not recommended | SP 800-131A Rev 2 | Legacy only; no new use |
-| `RC4-*` | — | 🚫 Disallowed | 🚫 Not recommended | SP 800-131A Rev 2; RFC 7465 | Stream cipher; statistically weak; banned in TLS |
-| `IDEA-*` | 128 bit | ❌ Deprecated | ❌ Removed (TR-02102-1) | BSI | Not NIST/FIPS approved; BSI removed |
-| `Blowfish-*` | ≤448 bit | ❌ Deprecated | ❌ Not listed (TR-02102-1) | — | 64-bit block; birthday bound vulnerable |
+| Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `AES-256-*` | 256 bit | ✅ Recommended | ✅ Recommended | ✅ Mandatory | FIPS 197; SP 800-57; BSI TR-02102-1 §3.3; CNSA 2.0 | CNSA 2.0 mandates AES-256 only |
+| `AES-[128\|192]-*` | 128–192 bit | ✅ Recommended | ✅ Recommended | 🚫 Not in CNSA | FIPS 197; SP 800-57; BSI TR-02102-1 §3.3 | NIST/BSI accept; CNSA 2.0 only allows AES-256 |
+| `CAMELLIA-[128\|256]-*` | 128–256 bit | ✓ Approved | ✅ Recommended | 🚫 Not in CNSA | BSI TR-02102-1 §3.3 | Approved by BSI; not in NIST FIPS or CNSA list |
+| `3DES-*` | ≤112 bit | ❌ Deprecated | 🚫 Not recommended (TR-02102-1) | 🚫 Not in CNSA | SP 800-131A Rev 2 §2; NIST IR 8214C | Disallowed for encryption after 2023; 64-bit block causes birthday-bound issues at ≥ 2³² blocks |
+| `DES-*` | 56 bit | 🚫 Disallowed | 🚫 Not recommended (TR-02102-1) | 🚫 Not in CNSA | SP 800-131A Rev 2 | Cryptographically broken |
+| `RC2-*` | ≤128 bit | 🚫 Disallowed | 🚫 Not recommended | 🚫 Not in CNSA | SP 800-131A Rev 2 | Legacy only; no new use |
+| `RC4-*` | — | 🚫 Disallowed | 🚫 Not recommended | 🚫 Not in CNSA | SP 800-131A Rev 2; RFC 7465 | Stream cipher; statistically weak; banned in TLS |
+| `IDEA-*` | 128 bit | ❌ Deprecated | ❌ Removed (TR-02102-1) | 🚫 Not in CNSA | BSI | Not NIST/FIPS approved; BSI removed |
+| `Blowfish-*` | ≤448 bit | ❌ Deprecated | ❌ Not listed (TR-02102-1) | 🚫 Not in CNSA | — | 64-bit block; birthday bound vulnerable |
 
 > ⚠ **3DES birthday bound:** With a 64-bit block, collisions become probable after ~2³² (4 GB) encrypted blocks under the same key. NIST disallowed 3DES for all new encryption effective 2024. Existing uses must migrate.
 
 ### 1.2 Block cipher modes
 
-| Pattern | Security | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `AES-[128\|192\|256]-GCM` | 128–256 bit | ✅ Recommended | ✅ Recommended | SP 800-38D; BSI TR-02102-1 §3.3 | AEAD; preferred for authenticated encryption |
-| `AES-[128\|192\|256]-CCM` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38C; BSI TR-02102-1 | AEAD; suitable for constrained environments |
-| `AES-[128\|192\|256]-GCM-SIV` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | RFC 8452; BSI TR-02102-1 | Nonce-misuse resistant; deterministic AEAD |
-| `AES-[128\|192\|256]-CTR` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38A | No authentication; counter must never repeat with same key |
-| `AES-[128\|192\|256]-CBC` | 128–256 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38A; BSI TR-02102-1 | Requires unpredictable (pseudorandom) IV; no integrity protection |
-| `AES-[128\|192\|256]-CFB[128]` | 128–256 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38A | IV must be unique; rarely preferred over CTR |
-| `AES-[128\|192\|256]-OFB` | 128–256 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38A | IV must be unique; malleable without MAC |
-| `AES-[128\|192\|256]-XTS` | 128–256 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38E; IEEE 1619 | **Storage encryption only**; not for network use; provides no integrity |
-| `AES-[128\|192\|256]-ECB` | 128–256 bit | 🚫 Disallowed | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38A; BSI TR-02102-1 | Deterministic; reveals identical blocks; prohibited for multi-block use |
-| `AES-KW-[128\|192\|256]` | 128–256 bit | ✓ Approved | — | SP 800-38F | Key-wrapping only; not a general encryption mode |
-| `ChaCha20-Poly1305` | 256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §3.4) | RFC 8439; BSI TR-02102-1 (2024) | AEAD; constant-time; preferred when AES-NI unavailable. Note: not in NIST FIPS approved list but BSI-approved |
+| Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `AES-[128\|192\|256]-GCM` | 128–256 bit | ✅ Recommended | ✅ Recommended | ✓ AES-256 only | SP 800-38D; BSI TR-02102-1 §3.3; CNSA 2.0 | AEAD; preferred for authenticated encryption; CNSA 2.0 mandates AES-256 |
+| `AES-[128\|192\|256]-CCM` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | ✓ AES-256 only | SP 800-38C; BSI TR-02102-1 | AEAD; suitable for constrained environments |
+| `AES-[128\|192\|256]-GCM-SIV` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | ✓ AES-256 only | RFC 8452; BSI TR-02102-1 | Nonce-misuse resistant; deterministic AEAD |
+| `AES-[128\|192\|256]-CTR` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | ✓ AES-256 only | SP 800-38A | No authentication; counter must never repeat with same key |
+| `AES-[128\|192\|256]-CBC` | 128–256 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.3) | ✓ AES-256 only | SP 800-38A; BSI TR-02102-1 | Requires unpredictable (pseudorandom) IV; no integrity protection |
+| `AES-[128\|192\|256]-CFB[128]` | 128–256 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.3) | ✓ AES-256 only | SP 800-38A | IV must be unique; rarely preferred over CTR |
+| `AES-[128\|192\|256]-OFB` | 128–256 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.3) | ✓ AES-256 only | SP 800-38A | IV must be unique; malleable without MAC |
+| `AES-[128\|192\|256]-XTS` | 128–256 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.3) | ✓ AES-256 only | SP 800-38E; IEEE 1619 | **Storage encryption only**; not for network use; provides no integrity |
+| `AES-[128\|192\|256]-ECB` | 128–256 bit | 🚫 Disallowed | ✅ Recommended (TR-02102-1 §3.3) | 🚫 Not in CNSA | SP 800-38A; BSI TR-02102-1 | Deterministic; reveals identical blocks; prohibited for multi-block use |
+| `AES-KW-[128\|192\|256]` | 128–256 bit | ✓ Approved | — | ✓ AES-256 only | SP 800-38F | Key-wrapping only; not a general encryption mode |
+| `ChaCha20-Poly1305` | 256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §3.4) | 🚫 Not in CNSA | RFC 8439; BSI TR-02102-1 (2024) | AEAD; constant-time; preferred when AES-NI unavailable. Note: not in NIST FIPS approved list but BSI-approved; not in CNSA 2.0 |
 
 > ⚠ **GCM IV uniqueness:** IV reuse under AES-GCM with the same key allows full key recovery. Use 96-bit random IVs with a CSPRNG, or a deterministic counter with strict uniqueness guarantees. After 2³² random IVs, collision probability exceeds 2⁻³² — implement rekey policies. (SP 800-38D §8.3)
 
@@ -82,31 +111,31 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ### 1.3 Tag length (AEAD)
 
-| Pattern | Security | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `AES-*-GCM[-128]` | 128-bit tag | ✅ Recommended | ✅ Recommended (TR-02102-1 §3.4) | SP 800-38D; BSI TR-02102-1; RFC 5116 | Full 128-bit tag required for general use |
-| `AES-*-GCM-96` | 96-bit tag | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.4) | SP 800-38D §5.2.1.2 | Permitted only for specific protocols (IPsec, TLS); verify protocol allows truncation |
-| `AES-*-GCM-[32\|64]` | 32–64-bit tag | 🚫 Disallowed | ✅ Recommended (TR-02102-1 §3.4) | SP 800-38D | Forgery probability too high for general use |
+| Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `AES-*-GCM[-128]` | 128-bit tag | ✅ Recommended | ✅ Recommended (TR-02102-1 §3.4) | ✓ AES-256 only | SP 800-38D; BSI TR-02102-1; RFC 5116 | Full 128-bit tag required for general use |
+| `AES-*-GCM-96` | 96-bit tag | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.4) | ⚠ AES-256 only | SP 800-38D §5.2.1.2 | Permitted only for specific protocols (IPsec, TLS); verify protocol allows truncation |
+| `AES-*-GCM-[32\|64]` | 32–64-bit tag | 🚫 Disallowed | ✅ Recommended (TR-02102-1 §3.4) | 🚫 Not in CNSA | SP 800-38D | Forgery probability too high for general use |
 
 ---
 
 ## 2. Hash Functions
 
-| Pattern | Output | Security | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|:---|:---|
-| `SHA-256` | 256 bit | 128 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | FIPS 180-4; BSI TR-02102-1 | Minimum for new designs |
-| `SHA-384` | 384 bit | 192 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | FIPS 180-4 | |
-| `SHA-512` | 512 bit | 256 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | FIPS 180-4 | |
-| `SHA-512/256` | 256 bit | 256 bit | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | FIPS 180-4 | Truncated SHA-512; efficient on 64-bit |
-| `SHA3-[256\|384\|512]` | 256–512 bit | 128–256 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | FIPS 202; BSI TR-02102-1 | Structurally independent of SHA-2; recommended for diversity |
-| `SHAKE128` | variable | 128 bit | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | FIPS 202 | XOF; use ≥ 32-byte (256-bit) output for 128-bit security |
-| `SHAKE256` | variable | 256 bit | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | FIPS 202 | XOF; use ≥ 64-byte (512-bit) output for 256-bit security |
-| `BLAKE2b-[256\|384\|512]` | variable | 128–256 bit | — | ⚠ Conditional | BSI | Approved by BSI; not in NIST FIPS list; high performance |
-| `BLAKE3` | variable | 128 bit | — | ⚠ Conditional | — | Not yet in NIST or BSI formal guidance; monitor standardisation |
-| `SHA-224` | 224 bit | 112 bit | ✅ Recommended (TR-02102-1 §4) | 🔜 Transitional | FIPS 180-4; SP 800-131A | 112-bit security; acceptable through 2030; disallowed from 2031 per SP 800-131A Rev 3 IPD; prefer SHA-256 for new designs |
-| `SHA-1` | 160 bit | 69 bit (collision) | 🚫 Not recommended (TR-02102-1) | ❌ Deprecated | SP 800-131A Rev 2 §9; BSI TR-02102-1 | **Disallowed for signatures, certificates, and collision-resistance** since 2013. Permitted only for HMAC-SHA-1 at legacy 112-bit security level through 2030 (NIST only, not BSI) |
-| `MD5` | 128 bit | — | 🚫 Not recommended (TR-02102-1) | 🚫 Disallowed | SP 800-131A; RFC 6151 | Collision attacks demonstrated; disallowed for all security purposes |
-| `MD4` | 128 bit | — | — | 🚫 Disallowed | — | Broken |
+| Pattern | Output | Security | NIST | BSI | CNSA | Sources | Notes |
+|:---|:---|:---|:---|:---|:---|:---|:---|
+| `SHA-384` | 384 bit | 192 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | ✅ Mandatory | FIPS 180-4; CNSA 2.0 | CNSA 2.0 mandates SHA-384 for general use |
+| `SHA-512` | 512 bit | 256 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | ✓ Approved | FIPS 180-4 | Acceptable in CNSA 2.0 contexts; SHA-384 preferred |
+| `SHA-256` | 256 bit | 128 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | 🚫 Not in CNSA | FIPS 180-4; BSI TR-02102-1 | Minimum for NIST/BSI; CNSA 2.0 mandates SHA-384 |
+| `SHA-512/256` | 256 bit | 256 bit | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | 🚫 Not in CNSA | FIPS 180-4 | Truncated SHA-512; efficient on 64-bit |
+| `SHA3-[256\|384\|512]` | 256–512 bit | 128–256 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | 🚫 Not in CNSA | FIPS 202; BSI TR-02102-1 | Structurally independent of SHA-2; CNSA 2.0 only specifies SHA-2 |
+| `SHAKE128` | variable | 128 bit | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | 🚫 Not in CNSA | FIPS 202 | XOF; use ≥ 32-byte (256-bit) output for 128-bit security |
+| `SHAKE256` | variable | 256 bit | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | 🚫 Not in CNSA | FIPS 202 | XOF; use ≥ 64-byte (512-bit) output for 256-bit security |
+| `BLAKE2b-[256\|384\|512]` | variable | 128–256 bit | — | ⚠ Conditional | 🚫 Not in CNSA | BSI | Approved by BSI; not in NIST FIPS or CNSA list |
+| `BLAKE3` | variable | 128 bit | — | ⚠ Conditional | 🚫 Not in CNSA | — | Not yet in NIST or BSI formal guidance |
+| `SHA-224` | 224 bit | 112 bit | ✅ Recommended (TR-02102-1 §4) | 🔜 Transitional | 🚫 Not in CNSA | FIPS 180-4; SP 800-131A | 112-bit security; acceptable through 2030; disallowed from 2031 per SP 800-131A Rev 3 IPD; prefer SHA-256 for new designs |
+| `SHA-1` | 160 bit | 69 bit (collision) | 🚫 Not recommended (TR-02102-1) | ❌ Deprecated | 🚫 Not in CNSA | SP 800-131A Rev 2 §9; BSI TR-02102-1 | **Disallowed for signatures, certificates, and collision-resistance** since 2013. Permitted only for HMAC-SHA-1 at legacy 112-bit security level through 2030 (NIST only, not BSI) |
+| `MD5` | 128 bit | — | 🚫 Not recommended (TR-02102-1) | 🚫 Disallowed | 🚫 Not in CNSA | SP 800-131A; RFC 6151 | Collision attacks demonstrated; disallowed for all security purposes |
+| `MD4` | 128 bit | — | — | 🚫 Disallowed | 🚫 Not in CNSA | — | Broken |
 
 > ⚠ **SHA-1 collision:** SHAttered attack (2017) demonstrated SHA-1 collisions at cost of ~2⁶³·¹ SHA-1 compressions. SHA-1 is fully deprecated for any collision-resistance use. NIST certificates with SHA-1 expired or were revoked by 2019.
 
@@ -114,19 +143,20 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ## 3. Message Authentication Codes (MAC)
 
-| Pattern | Security | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `HMAC-[SHA-256\|SHA-384\|SHA-512]` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | FIPS 198-1; SP 800-107; BSI TR-02102-1 | Preferred MAC construction for all new designs |
-| `HMAC-[SHA3-256\|SHA3-384\|SHA3-512]` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | FIPS 198-1; FIPS 202 | |
-| `HMAC-SHA-256[-128]` | 128 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | SP 800-107 | Truncated HMAC; output ≥ 128 bits |
-| `AES-[128\|192\|256]-CMAC` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38B; FIPS 198-1; BSI TR-02102-1 | Preferred MAC when HMAC is impractical (hardware AES available) |
-| `KMAC128` | 128 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §5) | SP 800-185 | |
-| `KMAC256` | 256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §5) | SP 800-185 | |
-| `Poly1305` | 128 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.4) | RFC 8439; BSI TR-02102-1 | One-time MAC; secure only as part of ChaCha20-Poly1305 or AES-Poly1305; not standalone |
-| `HMAC-SHA-1` | 112 bit | 🔜 Transitional | 🚫 Not recommended (TR-02102-1) | SP 800-131A Rev 2 | Permitted through 2030 for legacy; 112-bit security minimum. **BSI: no longer recommended** |
-| `HMAC-MD5` | — | 🚫 Disallowed | 🚫 Not recommended (TR-02102-1) | SP 800-131A | MD5 key-size weakness exploitable; disallowed |
-| `CBC-MAC-*` | — | ❌ Deprecated | — | SP 800-38B | Variable-length input attacks; superseded by CMAC |
-| `AES-*-GMAC` | 128–256 bit | ⚠ Conditional | ⚠ Conditional (TR-02102-1 §5) | SP 800-38D | AES-GCM with empty plaintext; inherits GCM IV-uniqueness requirement strictly |
+| Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `HMAC-[SHA-384\|SHA-512]` | 192–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | FIPS 198-1; SP 800-107; BSI TR-02102-1 | CNSA-compatible since SHA-384/512 are |
+| `HMAC-SHA-256` | 128 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | FIPS 198-1; SP 800-107 | NIST/BSI accept; CNSA mandates SHA-384 |
+| `HMAC-[SHA3-256\|SHA3-384\|SHA3-512]` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | FIPS 198-1; FIPS 202 | CNSA does not include SHA-3 |
+| `HMAC-SHA-256[-128]` | 128 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | SP 800-107 | Truncated HMAC; output ≥ 128 bits |
+| `AES-[128\|192\|256]-CMAC` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | ✓ AES-256 only | SP 800-38B; FIPS 198-1; BSI TR-02102-1 | Preferred MAC when HMAC is impractical (hardware AES available); CNSA mandates AES-256 |
+| `KMAC128` | 128 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §5) | 🚫 Not in CNSA | SP 800-185 | CNSA does not include Keccak-based MACs |
+| `KMAC256` | 256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §5) | 🚫 Not in CNSA | SP 800-185 | CNSA does not include Keccak-based MACs |
+| `Poly1305` | 128 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.4) | 🚫 Not in CNSA | RFC 8439; BSI TR-02102-1 | One-time MAC; secure only as part of ChaCha20-Poly1305 or AES-Poly1305; not standalone |
+| `HMAC-SHA-1` | 112 bit | 🔜 Transitional | 🚫 Not recommended (TR-02102-1) | 🚫 Not in CNSA | SP 800-131A Rev 2 | Permitted through 2030 for legacy; 112-bit security minimum. **BSI: no longer recommended** |
+| `HMAC-MD5` | — | 🚫 Disallowed | 🚫 Not recommended (TR-02102-1) | 🚫 Not in CNSA | SP 800-131A | MD5 key-size weakness exploitable; disallowed |
+| `CBC-MAC-*` | — | ❌ Deprecated | — | 🚫 Not in CNSA | SP 800-38B | Variable-length input attacks; superseded by CMAC |
+| `AES-*-GMAC` | 128–256 bit | ⚠ Conditional | ⚠ Conditional (TR-02102-1 §5) | ✓ AES-256 only | SP 800-38D | AES-GCM with empty plaintext; inherits GCM IV-uniqueness requirement strictly |
 
 > ⚠ **Truncated MAC:** Truncated HMAC output must be ≥ 128 bits per SP 800-107 §5.3.4. Shorter tags (e.g., 96-bit) require explicit approval and protocol binding.
 
@@ -134,13 +164,15 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ## 4. Asymmetric Encryption / Key Encapsulation
 
-| Pattern | Security | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `RSAES-OAEP-[2048\|3072\|4096]-[SHA-256\|SHA-384\|SHA-512]-MGF1` | 112–150+ bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-56B Rev 2; FIPS 186-5; BSI TR-02102-1 | Recommended RSA encryption scheme |
-| `RSAES-OAEP-[3072\|4096]-*` | 128–150+ bit | ✅ Recommended | ✅ Until 2031 (TR-02102-1 §2.3.2); ≥3000 bit | SP 800-57; BSI TR-02102-1 §3.6 | Preferred key sizes for new designs. BSI: 3000+ bits minimum |
-| `RSAES-PKCS1-[2048\|3072\|4096]` | ≤112 bit | 🚫 Disallowed | ✅ Until 2031 (TR-02102-1 §2.3.2); ≥3000 bit | SP 800-131A Rev 2; FIPS 186-5 | PKCS#1 v1.5 encryption **disallowed for new use** (Bleichenbacher oracle; not IND-CCA2); legacy decryption only with caution |
-| `ML-KEM-[512\|768\|1024]` | 128–256 bit (quantum) | ✅ Recommended | ✅ Recommended hybrid (TR-02102-1 §2.4.3) | FIPS 203 | NIST-standardised PQC KEM; ML-KEM-768 recommended default for TLS 1.3 |
-| `ECIES-[P-256\|P-384\|P-521]-*` | 128–192 bit | ✓ Approved | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | BSI TR-02102-1 §3.6; SP 800-56A | Hybrid encryption; use ECDH + KDF + AEAD |
+| Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `RSAES-OAEP-[3072\|4096]-SHA-384-MGF1` | 128–150+ bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | 🔜 Transitional | SP 800-56B Rev 2; FIPS 186-5; BSI TR-02102-1; CNSA 2.0 | CNSA 2.0: transitional with RSA-3072+ and SHA-384 only |
+| `RSAES-OAEP-[3072\|4096]-[SHA-256\|SHA-512]-MGF1` | 128–150+ bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | SP 800-56B Rev 2; FIPS 186-5; BSI TR-02102-1 | CNSA mandates SHA-384 |
+| `RSAES-OAEP-2048-*` | 112 bit | ✓ Approved | 🔜 Transitional | 🚫 Not in CNSA | SP 800-56B Rev 2; FIPS 186-5 | CNSA requires ≥3072 bits |
+| `RSAES-PKCS1-[2048\|3072\|4096]` | ≤112 bit | 🚫 Disallowed | ✅ Until 2031 (TR-02102-1 §2.3.2); ≥3000 bit | 🚫 Not in CNSA | SP 800-131A Rev 2; FIPS 186-5 | PKCS#1 v1.5 encryption **disallowed for new use** (Bleichenbacher oracle; not IND-CCA2); legacy decryption only with caution |
+| `ML-KEM-1024` | 256 bit (quantum) | ✓ Approved | ✅ Recommended hybrid (TR-02102-1 §2.4.3) | ✅ Mandatory | FIPS 203; CNSA 2.0 | CNSA 2.0 mandates ML-KEM-1024 (Category 5) |
+| `ML-KEM-[512\|768]` | 128–192 bit (quantum) | ✓ Approved | ✅ ML-KEM-768 only (TR-02102-1 §2.4.3) | 🚫 Not in CNSA | FIPS 203 | NIST-standardised; CNSA mandates ML-KEM-1024 only; BSI accepts ML-KEM-768 (rejects 512) |
+| `ECIES-[P-256\|P-384\|P-521]-*` | 128–192 bit | ✓ Approved | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | 🚫 Not in CNSA | BSI TR-02102-1 §3.6; SP 800-56A | Hybrid encryption; use ECDH + KDF + AEAD; not in CNSA suite |
 
 > ⚠ **RSAES-PKCS1 (v1.5):** The Bleichenbacher '98 attack and its variants (ROBOT 2017, Lucky Thirteen) allow ciphertext forgery and plaintext recovery. Disallowed for new implementations. Constant-time decryption with rejection of malformed messages is required even in legacy modes.
 
@@ -148,16 +180,17 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ## 5. Key Agreement
 
-| Pattern | Security | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `ECDH-[P-256\|P-384\|P-521]` | 128–260 bit | ✅ Recommended | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | SP 800-56A Rev 3; FIPS 186-5; BSI TR-02102-1 §3.5 | Ephemeral use (ECDHE) required for forward secrecy |
-| `ECDH-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]` | 128–256 bit | ✓ Approved | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | BSI TR-02102-1 §3.5 | BSI-preferred alternative to NIST curves; not in NIST FIPS |
-| `ECDH-[Curve25519\|X25519]` | 128 bit | ✅ Recommended | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | SP 800-186; RFC 7748; BSI TR-02102-1 | Constant-time; immune to timing attacks by design; default in TLS 1.3 |
-| `ECDH-[Curve448\|X448]` | 224 bit | ✓ Approved | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | SP 800-186; RFC 7748; BSI TR-02102-1 | 224-bit security |
-| `FFDH-[ffdhe3072\|ffdhe4096\|ffdhe6144\|ffdhe8192]` | 128–192 bit | ✓ Approved | ✅ Until 2031 (TR-02102-1 §2.3.5); ≥3000 bit | SP 800-56A; RFC 7919; BSI TR-02102-1 | Use RFC 7919 named groups only; custom primes require full validation |
-| `FFDH-ffdhe2048` | 112 bit | 🔜 Transitional | ✅ Until 2031 (TR-02102-1 §2.3.5); ≥3000 bit | SP 800-57; SP 800-56A | 112-bit security; acceptable through 2030. BSI: 3000+ bits recommended for new designs |
-| `FFDH-[1024\|1536]` | <112 bit | 🚫 Disallowed | ✅ Until 2031 (TR-02102-1 §2.3.5); ≥3000 bit | SP 800-131A Rev 2 | Logjam attack; disallowed |
-| `ECDH-secp256k1` | 128 bit | ❌ Deprecated | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | — | Not in NIST SP 800-186 or BSI approved list; used in blockchain only |
+| Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `ECDH-P-384` | 192 bit | ✅ Recommended | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | 🔜 Transitional | SP 800-56A Rev 3; FIPS 186-5; BSI TR-02102-1 §3.5; CNSA 2.0 | CNSA 2.0 transitional; will be replaced by ML-KEM-1024 |
+| `ECDH-[P-256\|P-521]` | 128–260 bit | ✅ Recommended | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | 🚫 Not in CNSA | SP 800-56A Rev 3; FIPS 186-5; BSI TR-02102-1 §3.5 | CNSA mandates P-384 only |
+| `ECDH-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]` | 128–256 bit | ✓ Approved | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | 🚫 Not in CNSA | BSI TR-02102-1 §3.5 | BSI-preferred alternative to NIST curves; not in NIST FIPS or CNSA |
+| `ECDH-[Curve25519\|X25519]` | 128 bit | ✅ Recommended | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | 🚫 Not in CNSA | SP 800-186; RFC 7748; BSI TR-02102-1 | Constant-time; default in TLS 1.3; not in CNSA |
+| `ECDH-[Curve448\|X448]` | 224 bit | ✓ Approved | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | 🚫 Not in CNSA | SP 800-186; RFC 7748; BSI TR-02102-1 | 224-bit security |
+| `FFDH-[ffdhe3072\|ffdhe4096\|ffdhe6144\|ffdhe8192]` | 128–192 bit | ✓ Approved | ✅ Until 2031 (TR-02102-1 §2.3.5); ≥3000 bit | 🔜 Transitional | SP 800-56A; RFC 7919; BSI TR-02102-1; CNSA 2.0 | CNSA 2.0 transitional with DH ≥3072 |
+| `FFDH-ffdhe2048` | 112 bit | 🔜 Transitional | ✅ Until 2031 (TR-02102-1 §2.3.5); ≥3000 bit | 🚫 Not in CNSA | SP 800-57; SP 800-56A | 112-bit security; CNSA requires ≥3072 |
+| `FFDH-[1024\|1536]` | <112 bit | 🚫 Disallowed | ✅ Until 2031 (TR-02102-1 §2.3.5); ≥3000 bit | 🚫 Not in CNSA | SP 800-131A Rev 2 | Logjam attack; disallowed |
+| `ECDH-secp256k1` | 128 bit | ❌ Deprecated | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | 🚫 Not in CNSA | — | Not in NIST SP 800-186 or BSI approved list; used in blockchain only |
 
 > ⚠ **Ephemeral key agreement:** Static (non-ephemeral) ECDH and DH provide no forward secrecy. SP 800-56A requires ephemeral keys for forward-secret key establishment. TLS 1.3 mandates ECDHE or DHE.
 
@@ -241,19 +274,22 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 6.1 Classical signatures
 
-| Pattern | Security | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `ECDSA-[P-256\|P-384\|P-521]-[SHA-256\|SHA-384\|SHA-512]` | 128–260 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | FIPS 186-5; SP 800-57; BSI TR-02102-1 §3.4 | RFC 8422 defines TLS use |
-| `ECDSA-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]-*` | 128–256 bit | ✓ Approved | ✅ Until 2035 (TR-02102-1 §5.3.3); ≥250 bit | BSI TR-02102-1 §3.4 | BSI-preferred alternative to NIST curves |
-| `EdDSA-[Ed25519\|Ed448]` | 128–224 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §5.3.3) | FIPS 186-5; RFC 8032; BSI TR-02102-1 | Deterministic; immune to k-reuse attacks; constant-time |
-| `RSASSA-PSS-[3072\|4096\|7680\|15360]-[SHA-256\|SHA-384\|SHA-512]-*` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | FIPS 186-5; SP 800-131A; BSI TR-02102-1 §3.6 | PSS with salt ≥ hLen bytes (SP 800-131A); BSI: 3000+ bit minimum |
-| `RSASSA-PSS-2048-[SHA-256\|SHA-384\|SHA-512]-*` | 112 bit | 🔜 Transitional | ✅ Recommended (TR-02102-1 §4) | SP 800-131A Rev 2; SP 800-57 | 112-bit security; acceptable through 2030 |
-| `RSASSA-PKCS1-[3072\|4096]-[SHA-256\|SHA-384\|SHA-512]` | 128–150+ bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §4) | FIPS 186-5 | PKCS#1 v1.5 **removed from FIPS 186-5 for new signing**; legacy signature verification only |
-| `RSASSA-PKCS1-2048-*` | 112 bit | ❌ Deprecated | ✅ Until 2031 (TR-02102-1 §2.3.2); ≥3000 bit | FIPS 186-5; SP 800-131A | New signing disallowed per FIPS 186-5; verification of existing signatures permitted |
-| `DSA-[2048\|3072]-[SHA-256\|SHA-384\|SHA-512]` | 112–128 bit | ❌ Deprecated | ✅ Recommended (TR-02102-1 §4) | FIPS 186-5 §3.7 | DSA **removed from FIPS 186-5** for new use (2023); legacy verification only |
-| `ECDSA-[P-192\|secp192r1]` | 96 bit | 🚫 Disallowed | ✅ Until 2035 (TR-02102-1 §5.3.3); ≥250 bit | SP 800-131A Rev 2; FIPS 186-5 | Disallowed after 2013 |
-| `DSA-1024-*` | 80 bit | 🚫 Disallowed | 🔜 Until 2029 (TR-02102-1 §5.3.2) | SP 800-131A Rev 2 | Disallowed after 2013 |
-| `RSASSA-*-1024-*` | 80 bit | 🚫 Disallowed | ✅ Until 2031 (TR-02102-1 §2.3.2); ≥3000 bit | SP 800-131A Rev 2 | Disallowed after 2013 |
+| Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `ECDSA-P-384-SHA-384` | 192 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | 🔜 Transitional | FIPS 186-5; SP 800-57; BSI TR-02102-1 §3.4; CNSA 2.0 | CNSA 2.0 transitional; will be replaced by ML-DSA-87 |
+| `ECDSA-[P-256\|P-521]-[SHA-256\|SHA-384\|SHA-512]` | 128–260 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | FIPS 186-5; SP 800-57; BSI TR-02102-1 §3.4 | CNSA mandates P-384 only |
+| `ECDSA-P-384-[SHA-256\|SHA-512]` | 192 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | FIPS 186-5; SP 800-57 | CNSA mandates SHA-384 with P-384 |
+| `ECDSA-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]-*` | 128–256 bit | ✓ Approved | ✅ Until 2035 (TR-02102-1 §5.3.3); ≥250 bit | 🚫 Not in CNSA | BSI TR-02102-1 §3.4 | BSI-preferred alternative; not in NIST FIPS or CNSA |
+| `EdDSA-[Ed25519\|Ed448]` | 128–224 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §5.3.3) | 🚫 Not in CNSA | FIPS 186-5; RFC 8032; BSI TR-02102-1 | Deterministic; immune to k-reuse; not in CNSA |
+| `RSASSA-PSS-[3072\|4096\|7680\|15360]-SHA-384-*` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | 🔜 Transitional | FIPS 186-5; SP 800-131A; BSI TR-02102-1 §3.6; CNSA 2.0 | CNSA 2.0 transitional with RSA-3072+ and SHA-384 |
+| `RSASSA-PSS-[3072\|4096\|7680\|15360]-[SHA-256\|SHA-512]-*` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | FIPS 186-5; SP 800-131A | CNSA mandates SHA-384 |
+| `RSASSA-PSS-2048-[SHA-256\|SHA-384\|SHA-512]-*` | 112 bit | 🔜 Transitional | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | SP 800-131A Rev 2; SP 800-57 | CNSA requires ≥3072 bits |
+| `RSASSA-PKCS1-[3072\|4096]-[SHA-256\|SHA-384\|SHA-512]` | 128–150+ bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | FIPS 186-5 | PKCS#1 v1.5 **removed from FIPS 186-5 for new signing**; CNSA mandates PSS |
+| `RSASSA-PKCS1-2048-*` | 112 bit | ❌ Deprecated | ✅ Until 2031 (TR-02102-1 §2.3.2); ≥3000 bit | 🚫 Not in CNSA | FIPS 186-5; SP 800-131A | New signing disallowed per FIPS 186-5 |
+| `DSA-[2048\|3072]-[SHA-256\|SHA-384\|SHA-512]` | 112–128 bit | ❌ Deprecated | ✅ Recommended (TR-02102-1 §4) | 🚫 Not in CNSA | FIPS 186-5 §3.7 | DSA **removed from FIPS 186-5** for new use (2023) |
+| `ECDSA-[P-192\|secp192r1]` | 96 bit | 🚫 Disallowed | ✅ Until 2035 (TR-02102-1 §5.3.3); ≥250 bit | 🚫 Not in CNSA | SP 800-131A Rev 2; FIPS 186-5 | Disallowed after 2013 |
+| `DSA-1024-*` | 80 bit | 🚫 Disallowed | 🔜 Until 2029 (TR-02102-1 §5.3.2) | 🚫 Not in CNSA | SP 800-131A Rev 2 | Disallowed after 2013 |
+| `RSASSA-*-1024-*` | 80 bit | 🚫 Disallowed | ✅ Until 2031 (TR-02102-1 §2.3.2); ≥3000 bit | 🚫 Not in CNSA | SP 800-131A Rev 2 | Disallowed after 2013 |
 
 > ⚠ **ECDSA nonce reuse:** ECDSA is catastrophically vulnerable to k (nonce) reuse — reusing k for two signatures with the same key exposes the private key directly. Use an RFC 6979 deterministic nonce or an approved CSPRNG per signing operation.
 
@@ -261,18 +297,18 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 6.2 Stateful hash-based signatures (SP 800-208)
 
-| Pattern | Security | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `LMS_SHA256_M32_H{5\|10\|15\|20\|25}` | 128-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | SP 800-208; RFC 8554 | **Stateful** — 256-bit classical / 128-bit post-quantum; n=32 |
-| `LMS_SHA256_M24_H{5\|10\|15\|20\|25}` | 96-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | SP 800-208; RFC 8554 | CNSA 2.0 recommended parameter family for NSS; n=24 |
-| `LMS_SHAKE_M32_H{5\|10\|15\|20\|25}` | 128-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-208 | SHAKE256/256 hash variant; n=32 |
-| `LMS_SHAKE_M24_H{5\|10\|15\|20\|25}` | 96-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-208 | SHAKE256/192 hash variant; n=24 |
-| `HSS-*` | 128-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | SP 800-208; RFC 8554 | Multi-level LMS; product of per-level capacities; state at each level |
-| `XMSS-SHA2_[10\|16\|20]_[256\|512]` | 128–256-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-208; RFC 8391 | **Stateful** — WOTS+ OTS; SHA-256 (n=32) or SHA-512 (n=64) |
-| `XMSS-SHAKE_[10\|16\|20]_[256\|512]` | 128–256-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-208; RFC 8391 | SHAKE-based XMSS variants |
-| `XMSS-SHA2_[10\|16\|20]_192` | 96-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-208 | SHA-256/192 (n=24); SP 800-208 addition |
-| `XMSS-SHAKE256_[10\|16\|20]_192` | 96-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-208 | SHAKE256/192 (n=24); SP 800-208 addition |
-| `XMSSMT-*` | 128–256-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | SP 800-208; RFC 8391 | Multi-tree XMSS; very large signing volumes; d-layer hypertree |
+| Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `LMS_SHA256_M32_H{5\|10\|15\|20\|25}` | 128-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | ✅ Mandatory | SP 800-208; RFC 8554; CNSA 2.0 | **Stateful** — 256-bit classical / 128-bit post-quantum; n=32; CNSA 2.0 software/firmware signing |
+| `LMS_SHA256_M24_H{5\|10\|15\|20\|25}` | 96-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | ✅ Mandatory | SP 800-208; RFC 8554; CNSA 2.0 | CNSA 2.0 recommended parameter family for NSS; n=24 |
+| `LMS_SHAKE_M32_H{5\|10\|15\|20\|25}` | 128-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | SP 800-208 | SHAKE256/256 hash variant; n=32; CNSA permits SP 800-208 LMS variants |
+| `LMS_SHAKE_M24_H{5\|10\|15\|20\|25}` | 96-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | SP 800-208 | SHAKE256/192 hash variant; n=24 |
+| `HSS-*` | 128-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | ✅ Mandatory | SP 800-208; RFC 8554; CNSA 2.0 | Multi-level LMS; product of per-level capacities; state at each level |
+| `XMSS-SHA2_[10\|16\|20]_[256\|512]` | 128–256-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | ✅ Mandatory | SP 800-208; RFC 8391; CNSA 2.0 | **Stateful** — WOTS+ OTS; SHA-256 (n=32) or SHA-512 (n=64); CNSA software signing |
+| `XMSS-SHAKE_[10\|16\|20]_[256\|512]` | 128–256-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | SP 800-208; RFC 8391 | SHAKE-based XMSS variants |
+| `XMSS-SHA2_[10\|16\|20]_192` | 96-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | SP 800-208 | SHA-256/192 (n=24); SP 800-208 addition |
+| `XMSS-SHAKE256_[10\|16\|20]_192` | 96-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | SP 800-208 | SHAKE256/192 (n=24); SP 800-208 addition |
+| `XMSSMT-*` | 128–256-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | ✅ Mandatory | SP 800-208; RFC 8391; CNSA 2.0 | Multi-tree XMSS; very large signing volumes; d-layer hypertree |
 
 > ⚠ **Statefulness:** Signing the same state twice under LMS, HSS, XMSS, or XMSS^MT is cryptographically catastrophic — it directly exposes the private key. Not suitable for general-purpose signing; use for code/firmware signing where frequency is low and state is fully controlled.
 
@@ -389,44 +425,44 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 10.1 Key Encapsulation — ML-KEM (FIPS 203)
 
-| Pattern | NIST Level | Security (classical / quantum) | NIST | BSI | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `ML-KEM-512` | 1 | 128 / 128 bit | ✓ Approved | ❌ Not recommended | Below BSI minimum (Category 3 required) |
-| `ML-KEM-768` | 3 | 192 / 192 bit | ✅ Recommended | ✅ Recommended hybrid (§2.4.3) | **Default recommendation**; BSI requires hybrid with classical KEM until 2031 |
-| `ML-KEM-1024` | 5 | 256 / 256 bit | ✓ Approved | ✅ Recommended hybrid (§2.4.3) | Highest security; BSI requires hybrid with classical KEM |
+| Pattern | NIST Level | Security (classical / quantum) | NIST | BSI | CNSA | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `ML-KEM-512` | 1 | 128 / 128 bit | ✓ Approved | ❌ Not recommended | 🚫 Not in CNSA | Below BSI minimum (Category 3 required); CNSA mandates ML-KEM-1024 |
+| `ML-KEM-768` | 3 | 192 / 192 bit | ✅ Recommended | ✅ Recommended hybrid (§2.4.3) | 🚫 Not in CNSA | NIST default recommendation; BSI requires hybrid with classical KEM until 2031; CNSA mandates ML-KEM-1024 |
+| `ML-KEM-1024` | 5 | 256 / 256 bit | ✓ Approved | ✅ Recommended hybrid (§2.4.3) | ✅ Mandatory | CNSA 2.0 mandates this parameter set; BSI requires hybrid with classical KEM |
 
 > ⚠ **Hybrid deployment:** Until ML-KEM implementations have accrued operational confidence, deploy as **hybrid** with a classical key exchange (X25519 or P-256). The TLS 1.3 hybrid scheme `X25519MLKEM768` is defined in `draft-ietf-tls-hybrid-design` and is the current recommendation. The combiner is simple concatenation fed into the TLS 1.3 HKDF key schedule (`{hybridKemCombiner}=concat`).
 
 ### 10.2 Digital Signatures — ML-DSA (FIPS 204)
 
-| Pattern | NIST Level | Security | NIST | BSI | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `ML-DSA-44` | 2 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.2) | Smallest signatures (2420 B); good for high-volume signing |
-| `ML-DSA-65` | 3 | 192 bit | ✅ Recommended | ✅ Recommended (§5.3.4.2) | Balanced; recommended for general use |
-| `ML-DSA-87` | 5 | 256 bit | ✓ Approved | ✅ Recommended (§5.3.4.2) | Highest security |
-| `ML-DSA-[44\|65\|87]-(deterministic)` | — | — | ❌ Deprecated | ❌ Not recommended | Deterministic mode vulnerable to fault attacks; use hedged mode |
-| `ML-DSA-[44\|65\|87]-(hedged)` | — | — | ✅ Recommended | ✅ Recommended (§5.3.4.2) | FIPS 204 §5.2 hedged mode (rnd from approved DRBG); fault-attack resistant |
+| Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `ML-DSA-44` | 2 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.2) | 🚫 Not in CNSA | Smallest signatures (2420 B); CNSA mandates ML-DSA-87 |
+| `ML-DSA-65` | 3 | 192 bit | ✅ Recommended | ✅ Recommended (§5.3.4.2) | 🚫 Not in CNSA | Balanced; NIST recommends; CNSA mandates ML-DSA-87 |
+| `ML-DSA-87` | 5 | 256 bit | ✓ Approved | ✅ Recommended (§5.3.4.2) | ✅ Mandatory | CNSA 2.0 mandates this parameter set for general signing |
+| `ML-DSA-[44\|65\|87]-(deterministic)` | — | — | ❌ Deprecated | ❌ Not recommended | ❌ Deprecated | Deterministic mode vulnerable to fault attacks; use hedged mode |
+| `ML-DSA-[44\|65\|87]-(hedged)` | — | — | ✅ Recommended | ✅ Recommended (§5.3.4.2) | ✓ ML-DSA-87 only | FIPS 204 §5.2 hedged mode; fault-attack resistant; CNSA only at Level 5 |
 
 > ⚠ **ML-DSA constant-time requirement:** Non-constant-time implementations of `SampleInBall` and the τ non-zero position sampling leak information about the signing key. All ML-DSA implementations must sample in constant time with respect to secret inputs. (NIST PQC Forum, Jan 2026)
 
 ### 10.3 Digital Signatures — SLH-DSA (FIPS 205)
 
-| Pattern | NIST Level | Security | NIST | BSI | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `SLH-DSA-SHA2-128s` | 1 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | Small signatures (7856 B); slow signing |
-| `SLH-DSA-SHA2-128f` | 1 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | Fast signing; larger signatures (17088 B) |
-| `SLH-DSA-SHA2-[192s\|192f]` | 3 | 192 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | |
-| `SLH-DSA-SHA2-[256s\|256f]` | 5 | 256 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | |
-| `SLH-DSA-SHAKE-[128s\|128f\|192s\|192f\|256s\|256f]` | 1–5 | 128–256 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | SHAKE-based variants; identical security, different internal hash |
+| Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `SLH-DSA-SHA2-128s` | 1 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | Small signatures (7856 B); slow signing; CNSA does not include SLH-DSA |
+| `SLH-DSA-SHA2-128f` | 1 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | Fast signing; larger signatures (17088 B); CNSA does not include SLH-DSA |
+| `SLH-DSA-SHA2-[192s\|192f]` | 3 | 192 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | CNSA does not include SLH-DSA |
+| `SLH-DSA-SHA2-[256s\|256f]` | 5 | 256 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | CNSA does not include SLH-DSA |
+| `SLH-DSA-SHAKE-[128s\|128f\|192s\|192f\|256s\|256f]` | 1–5 | 128–256 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | SHAKE-based variants; identical security, different internal hash; CNSA does not include SLH-DSA |
 
 > ℹ **Stateless:** SLH-DSA is stateless (unlike LMS/XMSS); no state management required. Signing is slow but requires no storage state. Suitable where signing frequency is low and verification speed matters more than signing speed.
 
 ### 10.4 Digital Signatures — FN-DSA / Falcon (FIPS 206 IPD)
 
-| Pattern | NIST Level | Security | NIST | BSI | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `FN-DSA-512` | 1 | 128 bit | ⚠ Conditional | — Not yet evaluated | FIPS 206 IPD (submitted Aug 2025; final expected late 2026 / early 2027); compact signatures (666 B); floating-point dependency (see alert) |
-| `FN-DSA-1024` | 5 | 256 bit | ⚠ Conditional | — Not yet evaluated | FIPS 206 IPD; 1280 B signatures |
+| Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `FN-DSA-512` | 1 | 128 bit | ⚠ Conditional | — Not yet evaluated | 🚫 Not in CNSA | FIPS 206 IPD (submitted Aug 2025; final expected late 2026 / early 2027); compact signatures (666 B); floating-point dependency; CNSA mandates ML-DSA-87 |
+| `FN-DSA-1024` | 5 | 256 bit | ⚠ Conditional | — Not yet evaluated | 🚫 Not in CNSA | FIPS 206 IPD; 1280 B signatures; CNSA does not include FN-DSA |
 
 > ⚠ **IEEE 754 compliance (`{floatingPointMode}`):** FN-DSA/Falcon uses FFT-based Gaussian sampling that relies on IEEE 754 floating-point arithmetic. Execution with extended precision (x87), flush-to-zero, or non-standard rounding **deviates from the specification** and may weaken or break security. Require `ieee754-strict` mode or `integer-emulation` in FIPS 140-3 and CC environments. FIPS 206 is still in the Initial Public Draft stage (IPD submitted for Department of Commerce clearance August 2025; final standard not yet published as of Q1 2026).
 

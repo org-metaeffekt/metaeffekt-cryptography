@@ -335,7 +335,16 @@ def normalize_status(cell: str) -> int | None:
 
 
 # Authority columns recognised in status tables.
-AUTHORITY_NAMES = ("IETF", "NIST", "BSI", "CABF")
+AUTHORITY_NAMES = ("IETF", "NIST", "BSI", "CABF", "CNSA")
+
+
+def _split_table_row(line: str) -> list[str]:
+    """Split a markdown table row by '|', preserving escaped pipes (\\|) inside cells."""
+    # Replace escaped pipe with a sentinel that cannot appear in markdown
+    PIPE_SENTINEL = "\x00PIPE\x00"
+    safe = line.replace("\\|", PIPE_SENTINEL)
+    cells = [c.strip().replace(PIPE_SENTINEL, "\\|") for c in safe.split("|")]
+    return cells
 
 
 def parse_authority_tables(text: str) -> list[tuple[int, str, dict]]:
@@ -355,7 +364,7 @@ def parse_authority_tables(text: str) -> list[tuple[int, str, dict]]:
             auth_indices = {}
             continue
 
-        cells = [c.strip() for c in line.split("|")]
+        cells = _split_table_row(line)
 
         # Header row detection: contains at least one authority name as exact cell
         header_authorities = {n: cells.index(n) for n in AUTHORITY_NAMES if n in cells}

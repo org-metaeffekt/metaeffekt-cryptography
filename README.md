@@ -96,9 +96,11 @@ that adjustments can be applied accordingly.
 
 - **[random-number-generators.md](random-number-generators.md)** — Catalogue of deterministic and non-deterministic random number generators (DRBGs and TRNGs). Covers SP 800-90A/B/C families, OS entropy sources, and platform-specific APIs. Each entry lists construction type, security strength, seeding requirements, and CycloneDX RNG pattern strings.
 
-- **[cryptographic-algorithm-status.md](cryptographic-algorithm-status.md)** — Algorithm-level security status (approved/deprecated/disallowed/broken) derived from NIST SP 800-57, SP 800-131A Rev 2, BSI TR-02102-1, and related standards. Covers symmetric, hash, MAC, asymmetric, key agreement, signatures, KDFs, RNGs, and PQC. Includes security strength equivalence tables (SP 800-57 Table 2) and cryptoperiod recommendations.
+- **[cryptographic-algorithm-status.md](cryptographic-algorithm-status.md)** — Algorithm-level security status (approved/deprecated/disallowed/broken) compared across three authorities: **NIST** (SP 800-131A Rev 2, FIPS 197/180-4/186-5/202/203/204/205), **BSI** (TR-02102-1 v2026-01), and **NSA CNSA 2.0** (PP-22-1338). Covers symmetric, hash, MAC, asymmetric, key agreement, signatures, KDFs, RNGs, and PQC. Includes security strength equivalence tables (SP 800-57 Table 2) and cryptoperiod recommendations.
 
-- **[cryptographic-protocol-status.md](cryptographic-protocol-status.md)** — Protocol-specific deployment guidance: SSH cipher suites (BSI TR-02102-4), IPsec/IKEv2 (BSI TR-02102-3), NSA CNSA 2.0 algorithm requirements and migration timeline, quantum threat context (ENISA), PKI key management (SP 800-57 Part 3), S/MIME, Kerberos, and DNSSEC.
+- **[cryptographic-protocol-status.md](cryptographic-protocol-status.md)** — Protocol-specific deployment guidance with multi-authority comparison columns (**IETF** / **NIST** / **BSI**, plus **CABF** for §5 PKI): SSH cipher suites (RFC 9142, BSI TR-02102-4), IPsec/IKEv2 (RFC 8221/8247, BSI TR-02102-3), NSA CNSA 2.0 algorithm requirements and migration timeline, quantum threat context (ENISA), PKI key management (CABF BR, SP 800-57 Part 3), S/MIME, Kerberos (RFC 6649/8429), and DNSSEC (RFC 8624, RFC 8945).
+
+- **[cryptographic-authority-inconsistencies.md](cryptographic-authority-inconsistencies.md)** — Cross-authority comparison report identifying where IETF, NIST, BSI, NSA CNSA 2.0, and CA/Browser Forum disagree on algorithm status. Documents 56 MAJOR / 23 MEDIUM / 77 minor divergences across both status files (217 comparable rows), grouped into five recurring patterns (CNSA exclusion, NIST/BSI PQC margin, IETF interop retention, BSI migration windows, BSI table coverage anomalies). Generated automatically by `scripts/validate_consistency.py` (check #9).
 
 - **[cryptographic-glossary.md](cryptographic-glossary.md)** — Plain-language explanations of all terms and abbreviations used across this repository, written for readers without a mathematics background. Covers cryptographic primitives, protocol concepts, standardisation bodies, post-quantum terminology, and SBOM/CycloneDX notation. Includes an abbreviation quick-reference table.
 
@@ -114,7 +116,7 @@ that adjustments can be applied accordingly.
 
 - **[cryptographic-registry-inconsistencies.md](cryptographic-registry-inconsistencies.md)** — Cross-reference of naming ambiguities and inconsistencies between the CycloneDX cryptography registry, the SPDX algorithm list, and this repository's taxonomy. Documents 16 concrete issues with eight resolution mechanisms. All CycloneDX and SPDX instance patterns are covered.
 
-- **[management/validator-test-report.md](management/validator-test-report.md)** — Test statistics for the pattern validator: 769 tests across 15 test classes covering instance validation by taxonomy, template/constraint validation, CycloneDX coverage (213 tests), SPDX coverage (169 tests), X.509 certificate analysis (5 tests), CMS analysis (7 tests), CBOM validation (8 tests), and CBOM generation (4 tests). Registry: 338 families, 9 files, 178 unique OIDs.
+- **[management/validator-test-report.md](management/validator-test-report.md)** — Test statistics for the pattern validator: 775 tests across 15 test classes covering instance validation by taxonomy, template/constraint validation, CycloneDX coverage (213 tests), SPDX coverage (169 tests), X.509 certificate analysis (5 tests), CMS analysis (7 tests), CBOM validation (8 tests), and CBOM generation (4 tests). Registry: 338 families, 9 files, 178 unique OIDs.
 
 - **[management/content-update-plan.md](management/content-update-plan.md)** — Content consistency, integrity, and synchronisation plan across all repository artefacts.
 
@@ -133,4 +135,8 @@ RNGs is currently under evaluation in the unpublished parts.
 
 - **[resources/random-number-generators.svg](resources/random-number-generators.svg)** — RNG classification: CSPRNG/DRBG (NIST SP 800-90A, accumulator-based, stream-cipher-based), OS entropy APIs, hardware RNG, non-cryptographic PRNGs, and historical/broken algorithms.
 
-Both diagrams are generated from `scripts/generate_diagrams.py` — edit the Python data structures and re-run to regenerate. This replaces the previous draw.io diagrams which did not scale with frequent content changes.
+## Scripts
+
+- **[scripts/generate_diagrams.py](scripts/generate_diagrams.py)** — Generates the SVG diagrams in `resources/` from Python data structures. Replaces the previous draw.io diagrams which did not scale with frequent content changes. Edit the Python data and re-run to regenerate.
+
+- **[scripts/validate_consistency.py](scripts/validate_consistency.py)** — Automated consistency validator that checks (1) family counts vs README claims, (2) OID counts, (3) parameter name coverage between YAML and `cryptographic-parameters.md`, (4) `patternStatus`/`preferredPattern` invariant, (5) status value validity, (6) family-name uniqueness, (7) OID format, (8) test count vs `validator-test-report.md`, and (9) cross-authority divergences in the status files (NIST/BSI/CNSA/IETF/CABF). Run with `python3 scripts/validate_consistency.py` from the repository root.
