@@ -101,7 +101,7 @@ It depends on PQClean sources and will require a migration path after the PQClea
 
 ---
 
-## 3. Round 2 Additional Signature Candidates
+## 3. Round 2 additional Signature Candidates
 
 Implementations are at submission quality, not production quality. Many do not use semantic
 version tags. The Round 2 tweak deadline was January 2025. NIST is evaluating candidates with
@@ -193,7 +193,7 @@ subsequently retired in favour of CIRCL.
 
 ---
 
-## 5. Production Cryptographic Libraries
+## 5. Production cryptographic Libraries
 
 Libraries in this section are suitable for production deployments. Version rows in the
 spreadsheet record the latest and one previous stable release per major/minor series.
@@ -398,7 +398,7 @@ reference implementation base for NIST hash standards.
 
 ---
 
-## 7. Chinese National Standards (SM-series)
+## 7. Chinese national Standards (SM-series)
 
 ### 7.1 GmSSL
 
@@ -419,7 +419,7 @@ for tool interoperability.
 
 ---
 
-## 8. Password-Authenticated Key Exchange (PAKE)
+## 8. Password-authenticated Key Exchange (PAKE)
 
 ### 8.1 SPAKE2 / SPAKE2+
 
@@ -683,7 +683,7 @@ RNGs are typically OS or hardware facilities, not standalone libraries:
 | ISAAC | OpenBSD arc4random (historical) | Replaced by ChaCha20 |
 | A5/1, A5/2 | libosmocore | GSM historical; A5/2 broken |
 
-### 11.6 Broken/Historical PQC
+### 11.6 Broken/historical PQC
 
 | Algorithm family | Implementation | Notes |
 |:---|:---|:---|
@@ -698,7 +698,7 @@ RNGs are typically OS or hardware facilities, not standalone libraries:
 | GeMSS | PQClean (historical) | Broken |
 | NTRUEncrypt | NTRU reference (historical) | Superseded by NTRU-HPS/HRSS |
 
-### 11.7 Protocol and Composite Constructs
+### 11.7 Protocol and composite Constructs
 
 | Algorithm family | Implementation | Notes |
 |:---|:---|:---|

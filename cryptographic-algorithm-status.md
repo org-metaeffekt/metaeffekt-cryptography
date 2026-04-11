@@ -295,7 +295,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ⚠ **EdDSA hedged signing:** EdDSA is deterministic by design, which eliminates k-reuse risk but makes it vulnerable to fault injection (single-fault differential). Use hedged mode (rfc8032 §5.1 with randomizer) in hardware implementations or when fault attacks are a concern.
 
-### 6.2 Stateful Hash-Based Signatures (SP 800-208)
+### 6.2 Stateful Hash-based Signatures (SP 800-208)
 
 | Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -333,7 +333,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ---
 
-## 8. Password-Based Key Derivation and Password Hashing
+## 8. Password-based Key Derivation and Password Hashing
 
 | Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
@@ -371,7 +371,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ⚠ **Personalization string:** Always supply a unique `{personalizationString}` at DRBG instantiation (e.g., application name + PID + timestamp). This provides domain separation at no security cost and prevents multiple instances seeded from the same entropy source from producing correlated output (SP 800-90A §8.7.1).
 
-### 9.2 Accumulator-Based CSPRNGs
+### 9.2 Accumulator-based CSPRNGs
 
 | Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
@@ -379,7 +379,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | `Fortuna-*` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | BSI AIS 20/31 | Non-standard cipher/hash variants reduce assurance; prefer canonical AES-256-SHA-256 form |
 | `Yarrow-*` | variable | ❌ Deprecated | — | — | Superseded by Fortuna; entropy estimator requirement difficult to implement correctly; do not use for new designs |
 
-### 9.3 OS-Provided Entropy APIs
+### 9.3 OS-provided Entropy APIs
 
 | Pattern | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|
@@ -493,7 +493,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ---
 
-## 11. TLS / Protocol Quick-Reference
+## 11. TLS / Protocol Quick-reference
 
 | Version | NIST | Sources | Notes |
 |:---|:---|:---|:---|
@@ -506,7 +506,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ---
 
-## 12. Deprecated and Disallowed Consolidated Reference
+## 12. Deprecated and disallowed consolidated Reference
 
 | Pattern | Reason | Disallowed since | Source |
 |:---|:---|:---|:---|

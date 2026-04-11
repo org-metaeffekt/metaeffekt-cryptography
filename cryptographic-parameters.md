@@ -906,7 +906,7 @@ Parameters specifying padding schemes and initialisation vector handling.
 
 ---
 
-## 8. Protocol & Miscellaneous Parameters
+## 8. Protocol & miscellaneous Parameters
 
 Construction-specific or protocol-level parameters that do not fit a general category.
 
@@ -956,7 +956,7 @@ Construction-specific or protocol-level parameters that do not fit a general cat
 
 ---
 
-## 9. PQC Internal Parameters (FIPS 203 / 204 / 205 / 206)
+## 9. PQC internal Parameters (FIPS 203 / 204 / 205 / 206)
 
 These parameters are fixed by the algorithm's named parameter set and are not free-standing
 CycloneDX pattern placeholders. They are documented here because they are essential for
@@ -968,7 +968,7 @@ standardisation discussions on the NIST PQC Forum.
 
 ---
 
-### ML-DSA Internal Parameters (FIPS 204)
+### ML-DSA internal Parameters (FIPS 204)
 
 
 #### `{k}` and `{l}` (ML-DSA, lattice matrix dimensions)
@@ -1116,7 +1116,7 @@ standardisation discussions on the NIST PQC Forum.
 
 ---
 
-### ML-KEM Internal Parameters (FIPS 203)
+### ML-KEM internal Parameters (FIPS 203)
 
 
 #### `{k}` (ML-KEM, module rank)
@@ -1208,7 +1208,7 @@ standardisation discussions on the NIST PQC Forum.
 
 ---
 
-### SLH-DSA Internal Parameters (FIPS 205)
+### SLH-DSA internal Parameters (FIPS 205)
 
 
 #### `{n}` (SLH-DSA, security parameter in bytes)
@@ -1319,7 +1319,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### SLH-DSA Complete Parameter and Size Reference (FIPS 205)
+#### SLH-DSA complete Parameter and Size Reference (FIPS 205)
 
 All 12 parameter sets (SHA-2 and SHAKE variants share identical structural parameters and sizes):
 
@@ -1731,7 +1731,7 @@ The effective security strength of a cryptographic operation is determined by th
     - [CSRC landing page](https://csrc.nist.gov/pubs/fips/206/ipd)
     - Interim reference: Falcon Round 3.1 specification at [falcon-sign.info](https://falcon-sign.info/)
 
-### NIST Special Publications
+### NIST special Publications
 
 - NIST SP 800-57 Part 1 Rev 5 — Recommendation for Key Management: Part 1 — General (May 2020)
     - [CSRC landing page](https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final)

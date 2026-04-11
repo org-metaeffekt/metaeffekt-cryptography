@@ -260,7 +260,7 @@ Cryptographic Algorithms
 
 ---
 
-## 8. Stateful Hash-Based Digital Signatures
+## 8. Stateful Hash-based digital Signatures
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -342,7 +342,7 @@ Cryptographic Algorithms
 
 ---
 
-## 12. Password-Based Key Derivation and Password Hashing
+## 12. Password-based Key Derivation and Password Hashing
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|

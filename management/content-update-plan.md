@@ -295,7 +295,7 @@ Reconcile these numbers across all documents:
 > [!NOTE]
 > After achieving consistency, this phase proposes forward-looking improvements — new authoritative sources to ingest, structural simplifications to the markdown, compactness improvements, and tooling to prevent future drift.
 
-### 8.1 New Data Sources to Ingest
+### 8.1 New Data Sources to ingest
 
 > [!NOTE]
 > Identify authoritative publications that are referenced but not yet fully ingested, and new sources that would expand the knowledge base's coverage or currency.
@@ -358,32 +358,33 @@ Reconcile these numbers across all documents:
 ### 9.1 Heading Capitalisation (noun-only rule)
 
 > [!NOTE]
-> Markdown headings follow a **noun-only** capitalisation rule (German-style) rather than English title case. Only nouns and noun-phrase modifiers are capitalised. Verbs, modals, articles, conjunctions, prepositions, adverbs, determiners, and pronouns remain lowercase. The first word of every heading is always capitalised regardless of its part of speech.
+> Markdown headings follow a **strict noun-only** capitalisation rule (German-style) rather than English title case. **Only nouns are capitalised.** Adjectives — even when modifying a noun ("attributive adjectives") — are lowercased. The first content word of every heading is always capitalised regardless of its part of speech.
 
-**Capitalise (noun-only rule):**
-
-| Class | Treatment | Example |
-|:---|:---|:---|
-| **Nouns** | Always capital | `Hash Functions`, `Key Length`, `Summary Table` |
-| **Adjectives in noun phrases** | Capital (treated as part of the noun phrase) | `Symmetric Encryption`, `Quantum Transition`, `Block Cipher Modes` |
-| **Gerunds** (verb form `-ing` acting as noun) | Capital (treated as nouns) | `Comparing Authorities`, `Hashing`, `Signing` |
-| **Acronyms and proper nouns** | Preserved as-is | `NIST`, `ML-KEM`, `SHA-256`, `OpenSSL`, `eSTREAM` |
-| **First word of heading** | Always capital regardless of part of speech | `## Five Questions every Organization should be able to answer` (`Five` is a quantifier but is the first word) |
-
-**Lowercase (noun-only rule):**
+**Capitalise (strict noun-only rule):**
 
 | Class | Treatment | Example |
 |:---|:---|:---|
-| **Verbs** (incl. modals, auxiliaries) | lowercase | `should`, `be`, `is`, `are`, `makes`, `enables`, `exists`, `appears` |
-| **Predicate adjectives** (after a verb) | lowercase | `is urgent`, `is invisible`, `getting involved` |
-| **Adverbs** (when not in noun phrase) | lowercase | `always`, `mostly`, `never`, `not`, `more` |
-| **Determiners, pronouns** | lowercase | `every`, `this`, `it`, `these`, `that` |
+| **Nouns** (proper nouns, common nouns, noun adjuncts) | Always capital | `Hash Functions`, `Key Length`, `Summary Table`, `Block Cipher Modes` (Block, Cipher, Modes are all noun words) |
+| **Gerunds** (verb form `-ing` acting as noun) | Capital (treated as nouns) | `Comparing Authorities`, `Hashing`, `Signing`, `Pairing-based` (Pairing is a gerund/noun) |
+| **Acronyms** | Preserved as-is | `NIST`, `BSI`, `CNSA`, `IETF`, `PRNGs`, `KEM`, `MAC`, `XOF` |
+| **Proper nouns and intentional-case names** | Preserved as-is | `ML-KEM`, `SHA-256`, `OpenSSL`, `eSTREAM`, `Diffie-Hellman`, `Weierstrass` |
+| **First content word of heading** | Always capital regardless of part of speech | `Symmetric Encryption` (Symmetric is adj but first content word → capital); `Five Questions every Organization should be able to answer` (Five is a quantifier but first word) |
+
+**Lowercase (strict noun-only rule):**
+
+| Class | Treatment | Example |
+|:---|:---|:---|
+| **Adjectives** (even attributive, modifying a following noun) | lowercase | `specific Modes`, `quantum Transition`, `digital Signatures`, `elliptic Curves`, `cryptographic Inventory`, `historical Schemes`, `prime Curves`, `internal Parameters` |
+| **Past participles acting as adjectives** | lowercase | `approved Algorithms`, `disallowed Modes`, `named Groups`, `standardised Algorithms` |
+| **Verbs, modals, auxiliaries** | lowercase | `is`, `are`, `should`, `must`, `enables`, `excludes`, `retains`, `disagree` |
+| **Predicate adjectives** (following a verb) | lowercase | `is urgent`, `is invisible`, `is involved` |
+| **Adverbs** | lowercase | `always`, `mostly`, `never`, `more`, `most`, `not` |
+| **Determiners, pronouns** | lowercase | `every`, `this`, `it`, `these`, `that`, `each` |
 | **Articles** | lowercase | `a`, `an`, `the` |
 | **Conjunctions** | lowercase | `and`, `but`, `or`, `nor`, `yet`, `so`, `than` |
-| **Short prepositions** (≤ 4 letters) | lowercase | `at`, `by`, `for`, `in`, `of`, `on`, `to`, `up`, `via`, `from`, `per` |
-| **Longer prepositions** | lowercase | `across`, `around`, `between`, `during`, `through` |
+| **Prepositions** (regardless of length) | lowercase | `at`, `by`, `for`, `in`, `of`, `on`, `to`, `with`, `from`, `per`, `across`, `between`, `during` |
 
-**Worked example:**
+**Worked example (the user's reference example):**
 
 ```
 # Five Questions every Organization should be able to answer
@@ -394,19 +395,43 @@ Reconcile these numbers across all documents:
    │    │         │     │             │      │   └────────── adjective      → lowercase
    │    │         │     │             │      └────────────── verb           → lowercase
    │    │         │     │             └───────────────────── modal verb     → lowercase
-   │    │         │     └───────────────────────────────── noun           → CAPITAL
-   │    │         └────────────────────────────────────── determiner     → lowercase
-   │    └────────────────────────────────────────────── noun           → CAPITAL
-   └─────────────────────────────────────────────────── first word     → CAPITAL
+   │    │         │     └─────────────────────────────────── noun           → CAPITAL
+   │    │         └──────────────────────────────────────── determiner     → lowercase
+   │    └─────────────────────────────────────────────── noun           → CAPITAL
+   └────────────────────────────────────────────────── first word     → CAPITAL
 ```
+
+**Adjective vs noun-adjunct discrimination:**
+
+The most subtle case is distinguishing **noun adjuncts** (nouns functioning as modifiers) from **true adjectives**. Both modify a following noun, but they have different parts of speech:
+
+| Phrase | Modifier | POS | Treatment |
+|:---|:---|:---|:---|
+| `Block Cipher Modes` | `Block`, `Cipher` | nouns | CAPITAL — both are noun words even though they function as modifiers |
+| `Hash Functions` | `Hash` | noun | CAPITAL |
+| `Key Length` | `Key` | noun | CAPITAL |
+| `Algorithm Families` | `Algorithm` | noun | CAPITAL |
+| `Security Strengths` | `Security` | noun | CAPITAL |
+| `quantum Transition` | `quantum` | adjective | lowercase |
+| `digital Signatures` | `digital` | adjective | lowercase |
+| `elliptic Curves` | `elliptic` | adjective | lowercase |
+| `specific Modes` | `specific` | adjective | lowercase |
+| `cryptographic Inventory` | `cryptographic` | adjective | lowercase |
+
+**Test:** can the modifier word stand alone as a noun? `Block` (a block of memory) yes — it's a noun used attributively. `quantum` (a quantum) — yes in physics, but in `quantum Transition` it functions as an adjective ("of a quantum nature"). When in doubt, look up the dictionary entry: if the primary part of speech is "noun", capitalise; if "adjective", lowercase.
 
 **Section number prefixes are not part of capitalisation scope:**
 
 ```
-### 1.1 Block Cipher Key Length
-    ─┬─ ─┬───────────────────
-     │    └── first content word — capitalised regardless
-     └─────── numeric prefix — unchanged
+### 13.5 Quantum Impact on security-strength Equivalence
+    ─┬── ─┬───── ─┬──── ─┬ ─┬──────────────── ─┬─────────
+     │    │       │      │   │                  │
+     │    │       │      │   │                  └── noun           → CAPITAL
+     │    │       │      │   └────────────────────── hyphenated adj → lowercase both halves
+     │    │       │      └────────────────────────── preposition    → lowercase
+     │    │       └─────────────────────────────── noun           → CAPITAL
+     │    └─────────────────────────────────── adj, FIRST WORD  → CAPITAL
+     └────────────────────────────────────── numeric prefix  → unchanged
 ```
 
 ### 9.2 Em-Dashes in Headings (avoid)
@@ -461,28 +486,29 @@ When em-dashes appear inside parentheses, replace them with a semicolon:
 | `(pyca/cryptography, PyCryptodome, PyNaCl)` | Library names |
 | `(BCryptGenRandom)` | API name |
 
-### 9.4 Hyphenated Compounds in Noun Phrases
+### 9.4 Hyphenated Compounds
 
 > [!NOTE]
-> When a hyphenated compound is part of a noun phrase (i.e., it modifies a following noun), **both halves** are capitalised. When the same compound appears inside brackets as descriptive text, both halves are lowercased per §9.3.
+> Each part of a hyphenated compound follows its own part of speech. **Noun parts** (and gerunds) are capitalised, **non-noun parts** (adjectives, past participles, prefixes) are lowercased. The first content word of a heading is treated specially: only its initial letter is capitalised, the remainder of the compound follows the rules.
 
-**Inside noun phrases (capitalised):**
+**Examples (compound used as modifier in a noun phrase):**
 
-| Compound | Example heading |
-|:---|:---|
-| `Hash-Based` | `Stateful Hash-Based Signatures` |
-| `Stream-Cipher-Based` | `Stream-Cipher-Based CSPRNGs` |
-| `Non-Cryptographic` | `Non-Cryptographic PRNGs` |
-| `Pre-Shared` | `Pre-Shared Key (PSK) Quantum Mitigation` |
-| `End-Entity` | `End-Entity Key Recommendations` |
-| `Accumulator-Based` | `Accumulator-Based CSPRNGs` |
-| `OS-Provided` | `OS-Provided Entropy APIs` |
-| `Lattice-Based` | `Lattice-Based` (standalone category — treated as noun) |
-| `Code-Based` | `Code-Based` (standalone category) |
-| `Pairing-Based` | `Pairing-Based Cryptography` |
-| `Top-Level` | `Top-Level RNG Taxonomy` |
-| `Cross-Cutting` | `Cross-Cutting PQC Hybrid Parameters` |
-| `Security-Strength` | `Security-Strength Equivalence` |
+| Compound | First letter | Internal noun parts | Result | Example heading |
+|:---|:---|:---|:---|:---|
+| `Hash-based` | first word: capital · else: lowercase | `Hash` (noun) | `Hash-based` | `Stateful Hash-based Signatures` |
+| `Stream-cipher-based` | first word: capital | `Stream`, `Cipher` (nouns) | `Stream-Cipher-based` | `Stream-Cipher-based CSPRNGs` |
+| `Non-cryptographic` | first word: capital | none | `Non-cryptographic` | `Non-cryptographic PRNGs` |
+| `Pre-shared` | first word: capital | none | `Pre-shared` | `Pre-shared Key (PSK) quantum Mitigation` |
+| `End-entity` | first word: capital | `End`, `Entity` (both nouns) | `End-Entity` | `End-Entity Key Recommendations` |
+| `Accumulator-based` | first word: capital | `Accumulator` (noun) | `Accumulator-based` | `Accumulator-based CSPRNGs` |
+| `OS-provided` | first word: capital | `OS` (acronym noun) | `OS-provided` | `OS-provided Entropy APIs` |
+| `Lattice-based` | first word: capital | `Lattice` (noun) | `Lattice-based` | `Lattice-based` (standalone category) |
+| `Code-based` | first word: capital | `Code` (noun) | `Code-based` | `Code-based` |
+| `Pairing-based` | first word: capital | `Pairing` (gerund-noun) | `Pairing-based` | `Pairing-based Cryptography` |
+| `Top-level` | first word: capital | none (`Top` adj) | `Top-level` | `Top-level RNG Taxonomy` |
+| `Cross-cutting` | first word: capital | none (`Cross` prefix) | `Cross-cutting` | `Cross-cutting PQC hybrid Parameters` |
+| `security-strength` | not first word | `Security`, `Strength` (both nouns) — but the compound modifies a following noun and is therefore an adjectival compound; lowercased uniformly | `security-strength` | `Quantum Impact on security-strength Equivalence` |
+| `Hash-Based` (as compound noun on its own, not modifying anything) | first word | `Hash` noun, `Based` participle | `Hash-Based` | rare; usually appears as modifier |
 
 **Inside brackets (lowercased per §9.3):**
 
@@ -491,6 +517,7 @@ When em-dashes appear inside parentheses, replace them with a semicolon:
 | `post-quantum` | `(post-quantum)` |
 | `cross-reference` | `(cross-reference)` |
 | `low-order` | `(low-order rounding threshold)` |
+| `hash-based` | `(hash-based)` |
 
 ### 9.5 Acronym and Proper Noun Preservation
 
