@@ -239,7 +239,7 @@ Cryptographic Algorithms
 
 ---
 
-## 7. Digital Signatures — Classical
+## 7. Classical Digital Signatures
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -260,7 +260,7 @@ Cryptographic Algorithms
 
 ---
 
-## 8. Digital Signatures — Stateful Hash-Based
+## 8. Stateful Hash-Based Digital Signatures
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -400,7 +400,7 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 
 ---
 
-## 14. Post-Quantum: Digital Signatures — NIST Standardised
+## 14. NIST-Standardised Post-Quantum Digital Signatures
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -508,7 +508,7 @@ The following were NIST Round 3 signature candidates. They did not progress to s
 
 ---
 
-## 16. Random Number Generators — NIST SP 800-90A DRBGs
+## 16. NIST SP 800-90A DRBGs
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -527,7 +527,7 @@ The following were NIST Round 3 signature candidates. They did not progress to s
 
 ---
 
-## 17. Random Number Generators — Accumulator-Based CSPRNGs
+## 17. Accumulator-Based CSPRNGs
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -536,7 +536,7 @@ The following were NIST Round 3 signature candidates. They did not progress to s
 
 ---
 
-## 18. Random Number Generators — Stream-Cipher-Based and OS APIs
+## 18. Stream-Cipher-Based CSPRNGs and OS APIs
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -739,7 +739,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 ---
 
-## 28. Additional Password Hashing (Windows / System)
+## 28. Additional Password Hashing (Windows / system)
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|

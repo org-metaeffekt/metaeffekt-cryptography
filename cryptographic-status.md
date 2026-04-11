@@ -1,4 +1,4 @@
-# Cryptographic Status — Redirect
+# Cryptographic Status (redirect)
 
 This file has been split into two distinct, focused documents:
 

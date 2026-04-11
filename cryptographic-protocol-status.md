@@ -90,7 +90,7 @@ Recommendations for SSH protocol usage. Source: BSI TR-02102-4, Version 2026-01 
 
 Recommendations for IPsec with IKEv2. Source: BSI TR-02102-3, Version 2026-01 (2026-01-27). IKEv1 is 🚫 Disallowed; IKEv2 (RFC 7296) only.
 
-### 2.1 IKEv2 Key Exchange (Diffie-Hellman Groups)
+### 2.1 IKEv2 Key Exchange (Diffie-Hellman groups)
 
 > **Authorities:** IETF RFC 8247 §2.4 (IKEv2 algorithms); NIST SP 800-131A Rev 2 + SP 800-186; BSI TR-02102-3 v2026-01. RFC 8247 does not address Groups 15–18, 20, 21, 25, 26, 31, 32 (these come from later RFCs and IANA registry assignments).
 
@@ -204,7 +204,7 @@ The three transition phases per category are:
 
 > ⚠ **Hybrid note (footnote 1 of the advisory):** Even though hybrid solutions may be allowed or required due to protocol standards, product availability, or interoperability requirements, CNSA 2.0 algorithms will become mandatory to select at the given date, and selecting CNSA 1.0 algorithms alone will no longer be approved.
 
-### 3.3 CNSA 1.0 Reference (Algorithms Being Phased Out)
+### 3.3 CNSA 1.0 Reference (algorithms being phased out)
 
 CNSA 1.0, listed in CNSSP 15 Annex B, remains required during the transition period. These algorithms will be deprecated when CNSA 2.0 is mandated per the timeline above.
 
@@ -300,7 +300,7 @@ The TLS 1.3 hybrid `X25519MLKEM768` (draft-ietf-tls-hybrid-design) uses this con
 
 > ℹ **When to deploy hybrids:** Deploy ML-KEM hybrid immediately for key establishment (HNDL risk). Maintain classical algorithm for backward compatibility. Remove classical algorithm only after PQC has become operationally validated and interoperability permits.
 
-### 4.4 Pre-shared Key (PSK) Quantum Mitigation
+### 4.4 Pre-Shared Key (PSK) Quantum Mitigation
 
 For organisations that cannot yet deploy PQC but need to protect long-lived confidential communications, a pre-shared symmetric key can be mixed into the key derivation alongside the public-key-derived secret. An attacker who later breaks the public-key exchange with a quantum computer still cannot recover the session key without the PSK.
 
@@ -319,7 +319,7 @@ psk_new = KDF(session_key, "retained secret")
 - Not applicable to virtual machines restored from snapshots (PSK may be copied)
 - Recommended only for systems with a small, known set of communication partners
 
-### 4.5 QKD — Why it is not a Substitute for PQC
+### 4.5 Why QKD is not a Substitute for PQC
 
 Quantum Key Distribution (QKD) distributes symmetric keys using quantum-physics principles (BB84, E91). An eavesdropper cannot copy quantum states without disturbing them, making interception detectable. However:
 
@@ -330,7 +330,7 @@ Quantum Key Distribution (QKD) distributes symmetric keys using quantum-physics 
 
 ENISA's position (2021, endorsed by BSI and NIST): **PQC is the primary migration path.** QKD may complement PQC in specific high-value, point-to-point scenarios (e.g., inter-datacenter links) but does not substitute for it.
 
-### 4.6 BSI TR-02102-1 v2026-01 — Migration Timeline
+### 4.6 Migration Timeline (BSI TR-02102-1 v2026-01)
 
 > **Source:** BSI TR-02102-1 v2026-01 (January 23, 2026), §2.1 "Use of Quantum-Safe Mechanisms".
 
@@ -378,7 +378,7 @@ The BSI defines explicit end-dates for the sole use of classical asymmetric mech
 | ECDSA P-256 | SHA-256 | — | ✓ Permitted | ✓ Approved | ✓ Approved | CABF BR §6.1.5 permits NIST P-256/P-384 |
 | ECDSA P-384 | SHA-384 | — | ✓ Permitted | ✅ Recommended | ✅ Recommended | Meets BSI ≥250-bit curve requirement |
 
-### 5.2 End-entity Key Recommendations
+### 5.2 End-Entity Key Recommendations
 
 | Authentication key | Signature key | Key establishment key | Symmetric cipher |
 |:---|:---|:---|:---|

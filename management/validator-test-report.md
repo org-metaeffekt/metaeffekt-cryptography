@@ -46,7 +46,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `cr-spdx.yaml` | 38 | 0 | 38 | 0 |
 | **Total** | **338** | **143** | **137** | **58** |
 
-### Family validation modes
+### Family Validation Modes
 
 | Mode | Count | Behaviour |
 |------|:-----:|-----------|

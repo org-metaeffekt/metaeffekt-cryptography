@@ -28,7 +28,7 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ---
 
-## Status legend
+## Status Legend
 
 | Symbol | Status | Meaning |
 |:---|:---|:---|
@@ -71,7 +71,7 @@ This document compares cryptographic primitives against three authorities that i
 
 ## 1. Symmetric Encryption
 
-### 1.1 Block cipher — key length
+### 1.1 Block Cipher Key Length
 
 | Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -87,7 +87,7 @@ This document compares cryptographic primitives against three authorities that i
 
 > ⚠ **3DES birthday bound:** With a 64-bit block, collisions become probable after ~2³² (4 GB) encrypted blocks under the same key. NIST disallowed 3DES for all new encryption effective 2024. Existing uses must migrate.
 
-### 1.2 Block cipher modes
+### 1.2 Block Cipher Modes
 
 | Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -109,7 +109,7 @@ This document compares cryptographic primitives against three authorities that i
 
 > ⚠ **Authentication:** CBC, CTR, CFB, and OFB provide **no integrity or authenticity**. Always pair with an approved MAC (HMAC or GMAC) or use an AEAD mode.
 
-### 1.3 Tag length (AEAD)
+### 1.3 Tag Length (AEAD)
 
 | Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -194,11 +194,11 @@ This document compares cryptographic primitives against three authorities that i
 
 > ⚠ **Ephemeral key agreement:** Static (non-ephemeral) ECDH and DH provide no forward secrecy. SP 800-56A requires ephemeral keys for forward-secret key establishment. TLS 1.3 mandates ECDHE or DHE.
 
-### 5.1 Approved elliptic curves (SP 800-186)
+### 5.1 Approved Elliptic Curves (SP 800-186)
 
 SP 800-186 (February 2023) specifies the complete catalogue of NIST-approved elliptic curve domain parameters. The table below summarises security strength, approval status, and allowed usage:
 
-#### Weierstrass prime curves (FIPS 186-5 primary curves)
+#### Weierstrass Prime Curves (FIPS 186-5 Primary Curves)
 
 | Curve | Also known as | Security strength | ECDH | ECDSA / EdDSA | Notes |
 |:---|:---|:---|:---|:---|:---|
@@ -208,32 +208,32 @@ SP 800-186 (February 2023) specifies the complete catalogue of NIST-approved ell
 | P-384 | secp384r1 | 192-bit | ✅ Recommended | ✅ Recommended | Required for NSS / CNSA 1.0; NSA baseline |
 | P-521 | secp521r1 | 260-bit | ✅ Recommended | ✅ Recommended | Highest NIST prime curve security |
 
-#### Montgomery curves (SP 800-186 §2.3)
+#### Montgomery Curves (SP 800-186 §2.3)
 
 | Curve | Form | Cofactor h | Security | ECDH | Notes |
 |:---|:---|:---|:---|:---|:---|
 | Curve25519 | By = x³ + Ax² + x; A=486662, B=1 | 8 | 128-bit | ✅ Recommended | Used as X25519 (RFC 7748); constant-time |
 | Curve448 | By = x³ + Ax² + x; A=156326, B=1 | 4 | 224-bit | ✓ Approved | Used as X448 (RFC 7748); 224-bit security |
 
-#### Twisted Edwards curves (SP 800-186 §2.4)
+#### Twisted Edwards Curves (SP 800-186 §2.4)
 
 | Curve | Form | Cofactor h | Security | Signature | Notes |
 |:---|:---|:---|:---|:---|:---|
 | Edwards25519 | ax² + y² = 1 + dx²y²; a=−1, d=−121665/121666 | 8 | 128-bit | ✅ Recommended (Ed25519) | Birationally equivalent to Curve25519; deterministic signing |
 | Edwards448 | ax² + y² = 1 + dx²y²; a=1, d=−39081 | 4 | 224-bit | ✓ Approved (Ed448) | Birationally equivalent to Curve448 |
 
-#### Binary curves (SP 800-186, Appendix G — all deprecated)
+#### Binary Curves (SP 800-186, Appendix G; all deprecated)
 
 All K-series and B-series binary curves (K-163, K-233, K-283, K-409, K-571, B-163, B-233, B-283, B-409, B-571) defined in earlier FIPS 186 editions are **deprecated** in SP 800-186. They are not approved for new implementations due to implementation complexity and side-channel concerns.
 
-#### Additional curves (SP 800-186, Appendix H)
+#### Additional Curves (SP 800-186, Appendix H)
 
 | Curve family | Approval status | Notes |
 |:---|:---|:---|
 | Brainpool curves (brainpoolP256r1, brainpoolP384r1, brainpoolP512r1, brainpoolP512t1, …) | ✓ Approved (SP 800-186 Appx H.1) | BSI-mandated alternative; may be used with NIST-approved schemes; not in FIPS 186-5 primary list |
 | secp256k1 | ❌ Not approved for general use | SP 800-186 Appendix H.2: discussed in context of blockchain/Bitcoin applications only; not approved for NSS or general-purpose cryptography |
 
-### 5.2 Key establishment scheme taxonomy (SP 800-56A Rev.3)
+### 5.2 Key Establishment Scheme Taxonomy (SP 800-56A Rev.3)
 
 SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number of key-establishment transactions (i and j) and static/ephemeral roles (s/e). The `C(i,e;j,s)` notation counts: i ephemeral + j static contributions per party.
 
@@ -244,7 +244,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | C(0e, 2s) — Full static | Both parties use only static keys | ❌ No FS | Approved for specific uses; SP 800-57 deprecates for new TLS use |
 | C(1e, 0s) — One-pass ephemeral | Initiator-only ephemeral; no static | Limited | Approved for specific contexts |
 
-#### Approved FFC (MODP) groups for IKE (SP 800-56A Rev.3, Table 25)
+#### Approved FFC (MODP) Groups for IKE (SP 800-56A Rev.3, Table 25)
 
 | Group | Prime size | Security | NIST |
 |:---|:---|:---|:---|
@@ -254,7 +254,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | MODP-6144 | 6144 bit | 152-bit | ✓ Approved |
 | MODP-8192 | 8192 bit | 192-bit | ✓ Approved |
 
-#### Approved FFC named groups for TLS (SP 800-56A Rev.3, Table 26 / RFC 7919)
+#### Approved FFC Named Groups for TLS (SP 800-56A Rev.3, Table 26 / RFC 7919)
 
 | Group | Prime size | Security | NIST |
 |:---|:---|:---|:---|
@@ -272,7 +272,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ## 6. Digital Signatures
 
-### 6.1 Classical signatures
+### 6.1 Classical Signatures
 
 | Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -295,7 +295,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ⚠ **EdDSA hedged signing:** EdDSA is deterministic by design, which eliminates k-reuse risk but makes it vulnerable to fault injection (single-fault differential). Use hedged mode (rfc8032 §5.1 with randomizer) in hardware implementations or when fault attacks are a concern.
 
-### 6.2 Stateful hash-based signatures (SP 800-208)
+### 6.2 Stateful Hash-Based Signatures (SP 800-208)
 
 | Pattern | Security | NIST | BSI | CNSA | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -371,7 +371,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ⚠ **Personalization string:** Always supply a unique `{personalizationString}` at DRBG instantiation (e.g., application name + PID + timestamp). This provides domain separation at no security cost and prevents multiple instances seeded from the same entropy source from producing correlated output (SP 800-90A §8.7.1).
 
-### 9.2 Accumulator-based CSPRNGs
+### 9.2 Accumulator-Based CSPRNGs
 
 | Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
@@ -379,7 +379,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | `Fortuna-*` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | BSI AIS 20/31 | Non-standard cipher/hash variants reduce assurance; prefer canonical AES-256-SHA-256 form |
 | `Yarrow-*` | variable | ❌ Deprecated | — | — | Superseded by Fortuna; entropy estimator requirement difficult to implement correctly; do not use for new designs |
 
-### 9.3 OS-provided entropy APIs
+### 9.3 OS-Provided Entropy APIs
 
 | Pattern | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|
@@ -389,7 +389,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | `BCryptGenRandom` | ✅ Recommended | Windows CNG; FIPS 140-3 | CTR_DRBG-AES-256 internally; FIPS 140-3 validated |
 | `getentropy()` | ✅ Recommended | macOS / BSDs; RFC-like | Non-blocking; limited to 256 bytes per call; preferred on macOS/BSDs |
 
-### 9.4 Hardware RNG interfaces
+### 9.4 Hardware RNG Interfaces
 
 | Pattern | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|
@@ -397,7 +397,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | `RDSEED` | ✓ Approved | Intel/AMD; SP 800-90B | Direct conditioned hardware entropy; suitable for **seeding** DRBGs; slower than RDRAND; may return failure (CF=0) — must retry |
 | `TPM_RNG-*` | ✓ Approved | TCG TPM 2.0; SP 800-90B | FIPS 140-3 validated TPMs; low throughput (10–50 KB/s); excellent trust boundary; provides independent entropy from CPU |
 
-### 9.5 BSI AIS 20/31 functionality classes
+### 9.5 BSI AIS 20/31 Functionality Classes
 
 | Class | Description | Minimum use case |
 |:---|:---|:---|
@@ -408,7 +408,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | **PTG.3** | Enhanced TRNG | Smart card / HSM key generation |
 | **NTG.1** | Non-deterministic RBG (TRNG + DRBG, highest assurance) | CA root key generation, HSM master keys |
 
-### 9.6 Non-cryptographic PRNGs — always disallowed for security use
+### 9.6 Non-Cryptographic PRNGs (always disallowed for security use)
 
 | Pattern | NIST | Notes |
 |:---|:---|:---|
@@ -423,7 +423,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ## 10. Post-Quantum Cryptography (FIPS 203 / 204 / 205 / 206)
 
-### 10.1 Key Encapsulation — ML-KEM (FIPS 203)
+### 10.1 ML-KEM Key Encapsulation (FIPS 203)
 
 | Pattern | NIST Level | Security (classical / quantum) | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -433,7 +433,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ⚠ **Hybrid deployment:** Until ML-KEM implementations have accrued operational confidence, deploy as **hybrid** with a classical key exchange (X25519 or P-256). The TLS 1.3 hybrid scheme `X25519MLKEM768` is defined in `draft-ietf-tls-hybrid-design` and is the current recommendation. The combiner is simple concatenation fed into the TLS 1.3 HKDF key schedule (`{hybridKemCombiner}=concat`).
 
-### 10.2 Digital Signatures — ML-DSA (FIPS 204)
+### 10.2 ML-DSA Digital Signatures (FIPS 204)
 
 | Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -445,7 +445,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ⚠ **ML-DSA constant-time requirement:** Non-constant-time implementations of `SampleInBall` and the τ non-zero position sampling leak information about the signing key. All ML-DSA implementations must sample in constant time with respect to secret inputs. (NIST PQC Forum, Jan 2026)
 
-### 10.3 Digital Signatures — SLH-DSA (FIPS 205)
+### 10.3 SLH-DSA Digital Signatures (FIPS 205)
 
 | Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -457,7 +457,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ℹ **Stateless:** SLH-DSA is stateless (unlike LMS/XMSS); no state management required. Signing is slow but requires no storage state. Suitable where signing frequency is low and verification speed matters more than signing speed.
 
-### 10.4 Digital Signatures — FN-DSA / Falcon (FIPS 206 IPD)
+### 10.4 FN-DSA / Falcon Digital Signatures (FIPS 206 IPD)
 
 | Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -468,7 +468,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ℹ **FIPS 206 standardisation status:** FIPS 203, 204, and 205 were published as final standards on 13 August 2024. FIPS 206 (FN-DSA / Falcon) followed a separate timeline: the IPD was submitted for internal NIST approval in August 2025 and is awaiting Department of Commerce clearance. The final standard is expected late 2026 or early 2027. Implementations may reference the Falcon Round 3.1 specification in the interim.
 
-### 10.5 Notable non-standardised PQC algorithms
+### 10.5 Notable Non-Standardised PQC Algorithms
 
 > **Source:** NIST IR 8545, *Status Report on the Fourth Round of the NIST Post-Quantum Cryptography Standardization Process*, March 2025 (doi:10.6028/NIST.IR.8545). Covers the Round 4 evaluation of HQC, BIKE, Classic McEliece, and SIKE.
 
@@ -483,7 +483,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | `NTRU-HPS-2048-677` (Level 1) | 128 bit | ❌ Not standardised | pk + ct: ~930 B | NTRU patents expired 2017; perfectly correct (no decryption failures); round 3 finalist not selected |
 | `LightSaber` / `Saber` / `FireSaber` | 128 / 192 / 256 bit | ❌ Not standardised | pk: 672 / 992 / 1312 B; ct: 736 / 1088 / 1472 B | Module-LWR (power-of-two moduli); Round 3 finalist not selected in favour of ML-KEM |
 
-#### Broken algorithms (do not use)
+#### Broken Algorithms (do not use)
 
 | Algorithm | Broken by | Year | Notes |
 |:---|:---|:---|:---|
@@ -506,7 +506,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ---
 
-## 12. Deprecated and Disallowed — Consolidated Reference
+## 12. Deprecated and Disallowed Consolidated Reference
 
 | Pattern | Reason | Disallowed since | Source |
 |:---|:---|:---|:---|
@@ -541,7 +541,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 Key-length equivalence guidance derived from NIST SP 800-57 Part 1 Rev 5, *Recommendation for Key Management: Part 1 — General* (May 2020).
 
-### 13.1 Table 2 — Comparable security strengths across algorithm families
+### 13.1 Comparable Security Strengths across Algorithm Families (Table 2)
 
 All values from §5.6.1 Table 2 (pp. 54–55).
 
@@ -563,7 +563,7 @@ All values from §5.6.1 Table 2 (pp. 54–55).
 
 > ℹ **IFC (RSA) security strength:** A 2048-bit RSA modulus provides approximately 112 bits of security, not 128. The common assumption that "2048-bit RSA = 128-bit security" is incorrect per SP 800-57 Table 2. 3072-bit RSA is the minimum for 128-bit security.
 
-### 13.2 Planning horizon and security-strength adequacy
+### 13.2 Planning Horizon and Security-Strength Adequacy
 
 SP 800-57 Rev 5 §5.6.2–§5.6.3 and SP 800-131A Rev 2:
 
@@ -589,7 +589,7 @@ SP 800-57 Rev 5 §5.6.2–§5.6.3 and SP 800-131A Rev 2:
 - **Processing:** Decrypting, verifying a signature, or verifying a MAC on data that was previously protected.
 - **Legacy use:** The algorithm/key may be used only to process already-protected data, not to protect new data.
 
-### 13.3 Approved algorithms per security-strength tier
+### 13.3 Approved Algorithms per Security-Strength Tier
 
 Based on SP 800-57 Rev 5 §5.6.1 and the referenced FIPS standards.
 
@@ -603,7 +603,7 @@ Based on SP 800-57 Rev 5 §5.6.1 and the referenced FIPS standards.
 
 > ℹ **PQC note:** ML-KEM (FIPS 203) and ML-DSA (FIPS 204) were standardised in August 2024, after SP 800-57 Rev 5 was published. They are included here at the NIST security levels stated in their respective FIPS publications. SP 800-57 Rev 6 (Initial Public Draft December 2025) is expected to incorporate PQC algorithm mappings formally.
 
-### 13.4 Hash function security strength (SP 800-57 Rev 5 §5.6.1)
+### 13.4 Hash Function Security Strength (SP 800-57 Rev 5 §5.6.1)
 
 Hash functions provide two distinct security properties with different bit strengths:
 
@@ -620,7 +620,7 @@ Hash functions provide two distinct security properties with different bit stren
 
 > For digital signatures and certificates, the collision-resistance strength of the hash must meet or exceed the security strength of the signing key. For HMAC, preimage resistance applies — HMAC-SHA-1 can still provide 112-bit security (transitional through 2030 per NIST; not recommended by BSI).
 
-### 13.5 Quantum impact on security-strength equivalence
+### 13.5 Quantum Impact on Security-Strength Equivalence
 
 The equivalence table in §13.1 assumes classical (non-quantum) adversaries. Grover's algorithm halves the effective security of symmetric ciphers and hash preimage resistance; Shor's algorithm breaks RSA, DH, DSA, and ECC entirely in polynomial time.
 
@@ -635,7 +635,7 @@ The equivalence table in §13.1 assumes classical (non-quantum) adversaries. Gro
 
 > ⚠ **Harvest-now-decrypt-later:** Data encrypted today with RSA or ECDH may be stored by adversaries and decrypted once a cryptographically relevant quantum computer is available. SP 800-57 Rev 5 does not yet address quantum threat timelines, but NIST's PQC programme (FIPS 203/204/205) and the forthcoming SP 800-57 Rev 6 provide the migration path.
 
-### 13.6 Cryptoperiod recommendations (SP 800-57 Rev 5 §5.3)
+### 13.6 Cryptoperiod Recommendations (SP 800-57 Rev 5 §5.3)
 
 A *cryptoperiod* is the time span during which a specific key is authorised for use. SP 800-57 Part 1 §5.3, Table 1:
 
@@ -660,7 +660,7 @@ Key rules:
 - Ephemeral private keys **shall** be destroyed immediately after use.
 - Key update (deriving a new key from the current key to replace it) is **disallowed** for federal applications.
 
-### 13.7 FIPS 140 validation requirements (SP 800-57 Part 2 Rev 1)
+### 13.7 FIPS 140 Validation Requirements (SP 800-57 Part 2 Rev 1)
 
 SP 800-57 Part 2 Rev 1 (May 2019) establishes key management policy requirements for federal agencies. All cryptographic functions **shall** be performed using FIPS 140-validated cryptographic modules.
 
@@ -679,7 +679,7 @@ Application-specific requirements (SP 800-57 Part 3 Rev 1):
 | OCSP Responder | Level 3+ | Part 3 §2 |
 | End-user / relying party | Level 1+ | Part 3 §2 |
 
-### 13.8 Key protection requirements (SP 800-57 Rev 5 §6)
+### 13.8 Key Protection Requirements (SP 800-57 Rev 5 §6)
 
 | Key/information type | Confidentiality | Integrity | Backup | Archive |
 |:---|:---|:---|:---|:---|

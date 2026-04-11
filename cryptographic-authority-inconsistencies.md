@@ -255,7 +255,7 @@ For the full list, run `python3 scripts/validate_consistency.py`.
 
 ---
 
-## Recurring Patterns (Summary)
+## Recurring Patterns (summary)
 
 | Pattern | Direction | Number of Cases | Reconciliation |
 |:---|:---|:---:|:---|

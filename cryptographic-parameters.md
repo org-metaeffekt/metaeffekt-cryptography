@@ -26,7 +26,7 @@
 > parameters (Part 1 Rev 5 Table 1/2, effective security strength chain rule). SP 800-57 Parts
 > 1/2/3 added to Sources.
 
-## Pattern notation conventions
+## Pattern Notation Conventions
 
 | Symbol | Meaning | Example |
 |:---|:---|:---|
@@ -37,7 +37,7 @@
 
 ---
 
-## 1. Size & length parameters
+## 1. Size & Length Parameters
 
 Parameters that specify numeric bit or byte quantities, directly determining security level and output size.
 
@@ -154,7 +154,7 @@ Parameters that specify numeric bit or byte quantities, directly determining sec
 
 ---
 
-## 2. Mode & variant parameters
+## 2. Mode & Variant Parameters
 
 Parameters that select among structural variants or sub-primitive choices for an algorithm family.
 
@@ -409,7 +409,7 @@ Nenc = encapsulated key size (ephemeral public key sent to recipient). Npk = rec
 
 ---
 
-## 3. Hash & digest parameters
+## 3. Hash & Digest Parameters
 
 Parameters that identify a hash function or PRF used as a sub-component within a larger construction.
 
@@ -495,7 +495,7 @@ Parameters that identify a hash function or PRF used as a sub-component within a
 | **Type** | composite parameter set identifier |
 | **Used in** | LMS, LMOTS, HSS, XMSS, XMSS^MT |
 
-#### LMS hash function parameter sets (SP 800-208 §4, Table 1)
+#### LMS Hash Function Parameter Sets (SP 800-208 §4, Table 1)
 
 Four hash functions are approved, identified by hash algorithm and output width n:
 
@@ -520,7 +520,7 @@ Five tree heights h are available for each hash function (SP 800-208 Table 1):
 
 Full LMS parameter set names combine hash and height, e.g. `LMS_SHA256_M32_H5` … `LMS_SHAKE_M24_H25` — **20 LMS parameter sets** total.
 
-#### LMOTS parameter sets (SP 800-208 §3, Table 2)
+#### LMOTS Parameter Sets (SP 800-208 §3, Table 2)
 
 Each LMS signature embeds one LMOTS (Leighton-Micali One-Time Signature) component. The Winternitz parameter w trades signature size for computation time:
 
@@ -535,7 +535,7 @@ The same four Winternitz values apply to all four hash functions (N24/N32 × SHA
 
 LMOTS signature sizes above are from RFC 8554 §4.3 (type + n×(p+1) bytes). The full LMS signature size adds the Merkle authentication path: LMS_sig_size = 4 + LMOTS_sig + 4 + h×n bytes.
 
-#### HSS (Hierarchical Signature Scheme — SP 800-208 §6, RFC 8554 §6)
+#### HSS (hierarchical signature scheme; SP 800-208 §6, RFC 8554 §6)
 
 HSS is a multi-level extension of LMS. An HSS key pair of L levels chains L LMS trees where each level's root key is signed by the level above. Maximum signing capacity = product of per-level capacities:
 
@@ -547,7 +547,7 @@ HSS is a multi-level extension of LMS. An HSS key pair of L levels chains L LMS 
 
 HSS public key = root LMS public key (4 + 4 + 16 + n bytes). HSS signature = concatenation of L (LMS signature + LMS public key) pairs.
 
-#### XMSS parameter sets (SP 800-208 §7, RFC 8391)
+#### XMSS Parameter Sets (SP 800-208 §7, RFC 8391)
 
 XMSS uses WOTS+ one-time signatures. SP 800-208 approves the following parameter set families:
 
@@ -562,7 +562,7 @@ XMSS uses WOTS+ one-time signatures. SP 800-208 approves the following parameter
 
 Example names: `XMSS-SHA2_10_256`, `XMSS-SHA2_20_512`, `XMSS-SHAKE256_10_192`. **18 XMSS parameter sets** in SP 800-208.
 
-#### XMSS^MT parameter sets (SP 800-208 §8, RFC 8391)
+#### XMSS^MT Parameter Sets (SP 800-208 §8, RFC 8391)
 
 XMSS^MT (multi-tree XMSS) uses d layers of XMSS trees with total hypertree height H = h′×d. Enables very large signing volumes while keeping per-signing computation bounded to d WOTS+ computations:
 
@@ -585,7 +585,7 @@ Example name: `XMSSMT-SHA2_20/2_256` (H=20, d=2, n=32).
 
 ---
 
-## 4. Curve & group parameters
+## 4. Curve & Group Parameters
 
 Parameters that select the algebraic structure for asymmetric operations.
 
@@ -619,7 +619,7 @@ Parameters that select the algebraic structure for asymmetric operations.
 
 ---
 
-## 5. Authentication & tag parameters
+## 5. Authentication & Tag Parameters
 
 Parameters related to authentication tags, AEAD construction identifiers, and MAC sub-components.
 
@@ -690,7 +690,7 @@ Parameters related to authentication tags, AEAD construction identifiers, and MA
 
 ---
 
-## 6. KDF & password parameters
+## 6. KDF & Password Parameters
 
 Parameters controlling cost, memory hardness, and sub-components of key derivation and password hashing functions.
 
@@ -886,7 +886,7 @@ Parameters controlling cost, memory hardness, and sub-components of key derivati
 
 ---
 
-## 7. Padding & IV parameters
+## 7. Padding & IV Parameters
 
 Parameters specifying padding schemes and initialisation vector handling.
 
@@ -906,7 +906,7 @@ Parameters specifying padding schemes and initialisation vector handling.
 
 ---
 
-## 8. Protocol & miscellaneous parameters
+## 8. Protocol & Miscellaneous Parameters
 
 Construction-specific or protocol-level parameters that do not fit a general category.
 
@@ -956,7 +956,7 @@ Construction-specific or protocol-level parameters that do not fit a general cat
 
 ---
 
-## 9. PQC internal parameters (FIPS 203 / 204 / 205 / 206)
+## 9. PQC Internal Parameters (FIPS 203 / 204 / 205 / 206)
 
 These parameters are fixed by the algorithm's named parameter set and are not free-standing
 CycloneDX pattern placeholders. They are documented here because they are essential for
@@ -968,10 +968,10 @@ standardisation discussions on the NIST PQC Forum.
 
 ---
 
-### ML-DSA internal parameters (FIPS 204)
+### ML-DSA Internal Parameters (FIPS 204)
 
 
-#### `{k}` and `{l}` (ML-DSA) — lattice matrix dimensions
+#### `{k}` and `{l}` (ML-DSA, lattice matrix dimensions)
 
 | Aspect | Detail |
 |:---|:---|
@@ -992,7 +992,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{eta}` (ML-DSA) — secret key coefficient bound
+#### `{eta}` (ML-DSA, secret key coefficient bound)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1006,7 +1006,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{gamma1}` (ML-DSA) — masking polynomial range
+#### `{gamma1}` (ML-DSA, masking polynomial range)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1020,7 +1020,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{gamma2}` (ML-DSA) — low-order rounding threshold
+#### `{gamma2}` (ML-DSA, low-order rounding threshold)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1034,7 +1034,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{tau}` (ML-DSA) — challenge polynomial weight
+#### `{tau}` (ML-DSA, challenge polynomial weight)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1048,7 +1048,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{lambda}` (ML-DSA) — collision strength target
+#### `{lambda}` (ML-DSA, collision strength target)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1062,7 +1062,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{omega}` (ML-DSA) — maximum hint bits
+#### `{omega}` (ML-DSA, maximum hint bits)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1076,7 +1076,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{beta}` (ML-DSA) — norm bound for signature acceptance
+#### `{beta}` (ML-DSA, norm bound for signature acceptance)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1090,7 +1090,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{q}` (ML-DSA) — prime modulus
+#### `{q}` (ML-DSA, prime modulus)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1104,7 +1104,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### ML-DSA size reference (FIPS 204 / RFC 9881)
+#### ML-DSA Size Reference (FIPS 204 / RFC 9881)
 
 > RFC 9881 (October 2025) specifies the encoding of ML-DSA public keys and signatures in X.509 PKIX certificates and CRLs. Key usage: `digitalSignature`, `nonRepudiation`, `keyCertSign`, `cRLSign`. Algorithm parameters MUST be absent. Pure ML-DSA only (HashML-DSA is excluded from PKIX).
 
@@ -1116,10 +1116,10 @@ standardisation discussions on the NIST PQC Forum.
 
 ---
 
-### ML-KEM internal parameters (FIPS 203)
+### ML-KEM Internal Parameters (FIPS 203)
 
 
-#### `{k}` (ML-KEM) — module rank
+#### `{k}` (ML-KEM, module rank)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1142,7 +1142,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{du}` and `{dv}` (ML-KEM) — ciphertext compression bits
+#### `{du}` and `{dv}` (ML-KEM, ciphertext compression bits)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1163,7 +1163,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{eta1}` and `{eta2}` (ML-KEM) — noise distribution width
+#### `{eta1}` and `{eta2}` (ML-KEM, noise distribution width)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1184,7 +1184,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{q}` (ML-KEM) — prime modulus
+#### `{q}` (ML-KEM, prime modulus)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1198,7 +1198,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### ML-KEM size reference (FIPS 203)
+#### ML-KEM Size Reference (FIPS 203)
 
 | Parameter set | ek (bytes) | dk (bytes) | Ciphertext (bytes) | Shared secret (bytes) | NIST level |
 |:---|:---|:---|:---|:---|:---|
@@ -1208,10 +1208,10 @@ standardisation discussions on the NIST PQC Forum.
 
 ---
 
-### SLH-DSA internal parameters (FIPS 205)
+### SLH-DSA Internal Parameters (FIPS 205)
 
 
-#### `{n}` (SLH-DSA) — security parameter in bytes
+#### `{n}` (SLH-DSA, security parameter in bytes)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1225,7 +1225,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{h}` and `{d}` (SLH-DSA) — hypertree height and layer count
+#### `{h}` and `{d}` (SLH-DSA, hypertree height and layer count)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1249,7 +1249,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{a}` (SLH-DSA) — FORS tree height
+#### `{a}` (SLH-DSA, FORS tree height)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1263,7 +1263,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{k}` (SLH-DSA) — number of FORS trees
+#### `{k}` (SLH-DSA, number of FORS trees)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1277,7 +1277,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{w}` / `{lg_w}` (SLH-DSA) — Winternitz parameter
+#### `{w}` / `{lg_w}` (SLH-DSA, Winternitz parameter)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1291,7 +1291,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{h_prime}` (SLH-DSA) — individual XMSS tree height
+#### `{h_prime}` (SLH-DSA, individual XMSS tree height)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1305,7 +1305,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### `{m}` (SLH-DSA) — message digest length
+#### `{m}` (SLH-DSA, message digest length)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1319,7 +1319,7 @@ standardisation discussions on the NIST PQC Forum.
 ---
 
 
-#### SLH-DSA complete parameter and size reference (FIPS 205)
+#### SLH-DSA Complete Parameter and Size Reference (FIPS 205)
 
 All 12 parameter sets (SHA-2 and SHAKE variants share identical structural parameters and sizes):
 
@@ -1336,10 +1336,10 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 
 ---
 
-### FN-DSA / Falcon parameters (FIPS 206 IPD)
+### FN-DSA / Falcon Parameters (FIPS 206 IPD)
 
 
-#### `{signingMode}` — pure vs. pre-hash signing
+#### `{signingMode}` (pure vs. pre-hash signing)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1354,7 +1354,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 ---
 
 
-#### `{deterministicSigning}` (ML-DSA) — hedged vs. deterministic mode
+#### `{deterministicSigning}` (ML-DSA, hedged vs. deterministic mode)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1369,7 +1369,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 ---
 
 
-#### `{context}` — signing context string
+#### `{context}` (signing context string)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1384,7 +1384,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 ---
 
 
-#### `{floatingPointMode}` (FN-DSA) — IEEE 754 arithmetic compliance
+#### `{floatingPointMode}` (FN-DSA, IEEE 754 arithmetic compliance)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1398,7 +1398,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 ---
 
 
-#### `{n}` (FN-DSA) — polynomial degree
+#### `{n}` (FN-DSA, polynomial degree)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1412,7 +1412,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 ---
 
 
-#### `{q}` (FN-DSA) — prime modulus
+#### `{q}` (FN-DSA, prime modulus)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1426,7 +1426,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 ---
 
 
-#### `{sigma}` (FN-DSA) — Gaussian standard deviation
+#### `{sigma}` (FN-DSA, Gaussian standard deviation)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1440,7 +1440,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 ---
 
 
-#### FN-DSA size reference (FIPS 206 IPD)
+#### FN-DSA Size Reference (FIPS 206 IPD)
 
 | Parameter set | n | q | pk (bytes) | sk (bytes) | sig (bytes, max) | NIST level |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -1452,10 +1452,10 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 
 ---
 
-### Cross-cutting PQC hybrid parameters
+### Cross-Cutting PQC Hybrid Parameters
 
 
-#### `{hybridKemCombiner}` — combination method for hybrid KEM shared secrets
+#### `{hybridKemCombiner}` (combination method for hybrid KEM shared secrets)
 
 | Aspect | Detail |
 |:---|:---|
@@ -1469,7 +1469,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 
 ---
 
-### HQC parameters (NIST selection, spec v2025-08-22)
+### HQC Parameters (NIST selection, spec v2025-08-22)
 
 > **Primary source:** HQC submission team, *Hamming Quasi-Cyclic (HQC)*, specification document v2025-08-22, https://pqc-hqc.org. NIST selected HQC as a fifth PQC standard (code-based KEM) in March 2025; FIPS standard pending.
 
@@ -1479,7 +1479,7 @@ HQC is an IND-CCA2-secure Key Encapsulation Mechanism (KEM) whose security is ba
 
 HQC-PKE (the underlying public-key encryption scheme) achieves IND-CPA security under the 2-DQCSD-P and 3-DQCSD-PT problems. HQC-KEM is obtained by applying the **Salted Fujisaki-Okamoto (SFO⊥) transform** to HQC-PKE, yielding IND-CCA2 security in the random-oracle model.
 
-#### Internal structure
+#### Internal Structure
 
 HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | rot(h)) and a decodable **concatenated Reed-Muller / Reed-Solomon (RMRS) code C** for message encoding.
 
@@ -1490,7 +1490,7 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 | Duplication | L1: [384, 8] L3: [640, 8] L5: [640, 8] |
 | Decoding | Maximum-likelihood decoding on internal code (fast Hadamard transform); algebraic decoder (Berlekamp-Massey / Euclidean) on external RS code |
 
-#### Hash functions and XOF
+#### Hash Functions and XOF
 
 | Function | Instantiation | Purpose |
 |:---|:---|:---|
@@ -1498,7 +1498,7 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 | H, J | SHA3-256 | Challenge hash in FO transform |
 | XOF | SHAKE256 | Pseudorandom expansion of seeds into vectors |
 
-#### Parameter sets (Table 5 of HQC spec v2025-08-22)
+#### Parameter Sets (Table 5 of HQC spec v2025-08-22)
 
 | Parameter | HQC-128 (HQC-1) | HQC-192 (HQC-3) | HQC-256 (HQC-5) |
 |:---|---:|---:|---:|
@@ -1511,7 +1511,7 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 | w_e (error vector weight) | 75 | 114 | 149 |
 | DFR (decoding failure rate) | < 2⁻¹²⁸ | < 2⁻¹⁹² | < 2⁻²⁵⁶ |
 
-#### Key and ciphertext sizes (Table 6 of HQC spec v2025-08-22)
+#### Key and Ciphertext Sizes (Table 6 of HQC spec v2025-08-22)
 
 | Size | HQC-128 (HQC-1) | HQC-192 (HQC-3) | HQC-256 (HQC-5) |
 |:---|---:|---:|---:|
@@ -1523,7 +1523,7 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 
 > The **compressed dk** format stores only `seed_KEM` (32 bytes); the full key pair can be re-derived from this seed. The **default dk** format stores `(ek_KEM; dk_PKE; σ; seed_KEM)` to avoid re-derivation during decapsulation.
 
-#### Security notes
+#### Security Notes
 
 - Classical security: ISD (Information Set Decoding) attacks yield work factors ≥ 2¹²⁸/²¹⁹²/²⁵⁶.
 - Quantum security: ISD with quantum speedup (Grover / quantum ISD variants) halves the exponent; security parameters are chosen conservatively to maintain ≥ 128/192/256 bit classical and ≥ 64/96/128 bit quantum security.
@@ -1532,7 +1532,7 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 
 ---
 
-## Summary table
+## Summary Table
 
 | Parameter | Category | Type | Key algorithm families |
 |:---|:---|:---|:---|
@@ -1625,13 +1625,13 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 
 ---
 
-## 10. BSI TR-02102-1 v2026-01 — Parameter Requirements
+## 10. BSI TR-02102-1 v2026-01 Parameter Requirements
 
 > **Source:** BSI TR-02102-1 v2026-01 (January 23, 2026), "Cryptographic Mechanisms: Recommendations and Key Lengths".
 
 BSI defines minimum parameter requirements that differ from — and are in some cases stricter than — NIST recommendations. The BSI minimum security level is **120 bits** (§1.2).
 
-### Key length requirements (BSI TR-02102-1 Table 1.2)
+### Key Length Requirements (BSI TR-02102-1 Table 1.2)
 
 | Mechanism | BSI minimum key length | BSI section | Notes |
 |:---|:---|:---|:---|
@@ -1644,14 +1644,14 @@ BSI defines minimum parameter requirements that differ from — and are in some 
 | ECDH / ECDSA curve order | **250 bit** | §2.3.4, §5.3.3 | P-256 (256 bit) is minimum |
 | Hash output for general use | **256 bit** | §4 | SHA-256 minimum; SHA-224 not recommended |
 
-### Security level equivalence (BSI TR-02102-1 Table 1.1)
+### Security Level Equivalence (BSI TR-02102-1 Table 1.1)
 
 | Security level | Symmetric | MAC | RSA / DH *p* | DSA / DH *q* | ECDSA / ECDH |
 |:---|:---|:---|:---|:---|:---|
 | 120 bit (BSI minimum) | 120 bit | 120 bit | 2800 bit | 2800 bit / 240 bit | 240 bit |
 | **128 bit (recommended)** | **128 bit** | **128 bit** | **3000 bit** | **3000 bit / 250 bit** | **250 bit** |
 
-### GCM / CCM tag and IV requirements (BSI TR-02102-1 §3.4)
+### GCM / CCM Tag and IV Requirements (BSI TR-02102-1 §3.4)
 
 | Parameter | BSI requirement | Notes |
 |:---|:---|:---|
@@ -1662,7 +1662,7 @@ BSI defines minimum parameter requirements that differ from — and are in some 
 | GCM-SIV IV length | 96 bit | Per RFC 8452 |
 | CBC IV | Unpredictable (pseudorandom) | Predictable IV enables chosen-plaintext attacks |
 
-### PQC parameter requirements (BSI TR-02102-1 §2.4)
+### PQC Parameter Requirements (BSI TR-02102-1 §2.4)
 
 | Algorithm | BSI-recommended parameters | BSI section | Notes |
 |:---|:---|:---|:---|
@@ -1702,7 +1702,7 @@ The effective security strength of a cryptographic operation is determined by th
 
 ## Sources
 
-### Registries and community resources
+### Registries and Community Resources
 
 - [CycloneDX Cryptography Registry](https://cyclonedx.org/registry/cryptography/) — algorithm families and variant patterns
     - [cryptography-defs.json](https://github.com/CycloneDX/specification/blob/master/schema/cryptography-defs.json) — machine-readable definitions (last updated 2026-02-24)
@@ -1713,7 +1713,7 @@ The effective security strength of a cryptographic operation is determined by th
 - [NIST PQC Forum](https://groups.google.com/a/list.nist.gov/g/pqc-forum) — official NIST mailing list for PQC standardisation discussions
     - [NIST PQC standardisation project](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
-### NIST FIPS standards (post-quantum)
+### NIST FIPS Standards (post-quantum)
 
 - NIST FIPS 203 — ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism)
     - [CSRC landing page](https://csrc.nist.gov/pubs/fips/203/final)
@@ -1805,7 +1805,7 @@ The effective security strength of a cryptographic operation is determined by th
 - `draft-turner-lamps-cms-fn-dsa` — Use of FN-DSA in CMS
     - [Datatracker](https://datatracker.ietf.org/doc/draft-turner-lamps-cms-fn-dsa/)
 
-### Research papers
+### Research Papers
 
 - Fluhrer, S. and Dang, Q. (2024). *Smaller Sphincs+* — proposes alternative SLH-DSA parameter sets for reduced signing volumes; cited in NIST PQC forum additional parameter sets request thread
     - [IACR ePrint 2024/018](https://eprint.iacr.org/2024/018)

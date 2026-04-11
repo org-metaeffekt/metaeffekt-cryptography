@@ -14,7 +14,7 @@
 
 ---
 
-## Pattern notation
+## Pattern Notation
 
 This document adopts the CycloneDX pattern convention from the
 [Cryptographic Algorithm Parameter Taxonomy](./cryptographic-parameters.md):
@@ -26,7 +26,7 @@ This document adopts the CycloneDX pattern convention from the
 | `{x}` | Variable placeholder | `Fortuna[-{blockCipher}]` |
 | `[-{x}]` | Optional variable | `HMAC_DRBG[-{hashAlgorithm}]` |
 
-### RNG identifier format
+### RNG Identifier Format
 
 The general pattern for identifying an RNG instance is:
 
@@ -40,7 +40,7 @@ operational choices such as prediction resistance or derivation function use.
 
 ---
 
-## 1. RNG taxonomy — top-level classification
+## 1. Top-Level RNG Taxonomy
 
 ```
 RBG
@@ -201,7 +201,7 @@ curve points (P and Q). Any implementation must be replaced immediately.
 
 ---
 
-## 3. Accumulator-based CSPRNGs
+## 3. Accumulator-Based CSPRNGs
 
 ### 3.1 Fortuna
 
@@ -270,7 +270,7 @@ Use Fortuna or a NIST DRBG for new designs.
 
 ---
 
-## 4. Stream-cipher-based CSPRNGs
+## 4. Stream-Cipher-Based CSPRNGs
 
 ### 4.1 ChaCha20-DRNG (Linux kernel)
 
@@ -350,7 +350,7 @@ the same underlying CSPRNG.
 
 ---
 
-## 5. Hardware RNG interfaces
+## 5. Hardware RNG Interfaces
 
 ### 5.1 RDRAND (Intel / AMD x86-64)
 
@@ -431,7 +431,7 @@ seeded from on-chip physical entropy.
 
 ---
 
-## 6. Non-cryptographic PRNGs
+## 6. Non-Cryptographic PRNGs
 
 These generators produce statistically good output but are **not**
 cryptographically secure. State is fully recoverable from a small number of
@@ -487,7 +487,7 @@ Output is trivially predictable from a single value. Never use for security.
 
 ---
 
-## 7. Parameter taxonomy
+## 7. Parameter Taxonomy
 
 Parameters governing RNG instantiation and operation, following the
 CycloneDX `{placeholder}` convention.
@@ -775,7 +775,7 @@ CycloneDX `{placeholder}` convention.
 
 ---
 
-## 8. Summary table
+## 8. Summary Table
 
 | Identifier pattern | Category | Primitive | FIPS 140-3 | Status |
 |:---|:---|:---|:---|:---|
@@ -799,7 +799,7 @@ CycloneDX `{placeholder}` convention.
 
 ---
 
-## 9. Parameter summary table
+## 9. Parameter Summary Table
 
 | Parameter | Category | Type | Used in |
 |:---|:---|:---|:---|
@@ -838,7 +838,7 @@ CycloneDX `{placeholder}` convention.
     - [CSRC landing page](https://csrc.nist.gov/pubs/sp/800/90/c/3pd/docs)
     - [PDF (3rd draft)](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90C.pdf)
 
-### Accumulator-based CSPRNG specifications
+### Accumulator-Based CSPRNG Specifications
 
 - Ferguson, N. and Schneier, B. (2003). *Practical Cryptography*, Wiley.
     - [Fortuna chapter excerpt (Schneier.com)](https://www.schneier.com/wp-content/uploads/2015/12/fortuna.pdf)
@@ -848,7 +848,7 @@ CycloneDX `{placeholder}` convention.
 - Dodis, Y., Shamir, A., Stephens-Davidowitz, N. and Wichs, D. (2014). *How to Eat Your Entropy and Have It Too — Optimal Recovery Strategies for Compromised RNGs*.
     - [Schneier on Security commentary](https://www.schneier.com/blog/archives/2014/03/the_security_of_7.html)
 
-### Linux kernel RNG
+### Linux Kernel RNG
 
 - BSI (2022). *Documentation and Analysis of the Linux Random Number Generator v5.0*.
     - [BSI PDF](https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN_V5_0.pdf)
@@ -866,7 +866,7 @@ CycloneDX `{placeholder}` convention.
 - TCG (2019). *Trusted Platform Module Library Specification, Family "2.0" — Part 3: Commands*, §16.2 `TPM2_GetRandom`.
     - [TCG specification](https://trustedcomputinggroup.org/resource/tpm-library-specification/)
 
-### Security analyses
+### Security Analyses
 
 - Woodage, J. and Shumow, D. (2019). *An Analysis of the NIST SP 800-90A Standard*.
     - [IACR ePrint 2018/349](https://eprint.iacr.org/2018/349)

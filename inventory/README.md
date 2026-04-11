@@ -108,7 +108,7 @@ version tags. The Round 2 tweak deadline was January 2025. NIST is evaluating ca
 down-selection expected mid-to-late 2025 and a final standard potentially by 2026-2027
 (NIST IR 8545). CROSS and MAYO are currently prioritised.
 
-### 3.1 Multivariate-based
+### 3.1 Multivariate-Based
 
 | Id | Version | Language | PQC patterns | URL |
 |:---|:---|:---|:---|:---|
@@ -122,7 +122,7 @@ down-selection expected mid-to-late 2025 and a final standard potentially by 202
 MAYO is an oil-and-vinegar variant; SNOVA, pqov (UOV), and QR-UOV are members of the
 Oil-and-Vinegar family. Mirath is the result of the merger of MIRA and MiRitH (MinRank in the Head).
 
-### 3.2 Lattice-based
+### 3.2 Lattice-Based
 
 | Id | Version | Language | PQC patterns | URL |
 |:---|:---|:---|:---|:---|
@@ -131,7 +131,7 @@ Oil-and-Vinegar family. Mirath is the result of the merger of MIRA and MiRitH (M
 HAWK is based on the Lattice Isomorphism Problem (LIP), designed by Ducas, Postlethwaite, Pulles,
 and van Woerden. Uses NTRU lattices without the floating-point Gaussian sampler of Falcon.
 
-### 3.3 Code-based
+### 3.3 Code-Based
 
 | Id | Version | Language | PQC patterns | URL |
 |:---|:---|:---|:---|:---|
@@ -158,7 +158,7 @@ implementation, matching the FAEST v2 specification. The reference C implementat
 tracks the same spec version without semantic tags. SDitH (Syndrome Decoding in the Head) is based
 on the Hamming quasi-cyclic problem.
 
-### 3.5 Isogeny-based
+### 3.5 Isogeny-Based
 
 | Id | Version | Language | PQC patterns | URL |
 |:---|:---|:---|:---|:---|
@@ -310,7 +310,7 @@ version numbers rather than a monorepo release. `ml-kem` (crates.io) is the ML-K
 crate at version 0.2.3; `ml-dsa` and `slh-dsa` crates are available under RustCrypto/signatures
 and RustCrypto/KEMs respectively.
 
-### 5.10 Go standard library
+### 5.10 Go Standard Library
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -358,7 +358,7 @@ lattice-based KEM) and hybrid KEM constructions alongside the NIST-standardised 
 The archived `crystals-go` (also in the spreadsheet) was a predecessor to the CRYSTALS
 implementations now in CIRCL.
 
-### 5.14 Python libraries (pyca/cryptography, PyCryptodome, PyNaCl)
+### 5.14 Python Libraries (pyca/cryptography, PyCryptodome, PyNaCl)
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -376,7 +376,7 @@ items as of Q1 2026.
 
 ---
 
-## 6. Lightweight Cryptography (NIST SP 800-232 — Ascon)
+## 6. Lightweight Cryptography (NIST SP 800-232; Ascon)
 
 ### 6.1 Ascon Reference Implementations
 
@@ -483,7 +483,7 @@ BLAKE3 is a cryptographic hash function designed by Jack O'Connell, Jean-Philipp
 Samuel Neves, and Zooko Wilcox-O'Hearn. It is based on Bao tree hashing and the BLAKE2
 compression function. The reference implementation (Rust + C) is dual-licensed CC0-1.0 / Apache-2.0.
 
-### 10.2 Pairing-based Cryptography
+### 10.2 Pairing-Based Cryptography
 
 | Id | Version | Language | Patterns | URL |
 |:---|:---|:---|:---|:---|
@@ -560,7 +560,7 @@ randomness. Since Linux 5.6 both draw from the same CSPRNG pool. `getrandom()` i
 preferred syscall interface (added in Linux 3.17). `getentropy()` is the POSIX-standardised
 glibc wrapper around `getrandom()`.
 
-### 10.9 Non-cryptographic PRNGs
+### 10.9 Non-Cryptographic PRNGs
 
 | Id | Version | Language | Patterns | URL |
 |:---|:---|:---|:---|:---|

@@ -33,7 +33,7 @@ security modules, and third-party libraries that embed their own cryptographic d
 A single application may invoke dozens of distinct algorithm configurations — often indirectly,
 through frameworks and libraries whose cryptographic choices are opaque to the consuming team.
 
-### The taxonomy is more complex than it appears
+### The Taxonomy is more complex than it appears
 
 "We use AES-256" is not an answer. The security of AES depends on the mode (GCM vs. ECB vs. CBC),
 the key management practices, the authentication tag length, the IV generation strategy, and
@@ -45,7 +45,7 @@ A complete cryptographic inventory must capture not just algorithm names but par
 configurations: key lengths, hash functions, modes, curves, padding schemes. Without this
 granularity, the inventory cannot support risk assessment or compliance demonstration.
 
-### Standards bodies disagree — and move at different speeds
+### Standards Bodies disagree and move at different Speeds
 
 NIST, BSI (Germany), ANSSI (France), ETSI, and NSA each publish cryptographic recommendations.
 They do not always agree. BSI TR-02102 permits algorithms that NIST has deprecated. CNSA 2.0

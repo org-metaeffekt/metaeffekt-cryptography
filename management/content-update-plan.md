@@ -1,4 +1,4 @@
-# Content Update Plan — Consistency, Integrity, and Synchronisation
+# Content Update Plan (consistency, integrity, and synchronisation)
 
 > Plan for ensuring all artefacts in the metaeffekt-cryptography repository are consistent,
 > complete, and synchronised. Covers markdown documents, YAML registry, ANTLR4 grammars,
@@ -44,6 +44,14 @@ Phase 8 (Improvements)                ── independent; can run last or in par
 ├── 8.2 (Markdown Structure)          ── depends on Phase 7
 ├── 8.3 (Compactness)                 ── depends on Phase 7
 └── 8.4 (Tooling)                     ── independent
+
+Phase 9 (Style Conventions)           ── independent; applies to all markdown files
+├── 9.1 (Heading Capitalisation, Noun-Only Rule)
+├── 9.2 (Em-Dashes in Headings, Avoided)
+├── 9.3 (Bracketed Content, Lowercased)
+├── 9.4 (Hyphenated Compounds in Noun Phrases)
+├── 9.5 (Acronym and Proper Noun Preservation)
+└── 9.6 (Verification and Enforcement)
 ```
 
 **Critical Path:** 1.1 → 2.1/2.2 → 3.1 → 7 → 8.2/8.3
@@ -339,6 +347,173 @@ Reconcile these numbers across all documents:
 - [ ] Consider a CI script that validates YAML family count matches README/markdown claims
 - [ ] Consider a script that extracts all `{placeholder}` from `cryptographic-parameters.md` and checks YAML coverage
 - [ ] Consider generating the summary counts table in `cryptographic-algorithms.md` from YAML rather than maintaining manually
+
+---
+
+## Phase 9: Style Conventions
+
+> [!NOTE]
+> Enforce consistent stylistic conventions across all markdown files in the repository so that authoring, review, and machine processing all assume the same rules. New content must conform; existing content is brought into conformance opportunistically.
+
+### 9.1 Heading Capitalisation (noun-only rule)
+
+> [!NOTE]
+> Markdown headings follow a **noun-only** capitalisation rule (German-style) rather than English title case. Only nouns and noun-phrase modifiers are capitalised. Verbs, modals, articles, conjunctions, prepositions, adverbs, determiners, and pronouns remain lowercase. The first word of every heading is always capitalised regardless of its part of speech.
+
+**Capitalise (noun-only rule):**
+
+| Class | Treatment | Example |
+|:---|:---|:---|
+| **Nouns** | Always capital | `Hash Functions`, `Key Length`, `Summary Table` |
+| **Adjectives in noun phrases** | Capital (treated as part of the noun phrase) | `Symmetric Encryption`, `Quantum Transition`, `Block Cipher Modes` |
+| **Gerunds** (verb form `-ing` acting as noun) | Capital (treated as nouns) | `Comparing Authorities`, `Hashing`, `Signing` |
+| **Acronyms and proper nouns** | Preserved as-is | `NIST`, `ML-KEM`, `SHA-256`, `OpenSSL`, `eSTREAM` |
+| **First word of heading** | Always capital regardless of part of speech | `## Five Questions every Organization should be able to answer` (`Five` is a quantifier but is the first word) |
+
+**Lowercase (noun-only rule):**
+
+| Class | Treatment | Example |
+|:---|:---|:---|
+| **Verbs** (incl. modals, auxiliaries) | lowercase | `should`, `be`, `is`, `are`, `makes`, `enables`, `exists`, `appears` |
+| **Predicate adjectives** (after a verb) | lowercase | `is urgent`, `is invisible`, `getting involved` |
+| **Adverbs** (when not in noun phrase) | lowercase | `always`, `mostly`, `never`, `not`, `more` |
+| **Determiners, pronouns** | lowercase | `every`, `this`, `it`, `these`, `that` |
+| **Articles** | lowercase | `a`, `an`, `the` |
+| **Conjunctions** | lowercase | `and`, `but`, `or`, `nor`, `yet`, `so`, `than` |
+| **Short prepositions** (≤ 4 letters) | lowercase | `at`, `by`, `for`, `in`, `of`, `on`, `to`, `up`, `via`, `from`, `per` |
+| **Longer prepositions** | lowercase | `across`, `around`, `between`, `during`, `through` |
+
+**Worked example:**
+
+```
+# Five Questions every Organization should be able to answer
+  ─┬── ─┬─────── ─┬─── ─┬─────────── ─┬───── ─┬─ ─┬── ─┬─ ─┬────
+   │    │         │     │             │      │   │   │    │
+   │    │         │     │             │      │   │   │    └── verb           → lowercase
+   │    │         │     │             │      │   │   └────── preposition    → lowercase
+   │    │         │     │             │      │   └────────── adjective      → lowercase
+   │    │         │     │             │      └────────────── verb           → lowercase
+   │    │         │     │             └───────────────────── modal verb     → lowercase
+   │    │         │     └───────────────────────────────── noun           → CAPITAL
+   │    │         └────────────────────────────────────── determiner     → lowercase
+   │    └────────────────────────────────────────────── noun           → CAPITAL
+   └─────────────────────────────────────────────────── first word     → CAPITAL
+```
+
+**Section number prefixes are not part of capitalisation scope:**
+
+```
+### 1.1 Block Cipher Key Length
+    ─┬─ ─┬───────────────────
+     │    └── first content word — capitalised regardless
+     └─────── numeric prefix — unchanged
+```
+
+### 9.2 Em-Dashes in Headings (avoid)
+
+> [!NOTE]
+> Em-dashes (`—`) in headings introduce a parsing ambiguity (where does the title end and the qualifier begin?) and complicate first-word treatment. Avoid them by restructuring the heading into one of the three forms below.
+
+**Three options for converting em-dash headings:**
+
+| Form | Use when | Example |
+|:---|:---|:---|
+| **Concatenate** | The two halves form a single noun phrase | `Block Cipher — Key Length` → `Block Cipher Key Length` |
+| **Bracket** | The trailing text is a qualifier or descriptor | `PRNGs — Always disallowed for security use` → `PRNGs (always disallowed for security use)` |
+| **Restructure** | The heading reads more naturally with the order swapped | `Digital Signatures — ML-DSA (FIPS 204)` → `ML-DSA Digital Signatures (FIPS 204)` |
+
+When em-dashes appear inside parentheses, replace them with a semicolon:
+
+| Before | After |
+|:---|:---|
+| `(SP 800-186, Appendix G — All Deprecated)` | `(SP 800-186, Appendix G; all deprecated)` |
+| `(NIST SP 800-232 — Ascon)` | `(NIST SP 800-232; Ascon)` |
+
+### 9.3 Bracketed Content (lowercase unless name or acronym)
+
+> [!NOTE]
+> Content inside parentheses is **lowercase**, regardless of whether the words would be capitalised outside the brackets. Exceptions: proper names, acronyms, standards identifiers, and intentional-case algorithm/library names.
+
+**Lowercased inside brackets:**
+
+| Before | After |
+|:---|:---|
+| `(Statistical Use Only)` | `(statistical use only)` |
+| `(Historical / Legacy)` | `(historical / legacy)` |
+| `(Not Standardised)` | `(not standardised)` |
+| `(Do Not Use)` | `(do not use)` |
+| `(Three Levels)` | `(three levels)` |
+| `(Active)` | `(active)` |
+| `(Post-Quantum)` | `(post-quantum)` |
+| `(Cross-Reference)` | `(cross-reference)` |
+| `(NIST Selection, Spec v2025-08-22)` | `(NIST selection, spec v2025-08-22)` (NIST stays — acronym) |
+| `(Windows / System)` | `(Windows / system)` (Windows stays — proper noun) |
+
+**Preserved inside brackets (names, acronyms, identifiers):**
+
+| Form | Reason |
+|:---|:---|
+| `(SP 800-131A Rev 2)` | Standards identifier |
+| `(FIPS 203)` | Standards identifier |
+| `(RFC 9142)` | Standards identifier |
+| `(BSI TR-02102-1 §3.4)` | Standards identifier |
+| `(ML-DSA)` | Algorithm name |
+| `(pyca/cryptography, PyCryptodome, PyNaCl)` | Library names |
+| `(BCryptGenRandom)` | API name |
+
+### 9.4 Hyphenated Compounds in Noun Phrases
+
+> [!NOTE]
+> When a hyphenated compound is part of a noun phrase (i.e., it modifies a following noun), **both halves** are capitalised. When the same compound appears inside brackets as descriptive text, both halves are lowercased per §9.3.
+
+**Inside noun phrases (capitalised):**
+
+| Compound | Example heading |
+|:---|:---|
+| `Hash-Based` | `Stateful Hash-Based Signatures` |
+| `Stream-Cipher-Based` | `Stream-Cipher-Based CSPRNGs` |
+| `Non-Cryptographic` | `Non-Cryptographic PRNGs` |
+| `Pre-Shared` | `Pre-Shared Key (PSK) Quantum Mitigation` |
+| `End-Entity` | `End-Entity Key Recommendations` |
+| `Accumulator-Based` | `Accumulator-Based CSPRNGs` |
+| `OS-Provided` | `OS-Provided Entropy APIs` |
+| `Lattice-Based` | `Lattice-Based` (standalone category — treated as noun) |
+| `Code-Based` | `Code-Based` (standalone category) |
+| `Pairing-Based` | `Pairing-Based Cryptography` |
+| `Top-Level` | `Top-Level RNG Taxonomy` |
+| `Cross-Cutting` | `Cross-Cutting PQC Hybrid Parameters` |
+| `Security-Strength` | `Security-Strength Equivalence` |
+
+**Inside brackets (lowercased per §9.3):**
+
+| Compound | Example |
+|:---|:---|
+| `post-quantum` | `(post-quantum)` |
+| `cross-reference` | `(cross-reference)` |
+| `low-order` | `(low-order rounding threshold)` |
+
+### 9.5 Acronym and Proper Noun Preservation
+
+> [!NOTE]
+> Acronyms, algorithm names, and proper nouns retain their canonical capitalisation in **all** positions (headings, brackets, prose). Capitalisation rules must not "correct" intentional non-standard casing.
+
+**Always preserved as-is:**
+
+| Class | Examples |
+|:---|:---|
+| **Acronyms** | `PRNGs`, `KEM`, `MAC`, `XOF`, `DRBG`, `AEAD`, `OID`, `MGF`, `IETF`, `NIST`, `BSI`, `CNSA`, `CABF`, `IPsec`, `MODP`, `ECP`, `FORS`, `WOTS`, `XMSS`, `LMS`, `HSS`, `QKD` |
+| **Algorithm names with intentional case** | `eSTREAM`, `cSHAKE`, `bcrypt`, `scrypt`, `yescrypt`, `secp256r1`, `brainpoolP256r1`, `mceliece460896/f`, `ssh-ed25519`, `chacha20-poly1305@openssh.com` |
+| **Library / vendor names** | `pyca/cryptography`, `liboqs`, `OpenSSL`, `BoringSSL`, `GmSSL`, `wolfSSL`, `metæffekt`, `Bouncy Castle` |
+| **OS API names** | `BCryptGenRandom`, `getrandom`, `getentropy`, `dev-random`, `dev-urandom`, `RDRAND`, `RDSEED` |
+| **Standards identifiers** | `FIPS 203`, `SP 800-131A Rev 2`, `RFC 9142`, `TR-02102-1`, `BSI AIS 20/31` |
+| **Mathematician / inventor names in proper nouns** | `Diffie-Hellman`, `Merkle`, `Schnorr`, `ElGamal`, `Lamport`, `Falcon` |
+
+### 9.6 Verification and Enforcement
+
+- [ ] Run `grep -nE '^#+' *.md inventory/README.md ae-pattern-validator/**/*.md management/*.md` after any heading edit to spot-check capitalisation
+- [ ] Verify no em-dashes remain in headings: `grep -nE '^#+ .*—' *.md inventory/README.md ae-pattern-validator/**/*.md management/*.md` should return nothing
+- [ ] When adding new headings, follow the lookup table in §9.4 for hyphenated compounds and §9.5 for preserved-case names
+- [ ] Consider adding a tooling check (Phase 8.4) that flags lowercase nouns and rogue em-dashes in markdown headings, exempting the acronym/identifier list in §9.5
 
 ---
 
