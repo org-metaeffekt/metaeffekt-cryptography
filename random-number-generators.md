@@ -40,7 +40,7 @@ operational choices such as prediction resistance or derivation function use.
 
 ---
 
-## 1. Top-level RNG Taxonomy
+## 1. Top-Level RNG Taxonomy
 
 ```
 RBG
@@ -270,7 +270,7 @@ Use Fortuna or a NIST DRBG for new designs.
 
 ---
 
-## 4. Stream-cipher-based CSPRNGs
+## 4. Stream-Cipher-based CSPRNGs
 
 ### 4.1 ChaCha20-DRNG (Linux kernel)
 
@@ -824,7 +824,7 @@ CycloneDX `{placeholder}` convention.
 
 ## 10. Sources
 
-### NIST SP 800-90 series
+### NIST SP 800-90 Series
 
 - NIST SP 800-90A Rev. 1 — Recommendation for Random Number Generation Using Deterministic Random Bit Generators
     - [CSRC landing page](https://csrc.nist.gov/pubs/sp/800/90/a/r1/final)

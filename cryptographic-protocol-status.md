@@ -70,7 +70,7 @@ Recommendations for SSH protocol usage. Source: BSI TR-02102-4, Version 2026-01 
 | `3des-cbc` | ◯ MAY (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | 3DES; 64-bit block; birthday-bound vulnerable; SP 800-131A Rev 2 disallowed since 2024 |
 | `arcfour*` | 🚫 MUST NOT (RFC 8758) | 🚫 Disallowed | 🚫 Disallowed | RC4; cryptographically broken; explicitly removed by RFC 8758 |
 
-### 1.4 MAC (for CTR-mode Ciphers; not needed with AEAD)
+### 1.4 MAC (for CTR-mode ciphers; not needed with AEAD)
 
 > **Authorities:** IETF RFC 4253 (original SSH-2 MACs), RFC 6668 (HMAC-SHA2 in SSH); NIST SP 800-131A Rev 2; BSI TR-02102-4 v2026-01. Note: ETM (encrypt-then-MAC) variants are OpenSSH extensions and not in any IETF SSH RFC.
 

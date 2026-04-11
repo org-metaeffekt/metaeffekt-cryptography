@@ -489,26 +489,50 @@ When em-dashes appear inside parentheses, replace them with a semicolon:
 ### 9.4 Hyphenated Compounds
 
 > [!NOTE]
-> Each part of a hyphenated compound follows its own part of speech. **Noun parts** (and gerunds) are capitalised, **non-noun parts** (adjectives, past participles, prefixes) are lowercased. The first content word of a heading is treated specially: only its initial letter is capitalised, the remainder of the compound follows the rules.
+> Hyphenated compounds use a **compound-cohesion rule**: when the compound contains at least one noun (or gerund-noun), **all parts of the compound are capitalised** as a single lexical unit. This applies whether the compound is the head of its phrase or modifies another noun.
+>
+> **Past participles override the cohesion rule**: when the compound contains a past participle (`based`, `provided`, `shared`, `standardised`), the past participle stays lowercase regardless of the other parts. Noun parts of the same compound still take capital from the noun rule itself.
 
-**Examples (compound used as modifier in a noun phrase):**
+**Decision flow:**
 
-| Compound | First letter | Internal noun parts | Result | Example heading |
-|:---|:---|:---|:---|:---|
-| `Hash-based` | first word: capital · else: lowercase | `Hash` (noun) | `Hash-based` | `Stateful Hash-based Signatures` |
-| `Stream-cipher-based` | first word: capital | `Stream`, `Cipher` (nouns) | `Stream-Cipher-based` | `Stream-Cipher-based CSPRNGs` |
-| `Non-cryptographic` | first word: capital | none | `Non-cryptographic` | `Non-cryptographic PRNGs` |
-| `Pre-shared` | first word: capital | none | `Pre-shared` | `Pre-shared Key (PSK) quantum Mitigation` |
-| `End-entity` | first word: capital | `End`, `Entity` (both nouns) | `End-Entity` | `End-Entity Key Recommendations` |
-| `Accumulator-based` | first word: capital | `Accumulator` (noun) | `Accumulator-based` | `Accumulator-based CSPRNGs` |
-| `OS-provided` | first word: capital | `OS` (acronym noun) | `OS-provided` | `OS-provided Entropy APIs` |
-| `Lattice-based` | first word: capital | `Lattice` (noun) | `Lattice-based` | `Lattice-based` (standalone category) |
-| `Code-based` | first word: capital | `Code` (noun) | `Code-based` | `Code-based` |
-| `Pairing-based` | first word: capital | `Pairing` (gerund-noun) | `Pairing-based` | `Pairing-based Cryptography` |
-| `Top-level` | first word: capital | none (`Top` adj) | `Top-level` | `Top-level RNG Taxonomy` |
-| `Cross-cutting` | first word: capital | none (`Cross` prefix) | `Cross-cutting` | `Cross-cutting PQC hybrid Parameters` |
-| `security-strength` | not first word | `Security`, `Strength` (both nouns) — but the compound modifies a following noun and is therefore an adjectival compound; lowercased uniformly | `security-strength` | `Quantum Impact on security-strength Equivalence` |
-| `Hash-Based` (as compound noun on its own, not modifying anything) | first word | `Hash` noun, `Based` participle | `Hash-Based` | rare; usually appears as modifier |
+1. **Does the compound contain a past participle (`-based`, `-provided`, `-shared`, `-standardised`)?**
+   → Past participle stays lowercase. Other parts follow their own POS (nouns capital, prefixes/adjectives lowercase except first-word rule).
+2. **Else, does the compound contain a noun (or gerund)?**
+   → All parts of the compound get capital (cohesion rule).
+3. **Else** (compound has no noun and no past participle):
+   → All parts lowercase. First-word rule still applies to the first letter of the first word.
+
+**Examples — compound contains a past participle (rule 1, past participle lowercase):**
+
+| Compound | POS breakdown | Result | Example heading |
+|:---|:---|:---|:---|
+| `Hash-based` | `Hash` noun · `based` past participle | `Hash-based` | `Stateful Hash-based Signatures` |
+| `Stream-Cipher-based` | `Stream` + `Cipher` nouns · `based` past participle | `Stream-Cipher-based` | `Stream-Cipher-based CSPRNGs` |
+| `Accumulator-based` | `Accumulator` noun · `based` past participle | `Accumulator-based` | `Accumulator-based CSPRNGs` |
+| `OS-provided` | `OS` acronym noun · `provided` past participle | `OS-provided` | `OS-provided Entropy APIs` |
+| `Pairing-based` | `Pairing` gerund-noun · `based` past participle | `Pairing-based` | `Pairing-based Cryptography` |
+| `Pre-shared` | `Pre-` prefix · `shared` past participle | first word: `Pre-shared`; else: `pre-shared` | `Pre-shared Key (PSK) quantum Mitigation` |
+| `Non-standardised` | `Non-` prefix · `standardised` past participle | first word: `Non-standardised`; else: `non-standardised` | `Notable non-standardised PQC Algorithms` |
+| `NIST-standardised` | `NIST` acronym noun · `standardised` past participle | `NIST-standardised` | `NIST-standardised post-quantum digital Signatures` |
+
+**Examples — compound contains a noun, no past participle (rule 2, cohesion applies):**
+
+| Compound | POS breakdown | Result | Example heading |
+|:---|:---|:---|:---|
+| `Quick-Reference` | `Quick` adjective · `Reference` noun | `Quick-Reference` | `TLS / Protocol Quick-Reference` |
+| `End-Entity` | `End` noun · `Entity` noun | `End-Entity` | `End-Entity Key Recommendations` |
+| `Security-Strength` | `Security` noun · `Strength` noun | `Security-Strength` | `Quantum Impact on Security-Strength Equivalence` |
+| `Top-Level` | `Top` adjective · `Level` noun | `Top-Level` | `Top-Level RNG Taxonomy` |
+| `Cross-Reference` | `Cross-` prefix · `Reference` noun | `Cross-Reference` | `Cross-Reference Validation` |
+| `Cross-File` | `Cross-` prefix · `File` noun | `Cross-File` | `Phase 7: Cross-File Consistency` |
+
+**Examples — compound contains no noun and no past participle (rule 3, all lowercase except first word):**
+
+| Compound | POS breakdown | Result | Example heading |
+|:---|:---|:---|:---|
+| `Cross-cutting` | `Cross-` prefix · `cutting` participle | first word: `Cross-cutting` | `Cross-cutting PQC hybrid Parameters` |
+| `Non-cryptographic` | `Non-` prefix · `cryptographic` adjective | first word: `Non-cryptographic` | `Non-cryptographic PRNGs` |
+| `Post-quantum` | `Post-` prefix · `quantum` adjective | first word: `Post-quantum` | `Post-quantum Cryptography` |
 
 **Inside brackets (lowercased per §9.3):**
 

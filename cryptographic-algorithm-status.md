@@ -41,7 +41,7 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ---
 
-## Authorities Compared
+## Comparing Authorities
 
 This document compares cryptographic primitives against three authorities that issue
 **algorithm-level** normative guidance: **NIST**, **BSI**, and **NSA CNSA 2.0**.
@@ -421,7 +421,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ---
 
-## 10. Post-Quantum Cryptography (FIPS 203 / 204 / 205 / 206)
+## 10. Post-quantum Cryptography (FIPS 203 / 204 / 205 / 206)
 
 ### 10.1 ML-KEM Key Encapsulation (FIPS 203)
 
@@ -493,7 +493,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ---
 
-## 11. TLS / Protocol Quick-reference
+## 11. TLS / Protocol Quick-Reference
 
 | Version | NIST | Sources | Notes |
 |:---|:---|:---|:---|
@@ -563,7 +563,7 @@ All values from §5.6.1 Table 2 (pp. 54–55).
 
 > ℹ **IFC (RSA) security strength:** A 2048-bit RSA modulus provides approximately 112 bits of security, not 128. The common assumption that "2048-bit RSA = 128-bit security" is incorrect per SP 800-57 Table 2. 3072-bit RSA is the minimum for 128-bit security.
 
-### 13.2 Planning Horizon and security-strength Adequacy
+### 13.2 Planning Horizon and Security-Strength Adequacy
 
 SP 800-57 Rev 5 §5.6.2–§5.6.3 and SP 800-131A Rev 2:
 
@@ -589,7 +589,7 @@ SP 800-57 Rev 5 §5.6.2–§5.6.3 and SP 800-131A Rev 2:
 - **Processing:** Decrypting, verifying a signature, or verifying a MAC on data that was previously protected.
 - **Legacy use:** The algorithm/key may be used only to process already-protected data, not to protect new data.
 
-### 13.3 Approved Algorithms per security-strength Tier
+### 13.3 Approved Algorithms per Security-Strength Tier
 
 Based on SP 800-57 Rev 5 §5.6.1 and the referenced FIPS standards.
 
@@ -620,7 +620,7 @@ Hash functions provide two distinct security properties with different bit stren
 
 > For digital signatures and certificates, the collision-resistance strength of the hash must meet or exceed the security strength of the signing key. For HMAC, preimage resistance applies — HMAC-SHA-1 can still provide 112-bit security (transitional through 2030 per NIST; not recommended by BSI).
 
-### 13.5 Quantum Impact on security-strength Equivalence
+### 13.5 Quantum Impact on Security-Strength Equivalence
 
 The equivalence table in §13.1 assumes classical (non-quantum) adversaries. Grover's algorithm halves the effective security of symmetric ciphers and hash preimage resistance; Shor's algorithm breaks RSA, DH, DSA, and ECC entirely in polynomial time.
 

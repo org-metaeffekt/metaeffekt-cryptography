@@ -295,7 +295,7 @@ Cryptographic Algorithms
 
 ---
 
-## 10. Elliptic Curves and Named Groups
+## 10. Elliptic Curves and named Groups
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -460,14 +460,14 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 | `hawk-512` | HAWK-512 | PQC signature (lattice, LIP) — L1 | — | `HAWK-512` | NIST PQC Round 2 |
 | `hawk-1024` | HAWK-1024 | PQC signature (lattice, LIP) — L5 | — | `HAWK-1024` | NIST PQC Round 2 |
 
-### Code-Based
+### Code-based
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
 | `cross` | CROSS (Codes and Restricted Objects Signature Scheme) | PQC signature (code-based) | — | `CROSS-*` | NIST PQC Round 2 (Additional Signatures); NIST IR 8528 |
 | `less` | LESS (Linear Equivalence Signature Scheme) | PQC signature (code-based) | — | `LESS-*` | NIST PQC Round 2 |
 
-### MPC-in-the-Head / Symmetric
+### MPC-in-the-Head / symmetric
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -483,7 +483,7 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 | `perk` | PERK (Permuted Kernels) | PQC signature (MPC-in-the-Head, permutation) | — | `PERK-*` | NIST PQC Round 2 |
 | `ryde` | RYDE (Rank Syndrome Decoding Equivalence) | PQC signature (MPC-in-the-Head, rank) | — | `RYDE-*` | NIST PQC Round 2 |
 
-### Isogeny-Based
+### Isogeny-based
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -536,7 +536,7 @@ The following were NIST Round 3 signature candidates. They did not progress to s
 
 ---
 
-## 18. Stream-Cipher-Based CSPRNGs and OS APIs
+## 18. Stream-Cipher-based CSPRNGs and OS APIs
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -578,7 +578,7 @@ The following were NIST Round 3 signature candidates. They did not progress to s
 
 ---
 
-## 21. Composite and Hybrid Constructs
+## 21. Composite and hybrid Constructs
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -645,7 +645,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 ---
 
-## 23. Additional Stream Ciphers (eSTREAM Portfolio and Telecom)
+## 23. Additional Stream Ciphers (eSTREAM portfolio and telecom)
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -697,7 +697,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 ---
 
-## 25. Non-Cryptographic Checksums
+## 25. Non-cryptographic Checksums
 
 > Not suitable for any security-relevant purpose. Included for SBOM scanning completeness.
 
@@ -748,7 +748,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 ---
 
-## 29. Additional Random Number Generators
+## 29. Additional random Number Generators
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
