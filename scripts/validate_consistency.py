@@ -262,136 +262,192 @@ def check_oid_format(families: list[dict]) -> bool:
 
 # Status severity ladder. Lower index = more permissive; higher = more restrictive.
 # Maps the leading symbol (or normalized phrase) to a tier.
+# Tier interpretation:
+#   0 = ✅ Recommended / MUST / REQUIRED
+#   1 = ✓  Approved / SHOULD / Permitted
+#   2 = ⚠ / ◯  Conditional / MAY / MUST-
+#   3 = 🔜 Transitional / Until <year>
+#   4 = ❌ Deprecated / SHOULD NOT / NOT RECOMMENDED / Removed
+#   5 = 🚫 Disallowed / MUST NOT / Broken
 STATUS_TIER = {
-    "✅": 0,  # Recommended
-    "✓": 1,   # Approved
-    "⚠": 2,   # Conditional
+    "✅": 0,  # Recommended / MUST
+    "✓": 1,   # Approved / SHOULD
+    "⚠": 2,   # Conditional / MUST-
+    "◯": 2,   # MAY (IETF "permitted but no preference")
     "🔜": 3,  # Transitional
-    "❌": 4,  # Deprecated
-    "🚫": 5,  # Disallowed / Not recommended
+    "❌": 4,  # Deprecated / SHOULD NOT / NOT RECOMMENDED
+    "🚫": 5,  # Disallowed / MUST NOT
 }
 
 # Words used as fallback when no symbol is present.
 STATUS_WORD_TIER = {
-    "recommended": 0,
-    "approved": 1,
-    "acceptable": 1,
-    "conditional": 2,
-    "transitional": 3,
-    "until": 3,           # "Until 2031", "Until 2035" — time-bounded approval
-    "deprecated": 4,
-    "removed": 4,
-    "not listed": 4,
-    "disallowed": 5,
-    "not recommended": 5,
-    "broken": 5,
+    "must not":         5,  # check before "must" so longer prefix wins
+    "should not":       4,
+    "not recommended":  4,
+    "must":             0,
+    "should":           1,
+    "may":              2,
+    "permitted":        1,
+    "recommended":      0,
+    "approved":         1,
+    "acceptable":       1,
+    "conditional":      2,
+    "transitional":     3,
+    "until":            3,  # "Until 2031", "Until 2035" — time-bounded approval
+    "deprecated":       4,
+    "removed":          4,
+    "not listed":       4,
+    "disallowed":       5,
+    "broken":           5,
 }
 
 
 def normalize_status(cell: str) -> int | None:
-    """Map a status cell (with emoji + words) to a severity tier 0-5, or None if unknown."""
+    """Map a status cell (with emoji + words) to a severity tier 0-5, or None if unknown.
+
+    Textual cues that override the leading symbol:
+    - "Until <year>" → tier 3 (transitional/time-bounded), even if cell starts with ✅
+      (BSI commonly writes "✅ Until 2031" meaning "approved only through 2031")
+    - "Conditional" → tier 2, even if cell starts with ✓ or ✅
+    """
     s = cell.strip()
     if not s or s == "—" or s == "-":
         return None
+    sl = s.lower()
+
+    # Override cues — these take precedence over the leading symbol
+    if "until" in sl:
+        return 3
+    if "conditional" in sl:
+        return 2
+    if "transitional" in sl:
+        return 3
+
     # Try leading symbol first
     for sym, tier in STATUS_TIER.items():
         if sym in s:
             return tier
-    # Fallback: word match (case-insensitive)
-    sl = s.lower()
+    # Fallback: word match (case-insensitive, longest-prefix-first via insertion order)
     for word, tier in STATUS_WORD_TIER.items():
         if word in sl:
             return tier
     return None
 
 
-def check_authority_divergence(base: Path) -> bool:
-    """Check 9: detect rows in algorithm-status.md where NIST and BSI columns disagree."""
-    md_file = base / "cryptographic-algorithm-status.md"
-    if not md_file.exists():
-        print(f"  SKIP  cryptographic-algorithm-status.md not found")
-        return True
+# Authority columns recognised in status tables.
+AUTHORITY_NAMES = ("IETF", "NIST", "BSI", "CABF")
 
-    text = md_file.read_text()
+
+def parse_authority_tables(text: str) -> list[tuple[int, str, dict]]:
+    """Parse markdown tables and return data rows that contain at least 2 authority columns.
+
+    Returns list of (line_number, pattern, {authority_name: cell_text}).
+    """
+    rows: list[tuple[int, str, dict]] = []
     lines = text.splitlines()
 
-    divergences: list[tuple[int, str, str, str, str]] = []  # (line, pattern, nist, bsi, severity)
-    same_tier = 0
-    total_rows = 0
-
-    nist_idx = None
-    bsi_idx = None
+    auth_indices: dict[str, int] = {}
     in_table = False
-    pattern_idx = 0  # first column is pattern/algorithm
 
     for i, line in enumerate(lines, 1):
         if not line.startswith("|"):
             in_table = False
-            nist_idx = None
-            bsi_idx = None
+            auth_indices = {}
             continue
 
         cells = [c.strip() for c in line.split("|")]
-        # cells[0] is empty (leading |); cells[-1] is empty (trailing |)
-        # Detect header row by presence of "NIST" and "BSI"
-        if "NIST" in cells and "BSI" in cells:
-            nist_idx = cells.index("NIST")
-            bsi_idx = cells.index("BSI")
+
+        # Header row detection: contains at least one authority name as exact cell
+        header_authorities = {n: cells.index(n) for n in AUTHORITY_NAMES if n in cells}
+        if header_authorities:
+            auth_indices = header_authorities
             in_table = True
             continue
 
-        # Skip alignment row (e.g., |:---|:---|...)
+        # Skip alignment row
         if in_table and re.match(r"^\|[:\-\s|]+\|\s*$", line):
             continue
 
-        # Data row
-        if in_table and nist_idx is not None and bsi_idx is not None:
-            if nist_idx >= len(cells) or bsi_idx >= len(cells):
-                continue
+        # Data row — only consider rows where we have at least 2 authority columns
+        if in_table and len(auth_indices) >= 2:
+            # Pattern is in the first column (cells[1] since cells[0] is leading empty)
             pattern = cells[1] if len(cells) > 1 else ""
-            nist_cell = cells[nist_idx]
-            bsi_cell = cells[bsi_idx]
-            nist_tier = normalize_status(nist_cell)
-            bsi_tier = normalize_status(bsi_cell)
-            if nist_tier is None or bsi_tier is None:
+            auths = {}
+            for name, idx in auth_indices.items():
+                if idx < len(cells):
+                    auths[name] = cells[idx]
+            rows.append((i, pattern, auths))
+
+    return rows
+
+
+def check_authority_divergence(base: Path) -> bool:
+    """Check 9: detect rows where authority columns (IETF/NIST/BSI/CABF) disagree."""
+    files_to_check = [
+        ("cryptographic-algorithm-status.md", "algo"),
+        ("cryptographic-protocol-status.md", "proto"),
+    ]
+
+    total_rows = 0
+    same_tier_rows = 0
+    divergences: list[tuple[str, int, str, dict, int]] = []
+    # (file_label, line_number, pattern, {authority: cell}, max_diff)
+
+    for filename, label in files_to_check:
+        md_file = base / filename
+        if not md_file.exists():
+            continue
+        text = md_file.read_text()
+        for line_no, pattern, auths in parse_authority_tables(text):
+            # Compute tier for each cell that has a known status
+            tiers = {}
+            for name, cell in auths.items():
+                t = normalize_status(cell)
+                if t is not None:
+                    tiers[name] = t
+            if len(tiers) < 2:
                 continue
             total_rows += 1
-            if nist_tier == bsi_tier:
-                same_tier += 1
+            tier_values = list(tiers.values())
+            max_diff = max(tier_values) - min(tier_values)
+            if max_diff == 0:
+                same_tier_rows += 1
             else:
-                # Mark severity by tier difference
-                diff = abs(nist_tier - bsi_tier)
-                if diff >= 3:
-                    severity = "MAJOR"
-                elif diff == 2:
-                    severity = "MEDIUM"
-                else:
-                    severity = "minor"
-                divergences.append((i, pattern, nist_cell, bsi_cell, severity))
+                divergences.append((label, line_no, pattern, auths, max_diff))
 
     if total_rows == 0:
-        print(f"  SKIP  no NIST/BSI tables found")
+        print(f"  SKIP  no authority-comparison tables found")
         return True
 
-    print(f"  OK    {same_tier}/{total_rows} rows with matching NIST/BSI tier")
+    print(f"  OK    {same_tier_rows}/{total_rows} rows with all authorities agreeing on tier")
     if divergences:
         print(f"  INFO  {len(divergences)} rows with diverging guidance:")
         # Group by severity for readability
+        groups = {"MAJOR": [], "MEDIUM": [], "minor": []}
+        for d in divergences:
+            diff = d[4]
+            if diff >= 3:
+                groups["MAJOR"].append(d)
+            elif diff == 2:
+                groups["MEDIUM"].append(d)
+            else:
+                groups["minor"].append(d)
+
         for sev in ("MAJOR", "MEDIUM", "minor"):
-            group = [d for d in divergences if d[4] == sev]
+            group = groups[sev]
             if not group:
                 continue
             print(f"    [{sev}] {len(group)} row(s):")
-            for line_no, pattern, nist, bsi, _ in group[:20]:
-                # Truncate long status strings for readability
-                n = (nist[:32] + "…") if len(nist) > 33 else nist
-                b = (bsi[:32] + "…") if len(bsi) > 33 else bsi
-                p = pattern if len(pattern) <= 60 else pattern[:57] + "…"
-                print(f"      L{line_no}  {p}")
-                print(f"             NIST: {n}")
-                print(f"             BSI:  {b}")
-            if len(group) > 20:
-                print(f"      ... and {len(group) - 20} more")
+            for label, line_no, pattern, auths, _ in group[:25]:
+                p = pattern if len(pattern) <= 56 else pattern[:53] + "…"
+                print(f"      [{label}] L{line_no}  {p}")
+                for name in AUTHORITY_NAMES:
+                    if name in auths and auths[name] not in ("—", "-", ""):
+                        cell = auths[name]
+                        c = (cell[:38] + "…") if len(cell) > 39 else cell
+                        print(f"             {name:5s}: {c}")
+            if len(group) > 25:
+                print(f"      ... and {len(group) - 25} more")
     # Informational only
     return True
 
