@@ -194,11 +194,11 @@ This document compares cryptographic primitives against three authorities that i
 
 > ⚠ **Ephemeral key agreement:** Static (non-ephemeral) ECDH and DH provide no forward secrecy. SP 800-56A requires ephemeral keys for forward-secret key establishment. TLS 1.3 mandates ECDHE or DHE.
 
-### 5.1 Approved Elliptic Curves (SP 800-186)
+### 5.1 Approved elliptic Curves (SP 800-186)
 
 SP 800-186 (February 2023) specifies the complete catalogue of NIST-approved elliptic curve domain parameters. The table below summarises security strength, approval status, and allowed usage:
 
-#### Weierstrass Prime Curves (FIPS 186-5 Primary Curves)
+#### Weierstrass prime Curves (FIPS 186-5 primary curves)
 
 | Curve | Also known as | Security strength | ECDH | ECDSA / EdDSA | Notes |
 |:---|:---|:---|:---|:---|:---|
@@ -254,7 +254,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | MODP-6144 | 6144 bit | 152-bit | ✓ Approved |
 | MODP-8192 | 8192 bit | 192-bit | ✓ Approved |
 
-#### Approved FFC Named Groups for TLS (SP 800-56A Rev.3, Table 26 / RFC 7919)
+#### Approved FFC named Groups for TLS (SP 800-56A Rev.3, Table 26 / RFC 7919)
 
 | Group | Prime size | Security | NIST |
 |:---|:---|:---|:---|
@@ -468,7 +468,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ℹ **FIPS 206 standardisation status:** FIPS 203, 204, and 205 were published as final standards on 13 August 2024. FIPS 206 (FN-DSA / Falcon) followed a separate timeline: the IPD was submitted for internal NIST approval in August 2025 and is awaiting Department of Commerce clearance. The final standard is expected late 2026 or early 2027. Implementations may reference the Falcon Round 3.1 specification in the interim.
 
-### 10.5 Notable Non-Standardised PQC Algorithms
+### 10.5 Notable non-standardised PQC Algorithms
 
 > **Source:** NIST IR 8545, *Status Report on the Fourth Round of the NIST Post-Quantum Cryptography Standardization Process*, March 2025 (doi:10.6028/NIST.IR.8545). Covers the Round 4 evaluation of HQC, BIKE, Classic McEliece, and SIKE.
 
@@ -563,7 +563,7 @@ All values from §5.6.1 Table 2 (pp. 54–55).
 
 > ℹ **IFC (RSA) security strength:** A 2048-bit RSA modulus provides approximately 112 bits of security, not 128. The common assumption that "2048-bit RSA = 128-bit security" is incorrect per SP 800-57 Table 2. 3072-bit RSA is the minimum for 128-bit security.
 
-### 13.2 Planning Horizon and Security-Strength Adequacy
+### 13.2 Planning Horizon and security-strength Adequacy
 
 SP 800-57 Rev 5 §5.6.2–§5.6.3 and SP 800-131A Rev 2:
 
@@ -589,7 +589,7 @@ SP 800-57 Rev 5 §5.6.2–§5.6.3 and SP 800-131A Rev 2:
 - **Processing:** Decrypting, verifying a signature, or verifying a MAC on data that was previously protected.
 - **Legacy use:** The algorithm/key may be used only to process already-protected data, not to protect new data.
 
-### 13.3 Approved Algorithms per Security-Strength Tier
+### 13.3 Approved Algorithms per security-strength Tier
 
 Based on SP 800-57 Rev 5 §5.6.1 and the referenced FIPS standards.
 
@@ -620,7 +620,7 @@ Hash functions provide two distinct security properties with different bit stren
 
 > For digital signatures and certificates, the collision-resistance strength of the hash must meet or exceed the security strength of the signing key. For HMAC, preimage resistance applies — HMAC-SHA-1 can still provide 112-bit security (transitional through 2030 per NIST; not recommended by BSI).
 
-### 13.5 Quantum Impact on Security-Strength Equivalence
+### 13.5 Quantum Impact on security-strength Equivalence
 
 The equivalence table in §13.1 assumes classical (non-quantum) adversaries. Grover's algorithm halves the effective security of symmetric ciphers and hash preimage resistance; Shor's algorithm breaks RSA, DH, DSA, and ECC entirely in polynomial time.
 

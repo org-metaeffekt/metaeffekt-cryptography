@@ -300,7 +300,7 @@ The TLS 1.3 hybrid `X25519MLKEM768` (draft-ietf-tls-hybrid-design) uses this con
 
 > ℹ **When to deploy hybrids:** Deploy ML-KEM hybrid immediately for key establishment (HNDL risk). Maintain classical algorithm for backward compatibility. Remove classical algorithm only after PQC has become operationally validated and interoperability permits.
 
-### 4.4 Pre-Shared Key (PSK) Quantum Mitigation
+### 4.4 Pre-shared Key (PSK) quantum Mitigation
 
 For organisations that cannot yet deploy PQC but need to protect long-lived confidential communications, a pre-shared symmetric key can be mixed into the key derivation alongside the public-key-derived secret. An attacker who later breaks the public-key exchange with a quantum computer still cannot recover the session key without the PSK.
 

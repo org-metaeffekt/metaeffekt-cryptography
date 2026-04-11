@@ -106,7 +106,7 @@ approve it.
 
 The 56 MAJOR divergences cluster into a few distinct policy disagreements:
 
-### Pattern A: CNSA Excludes NIST/BSI Approved Algorithms
+### Pattern A: CNSA excludes NIST/BSI approved Algorithms
 
 CNSA 2.0 is intentionally a *restrictive subset* of NIST-approved algorithms.
 Algorithms that NIST/BSI fully approve but CNSA excludes:
@@ -143,7 +143,7 @@ suite is permitted. For civilian systems, NIST and BSI guidance is sufficient.
 |:---|:---|:---|:---|
 | `ML-KEM-512` | ✓ Approved | ❌ Not recommended | BSI requires NIST Category 3 minimum (ML-KEM-768 / 1024) for quantum resistance margin |
 
-### Pattern C: IETF Retains Weak Algorithms for Protocol Interop
+### Pattern C: IETF retains weak Algorithms for Protocol Interop
 
 IETF protocol RFCs prioritise interoperability with installed bases, often
 retaining algorithms that NIST and BSI disallow:
@@ -164,7 +164,7 @@ stricter modern alternatives (e.g., SHA-256 over SHA-1, AES over 3DES) and treat
 the IETF backward-compat retention as advisory only. NIST/BSI cryptographic policy
 overrides IETF interop requirements in regulated environments.
 
-### Pattern D: NIST Disallows, BSI Grants Migration Window
+### Pattern D: NIST disallows, BSI grants Migration Window
 
 BSI TR-02102-1 sets explicit calendar deadlines (typically 2029–2031) for
 algorithms NIST has already disallowed:
@@ -186,7 +186,7 @@ is purely about migration timing. Plan migration on the **earlier** deadline
 reflect transcription errors and should be cross-checked against the actual
 TR-02102-1 §B.2 text.
 
-### Pattern E: BSI More Permissive Than NIST on Specific Modes
+### Pattern E: BSI more permissive than NIST on specific Modes
 
 Algorithms where BSI accepts a mode/use that NIST flags conditional or disallowed:
 

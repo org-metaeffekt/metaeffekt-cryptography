@@ -357,7 +357,7 @@ Cryptographic Algorithms
 
 ---
 
-## 13. Post-Quantum: Key Encapsulation Mechanisms
+## 13. Post-quantum: Key Encapsulation Mechanisms
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -400,7 +400,7 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 
 ---
 
-## 14. NIST-Standardised Post-Quantum Digital Signatures
+## 14. NIST-standardised post-quantum digital Signatures
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -439,7 +439,7 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 
 ---
 
-## 15. Post-Quantum: Round 2 Additional Signature Candidates
+## 15. Post-quantum: Round 2 additional Signature Candidates
 
 ### Multivariate
 
@@ -614,7 +614,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 ---
 
-## 22. Additional Symmetric Block Ciphers (historical / legacy)
+## 22. Additional symmetric Block Ciphers (historical / legacy)
 
 > Included for SPDX coverage. These ciphers appear in legacy software, forensic analysis, and SBOM scanning contexts but are not approved for new use.
 
@@ -710,7 +710,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 ---
 
-## 26. Additional Asymmetric Schemes (historical)
+## 26. Additional asymmetric Schemes (historical)
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|

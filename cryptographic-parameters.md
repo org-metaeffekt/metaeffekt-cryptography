@@ -1452,7 +1452,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 
 ---
 
-### Cross-Cutting PQC Hybrid Parameters
+### Cross-cutting PQC hybrid Parameters
 
 
 #### `{hybridKemCombiner}` (combination method for hybrid KEM shared secrets)

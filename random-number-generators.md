@@ -40,7 +40,7 @@ operational choices such as prediction resistance or derivation function use.
 
 ---
 
-## 1. Top-Level RNG Taxonomy
+## 1. Top-level RNG Taxonomy
 
 ```
 RBG
@@ -201,7 +201,7 @@ curve points (P and Q). Any implementation must be replaced immediately.
 
 ---
 
-## 3. Accumulator-Based CSPRNGs
+## 3. Accumulator-based CSPRNGs
 
 ### 3.1 Fortuna
 
@@ -270,7 +270,7 @@ Use Fortuna or a NIST DRBG for new designs.
 
 ---
 
-## 4. Stream-Cipher-Based CSPRNGs
+## 4. Stream-cipher-based CSPRNGs
 
 ### 4.1 ChaCha20-DRNG (Linux kernel)
 
@@ -431,7 +431,7 @@ seeded from on-chip physical entropy.
 
 ---
 
-## 6. Non-Cryptographic PRNGs
+## 6. Non-cryptographic PRNGs
 
 These generators produce statistically good output but are **not**
 cryptographically secure. State is fully recoverable from a small number of
@@ -838,7 +838,7 @@ CycloneDX `{placeholder}` convention.
     - [CSRC landing page](https://csrc.nist.gov/pubs/sp/800/90/c/3pd/docs)
     - [PDF (3rd draft)](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90C.pdf)
 
-### Accumulator-Based CSPRNG Specifications
+### Accumulator-based CSPRNG Specifications
 
 - Ferguson, N. and Schneier, B. (2003). *Practical Cryptography*, Wiley.
     - [Fortuna chapter excerpt (Schneier.com)](https://www.schneier.com/wp-content/uploads/2015/12/fortuna.pdf)

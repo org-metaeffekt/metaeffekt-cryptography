@@ -92,7 +92,7 @@ their exposure only when these deadlines arrive will face an impossible remediat
 
 ---
 
-## What a Cryptographic Inventory enables
+## What a cryptographic Inventory enables
 
 A structured cryptographic inventory — a Cryptography Bill of Materials (CBOM) — transforms
 these five unanswerable questions into tractable operational problems.
