@@ -45,24 +45,24 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ### 1.1 Block cipher — key length
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
-| `AES-[128\|192\|256]-*` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §3.3) | FIPS 197; SP 800-57; BSI TR-02102-1 §3.3 | AES-128 sufficient for most uses; AES-256 recommended for quantum-resilient designs |
-| `CAMELLIA-[128\|256]-*` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | BSI TR-02102-1 §3.3 | Approved by BSI; not in NIST FIPS approved list |
+| `AES-[128\|192\|256]-*` | 128–256 bit | ✅ Recommended | ✅ Recommended | FIPS 197; SP 800-57; BSI TR-02102-1 §3.3 | AES-128 sufficient for most uses; AES-256 recommended for quantum-resilient designs |
+| `CAMELLIA-[128\|256]-*` | 128–256 bit | ✓ Approved | ✅ Recommended | BSI TR-02102-1 §3.3 | Approved by BSI; not in NIST FIPS approved list |
 | `3DES-*` | ≤112 bit | ❌ Deprecated | 🚫 Not recommended (TR-02102-1) | SP 800-131A Rev 2 §2; NIST IR 8214C | Disallowed for encryption after 2023; 64-bit block causes birthday-bound issues at ≥ 2³² blocks |
 | `DES-*` | 56 bit | 🚫 Disallowed | 🚫 Not recommended (TR-02102-1) | SP 800-131A Rev 2 | Cryptographically broken |
 | `RC2-*` | ≤128 bit | 🚫 Disallowed | 🚫 Not recommended | SP 800-131A Rev 2 | Legacy only; no new use |
 | `RC4-*` | — | 🚫 Disallowed | 🚫 Not recommended | SP 800-131A Rev 2; RFC 7465 | Stream cipher; statistically weak; banned in TLS |
-| `IDEA-*` | 128 bit | ❌ Deprecated | ❌ Removed (TR-02102-1) | BSI TR-02102-1 | Not NIST/FIPS approved; BSI removed |
+| `IDEA-*` | 128 bit | ❌ Deprecated | ❌ Removed (TR-02102-1) | BSI | Not NIST/FIPS approved; BSI removed |
 | `Blowfish-*` | ≤448 bit | ❌ Deprecated | ❌ Not listed (TR-02102-1) | — | 64-bit block; birthday bound vulnerable |
 
 > ⚠ **3DES birthday bound:** With a 64-bit block, collisions become probable after ~2³² (4 GB) encrypted blocks under the same key. NIST disallowed 3DES for all new encryption effective 2024. Existing uses must migrate.
 
 ### 1.2 Block cipher modes
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
-| `AES-[128\|192\|256]-GCM` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38D; BSI TR-02102-1 §3.3 | AEAD; preferred for authenticated encryption |
+| `AES-[128\|192\|256]-GCM` | 128–256 bit | ✅ Recommended | ✅ Recommended | SP 800-38D; BSI TR-02102-1 §3.3 | AEAD; preferred for authenticated encryption |
 | `AES-[128\|192\|256]-CCM` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38C; BSI TR-02102-1 | AEAD; suitable for constrained environments |
 | `AES-[128\|192\|256]-GCM-SIV` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | RFC 8452; BSI TR-02102-1 | Nonce-misuse resistant; deterministic AEAD |
 | `AES-[128\|192\|256]-CTR` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §3.3) | SP 800-38A | No authentication; counter must never repeat with same key |
@@ -82,7 +82,7 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ### 1.3 Tag length (AEAD)
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `AES-*-GCM[-128]` | 128-bit tag | ✅ Recommended | ✅ Recommended (TR-02102-1 §3.4) | SP 800-38D; BSI TR-02102-1; RFC 5116 | Full 128-bit tag required for general use |
 | `AES-*-GCM-96` | 96-bit tag | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.4) | SP 800-38D §5.2.1.2 | Permitted only for specific protocols (IPsec, TLS); verify protocol allows truncation |
@@ -92,7 +92,7 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ## 2. Hash Functions
 
-| Pattern | Output | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Output | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
 | `SHA-256` | 256 bit | 128 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | FIPS 180-4; BSI TR-02102-1 | Minimum for new designs |
 | `SHA-384` | 384 bit | 192 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | FIPS 180-4 | |
@@ -101,7 +101,7 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 | `SHA3-[256\|384\|512]` | 256–512 bit | 128–256 bit | ✅ Recommended (TR-02102-1 §4) | ✅ Recommended | FIPS 202; BSI TR-02102-1 | Structurally independent of SHA-2; recommended for diversity |
 | `SHAKE128` | variable | 128 bit | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | FIPS 202 | XOF; use ≥ 32-byte (256-bit) output for 128-bit security |
 | `SHAKE256` | variable | 256 bit | ✅ Recommended (TR-02102-1 §4) | ✓ Approved | FIPS 202 | XOF; use ≥ 64-byte (512-bit) output for 256-bit security |
-| `BLAKE2b-[256\|384\|512]` | variable | 128–256 bit | — | ⚠ Conditional | BSI TR-02102-1 | Approved by BSI; not in NIST FIPS list; high performance |
+| `BLAKE2b-[256\|384\|512]` | variable | 128–256 bit | — | ⚠ Conditional | BSI | Approved by BSI; not in NIST FIPS list; high performance |
 | `BLAKE3` | variable | 128 bit | — | ⚠ Conditional | — | Not yet in NIST or BSI formal guidance; monitor standardisation |
 | `SHA-224` | 224 bit | 112 bit | ✅ Recommended (TR-02102-1 §4) | 🔜 Transitional | FIPS 180-4; SP 800-131A | 112-bit security; acceptable through 2030; disallowed from 2031 per SP 800-131A Rev 3 IPD; prefer SHA-256 for new designs |
 | `SHA-1` | 160 bit | 69 bit (collision) | 🚫 Not recommended (TR-02102-1) | ❌ Deprecated | SP 800-131A Rev 2 §9; BSI TR-02102-1 | **Disallowed for signatures, certificates, and collision-resistance** since 2013. Permitted only for HMAC-SHA-1 at legacy 112-bit security level through 2030 (NIST only, not BSI) |
@@ -114,7 +114,7 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ## 3. Message Authentication Codes (MAC)
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `HMAC-[SHA-256\|SHA-384\|SHA-512]` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | FIPS 198-1; SP 800-107; BSI TR-02102-1 | Preferred MAC construction for all new designs |
 | `HMAC-[SHA3-256\|SHA3-384\|SHA3-512]` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | FIPS 198-1; FIPS 202 | |
@@ -134,7 +134,7 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ## 4. Asymmetric Encryption / Key Encapsulation
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `RSAES-OAEP-[2048\|3072\|4096]-[SHA-256\|SHA-384\|SHA-512]-MGF1` | 112–150+ bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-56B Rev 2; FIPS 186-5; BSI TR-02102-1 | Recommended RSA encryption scheme |
 | `RSAES-OAEP-[3072\|4096]-*` | 128–150+ bit | ✅ Recommended | ✅ Until 2031 (TR-02102-1 §2.3.2); ≥3000 bit | SP 800-57; BSI TR-02102-1 §3.6 | Preferred key sizes for new designs. BSI: 3000+ bits minimum |
@@ -148,7 +148,7 @@ Examples: `AES-[128|192|256]-*` — AES with any of the listed key sizes, any mo
 
 ## 5. Key Agreement
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `ECDH-[P-256\|P-384\|P-521]` | 128–260 bit | ✅ Recommended | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | SP 800-56A Rev 3; FIPS 186-5; BSI TR-02102-1 §3.5 | Ephemeral use (ECDHE) required for forward secrecy |
 | `ECDH-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]` | 128–256 bit | ✓ Approved | ✅ Until 2031 (TR-02102-1 §2.3.6); ≥250 bit | BSI TR-02102-1 §3.5 | BSI-preferred alternative to NIST curves; not in NIST FIPS |
@@ -213,7 +213,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 #### Approved FFC (MODP) groups for IKE (SP 800-56A Rev.3, Table 25)
 
-| Group | Prime size | Security | Status |
+| Group | Prime size | Security | NIST |
 |:---|:---|:---|:---|
 | MODP-2048 | 2048 bit | 112-bit | ⚠ Transitional (through 2030) |
 | MODP-3072 | 3072 bit | 128-bit | ✓ Approved |
@@ -223,7 +223,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 #### Approved FFC named groups for TLS (SP 800-56A Rev.3, Table 26 / RFC 7919)
 
-| Group | Prime size | Security | Status |
+| Group | Prime size | Security | NIST |
 |:---|:---|:---|:---|
 | ffdhe2048 | 2048 bit | 112-bit | ⚠ Transitional (through 2030) |
 | ffdhe3072 | 3072 bit | 128-bit | ✅ Recommended |
@@ -241,7 +241,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 6.1 Classical signatures
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `ECDSA-[P-256\|P-384\|P-521]-[SHA-256\|SHA-384\|SHA-512]` | 128–260 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | FIPS 186-5; SP 800-57; BSI TR-02102-1 §3.4 | RFC 8422 defines TLS use |
 | `ECDSA-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]-*` | 128–256 bit | ✓ Approved | ✅ Until 2035 (TR-02102-1 §5.3.3); ≥250 bit | BSI TR-02102-1 §3.4 | BSI-preferred alternative to NIST curves |
@@ -261,7 +261,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 6.2 Stateful hash-based signatures (SP 800-208)
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `LMS_SHA256_M32_H{5\|10\|15\|20\|25}` | 128-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | SP 800-208; RFC 8554 | **Stateful** — 256-bit classical / 128-bit post-quantum; n=32 |
 | `LMS_SHA256_M24_H{5\|10\|15\|20\|25}` | 96-bit PQ | ✓ Approved | ✅ Recommended (TR-02102-1 §5.3.4.3) | SP 800-208; RFC 8554 | CNSA 2.0 recommended parameter family for NSS; n=24 |
@@ -284,7 +284,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ## 7. Key Derivation Functions
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `HKDF-[SHA-256\|SHA-384\|SHA-512]` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | RFC 5869; SP 800-56C Rev 2; SP 800-135; BSI TR-02102-1 | Standard two-step KDF (Extract + Expand); use in TLS 1.3, HPKE, OPAQUE |
 | `SP800-108-[HMAC-SHA256\|HMAC-SHA384\|HMAC-SHA512\|AES-CMAC]` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §5) | SP 800-108r1 | Counter, feedback, and double-pipeline modes; approved for FIPS 140-3 |
@@ -299,11 +299,11 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ## 8. Password-Based Key Derivation and Password Hashing
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `Argon2id-*-[19456\|65536\|262144\|1048576]-[2\|3]-1` | 128+ bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §B.2) | BSI TR-02102-1 §3.9; OWASP 2023 | PHC winner; memory-hard; side-channel resistant variant; min m=19456 KiB, t=2, p=1 (OWASP web); m=65536 KiB for higher security |
 | `scrypt-[32768\|65536\|1048576]-8-1-*` | 128+ bit | ✓ Approved | ✓ Acceptable (TR-02102-1 §B.2) | RFC 7914; BSI TR-02102-1 | N=32768 minimum (OWASP); N=1048576 high-security |
-| `bcrypt-[12\|13\|14]-*` | 128 bit | ✓ Approved | ✓ Acceptable (TR-02102-1 §B.2) | BSI TR-02102-1 | Cost ≥ 12 (2024 minimum); input truncated at 72 bytes |
+| `bcrypt-[12\|13\|14]-*` | 128 bit | ✓ Approved | ✓ Acceptable (TR-02102-1 §B.2) | BSI | Cost ≥ 12 (2024 minimum); input truncated at 72 bytes |
 | `PBKDF2-HMAC-[SHA-256\|SHA-384\|SHA-512]-[600000\|1000000]-*-[32\|48\|64]` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-132; OWASP 2023; BSI TR-02102-1 | Minimum 600,000 iterations for PBKDF2-HMAC-SHA-256 (SP 800-132 2023 update); salt ≥ 128 bits |
 | `PBKDF2-HMAC-SHA-1-*` | ≤112 bit | ❌ Deprecated | ✅ Recommended (TR-02102-1 §4) | SP 800-132 | SHA-1 deprecation applies; use SHA-256 minimum |
 | `PBKDF1-*` | — | 🚫 Disallowed | ✅ Recommended (TR-02102-1 §B.2) | RFC 8018 §6.1 | PBKDF1 disallowed; only supports short keys; superseded by PBKDF2 |
@@ -318,7 +318,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 9.1 NIST SP 800-90A DRBGs
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `HMAC_DRBG-[SHA-256\|SHA-384\|SHA-512]` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | SP 800-90A Rev 1; BSI AIS 20/31 (DRG.2+) | Best-proven security (machine-verified proof); preferred DRBG for general use |
 | `Hash_DRBG-[SHA-256\|SHA-384\|SHA-512]` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | SP 800-90A Rev 1 | Hash-only; no block cipher required; formal security proof |
@@ -337,7 +337,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 9.2 Accumulator-based CSPRNGs
 
-| Pattern | Security | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `Fortuna-AES-256-SHA-256` | 256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §4) | BSI AIS 20/31; Ferguson-Schneier *Cryptography Engineering* | 32 entropy pools; automatic pool-based reseeding; no entropy estimator required; deployed in macOS/iOS since 2020 |
 | `Fortuna-*` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | BSI AIS 20/31 | Non-standard cipher/hash variants reduce assurance; prefer canonical AES-256-SHA-256 form |
@@ -345,7 +345,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 9.3 OS-provided entropy APIs
 
-| Pattern | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|
 | `getrandom()` | ✅ Recommended | Linux ≥ 3.17; SP 800-90B | Blocks only until initialization; same pool as /dev/urandom; preferred over /dev/urandom for new Linux code |
 | `/dev/urandom` | ✓ Approved | Linux / macOS / BSD | Never blocks after boot; identical to /dev/random on Linux ≥ 5.6; backed by ChaCha20-DRNG (Linux) or Fortuna (macOS) |
@@ -355,7 +355,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 9.4 Hardware RNG interfaces
 
-| Pattern | Status | BSI TR-02102-1 | Sources | Notes |
+| Pattern | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|
 | `RDRAND` | ⚠ Conditional | Intel/AMD; SP 800-90B | CTR_DRBG on-die; **must not be the sole entropy source**; combine with OS entropy (XOR or HKDF); trust concerns about Intel microcode control |
 | `RDSEED` | ✓ Approved | Intel/AMD; SP 800-90B | Direct conditioned hardware entropy; suitable for **seeding** DRBGs; slower than RDRAND; may return failure (CF=0) — must retry |
@@ -374,7 +374,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 9.6 Non-cryptographic PRNGs — always disallowed for security use
 
-| Pattern | Status | Notes |
+| Pattern | NIST | Notes |
 |:---|:---|:---|
 | `MT19937` | 🚫 Disallowed | State fully recoverable from 624 consecutive 32-bit outputs; default `random` in Python, PHP, Ruby |
 | `Xoshiro(256\|512)(+\|++\|**)` | 🚫 Disallowed | Linear feedback; fast but cryptographically insecure |
@@ -389,7 +389,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 10.1 Key Encapsulation — ML-KEM (FIPS 203)
 
-| Pattern | NIST Level | Security (classical / quantum) | Status | BSI TR-02102-1 | Notes |
+| Pattern | NIST Level | Security (classical / quantum) | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `ML-KEM-512` | 1 | 128 / 128 bit | ✓ Approved | ❌ Not recommended | Below BSI minimum (Category 3 required) |
 | `ML-KEM-768` | 3 | 192 / 192 bit | ✅ Recommended | ✅ Recommended hybrid (§2.4.3) | **Default recommendation**; BSI requires hybrid with classical KEM until 2031 |
@@ -399,7 +399,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 10.2 Digital Signatures — ML-DSA (FIPS 204)
 
-| Pattern | NIST Level | Security | Status | BSI TR-02102-1 | Notes |
+| Pattern | NIST Level | Security | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `ML-DSA-44` | 2 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.2) | Smallest signatures (2420 B); good for high-volume signing |
 | `ML-DSA-65` | 3 | 192 bit | ✅ Recommended | ✅ Recommended (§5.3.4.2) | Balanced; recommended for general use |
@@ -411,7 +411,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 10.3 Digital Signatures — SLH-DSA (FIPS 205)
 
-| Pattern | NIST Level | Security | Status | BSI TR-02102-1 | Notes |
+| Pattern | NIST Level | Security | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `SLH-DSA-SHA2-128s` | 1 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | Small signatures (7856 B); slow signing |
 | `SLH-DSA-SHA2-128f` | 1 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | Fast signing; larger signatures (17088 B) |
@@ -423,7 +423,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 10.4 Digital Signatures — FN-DSA / Falcon (FIPS 206 IPD)
 
-| Pattern | NIST Level | Security | Status | BSI TR-02102-1 | Notes |
+| Pattern | NIST Level | Security | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `FN-DSA-512` | 1 | 128 bit | ⚠ Conditional | — Not yet evaluated | FIPS 206 IPD (submitted Aug 2025; final expected late 2026 / early 2027); compact signatures (666 B); floating-point dependency (see alert) |
 | `FN-DSA-1024` | 5 | 256 bit | ⚠ Conditional | — Not yet evaluated | FIPS 206 IPD; 1280 B signatures |
@@ -438,7 +438,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 #### Key Encapsulation
 
-| Algorithm | Security | Status | Key sizes | Notes |
+| Algorithm | Security | NIST | Key sizes | Notes |
 |:---|:---|:---|:---|:---|
 | `HQC-128` / `HQC-192` / `HQC-256` | 128 / 192 / 256 bit | ⚠ Conditional | ek: 2241 / 4514 / 7237 B; dk: 2321 / 4602 / 7333 B (or 32 B compressed); ct: 4433 / 8978 / 14421 B; K: 32 B | **NIST selected March 2025** (Round 4) as fifth PQC standard (code-based backup KEM); FIPS draft + final expected ~2027; SP 800-227 (draft Jan 2025) covers KEM usage guidance; sizes from HQC spec v2025-08-22 |
 | `FrodoKEM-640` / `976` / `1344` | 128 / 192 / 256 bit | ❌ Not standardised | pk: 9616 / 15632 / 21520 B; ct: 9720 / 15744 / 21632 B | Conservative plain-LWE basis (no ring/module structure); available in liboqs / OQS-OpenSSL |
@@ -459,7 +459,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ## 11. TLS / Protocol Quick-Reference
 
-| Version | Status | Sources | Notes |
+| Version | NIST | Sources | Notes |
 |:---|:---|:---|:---|
 | **TLS 1.3** | ✅ Recommended | RFC 8446; BSI TR-02102-2 (2024) | ECDHE-only forward secrecy; AEAD-only cipher suites; no renegotiation |
 | **TLS 1.2** + strong ciphers | ⚠ Conditional | RFC 5246; BSI TR-02102-2 | Acceptable with ECDHE + AES-GCM + SHA-256+; disable RC4, 3DES, CBC-SHA1 cipher suites |
@@ -478,7 +478,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | `3DES-*` | 64-bit block; birthday bound; 112-bit max | Encryption: 2024 | SP 800-131A Rev 2 §2 |
 | `RC4-*` | Statistical biases; NOMORE, RC4NOMORE attacks | 2015 | RFC 7465; SP 800-131A |
 | `RC2-*` | Legacy; key-size attacks | 2014 | SP 800-131A |
-| `IDEA-*` | Not FIPS; patented legacy | — | BSI TR-02102-1 |
+| `IDEA-*` | Not FIPS; patented legacy | — | BSI |
 | `Blowfish-*` | 64-bit block; birthday bound | — | — |
 | `AES-*-ECB` | Deterministic; pattern-revealing | Never approved | SP 800-38A |
 | `MD5` | Collision attacks (2004+); preimage weakness | 2013 | SP 800-131A |
@@ -509,7 +509,7 @@ Key-length equivalence guidance derived from NIST SP 800-57 Part 1 Rev 5, *Recom
 
 All values from §5.6.1 Table 2 (pp. 54–55).
 
-| Security strength (bits) | Symmetric cipher | FFC key size (L, N) | IFC key size (k) | ECC key size (f) | Status |
+| Security strength (bits) | Symmetric cipher | FFC key size (L, N) | IFC key size (k) | ECC key size (f) | NIST |
 |:---|:---|:---|:---|:---|:---|
 | < 80 | 2TDEA, SKIPJACK | L=1024, N=160 | 1024 | 160–223 | 🚫 Disallowed |
 | 112 | 3TDEA | L=2048, N=224 | 2048 | 224–255 | 🔜 Transitional (through 2030) |
@@ -531,7 +531,7 @@ All values from §5.6.1 Table 2 (pp. 54–55).
 
 SP 800-57 Rev 5 §5.6.2–§5.6.3 and SP 800-131A Rev 2:
 
-| Security strength (bits) | Status | Planning horizon |
+| Security strength (bits) | NIST | Planning horizon |
 |:---|:---|:---|
 | < 80 | 🚫 Disallowed | Disallowed since 2013. No algorithm providing only 80-bit security may be used to protect data. |
 | 112 | 🔜 Transitional | Acceptable minimum through **31 December 2030**. Keys remaining in use beyond 2030 must provide at least 128-bit security. |

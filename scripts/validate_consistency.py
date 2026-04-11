@@ -260,6 +260,142 @@ def check_oid_format(families: list[dict]) -> bool:
     return ok
 
 
+# Status severity ladder. Lower index = more permissive; higher = more restrictive.
+# Maps the leading symbol (or normalized phrase) to a tier.
+STATUS_TIER = {
+    "✅": 0,  # Recommended
+    "✓": 1,   # Approved
+    "⚠": 2,   # Conditional
+    "🔜": 3,  # Transitional
+    "❌": 4,  # Deprecated
+    "🚫": 5,  # Disallowed / Not recommended
+}
+
+# Words used as fallback when no symbol is present.
+STATUS_WORD_TIER = {
+    "recommended": 0,
+    "approved": 1,
+    "acceptable": 1,
+    "conditional": 2,
+    "transitional": 3,
+    "until": 3,           # "Until 2031", "Until 2035" — time-bounded approval
+    "deprecated": 4,
+    "removed": 4,
+    "not listed": 4,
+    "disallowed": 5,
+    "not recommended": 5,
+    "broken": 5,
+}
+
+
+def normalize_status(cell: str) -> int | None:
+    """Map a status cell (with emoji + words) to a severity tier 0-5, or None if unknown."""
+    s = cell.strip()
+    if not s or s == "—" or s == "-":
+        return None
+    # Try leading symbol first
+    for sym, tier in STATUS_TIER.items():
+        if sym in s:
+            return tier
+    # Fallback: word match (case-insensitive)
+    sl = s.lower()
+    for word, tier in STATUS_WORD_TIER.items():
+        if word in sl:
+            return tier
+    return None
+
+
+def check_authority_divergence(base: Path) -> bool:
+    """Check 9: detect rows in algorithm-status.md where NIST and BSI columns disagree."""
+    md_file = base / "cryptographic-algorithm-status.md"
+    if not md_file.exists():
+        print(f"  SKIP  cryptographic-algorithm-status.md not found")
+        return True
+
+    text = md_file.read_text()
+    lines = text.splitlines()
+
+    divergences: list[tuple[int, str, str, str, str]] = []  # (line, pattern, nist, bsi, severity)
+    same_tier = 0
+    total_rows = 0
+
+    nist_idx = None
+    bsi_idx = None
+    in_table = False
+    pattern_idx = 0  # first column is pattern/algorithm
+
+    for i, line in enumerate(lines, 1):
+        if not line.startswith("|"):
+            in_table = False
+            nist_idx = None
+            bsi_idx = None
+            continue
+
+        cells = [c.strip() for c in line.split("|")]
+        # cells[0] is empty (leading |); cells[-1] is empty (trailing |)
+        # Detect header row by presence of "NIST" and "BSI"
+        if "NIST" in cells and "BSI" in cells:
+            nist_idx = cells.index("NIST")
+            bsi_idx = cells.index("BSI")
+            in_table = True
+            continue
+
+        # Skip alignment row (e.g., |:---|:---|...)
+        if in_table and re.match(r"^\|[:\-\s|]+\|\s*$", line):
+            continue
+
+        # Data row
+        if in_table and nist_idx is not None and bsi_idx is not None:
+            if nist_idx >= len(cells) or bsi_idx >= len(cells):
+                continue
+            pattern = cells[1] if len(cells) > 1 else ""
+            nist_cell = cells[nist_idx]
+            bsi_cell = cells[bsi_idx]
+            nist_tier = normalize_status(nist_cell)
+            bsi_tier = normalize_status(bsi_cell)
+            if nist_tier is None or bsi_tier is None:
+                continue
+            total_rows += 1
+            if nist_tier == bsi_tier:
+                same_tier += 1
+            else:
+                # Mark severity by tier difference
+                diff = abs(nist_tier - bsi_tier)
+                if diff >= 3:
+                    severity = "MAJOR"
+                elif diff == 2:
+                    severity = "MEDIUM"
+                else:
+                    severity = "minor"
+                divergences.append((i, pattern, nist_cell, bsi_cell, severity))
+
+    if total_rows == 0:
+        print(f"  SKIP  no NIST/BSI tables found")
+        return True
+
+    print(f"  OK    {same_tier}/{total_rows} rows with matching NIST/BSI tier")
+    if divergences:
+        print(f"  INFO  {len(divergences)} rows with diverging guidance:")
+        # Group by severity for readability
+        for sev in ("MAJOR", "MEDIUM", "minor"):
+            group = [d for d in divergences if d[4] == sev]
+            if not group:
+                continue
+            print(f"    [{sev}] {len(group)} row(s):")
+            for line_no, pattern, nist, bsi, _ in group[:20]:
+                # Truncate long status strings for readability
+                n = (nist[:32] + "…") if len(nist) > 33 else nist
+                b = (bsi[:32] + "…") if len(bsi) > 33 else bsi
+                p = pattern if len(pattern) <= 60 else pattern[:57] + "…"
+                print(f"      L{line_no}  {p}")
+                print(f"             NIST: {n}")
+                print(f"             BSI:  {b}")
+            if len(group) > 20:
+                print(f"      ... and {len(group) - 20} more")
+    # Informational only
+    return True
+
+
 def check_test_count(base: Path) -> bool:
     """Check 8: total test count in validator-test-report.md vs sum of per-class counts."""
     report = base / "management" / "validator-test-report.md"
@@ -350,6 +486,7 @@ def main():
         ("6. Duplicate family names",                 lambda: check_duplicate_families(families)),
         ("7. OID format",                             lambda: check_oid_format(families)),
         ("8. Test count vs report",                   lambda: check_test_count(base)),
+        ("9. NIST/BSI authority divergence",          lambda: check_authority_divergence(base)),
     ]
 
     for title, fn in checks:
