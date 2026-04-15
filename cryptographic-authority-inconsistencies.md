@@ -21,7 +21,7 @@ each cell to a 6-tier severity scale, and reports any row where authorities diff
 
 ---
 
-## Authorities Compared
+## Comparing Authorities
 
 | Authority | Scope | Document |
 |:---|:---|:---|

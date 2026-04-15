@@ -408,7 +408,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | **PTG.3** | Enhanced TRNG | Smart card / HSM key generation |
 | **NTG.1** | Non-deterministic RBG (TRNG + DRBG, highest assurance) | CA root key generation, HSM master keys |
 
-### 9.6 Non-Cryptographic PRNGs (always disallowed for security use)
+### 9.6 Non-cryptographic PRNGs (always disallowed for security use)
 
 | Pattern | NIST | Notes |
 |:---|:---|:---|
@@ -433,7 +433,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ⚠ **Hybrid deployment:** Until ML-KEM implementations have accrued operational confidence, deploy as **hybrid** with a classical key exchange (X25519 or P-256). The TLS 1.3 hybrid scheme `X25519MLKEM768` is defined in `draft-ietf-tls-hybrid-design` and is the current recommendation. The combiner is simple concatenation fed into the TLS 1.3 HKDF key schedule (`{hybridKemCombiner}=concat`).
 
-### 10.2 ML-DSA Digital Signatures (FIPS 204)
+### 10.2 ML-DSA digital Signatures (FIPS 204)
 
 | Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -445,7 +445,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ⚠ **ML-DSA constant-time requirement:** Non-constant-time implementations of `SampleInBall` and the τ non-zero position sampling leak information about the signing key. All ML-DSA implementations must sample in constant time with respect to secret inputs. (NIST PQC Forum, Jan 2026)
 
-### 10.3 SLH-DSA Digital Signatures (FIPS 205)
+### 10.3 SLH-DSA digital Signatures (FIPS 205)
 
 | Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -457,7 +457,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ℹ **Stateless:** SLH-DSA is stateless (unlike LMS/XMSS); no state management required. Signing is slow but requires no storage state. Suitable where signing frequency is low and verification speed matters more than signing speed.
 
-### 10.4 FN-DSA / Falcon Digital Signatures (FIPS 206 IPD)
+### 10.4 FN-DSA / Falcon digital Signatures (FIPS 206 IPD)
 
 | Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|

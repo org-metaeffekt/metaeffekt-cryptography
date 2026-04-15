@@ -140,7 +140,7 @@ choice-in-name notation.
 
 ---
 
-## 6. GOST Algorithm Numbering: With and Without Year Suffix
+## 6. GOST Algorithm Numbering: with and without Year Suffix
 
 | Source | Pattern |
 |--------|---------|
@@ -298,7 +298,7 @@ The following algorithms are in this repository's taxonomy but **not** in the Cy
 
 ---
 
-## 15. Missing from This Repository
+## 15. Missing from this Repository
 
 The following CycloneDX patterns have **no corresponding family** in this repository's
 validation registry. They are grouped by resolution status.
@@ -422,7 +422,7 @@ convention issue, not a missing algorithm coverage issue.
 
 ---
 
-## 16. SPDX Cryptographic Algorithm List Deviations
+## 16. SPDX cryptographic Algorithm List Deviations
 
 The SPDX cryptographic-algorithm-list (https://github.com/spdx/cryptographic-algorithm-list)
 contains 127 algorithm identifiers. These use naming conventions that differ from both this
@@ -489,7 +489,7 @@ These SPDX identifiers are registered as deprecated families with a `spdx:` pref
 | `X509` | `spdx:X509` | X.509 PKI certificate framework |
 | `cms` | `spdx:cms` | Cryptographic Message Syntax |
 
-### 16.3 SPDX Entries with No Canonical Equivalent
+### 16.3 SPDX Entries with no canonical Equivalent
 
 These SPDX identifiers have no corresponding algorithm in the canonical registry or
 in CycloneDX. They are registered in `cr-spdx.yaml` without deprecation:

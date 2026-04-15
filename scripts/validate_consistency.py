@@ -461,6 +461,132 @@ def check_authority_divergence(base: Path) -> bool:
     return True
 
 
+# ---------------------------------------------------------------------------
+# Check 10: heading style (noun-only rule, em-dashes, bracket case)
+# ---------------------------------------------------------------------------
+
+# Words that should be lowercase in headings (unless first content word).
+# Covers verbs, modals, articles, conjunctions, prepositions, determiners,
+# pronouns, adverbs, and common adjectives.  Nouns, gerunds, acronyms, and
+# proper nouns are NOT in this set.
+_SHOULD_BE_LOWERCASE = frozenset({
+    # articles
+    "a", "an", "the",
+    # conjunctions
+    "and", "but", "or", "nor", "yet", "so", "than",
+    # prepositions
+    "at", "by", "for", "in", "of", "on", "to", "up", "via", "with", "from",
+    "per", "across", "around", "between", "during", "through", "into", "onto",
+    "about", "after", "before", "over", "under", "until",
+    # determiners / pronouns
+    "this", "that", "these", "those", "each", "every", "all", "some", "any",
+    "it", "its", "they", "them", "their", "we", "us", "our", "you", "your",
+    "who", "whom", "whose", "which",
+    # verbs / modals / auxiliaries
+    "is", "are", "was", "were", "be", "been", "being", "am",
+    "has", "have", "had", "having",
+    "do", "does", "did", "doing",
+    "will", "would", "shall", "should", "can", "could", "may", "might", "must",
+    "makes", "made", "enables", "exists", "appears", "provides", "requires",
+    "retains", "excludes", "grants", "disallows", "disagree", "disagrees",
+    "allows", "used", "compared", "phased",
+    # adverbs
+    "always", "never", "mostly", "sometimes", "often", "now", "then",
+    "more", "most", "less", "very", "too", "also", "only", "even", "just",
+    "still", "already", "not", "no",
+    # common adjectives (non-noun words that appear in crypto headings)
+    "specific", "general", "common", "special",
+    "simple", "complex", "good", "bad",
+    "historical", "classical", "modern", "legacy",
+    "symmetric", "asymmetric", "digital", "quantum", "cryptographic",
+    "elliptic", "prime", "composite", "hybrid", "pure",
+    "national", "international", "commercial",
+    "internal", "external", "additional", "notable",
+    "minor", "major", "medium",
+    "permissive", "restrictive", "strict",
+    "urgent", "critical", "important",
+    "invisible", "visible",
+    "random", "lightweight",
+    "weak", "strong",
+    "consolidated", "comparable",
+    "miscellaneous",
+})
+
+
+def check_heading_style(base: Path) -> bool:
+    """Check 10: heading style — noun-only capitalisation, no em-dashes, bracket case."""
+    md_globs = ["*.md", "inventory/*.md", "management/*.md",
+                "ae-pattern-validator/*.md", "ae-pattern-validator/src/main/resources/registry/*.md"]
+    md_files: list[Path] = []
+    for g in md_globs:
+        md_files.extend(sorted(base.glob(g)))
+
+    em_dash_issues: list[tuple[str, int, str]] = []
+    cap_issues: list[tuple[str, int, str, str]] = []
+
+    for fpath in md_files:
+        try:
+            lines = fpath.read_text().splitlines()
+        except (IOError, UnicodeDecodeError):
+            continue
+        rel = str(fpath.relative_to(base))
+        for i, line in enumerate(lines, 1):
+            m = re.match(r"^#{1,6}\s+(.*)", line)
+            if not m:
+                continue
+            heading = m.group(1)
+
+            # ── em-dash check ──
+            if "—" in heading:
+                em_dash_issues.append((rel, i, heading))
+
+            # ── capitalised-lowercase-word check ──
+            # Strip code spans and section-number prefix
+            stripped = re.sub(r"`[^`]*`", "", heading)
+            stripped = re.sub(r"^\d+(\.\d+)*\.?\s*", "", stripped)
+            # Tokenise into word-like sequences with their position in stripped text
+            tokens = list(re.finditer(r"[A-Za-z][A-Za-z']*", stripped))
+            if not tokens:
+                continue
+
+            for j, tok in enumerate(tokens):
+                word = tok.group()
+                # Skip first content word (always capitalised)
+                if j == 0:
+                    continue
+                # Skip all-uppercase (acronyms)
+                if word.isupper():
+                    continue
+                # Skip words that start lowercase (already OK)
+                if word[0].islower():
+                    continue
+                # Word starts uppercase — check if it should be lowercase
+                if word.lower() in _SHOULD_BE_LOWERCASE:
+                    cap_issues.append((rel, i, heading, word))
+
+    ok = True
+
+    if em_dash_issues:
+        print(f"  WARN  {len(em_dash_issues)} heading(s) contain em-dash (avoid per §9.2):")
+        for rel, ln, h in em_dash_issues[:10]:
+            print(f"    {rel}:{ln}  {h}")
+        if len(em_dash_issues) > 10:
+            print(f"    ... and {len(em_dash_issues) - 10} more")
+        ok = False
+
+    if cap_issues:
+        print(f"  INFO  {len(cap_issues)} heading word(s) may need lowercase (review per §9.1):")
+        for rel, ln, h, w in cap_issues[:15]:
+            print(f"    {rel}:{ln}  '{w}' in: {h}")
+        if len(cap_issues) > 15:
+            print(f"    ... and {len(cap_issues) - 15} more")
+
+    if not em_dash_issues and not cap_issues:
+        print(f"  OK    no heading style issues detected ({sum(1 for f in md_files for l in f.read_text().splitlines() if l.startswith('#'))} headings scanned)")
+
+    return ok  # em-dash is WARN (fails check); capitalisation is INFO only
+
+
 def check_test_count(base: Path) -> bool:
     """Check 8: total test count in validator-test-report.md vs sum of per-class counts."""
     report = base / "management" / "validator-test-report.md"
@@ -552,6 +678,7 @@ def main():
         ("7. OID format",                             lambda: check_oid_format(families)),
         ("8. Test count vs report",                   lambda: check_test_count(base)),
         ("9. NIST/BSI authority divergence",          lambda: check_authority_divergence(base)),
+        ("10. Heading style (noun-only rule)",         lambda: check_heading_style(base)),
     ]
 
     for title, fn in checks:

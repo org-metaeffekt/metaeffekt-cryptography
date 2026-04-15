@@ -239,7 +239,7 @@ Cryptographic Algorithms
 
 ---
 
-## 7. Classical Digital Signatures
+## 7. Classical digital Signatures
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
@@ -553,7 +553,7 @@ The following were NIST Round 3 signature candidates. They did not progress to s
 
 ---
 
-## 19. Non-Cryptographic PRNGs (statistical use only)
+## 19. Non-cryptographic PRNGs (statistical use only)
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|

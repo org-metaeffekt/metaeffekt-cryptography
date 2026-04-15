@@ -58,7 +58,7 @@ multiple standards documents — a process that is slow, error-prone, and imposs
 
 ---
 
-## The Quantum Transition makes this urgent
+## The quantum Transition makes this urgent
 
 The threat from large-scale quantum computers is not speculative. It is a matter of timing.
 Shor's algorithm, running on a sufficiently powerful quantum computer, breaks RSA, ECDH, ECDSA,

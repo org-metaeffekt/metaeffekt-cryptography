@@ -92,7 +92,7 @@ matched — zero unmatched. Split into two test sets.
 
 ---
 
-## Appendix A: All Instance Patterns Tested (276)
+## Appendix A: all Instance Patterns tested (276)
 
 Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 
@@ -296,7 +296,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `XMSSMT-test` | `XMSSMT` |
 | `XTR` | `XTR` |
 
-### Post-Quantum Cryptography (44 patterns)
+### Post-quantum Cryptography (44 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -403,7 +403,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `Xoshiro` | `Xoshiro` |
 | `Yarrow-AES` | `Yarrow` |
 
-### CycloneDX-Specific Families (4 patterns)
+### CycloneDX-specific Families (4 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -412,7 +412,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `Ed448ctx` | `cdx:Ed448ctx` |
 | `FFDHE-ffdhe4096` | `cdx:FFDHE` |
 
-## Appendix B: All Template Patterns Tested (149)
+## Appendix B: all Template Patterns tested (149)
 
 Pattern templates validated in `TEMPLATE` mode, organized by taxonomy. Templates may
 contain wildcards (`*`), enumerations (`[a\|b]`, `(a\|b)`), and variable placeholders
@@ -523,7 +523,7 @@ contain wildcards (`*`), enumerations (`[a\|b]`, `(a\|b)`), and variable placeho
 | `XMSS-(SHA2\|SHAKE)` | `XMSS` |
 | `XMSSMT-(SHA2\|SHAKE)` | `XMSSMT` |
 
-### Post-Quantum Cryptography (5 patterns)
+### Post-quantum Cryptography (5 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -562,7 +562,7 @@ contain wildcards (`*`), enumerations (`[a\|b]`, `(a\|b)`), and variable placeho
 | `Hash_DRBG[-{hashAlgorithm}]` | `Hash_DRBG` |
 | `Yarrow[-{blockCipher}][-{hashAlgorithm}]` | `Yarrow` |
 
-### CycloneDX-Specific Families (40 patterns)
+### CycloneDX-specific Families (40 patterns)
 
 | Pattern | Family |
 |---------|--------|
