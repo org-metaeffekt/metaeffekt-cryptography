@@ -1683,7 +1683,7 @@ For BSI hybridisation mechanisms (CatKDF, KeyCombine), migration timelines (clas
 
 > **Source:** NIST SP 800-57 Part 1 Rev 5 (May 2020), §5.3 Table 1 and §5.6 Table 2.
 
-For full cryptoperiod tables per key type (originator-usage and recipient-usage periods), see `cryptographic-algorithm-status.md` §13.6.
+For full cryptoperiod tables per key type (originator-usage and recipient-usage periods), see `cryptographic-algorithm-status.md` §14.6.
 
 ### Effective Security Strength
 

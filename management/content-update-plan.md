@@ -314,10 +314,10 @@ Reconcile these numbers across all documents:
 > [!NOTE]
 > Evaluate whether the current file organisation (7 markdown files) is optimal or whether merges/splits would improve navigability and reduce maintenance burden. Also review chapter ordering within each file.
 
-- [ ] Evaluate merging `random-number-generators.md` into `cryptographic-algorithms.md` (RNGs already §16-§19 there)
+- [ ] Evaluate merging `random-number-generators.md` into `cryptographic-algorithms.md` (RNGs already §14-§17 there)
 - [ ] Evaluate whether `cryptographic-registry-inconsistencies.md` should become an appendix of `cryptographic-algorithms.md`
 - [ ] Check `cryptographic-governance.md` for updates needed after all ingestion work
-- [ ] Consider splitting `cryptographic-algorithm-status.md` §13-§21 (SP 800-57 / protocol-specific) into a separate file if it grows further
+- [ ] Consider splitting `cryptographic-algorithm-status.md` §14 (SP 800-57 Security Strength Equivalence) into a separate file if it grows further
 - [ ] Review chapter ordering within each markdown file for logical flow
 
 ### 8.3 Compactness Review

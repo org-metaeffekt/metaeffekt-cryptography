@@ -385,7 +385,7 @@ NIST IR 8547 defines federal Deadlines for migrating away from classical asymmet
 
 ## 5. PKI Key Management (SP 800-57 Part 3 Rev 1 §2)
 
-> **Source:** NIST SP 800-57 Part 3 Rev 1, January 2015. Note: this predates NIST PQC standardisation (2024) and current BSI guidance (2026). Algorithm-specific parameters should be cross-referenced with `cryptographic-algorithm-status.md` §13 (security strength equivalence) and SP 800-131A for current approval status.
+> **Source:** NIST SP 800-57 Part 3 Rev 1, January 2015. Note: this predates NIST PQC standardisation (2024) and current BSI guidance (2026). Algorithm-specific parameters should be cross-referenced with `cryptographic-algorithm-status.md` §14 (Security Strength Equivalence) and SP 800-131A for current approval status.
 
 ### 5.1 CA and OCSP Responder Signing
 
