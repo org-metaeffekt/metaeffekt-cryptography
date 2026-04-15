@@ -11,6 +11,7 @@
 > NSA CNSA 2.0 (PP-22-1338, Sep 2022) ·
 > BSI TR-02102-1 v2026-01 (2026-01-23) · BSI TR-02102-2 v2026-01 (2025-12-27) ·
 > BSI TR-02102-3 v2026-01 (2026-01-27) · BSI TR-02102-4 v2026-01 (2026-01-27) · BSI AIS 20/31 v3 (2022) ·
+> NIST SP 800-227 (Sep 2025) · NIST IR 8547 IPD (Nov 2024) ·
 > ENISA "Post-Quantum Cryptography: Current state and quantum mitigation" v2 (May 2021)
 
 ---
@@ -77,7 +78,7 @@ This document compares cryptographic primitives against three authorities that i
 |:---|:---|:---|:---|:---|:---|:---|
 | `AES-256-*` | 256 bit | ✅ Recommended | ✅ Recommended | ✅ Mandatory | FIPS 197; SP 800-57; BSI TR-02102-1 §3.3; CNSA 2.0 | CNSA 2.0 mandates AES-256 only |
 | `AES-[128\|192]-*` | 128–192 bit | ✅ Recommended | ✅ Recommended | 🚫 Not in CNSA | FIPS 197; SP 800-57; BSI TR-02102-1 §3.3 | NIST/BSI accept; CNSA 2.0 only allows AES-256 |
-| `CAMELLIA-[128\|256]-*` | 128–256 bit | ✓ Approved | ✅ Recommended | 🚫 Not in CNSA | BSI TR-02102-1 §3.3 | Approved by BSI; not in NIST FIPS or CNSA list |
+| `CAMELLIA-[128\|256]-*` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-2) | 🚫 Not in CNSA | BSI TR-02102-2 | Not in TR-02102-1 Table 3.1 (only AES listed); recommended via TR-02102-2 for TLS. Not in NIST FIPS or CNSA list |
 | `3DES-*` | ≤112 bit | ❌ Deprecated | 🚫 Not recommended (TR-02102-1) | 🚫 Not in CNSA | SP 800-131A Rev 2 §2; NIST IR 8214C | Disallowed for encryption after 2023; 64-bit block causes birthday-bound issues at ≥ 2³² blocks |
 | `DES-*` | 56 bit | 🚫 Disallowed | 🚫 Not recommended (TR-02102-1) | 🚫 Not in CNSA | SP 800-131A Rev 2 | Cryptographically broken |
 | `RC2-*` | ≤128 bit | 🚫 Disallowed | 🚫 Not recommended | 🚫 Not in CNSA | SP 800-131A Rev 2 | Legacy only; no new use |
@@ -101,7 +102,7 @@ This document compares cryptographic primitives against three authorities that i
 | `AES-[128\|192\|256]-XTS` | 128–256 bit | ⚠ Conditional | ✅ Recommended (TR-02102-1 §3.3) | ✓ AES-256 only | SP 800-38E; IEEE 1619 | **Storage encryption only**; not for network use; provides no integrity |
 | `AES-[128\|192\|256]-ECB` | 128–256 bit | 🚫 Disallowed | ✅ Recommended (TR-02102-1 §3.3) | 🚫 Not in CNSA | SP 800-38A; BSI TR-02102-1 | Deterministic; reveals identical blocks; prohibited for multi-block use |
 | `AES-KW-[128\|192\|256]` | 128–256 bit | ✓ Approved | — | ✓ AES-256 only | SP 800-38F | Key-wrapping only; not a general encryption mode |
-| `ChaCha20-Poly1305` | 256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §3.4) | 🚫 Not in CNSA | RFC 8439; BSI TR-02102-1 (2024) | AEAD; constant-time; preferred when AES-NI unavailable. Note: not in NIST FIPS approved list but BSI-approved; not in CNSA 2.0 |
+| `ChaCha20-Poly1305` | 256 bit | ✅ Recommended | ✅ Recommended (TR-02102-2) | 🚫 Not in CNSA | RFC 8439; BSI TR-02102-2 | AEAD; constant-time; preferred when AES-NI unavailable. Not listed in TR-02102-1 §3.2 (stream ciphers not recommended); BSI-approved via TR-02102-2 for TLS use. Not in NIST FIPS approved list; not in CNSA 2.0 |
 
 > ⚠ **GCM IV uniqueness:** IV reuse under AES-GCM with the same key allows full key recovery. Use 96-bit random IVs with a CSPRNG, or a deterministic counter with strict uniqueness guarantees. After 2³² random IVs, collision probability exceeds 2⁻³² — implement rekey policies. (SP 800-38D §8.3)
 
@@ -338,11 +339,11 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | Pattern | Security | NIST | BSI | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|
 | `Argon2id-*-[19456\|65536\|262144\|1048576]-[2\|3]-1` | 128+ bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §B.2) | BSI TR-02102-1 §3.9; OWASP 2023 | PHC winner; memory-hard; side-channel resistant variant; min m=19456 KiB, t=2, p=1 (OWASP web); m=65536 KiB for higher security |
-| `scrypt-[32768\|65536\|1048576]-8-1-*` | 128+ bit | ✓ Approved | ✓ Acceptable (TR-02102-1 §B.2) | RFC 7914; BSI TR-02102-1 | N=32768 minimum (OWASP); N=1048576 high-security |
-| `bcrypt-[12\|13\|14]-*` | 128 bit | ✓ Approved | ✓ Acceptable (TR-02102-1 §B.2) | BSI | Cost ≥ 12 (2024 minimum); input truncated at 72 bytes |
+| `scrypt-[32768\|65536\|1048576]-8-1-*` | 128+ bit | ✓ Approved | — Not addressed | RFC 7914 | N=32768 minimum (OWASP); N=1048576 high-security. Not mentioned in BSI TR-02102-1; only Argon2id recommended for software-based password KDF |
+| `bcrypt-[12\|13\|14]-*` | 128 bit | ✓ Approved | — Not addressed | — | Cost ≥ 12 (2024 minimum); input truncated at 72 bytes. Not mentioned in BSI TR-02102-1; only Argon2id recommended for software-based password KDF |
 | `PBKDF2-HMAC-[SHA-256\|SHA-384\|SHA-512]-[600000\|1000000]-*-[32\|48\|64]` | 128–256 bit | ✓ Approved | ✅ Recommended (TR-02102-1 §4) | SP 800-132; OWASP 2023; BSI TR-02102-1 | Minimum 600,000 iterations for PBKDF2-HMAC-SHA-256 (SP 800-132 2023 update); salt ≥ 128 bits |
-| `PBKDF2-HMAC-SHA-1-*` | ≤112 bit | ❌ Deprecated | ✅ Recommended (TR-02102-1 §4) | SP 800-132 | SHA-1 deprecation applies; use SHA-256 minimum |
-| `PBKDF1-*` | — | 🚫 Disallowed | ✅ Recommended (TR-02102-1 §B.2) | RFC 8018 §6.1 | PBKDF1 disallowed; only supports short keys; superseded by PBKDF2 |
+| `PBKDF2-HMAC-SHA-1-*` | ≤112 bit | ❌ Deprecated | 🚫 Not recommended | SP 800-132 | SHA-1 deprecation applies; use SHA-256 minimum. BSI: SHA-1 should never be used; PBKDF2 not listed in TR-02102-1 |
+| `PBKDF1-*` | — | 🚫 Disallowed | — Not addressed | RFC 8018 §6.1 | PBKDF1 disallowed; only supports short keys; superseded by PBKDF2. BSI TR-02102-1 does not mention PBKDF1 |
 
 > ⚠ **Password hash without memory hardness:** PBKDF2 lacks memory hardness and is GPU-parallelisable. For password storage, prefer Argon2id or scrypt. PBKDF2 is acceptable for derived key material in standards-constrained environments (TLS, IKE).
 
@@ -437,7 +438,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 | Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
-| `ML-DSA-44` | 2 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.2) | 🚫 Not in CNSA | Smallest signatures (2420 B); CNSA mandates ML-DSA-87 |
+| `ML-DSA-44` | 2 | 128 bit | ✓ Approved | 🚫 Not recommended | 🚫 Not in CNSA | Smallest signatures (2420 B); CNSA mandates ML-DSA-87. BSI requires Category 3 minimum; only ML-DSA-65/87 listed |
 | `ML-DSA-65` | 3 | 192 bit | ✅ Recommended | ✅ Recommended (§5.3.4.2) | 🚫 Not in CNSA | Balanced; NIST recommends; CNSA mandates ML-DSA-87 |
 | `ML-DSA-87` | 5 | 256 bit | ✓ Approved | ✅ Recommended (§5.3.4.2) | ✅ Mandatory | CNSA 2.0 mandates this parameter set for general signing |
 | `ML-DSA-[44\|65\|87]-(deterministic)` | — | — | ❌ Deprecated | ❌ Not recommended | ❌ Deprecated | Deterministic mode vulnerable to fault attacks; use hedged mode |
@@ -449,11 +450,11 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 | Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
-| `SLH-DSA-SHA2-128s` | 1 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | Small signatures (7856 B); slow signing; CNSA does not include SLH-DSA |
-| `SLH-DSA-SHA2-128f` | 1 | 128 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | Fast signing; larger signatures (17088 B); CNSA does not include SLH-DSA |
+| `SLH-DSA-SHA2-128s` | 1 | 128 bit | ✓ Approved | 🚫 Not recommended | 🚫 Not in CNSA | Small signatures (7856 B); slow signing; CNSA does not include SLH-DSA. BSI requires Category 3 minimum; only 192/256 parameter sets listed |
+| `SLH-DSA-SHA2-128f` | 1 | 128 bit | ✓ Approved | 🚫 Not recommended | 🚫 Not in CNSA | Fast signing; larger signatures (17088 B); CNSA does not include SLH-DSA. BSI requires Category 3 minimum; only 192/256 parameter sets listed |
 | `SLH-DSA-SHA2-[192s\|192f]` | 3 | 192 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | CNSA does not include SLH-DSA |
 | `SLH-DSA-SHA2-[256s\|256f]` | 5 | 256 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | CNSA does not include SLH-DSA |
-| `SLH-DSA-SHAKE-[128s\|128f\|192s\|192f\|256s\|256f]` | 1–5 | 128–256 bit | ✓ Approved | ✅ Recommended (§5.3.4.1) | 🚫 Not in CNSA | SHAKE-based variants; identical security, different internal hash; CNSA does not include SLH-DSA |
+| `SLH-DSA-SHAKE-[128s\|128f\|192s\|192f\|256s\|256f]` | 1–5 | 128–256 bit | ✓ Approved | ✅ 192/256 only (§5.3.4.1) | 🚫 Not in CNSA | SHAKE-based variants; identical security, different internal hash; CNSA does not include SLH-DSA. BSI requires Category 3 minimum; only 192/256 parameter sets listed |
 
 > ℹ **Stateless:** SLH-DSA is stateless (unlike LMS/XMSS); no state management required. Signing is slow but requires no storage state. Suitable where signing frequency is low and verification speed matters more than signing speed.
 

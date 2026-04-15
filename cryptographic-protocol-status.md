@@ -9,7 +9,8 @@
 >
 > **Primary sources:** BSI TR-02102-2 v2026-01 (TLS) · BSI TR-02102-3 v2026-01 (IPsec) ·
 > BSI TR-02102-4 v2026-01 (SSH) · NSA CNSA 2.0 (PP-22-1338, Sep 2022) ·
-> ENISA "Post-Quantum Cryptography" v2 (May 2021) · NIST SP 800-57 Part 3 Rev 1 (Jan 2015)
+> ENISA "Post-Quantum Cryptography" v2 (May 2021) · NIST SP 800-57 Part 3 Rev 1 (Jan 2015) ·
+> NIST IR 8547 IPD (Nov 2024)
 
 ---
 
@@ -360,6 +361,25 @@ The BSI defines explicit end-dates for the sole use of classical asymmetric mech
 | KeyCombine (SP 800-56C §4.6.1 Eq. 9 + §4.6.2 Eq. 15) | NIST key combination with KDF or KMAC |
 
 **BSI minimum security level:** 120 bits (TR-02102-1 §1.2). All recommended mechanisms achieve at least this level. AES-128 maps to 128 bits; EC curves must be ≥250 bits; RSA/DH moduli must be ≥3000 bits.
+
+### 4.7 NIST IR 8547 PQC Transition Timeline
+
+> **Source:** NIST IR 8547 IPD (Initial Public Draft), November 2024, "Transition to Post-Quantum Cryptography Standards". This is an Initial Public Draft; Timelines may be adjusted in the final Version.
+
+NIST IR 8547 defines federal Deadlines for migrating away from classical asymmetric Cryptography. NSM-10 (National Security Memorandum 10) establishes **2035** as the primary Target for completing the PQC Transition across US federal Systems.
+
+| Algorithm class | 112-bit Security | ≥128-bit Security |
+|:---|:---|:---|
+| Digital Signatures (ECDSA, EdDSA, RSA) | deprecated after 2030 | disallowed after 2035 |
+| Key Establishment (DH, ECDH, RSA) | deprecated after 2030 | disallowed after 2035 |
+| Symmetric (AES-128+) | unchanged | Category 1+ quantum Security |
+
+**Key Points:**
+
+- **Key Establishment migrates first.** Because of the harvest-now-decrypt-later Threat, key establishment Mechanisms should transition to PQC sooner than Signatures — encrypted Data captured today can be decrypted retroactively once a cryptographically relevant quantum Computer is available.
+- **Hybrid Schemes are explicitly supported.** IR 8547 permits hybrid key Establishment combining a classical and a PQC Component. The classical Component in a hybrid Scheme is **not** disallowed after 2035; only sole use of classical Algorithms is subject to the Deadline.
+- **NSM-10 Target.** National Security Memorandum 10 (January 2022) establishes 2035 as the primary federal Target for PQC Transition Completion.
+- **IPD Status.** This is an Initial Public Draft. Final Timelines may be adjusted based on public Comment and the evolving quantum Threat Landscape.
 
 ---
 

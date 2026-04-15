@@ -177,14 +177,12 @@ algorithms NIST has already disallowed:
 | `DSA-1024-*` | 🚫 Disallowed | 🔜 Until 2029 | BSI: 2029 |
 | `FFDH-[1024\|1536]` | 🚫 Disallowed | ✅ Until 2031 | BSI: 2031 |
 | `ECDH-secp256k1` | ❌ Deprecated | ✅ Until 2031 | BSI: 2031 |
-| `PBKDF1-*` | 🚫 Disallowed | ✅ Recommended (TR-02102-1 §B.2) | (BSI text appears anomalous; verify) |
-| `PBKDF2-HMAC-SHA-1-*` | ❌ Deprecated | ✅ Recommended (TR-02102-1 §4) | (BSI text appears anomalous; verify) |
+| `PBKDF1-*` | 🚫 Disallowed | — Not addressed | — |
+| `PBKDF2-HMAC-SHA-1-*` | ❌ Deprecated | 🚫 Not recommended | — |
 
 **Action:** Both NIST and BSI agree these algorithms are weak; the disagreement
 is purely about migration timing. Plan migration on the **earlier** deadline
-(NIST's) for safety margin. The two PBKDF entries marked anomalous likely
-reflect transcription errors and should be cross-checked against the actual
-TR-02102-1 §B.2 text.
+(NIST's) for safety margin.
 
 ### Pattern E: BSI more permissive than NIST on specific Modes
 

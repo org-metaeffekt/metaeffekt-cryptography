@@ -1464,8 +1464,8 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 | **Type** | enumeration |
 | **Canonical values** | `concat` `xor` `HKDF` |
 | **Pattern implication** | `DHKEM(X25519)+ML-KEM-768[-{hybridKemCombiner}]` |
-| **Implementation note** | PQC forum thread "TLS1.3 hybrid implementation" (Jan 2026, Bas Westerbaan): the TLS working group settled on simple concatenation (`concat`) — the two shared secrets are concatenated and fed directly into the TLS 1.3 HKDF key schedule. No separate combiner is needed because the key schedule already provides binding. Defined in `draft-ietf-tls-hybrid-design`. |
-| **Used in** | ML-KEM (hybrid TLS / HPKE deployments) |
+| **Implementation note** | PQC forum thread "TLS1.3 hybrid implementation" (Jan 2026, Bas Westerbaan): the TLS working group settled on simple concatenation (`concat`) — the two shared secrets are concatenated and fed directly into the TLS 1.3 HKDF key schedule. No separate combiner is needed because the key schedule already provides binding. Defined in `draft-ietf-tls-hybrid-design`. **SP 800-227 §4.6 Guidance:** SP 800-227 §4.6.2 defines approved key Combiners derived from SP 800-56C and SP 800-133. The naive Combiner `KDF(K1, K2)` does **not** preserve IND-CCA2 Security (SP 800-227 §4.6.3). The recommended IND-CCA-preserving Combiner includes shared Secrets, Ciphertexts, Encapsulation Keys, and a Domain Separator: `H(K1, K2, c1, c2, ek1, ek2, domain_sep)`. |
+| **Used in** | ML-KEM (hybrid TLS), SP 800-227 |
 
 ---
 
@@ -1620,7 +1620,7 @@ HQC uses a **double-circulant [2n, n] code** with parity-check matrix (Iₙ | ro
 | `{signingMode}` | PQC protocol | enumeration | ML-DSA, SLH-DSA, FN-DSA |
 | `{deterministicSigning}` | PQC protocol | enumeration | ML-DSA |
 | `{context}` | PQC protocol | byte string (0–255 B) | ML-DSA, SLH-DSA, FN-DSA |
-| `{hybridKemCombiner}` | PQC protocol | enumeration | ML-KEM (hybrid TLS) |
+| `{hybridKemCombiner}` | PQC protocol | enumeration | ML-KEM (hybrid TLS), SP 800-227 |
 | `{floatingPointMode}` | PQC protocol | enumeration | FN-DSA |
 
 ---
@@ -1757,6 +1757,8 @@ The effective security strength of a cryptographic operation is determined by th
     - [CSRC landing page](https://csrc.nist.gov/pubs/sp/800/208/final)
     - [PDF](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-208.pdf)
     - DOI: [10.6028/NIST.SP.800-208](https://doi.org/10.6028/NIST.SP.800-208)
+* [NIST SP 800-227](https://doi.org/10.6028/NIST.SP.800-227) — *Recommendations for Key-Encapsulation Mechanisms*, September 2025
+* [NIST IR 8547 IPD](https://doi.org/10.6028/NIST.IR.8547.ipd) — *Transition to Post-Quantum Cryptography Standards*, November 2024 (Initial Public Draft)
 
 ### IETF RFCs
 
