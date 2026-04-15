@@ -171,6 +171,9 @@ A multi-algorithm scheme that combines multiple component algorithms of the same
 **Composite ML-DSA**
 An IETF standard (draft-ietf-lamps-pq-composite-sigs-15, LAMPS WG, February 2026) defining 18 composite signature algorithms that combine ML-DSA (FIPS 204) with a traditional algorithm (RSA-PSS, RSA-PKCS#1v1.5, ECDSA, Ed25519, or Ed448). Each algorithm has a registered OID in the `1.3.6.1.5.5.7.6` arc. The signing process generates two independent component signatures (one ML-DSA, one traditional) serialised as a pair; verification requires both to succeed. Composite ML-DSA provides **EUF-CMA** (existential unforgeability) but not **SUF-CMA** (strong unforgeability); see those entries. Motivation: allows organisations to add post-quantum protection to existing PKIX infrastructure without replacing the traditional cryptography, reducing re-certification overhead. Security holds as long as either component algorithm remains unbroken.
 
+**CRQC — Cryptographically Relevant Quantum Computer**
+A quantum computer powerful enough to run Shor's algorithm against deployed public-key cryptographic parameters (e.g., factor 2048-bit RSA, compute discrete logarithms on P-256). No CRQC exists as of 2026. The "harvest now, decrypt later" threat assumes adversaries collect ciphertext today for future decryption once a CRQC becomes available. NIST IR 8547 uses this term to frame the PQC migration urgency.
+
 **CROSS — Codes and Restricted Objects Signature Scheme**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on code equivalence problems. CROSS is one of the prioritised candidates alongside MAYO in the NIST additional signatures process.
 
@@ -259,6 +262,9 @@ An open standard for Software Bills of Materials (SBOMs) maintained by OWASP. It
 
 ## D
 
+**Decapsulation Key**
+The private (secret) component of a KEM key pair. The holder of the decapsulation key uses it with a received ciphertext to recover the shared secret produced by the encapsulation step. In ML-KEM (FIPS 203), the decapsulation key includes the full secret polynomial and a copy of the encapsulation key. See also: Encapsulation Key, KEM.
+
 **Decryption**
 The process of turning ciphertext back into readable plaintext using the correct key.
 
@@ -289,6 +295,9 @@ A mathematical value computed from a message and a private key. Anyone with the 
 **Domain Separation**
 A technique ensuring that the same cryptographic key or primitive produces independent, unrelated outputs when used for different purposes. Achieved by prepending different labels or using different context strings. Prevents cross-protocol attacks.
 
+**DRG.3 / DRG.4 — Deterministic Random Number Generator Classes (BSI AIS 20/31)**
+BSI's classification for deterministic random number generators. DRG.3 provides prediction resistance by requiring live entropy input before each output block — equivalent to a NIST SP 800-90A DRBG with prediction resistance enabled. DRG.4 adds forward secrecy after reseeding, providing stronger guarantees for long-term key generation. Both are recommended by BSI TR-02102-1 §8 for general cryptographic use. See also: PTG.3, NTG.1.
+
 **DRBG — Deterministic Random Bit Generator**
 A random number generator that produces output deterministically from an initial seed. NIST SP 800-90A defines three approved mechanisms: Hash_DRBG, HMAC_DRBG, and CTR_DRBG. Once seeded with true entropy, a DRBG can produce arbitrarily many pseudorandom bits.
 
@@ -307,6 +316,9 @@ Parameters controlling how aggressively ciphertext components are compressed in 
 
 **EasyCrypt**
 A formal verification framework for cryptographic proofs, used to verify the security of implementations written in the Jasmin programming language. The mlkem-libjade implementation in the PQ Code Package uses EasyCrypt-level proofs.
+
+**Encapsulation Key**
+The public component of a KEM key pair. The encapsulating party uses this key to produce a ciphertext and a shared secret. In ML-KEM (FIPS 203), the encapsulation key is a compressed representation of the public matrix and vector. SP 800-227 §4.2 requires assurance of ownership before using a static encapsulation key. See also: Decapsulation Key, KEM.
 
 **ECB — Electronic Codebook Mode**
 A block cipher mode where each block is encrypted independently with the same key. Identical plaintext blocks produce identical ciphertext blocks, which leaks patterns (the "ECB penguin" problem). Never use ECB for messages longer than one block.
@@ -584,6 +596,9 @@ The number of bits in a cryptographic key. Longer keys are harder to brute-force
 **Key Management**
 The processes and infrastructure for generating, distributing, storing, rotating, and revoking cryptographic keys.
 
+**Key Confirmation**
+A protocol step in which one or both parties prove they derived the same shared secret from a key-establishment exchange. Achieved by exchanging a MAC tag computed on agreed-upon data using a dedicated key-confirmation key (KC_Key) derived from the shared secret. SP 800-227 §4.4 recommends key confirmation for KEM-based key establishment and specifies approved MAC algorithms (HMAC, KMAC, AES-CMAC, AES-GMAC).
+
 **Key Wrap / Key Wrapping**
 Encrypting a cryptographic key with another key for secure storage or transmission (AES-KW, AES-KWP).
 
@@ -846,6 +861,9 @@ An interim mitigation strategy for protecting confidential communications agains
 
 **Pre-Hash Mode**
 A signing mode where the message is hashed by the application before being passed to the signature algorithm. Useful for processing very large messages. All NIST PQC signature algorithms support both pure mode (algorithm hashes internally) and pre-hash mode.
+
+**PTG.3 — Physical True Random Number Generator Class (BSI AIS 20/31)**
+BSI's highest-assurance TRNG class. A PTG.3 generator uses a physical entropy source with online health testing and output post-processing. Recommended by BSI TR-02102-1 §8 as the primary random number generator for all cryptographic applications. PTG.2 (lower assurance) is acceptable for seeding DRBGs but not recommended for direct cryptographic use. See also: DRG.3, NTG.1.
 
 **PRF — Pseudorandom Function**
 A keyed function whose output is computationally indistinguishable from a truly random function. Building block of KDFs, MACs, and DRBGs. HMAC, AES-CMAC, and KMAC are all PRFs.
