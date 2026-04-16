@@ -38,10 +38,20 @@ def load_yaml_files(registry_dir: Path) -> list[tuple[str, dict]]:
 
 
 def extract_families(yaml_files: list[tuple[str, dict]]) -> list[dict]:
-    """Flatten all family entries from all files."""
+    """Flatten all family/entry records from all files (supports v1 'families' and v2 'entries')."""
     families = []
     for _name, doc in yaml_files:
-        families.extend(doc.get("families") or [])
+        entries = doc.get("entries") or doc.get("families") or []
+        # Normalize v2 "id" to v1 "family" for backward compat
+        for entry in entries:
+            if "family" not in entry and "id" in entry:
+                entry["family"] = entry["id"]
+            # Normalize v2 "authorities.nist.status" to v1 "status"
+            if "status" not in entry and "authorities" in entry:
+                auths = entry.get("authorities") or {}
+                if "nist" in auths and "status" in auths["nist"]:
+                    entry["status"] = auths["nist"]["status"]
+        families.extend(entries)
     return families
 
 
@@ -64,7 +74,7 @@ def collect_oids(families: list[dict]) -> set[str]:
 
 
 OID_RE = re.compile(r"^\d+(\.\d+)+$")
-VALID_STATUSES = {"approved", "deprecated", "disallowed", "broken"}
+VALID_STATUSES = {"approved", "deprecated", "disallowed", "broken", "mandatory"}
 
 
 # ---------------------------------------------------------------------------
@@ -185,33 +195,43 @@ def check_deprecated_preferred_invariant(families: list[dict]) -> bool:
     return ok
 
 
+def _extract_authority_statuses(obj: dict) -> list[tuple[str, str]]:
+    """Extract (authority_id, status) pairs from an object's authorities map."""
+    auths = obj.get("authorities") or {}
+    results = []
+    for auth_id, auth_data in auths.items():
+        if isinstance(auth_data, dict) and "status" in auth_data:
+            results.append((auth_id, auth_data["status"]))
+    return results
+
+
 def check_status_values(families: list[dict]) -> bool:
-    """Check 5: all status fields contain only valid values."""
+    """Check 5: all authority status fields contain only valid values."""
     ok = True
     for fam in families:
-        name = fam.get("family", "<unknown>")
+        name = fam.get("family", fam.get("id", "<unknown>"))
 
-        # Family-level status (defaults to approved if absent)
-        status = fam.get("status")
-        if status and status not in VALID_STATUSES:
-            print(f"  FAIL  {name}: invalid family status '{status}'")
-            ok = False
+        # Entry-level authority statuses
+        for auth_id, status in _extract_authority_statuses(fam):
+            if status not in VALID_STATUSES:
+                print(f"  FAIL  {name} {auth_id}: invalid status '{status}'")
+                ok = False
 
-        # Parameter-value statuses
+        # Parameter-value authority statuses
         for param in fam.get("parameters") or []:
             for val in param.get("values") or []:
                 if isinstance(val, dict):
-                    vs = val.get("status")
-                    if vs and vs not in VALID_STATUSES:
-                        print(f"  FAIL  {name}.{param.get('name')}.{val.get('value')}: invalid status '{vs}'")
-                        ok = False
+                    for auth_id, vs in _extract_authority_statuses(val):
+                        if vs not in VALID_STATUSES:
+                            print(f"  FAIL  {name}.{param.get('name')}.{val.get('value')} {auth_id}: invalid status '{vs}'")
+                            ok = False
 
-        # Implicit parameter statuses
+        # Implicit parameter authority statuses
         for ip in fam.get("implicitParameters") or []:
-            ips = ip.get("status")
-            if ips and ips not in VALID_STATUSES:
-                print(f"  FAIL  {name} implicitParam {ip.get('name')}: invalid status '{ips}'")
-                ok = False
+            for auth_id, ips in _extract_authority_statuses(ip):
+                if ips not in VALID_STATUSES:
+                    print(f"  FAIL  {name} implicitParam {ip.get('name')} {auth_id}: invalid status '{ips}'")
+                    ok = False
 
     if ok:
         print(f"  OK    all status values are valid ({', '.join(sorted(VALID_STATUSES))})")
