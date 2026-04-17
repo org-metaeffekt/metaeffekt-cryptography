@@ -510,6 +510,9 @@ A 64-bit block cipher, historically used in PGP. No longer recommended; supersed
 **IEEE 754**
 The international standard for floating-point arithmetic in computers. FN-DSA (Falcon) requires that the underlying processor strictly follows IEEE 754 rules during key generation and signing — non-compliant behaviour (e.g., extended precision in x87 mode, flush-to-zero) can produce incorrect or insecure output.
 
+**IANA — Internet Assigned Numbers Authority**
+The organisation that manages protocol parameter registries for internet standards. Maintains the authoritative registries for TLS cipher suites, TLS supported groups, TLS signature schemes, IPsec transforms, SSH algorithms, and HPKE parameters. Each registry entry carries a numeric identifier, a description, and a "Recommended" flag (Y = recommended, N = not recommended, D = deprecated). IANA recommendation status is protocol-level guidance — it reflects interoperability requirements rather than cryptographic security assessments. See https://www.iana.org/assignments/tls-parameters/.
+
 **IETF — Internet Engineering Task Force**
 The organisation that develops and publishes Internet standards, published as RFCs. Working groups relevant to cryptography include CFRG (Crypto Forum Research Group) and LAMPS (Limited Additional Mechanisms for PKIX and SMIME).
 

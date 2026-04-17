@@ -26,18 +26,29 @@ each cell to a 6-tier severity scale, and reports any row where authorities diff
 | Authority | Scope | Document |
 |:---|:---|:---|
 | **IETF** | Protocol-level — RFCs that mandate algorithms within a given protocol | RFC 9142 (SSH), RFC 8221/8247 (IPsec), RFC 8624 (DNSSEC), RFC 8945 (TSIG), RFC 8429 (Kerberos), … |
+| **IANA** | Protocol-level — registry of negotiable protocol Parameters | TLS cipher suites, supported groups, signature schemes; IPsec transforms; SSH algorithms |
 | **NIST** | US civilian / federal — algorithm-level | SP 800-131A Rev 2, SP 800-57, FIPS 197/180-4/186-5/202/203/204/205 |
 | **BSI** | German / EU civilian — algorithm-level + protocol-level | TR-02102-1 v2026-01 (algorithms), TR-02102-3 (IPsec), TR-02102-4 (SSH) |
 | **CNSA** | US military / National Security Systems — algorithm-level | NSA CNSA 2.0 Cybersecurity Advisory PP-22-1338 (Sep 2022) |
 | **CABF** | Public-trust PKI — used only in PKI tables | CA/Browser Forum Baseline Requirements §6.1.5 |
 
-> **Why no IETF column at the algorithm level?** IETF rarely issues normative
-> requirements at the primitive level — most IETF cryptographic RFCs either
-> *specify* an algorithm without mandating its use (RFC 8017 for RSA, RFC 5869
-> for HKDF) or are *informational* (RFC 6151 for MD5, RFC 6194 for SHA-1). Where
-> IETF does tabulate algorithm requirements (RFC 9142 SSH, RFC 8221/8247 IPsec,
-> RFC 8624 DNSSEC, RFC 8945 TSIG), the scope is *protocol-level* and lives in
-> [`cryptographic-protocol-status.md`](cryptographic-protocol-status.md).
+> **IANA vs IETF:** IANA maintains the registries; IETF writes the RFCs that
+> define algorithms and set the requirement levels (MUST/SHOULD/MAY). An IANA
+> "Recommended=Y" entry reflects the IETF's assessment at the time the algorithm
+> was registered. IANA recommendation status is about *interoperability* —
+> whether implementations should support the algorithm for protocol compliance —
+> not about *cryptographic security*. An algorithm can be IANA-recommended but
+> NIST-disallowed (e.g., HMAC-SHA1-96 in IPsec: IANA Recommended=MUST-,
+> NIST disallowed due to SHA-1).
+>
+> **Why no IETF/IANA column at the algorithm level?** IETF and IANA operate at
+> the protocol level — they define which algorithms a protocol implementation
+> must support, not which algorithms are cryptographically secure. Their guidance
+> lives in [`cryptographic-protocol-status.md`](cryptographic-protocol-status.md)
+> and in the YAML composite registries (`cr-tls.yaml`, `cr-ssh.yaml`,
+> `cr-ipsec.yaml`). For the full TLS cipher suite decomposition with IANA
+> recommendation status, see
+> [`cryptographic-tls-cipher-suites.md`](cryptographic-tls-cipher-suites.md).
 
 ---
 
@@ -45,16 +56,18 @@ each cell to a 6-tier severity scale, and reports any row where authorities diff
 
 ### Severity Tiers
 
-Every status cell is normalised to one of six tiers, lowest = most permissive:
+Every status cell is normalised to one of eight tiers, lowest = most permissive:
 
-| Tier | NIST/BSI | IETF | CNSA | Examples |
-|:---:|:---|:---|:---|:---|
-| 0 | ✅ Recommended | ✅ MUST / REQUIRED | ✅ Mandatory | "✅ Recommended", "MUST", "Mandatory" |
-| 1 | ✓ Approved / Acceptable | ✓ SHOULD / RECOMMENDED | ✓ Approved | "✓ Approved", "SHOULD" |
-| 2 | ⚠ Conditional | ◯ MAY / OPTIONAL · ⚠ MUST- | ⚠ Conditional | "MAY", "MUST minus", "Conditional" |
-| 3 | 🔜 Transitional / Until \<year\> | — | 🔜 Transitional | "🔜 Transitional", "✅ Until 2031" |
-| 4 | ❌ Deprecated / Removed | ❌ SHOULD NOT / NOT RECOMMENDED | ❌ Deprecated | "Deprecated", "SHOULD NOT" |
-| 5 | 🚫 Disallowed / Broken | 🚫 MUST NOT / PROHIBITED | 🚫 Not in CNSA | "Disallowed", "MUST NOT", "Not in CNSA" |
+| Tier | Symbol | Status | NIST | BSI | CNSA | IANA | IETF |
+|:---:|:---|:---|:---|:---|:---|:---|:---|
+| 0 | ✅ | Mandatory | — | — | Required | — | MUST |
+| 1 | ✅ | Recommended | Preferred acceptable | Empfohlen | — | Recommended=Y | SHOULD |
+| 2 | ✓ | Approved | Acceptable | — | — | — | MAY |
+| 3 | ⚠ | Conditional | Acceptable (restricted) | — | — | — | MUST- |
+| 4 | 🔜 | Transitional | Deprecated (with date) | Until \<year\> | Transitional | Recommended=D | — |
+| 5 | ❌ | Deprecated | Deprecated | Legacy | — | — | SHOULD NOT |
+| 6 | 🚫 | Disallowed | Disallowed | Not recommended | Not listed | Recommended=N | MUST NOT |
+| 7 | 🚫 | Broken | — | — | — | — | — |
 
 ### Divergence Classification
 
