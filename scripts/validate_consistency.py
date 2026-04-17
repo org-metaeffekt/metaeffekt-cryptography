@@ -74,7 +74,7 @@ def collect_oids(families: list[dict]) -> set[str]:
 
 
 OID_RE = re.compile(r"^\d+(\.\d+)+$")
-VALID_STATUSES = {"approved", "deprecated", "disallowed", "broken", "mandatory"}
+VALID_STATUSES = {"mandatory", "recommended", "approved", "conditional", "transitional", "deprecated", "disallowed", "broken"}
 
 
 # ---------------------------------------------------------------------------
