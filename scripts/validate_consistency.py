@@ -82,9 +82,11 @@ VALID_STATUSES = {"approved", "deprecated", "disallowed", "broken", "mandatory"}
 # ---------------------------------------------------------------------------
 
 def check_family_count(families: list[dict], base: Path) -> bool:
-    """Check 1: YAML family count vs README claims."""
+    """Check 1: YAML entry count vs README claims."""
     ok = True
-    count = len(families)
+    total = len(families)
+    algo_count = sum(1 for f in families if f.get("type", "algorithm") == "algorithm")
+    composite_count = total - algo_count
 
     targets = {
         "registry README": base / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "README.md",
@@ -97,18 +99,44 @@ def check_family_count(families: list[dict], base: Path) -> bool:
             print(f"  SKIP  {label}: file not found ({path})")
             continue
         text = path.read_text()
-        # Look for patterns like "324 families" or "324 algorithm families" or "324 registered algorithm families"
-        # Use a tight pattern: number immediately followed by optional adjectives then "famil..."
-        m = re.search(r"\b(\d+)\s+(?:\w+\s+){0,3}famil(?:ies|y)", text)
-        if m:
-            claimed = int(m.group(1))
-            if claimed == count:
-                print(f"  OK    {label}: {claimed} families matches YAML")
+        matched = False
+
+        # Check for total entries count (e.g., "508 total entries")
+        m_total = re.search(r"\b(\d+)\s+total\s+entr(?:ies|y)", text)
+        if m_total:
+            claimed = int(m_total.group(1))
+            if claimed == total:
+                print(f"  OK    {label}: {claimed} total entries matches YAML")
             else:
-                print(f"  FAIL  {label}: claims {claimed} families, YAML has {count}")
+                print(f"  FAIL  {label}: claims {claimed} total entries, YAML has {total}")
                 ok = False
-        else:
-            print(f"  SKIP  {label}: no family count found")
+            matched = True
+
+        # Check for algorithm entries count (e.g., "338 algorithm entries" or "338 algorithm families")
+        m_algo = re.search(r"\b(\d+)\s+algorithm\s+(?:entr(?:ies|y)|famil(?:ies|y))", text)
+        if m_algo:
+            claimed = int(m_algo.group(1))
+            if claimed == algo_count:
+                print(f"  OK    {label}: {claimed} algorithm entries matches YAML")
+            else:
+                print(f"  FAIL  {label}: claims {claimed} algorithm entries, YAML has {algo_count}")
+                ok = False
+            matched = True
+
+        # Fallback: check for generic "N families" (older format)
+        if not matched:
+            m = re.search(r"\b(\d+)\s+(?:\w+\s+){0,3}famil(?:ies|y)", text)
+            if m:
+                claimed = int(m.group(1))
+                if claimed == algo_count:
+                    print(f"  OK    {label}: {claimed} families matches algorithm count")
+                elif claimed == total:
+                    print(f"  OK    {label}: {claimed} families matches total count")
+                else:
+                    print(f"  FAIL  {label}: claims {claimed} families, YAML has {algo_count} algorithms / {total} total")
+                    ok = False
+            else:
+                print(f"  SKIP  {label}: no entry count found")
 
     return ok
 

@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (9 files, 338 registered algorithm families, 178 unique OIDs indexed).
+registry (10 files, 338 algorithm entries + 170 TLS composite entries, 178 unique OIDs indexed).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 

@@ -6,3 +6,6 @@
 **/._*
 
 ae-pattern-validator
+
+# IANA CSV cache (regeneratable)
+scripts/.iana-cache/
