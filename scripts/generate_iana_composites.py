@@ -34,6 +34,7 @@ from typing import Optional
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
 OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-tls.yaml"
+SSH_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-ssh.yaml"
 DEFAULT_CACHE_DIR = SCRIPT_DIR / ".iana-cache"
 
 # ── IANA CSV URLs ──────────────────────────────────────────────────────────────
@@ -126,6 +127,45 @@ SIG_MAP = {
     "mldsa44": "ML-DSA-44",
     "mldsa65": "ML-DSA-65",
     "mldsa87": "ML-DSA-87",
+}
+
+# ── SSH algorithm lookup tables ───────────────────────────────────────────────
+
+SSH_KEX_MAP = {
+    "curve25519-sha256": ["ECDH-Curve25519", "SHA-256"],
+    "ecdh-sha2-nistp256": ["ECDH-P-256", "SHA-256"],
+    "ecdh-sha2-nistp384": ["ECDH-P-384", "SHA-384"],
+    "ecdh-sha2-nistp521": ["ECDH-P-521", "SHA-512"],
+    "diffie-hellman-group14-sha256": ["FFDH-ffdhe2048", "SHA-256"],
+    "diffie-hellman-group16-sha512": ["FFDH-ffdhe4096", "SHA-512"],
+    "diffie-hellman-group18-sha512": ["FFDH-ffdhe8192", "SHA-512"],
+}
+
+SSH_HOST_AUTH_MAP = {
+    "ssh-ed25519": ["EdDSA-Ed25519"],
+    "ecdsa-sha2-nistp256": ["ECDSA-P-256-SHA-256"],
+    "ecdsa-sha2-nistp384": ["ECDSA-P-384-SHA-384"],
+    "ecdsa-sha2-nistp521": ["ECDSA-P-521-SHA-512"],
+    "rsa-sha2-256": ["RSASSA-PSS-SHA-256"],
+    "rsa-sha2-512": ["RSASSA-PSS-SHA-512"],
+}
+
+SSH_CIPHER_MAP = {
+    "chacha20-poly1305@openssh.com": ["ChaCha20-Poly1305"],
+    "aes256-gcm@openssh.com": ["AES-256-GCM"],
+    "aes128-gcm@openssh.com": ["AES-128-GCM"],
+    "aes256-ctr": ["AES-256-CTR"],
+    "aes192-ctr": ["AES-192-CTR"],
+    "aes128-ctr": ["AES-128-CTR"],
+    "aes256-cbc": ["AES-256-CBC"],
+    "3des-cbc": ["3DES-CBC"],
+}
+
+SSH_MAC_MAP = {
+    "hmac-sha2-256-etm@openssh.com": ["HMAC-SHA-256"],
+    "hmac-sha2-512-etm@openssh.com": ["HMAC-SHA-512"],
+    "hmac-sha2-256": ["HMAC-SHA-256"],
+    "hmac-sha2-512": ["HMAC-SHA-512"],
 }
 
 
@@ -489,15 +529,89 @@ def process_signature_schemes(csv_text: str) -> tuple[list[dict], list[str]]:
     return entries, failures
 
 
+# ── SSH composite generation ──────────────────────────────────────────────────
+
+def generate_ssh_entries() -> list[dict]:
+    """Generate SSH composite entries from hardcoded lookup tables."""
+    entries = []
+
+    for name, components in SSH_KEX_MAP.items():
+        entries.append({
+            "id": name,
+            "subType": "sshKex",
+            "components": components,
+        })
+
+    for name, components in SSH_HOST_AUTH_MAP.items():
+        entries.append({
+            "id": name,
+            "subType": "sshHostAuth",
+            "components": components,
+        })
+
+    for name, components in SSH_CIPHER_MAP.items():
+        entries.append({
+            "id": name,
+            "subType": "sshCipher",
+            "components": components,
+        })
+
+    for name, components in SSH_MAC_MAP.items():
+        entries.append({
+            "id": name,
+            "subType": "sshMac",
+            "components": components,
+        })
+
+    return entries
+
+
+def format_ssh_entry(entry: dict) -> str:
+    """Format a single SSH registry entry as YAML text."""
+    lines = []
+    lines.append(f'  - id: {yaml_str(entry["id"])}')
+    lines.append(f'    type: "composite"')
+    lines.append(f'    subType: {yaml_str(entry["subType"])}')
+    lines.append(f'    protocol: "SSH"')
+
+    components = entry.get("components", [])
+    comp_str = ", ".join(yaml_str(c) for c in components)
+    lines.append(f'    components: [{comp_str}]')
+
+    return "\n".join(lines)
+
+
+def generate_ssh_yaml(entries: list[dict]) -> str:
+    """Generate the full SSH YAML document."""
+    parts = []
+    parts.append("# SSH protocol composites")
+    parts.append("# Algorithms from IANA SSH Parameters and RFC 9142, RFC 8332, RFC 8709")
+    parts.append("#")
+    parts.append("# Auto-generated from hardcoded lookup tables.")
+    parts.append("# Do not edit manually; regenerate with:")
+    parts.append("#   python scripts/generate_iana_composites.py")
+    parts.append("#")
+    parts.append("# Part of the ae-pattern-validator validation registry.")
+    parts.append('version: "2.0"')
+    parts.append("")
+    parts.append("entries:")
+
+    for entry in entries:
+        parts.append("")
+        parts.append(format_ssh_entry(entry))
+
+    return "\n".join(parts) + "\n"
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Generate cr-tls.yaml from IANA TLS registries")
+    parser = argparse.ArgumentParser(description="Generate cr-tls.yaml and cr-ssh.yaml from IANA registries")
     parser.add_argument("--check", action="store_true",
                         help="Compare generated output with existing file; exit non-zero on differences")
     parser.add_argument("--cache-dir", type=Path, default=DEFAULT_CACHE_DIR,
                         help="Directory for cached CSV files")
     args = parser.parse_args()
 
-    print("=== IANA TLS Composite Generator ===\n")
+    print("=== IANA TLS/SSH Composite Generator ===\n")
     print("Fetching IANA CSV data...")
 
     cs_csv = fetch_csv("cipher-suites", args.cache_dir)
@@ -531,29 +645,51 @@ def main():
     all_entries = cs_entries + sg_entries + ss_entries
     yaml_text = generate_yaml(all_entries)
 
+    # Generate SSH composites from hardcoded tables
+    print("\nProcessing SSH algorithms...")
+    ssh_entries = generate_ssh_entries()
+    ssh_yaml_text = generate_ssh_yaml(ssh_entries)
+    print(f"  Generated: {len(ssh_entries)} entries")
+
     print(f"\n=== Summary ===")
-    print(f"  Cipher suites:    {len(cs_entries)}")
-    print(f"  Supported groups: {len(sg_entries)}")
-    print(f"  Signature schemes:{len(ss_entries)}")
-    print(f"  Total entries:    {len(all_entries)}")
-    print(f"  Decomp failures:  {len(cs_failures) + len(sg_failures) + len(ss_failures)}")
+    print(f"  TLS cipher suites:    {len(cs_entries)}")
+    print(f"  TLS supported groups: {len(sg_entries)}")
+    print(f"  TLS signature schemes:{len(ss_entries)}")
+    print(f"  TLS total entries:    {len(all_entries)}")
+    print(f"  TLS decomp failures:  {len(cs_failures) + len(sg_failures) + len(ss_failures)}")
+    print(f"  SSH entries:          {len(ssh_entries)}")
 
     if args.check:
+        check_ok = True
         if not OUTPUT_PATH.exists():
             print(f"\nERROR: {OUTPUT_PATH} does not exist for comparison", file=sys.stderr)
-            sys.exit(1)
-        existing = OUTPUT_PATH.read_text(encoding="utf-8")
-        if existing == yaml_text:
-            print(f"\n  cr-tls.yaml is up to date.")
-            sys.exit(0)
+            check_ok = False
         else:
-            print(f"\n  ERROR: cr-tls.yaml is out of date! Re-run without --check to regenerate.",
-                  file=sys.stderr)
-            sys.exit(1)
+            existing = OUTPUT_PATH.read_text(encoding="utf-8")
+            if existing == yaml_text:
+                print(f"\n  cr-tls.yaml is up to date.")
+            else:
+                print(f"\n  ERROR: cr-tls.yaml is out of date! Re-run without --check to regenerate.",
+                      file=sys.stderr)
+                check_ok = False
+        if not SSH_OUTPUT_PATH.exists():
+            print(f"\nERROR: {SSH_OUTPUT_PATH} does not exist for comparison", file=sys.stderr)
+            check_ok = False
+        else:
+            existing_ssh = SSH_OUTPUT_PATH.read_text(encoding="utf-8")
+            if existing_ssh == ssh_yaml_text:
+                print(f"  cr-ssh.yaml is up to date.")
+            else:
+                print(f"\n  ERROR: cr-ssh.yaml is out of date! Re-run without --check to regenerate.",
+                      file=sys.stderr)
+                check_ok = False
+        sys.exit(0 if check_ok else 1)
     else:
         OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT_PATH.write_text(yaml_text, encoding="utf-8")
         print(f"\n  Written to {OUTPUT_PATH}")
+        SSH_OUTPUT_PATH.write_text(ssh_yaml_text, encoding="utf-8")
+        print(f"  Written to {SSH_OUTPUT_PATH}")
 
 
 if __name__ == "__main__":

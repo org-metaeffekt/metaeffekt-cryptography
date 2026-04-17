@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (10 files, 338 algorithm entries + 170 TLS composite entries, 178 unique OIDs indexed).
+registry (12 files, 338 algorithm entries + 208 composite entries, 191 unique OIDs indexed).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 
@@ -27,7 +27,8 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `CBomGeneratorTest` | 4 | CBOM JSON generation from cert/CMS analysis |
 | `MainTest` | 26 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
 | `AlgorithmRegistryTest` | 15 | Registry loading, duplicate detection, OID index, cross-validation, coverage |
-| **Total** | **775** | |
+| `CompositeValidationTest` | 11 | Composite entry loading, TLS/SSH/X.509 component resolution, authority-aware validation |
+| **Total** | **786** | |
 
 ---
 
