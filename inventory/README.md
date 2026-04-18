@@ -222,7 +222,22 @@ follow semantic versioning; consumers pin a specific git commit. AWS-LC is an AW
 BoringSSL with a FIPS 140-3 validation module; ML-KEM is the first PQC algorithm to appear
 in that validated boundary.
 
-### 5.3 Embedded TLS (Mbed-TLS, wolfSSL)
+### 5.3 Botan (BSI cryptographic Library)
+
+| Id | Version | Language | PQC status | URL |
+|:---|:---|:---|:---|:---|
+| botan-3.7.1-RSCS1 | 3.7.1-RSCS1 | C++ | ML-KEM, ML-DSA, SLH-DSA, FrodoKEM, Classic McEliece, XMSS, HSS/LMS; TLS 1.3 hybrid PQ key exchange | https://github.com/randombit/botan |
+| botan-3.6.1 | 3.6.1 | C++ | ML-KEM, ML-DSA, SLH-DSA, FrodoKEM, Classic McEliece, XMSS, HSS/LMS | https://github.com/randombit/botan |
+
+Botan is the BSI-commissioned cryptographic library, developed by Rohde & Schwarz Cybersecurity
+GmbH. BSI formally recommends Botan 3.6.1 and 3.7.1-RSCS1 for security-sensitive applications.
+The RSCS1 variant includes BSI-specific patches (notably a compliant ECDH implementation; the
+upstream 3.7.1 without RSCS1 label is NOT recommended by BSI due to non-compliant ECDH). The
+library supports all PQC algorithms listed in BSI TR-02102-1 (FrodoKEM, Classic McEliece, ML-KEM,
+ML-DSA, SLH-DSA, XMSS, HSS/LMS) and implements hybrid TLS 1.3 key exchange with ML-KEM and
+FrodoKEM. Native APIs: C++, C, Python. BSD-2-Clause licence.
+
+### 5.4 Embedded TLS (Mbed-TLS, wolfSSL)
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -235,7 +250,7 @@ Mbed-TLS 4.0 and 3.6.x are maintained in parallel; 4.x is the API-breaking major
 ML-KEM added; the 3.6.x LTS branch provides the stable ABI for existing integrations.
 wolfSSL targets the CNSA 2.0 algorithm suite and is widely used in FIPS-certified embedded products.
 
-### 5.4 GnuTLS / libgcrypt / Nettle
+### 5.5 GnuTLS / libgcrypt / Nettle
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -251,7 +266,7 @@ None currently support PQC natively; ML-KEM in GnuTLS requires building with `--
 or `--with-leancrypto`. GnuTLS 3.8.x defaults the experimental hybrid key share to
 X25519+ML-KEM-768 when PQC support is enabled.
 
-### 5.5 Mozilla NSS
+### 5.6 Mozilla NSS
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -262,7 +277,7 @@ NSS is the crypto and TLS library used by Firefox and many Linux distributions. 
 ships in current Firefox releases; NSS follows a Mozilla-versioned release cadence independent
 of Firefox version numbers.
 
-### 5.6 Bouncy Castle (Java / C#)
+### 5.7 Bouncy Castle (Java / C#)
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -275,7 +290,7 @@ Bouncy Castle is one of the most comprehensive PQC-capable JVM libraries. The Ja
 additionally covers FN-DSA, HQC, and composite (classical + PQC) signature formats. The C#
 implementation mirrors the Java PQC coverage with a slight release lag.
 
-### 5.7 libsodium
+### 5.8 libsodium
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -287,7 +302,7 @@ ChaCha20-Poly1305, Argon2id, and scrypt. No PQC algorithms are planned for the c
 design; users requiring PQC alongside libsodium-style ergonomics are directed to libsodium
 wrappers layered on top of oqs or AWS-LC.
 
-### 5.8 Crypto++ (C++)
+### 5.9 Crypto++ (C++)
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -298,7 +313,7 @@ Crypto++ 8.9.0 (October 2023) is the last official release of the library. PQC i
 for the current maintainership. Projects depending on Crypto++ for new deployments should
 evaluate migration to OpenSSL 3.5+ or AWS-LC.
 
-### 5.9 RustCrypto
+### 5.10 RustCrypto
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -310,7 +325,7 @@ version numbers rather than a monorepo release. `ml-kem` (crates.io) is the ML-K
 crate at version 0.2.3; `ml-dsa` and `slh-dsa` crates are available under RustCrypto/signatures
 and RustCrypto/KEMs respectively.
 
-### 5.10 Go standard Library
+### 5.11 Go standard Library
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -321,7 +336,7 @@ The Go standard library `crypto` package has included X25519MLKEM768 as the defa
 key-share algorithm since Go 1.24. ML-DSA was added in Go 1.26. Both are in `crypto/internal`
 packages promoted to stable APIs. No cgo required; pure-Go implementations.
 
-### 5.11 OpenJDK (JCA / JCE)
+### 5.12 OpenJDK (JCA / JCE)
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -333,7 +348,7 @@ following the JEP track that began with incubating preview in JDK 25. The HPKE A
 introduced in JDK 26 under JEP 496. No external library dependency required; implementations
 are in the JDK's native `sun.security` provider.
 
-### 5.12 Google Tink
+### 5.13 Google Tink
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -346,7 +361,7 @@ Google Tink is an opinionated, high-level crypto API that intentionally exposes 
 security-reviewed parameter combinations. PQC support is limited to the higher-security
 parameter sets (ML-KEM-768/1024, ML-DSA-87) to prevent accidental use of weaker configurations.
 
-### 5.13 Cloudflare CIRCL
+### 5.14 Cloudflare CIRCL
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
@@ -358,7 +373,7 @@ lattice-based KEM) and hybrid KEM constructions alongside the NIST-standardised 
 The archived `crystals-go` (also in the spreadsheet) was a predecessor to the CRYSTALS
 implementations now in CIRCL.
 
-### 5.14 Python Libraries (pyca/cryptography, PyCryptodome, PyNaCl)
+### 5.15 Python Libraries (pyca/cryptography, PyCryptodome, PyNaCl)
 
 | Id | Version | Language | PQC status | URL |
 |:---|:---|:---|:---|:---|
