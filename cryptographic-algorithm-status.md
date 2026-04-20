@@ -1,5 +1,9 @@
 # Cryptographic Algorithm Status and Alerts
 
+> [!WARNING]  
+> The content in this repository is aggregated with artificial intelligence (Claude and partially Gemini).
+> There is absolutely no claim on completeness and correctness. All usages are at your own risk.
+
 > Characteristics, status, and alerts derived from NIST and BSI publications.
 > Algorithms and RNGs are expressed using the CycloneDX pattern notation extended with two
 > wildcard conventions defined below.

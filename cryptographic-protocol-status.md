@@ -1,6 +1,10 @@
 # Cryptographic Protocol Guidance
 
-> Protocol-specific and domain-specific deployment guidance for cryptographic algorithms.
+> [!WARNING]  
+> The content in this repository is aggregated with artificial intelligence (Claude and partially Gemini).
+> There is absolutely no claim on completeness and correctness. All usages are at your own risk.
+
+> Protocol-specific and domain-specific deployment status information for cryptographic algorithms.
 > Covers SSH, IPsec/IKEv2, CNSA 2.0 migration, quantum threat context, PKI, S/MIME,
 > Kerberos, and DNSSEC.
 >
