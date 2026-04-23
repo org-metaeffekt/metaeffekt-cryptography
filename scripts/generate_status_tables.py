@@ -437,8 +437,8 @@ PATTERN_MAP = {
     "TLS13-PRF-[SHA-256\\|SHA-384]": ("TLS13-HKDF", None),
     "TLS12-PRF-SHA-256": ("TLS12-PRF", None),
     "ANSI-KDF-[X9.42\\|X9.63]-[SHA-256\\|SHA-384\\|SHA-512]": ("ANSI-KDF-X9.42", None),
-    "TLS10-PRF-*": (None, None),
-    "SSL30-PRF-*": (None, None),
+    "TLS10-PRF-*": ("TLS10-PRF", None),
+    "SSL30-PRF-*": ("SSL30-PRF", None),
     # Section 9: Password
     "Argon2id-*-[19456\\|65536\\|262144\\|1048576]-[2\\|3]-1": ("Argon2id", None),
     "scrypt-[32768\\|65536\\|1048576]-8-1-*": ("scrypt", None),
