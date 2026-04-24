@@ -41,7 +41,7 @@ A standardised way to encrypt (wrap) one cryptographic key inside another, so th
 A BSI technical guideline defining requirements for random number generators in security modules. Version 3 (2022) classifies generators into functionality classes: DRG.2-4 for deterministic generators, PTG.2-3 for physical TRNGs, and NTG.1 for non-deterministic RBGs. Referenced in cryptographic module evaluations (Common Criteria, BSI certification).
 
 **Adiantum**
-A length-preserving encryption construction designed by Google (2018) for storage encryption on low-end devices lacking AES hardware acceleration. Internally combines ChaCha12 (a reduced-round ChaCha variant), AES-HCTR2 (a wide-block mode), and Poly1305 hashing. Used in Android for full-disk encryption on ARMv7 devices. Not an AEAD cipher — it provides confidentiality only, not authentication.
+A length-preserving encryption construction designed by Google (2018) for storage encryption on low-end devices lacking AES hardware acceleration. Internally combines XChaCha12 (a reduced-round XChaCha variant), a single AES-256 block cipher invocation, and NH + Poly1305 hashing (HBSH construction). Used in Android for full-disk encryption on ARMv7 devices. Not an AEAD cipher — it provides confidentiality only, not authentication.
 
 **Agility, Cryptographic**
 The design property of a system that allows its cryptographic algorithms to be swapped out without redesigning the system. Important for migrating away from algorithms that are broken or deprecated.
@@ -49,8 +49,14 @@ The design property of a system that allows its cryptographic algorithms to be s
 **AKA — Authentication and Key Agreement**
 The mutual authentication protocol used in 3GPP mobile networks (3G/4G/5G) between the SIM/USIM and the network. The authentication functions are typically implemented using MILENAGE (AES-based) or TUAK (Keccak-based).
 
+**ANSI — American National Standards Institute**
+US standards body. In cryptography, relevant for key agreement (ANSI X9.42, X9.63) and digital signatures (ANSI X9.31, withdrawn).
+
 **ANSSI — Agence Nationale de la Sécurité des Systèmes d'Information**
 The French national cybersecurity agency. Publishes cryptographic recommendations and algorithm approvals for French government systems, comparable to BSI (Germany) and NIST (US).
+
+**ARC4 / ARCFOUR**
+Alternative names for the RC4 stream cipher, used to avoid trademark issues. See **RC4**.
 
 **Argon2 (Argon2i, Argon2d, Argon2id)**
 A modern password-hashing algorithm (RFC 9106) designed to resist brute-force attacks even on specialised hardware (GPUs, ASICs). It intentionally consumes a configurable amount of memory and time, making bulk password-cracking expensive. **Argon2id** is the recommended variant: it resists both timing side-channels and GPU attacks. Winner of the Password Hashing Competition (2015).
@@ -101,6 +107,9 @@ The fixed chunk size a block cipher operates on. AES has a 128-bit block size (1
 **BLS — Boneh-Lynn-Shacham Signature**
 A digital signature scheme with the unique property that multiple signatures can be combined ("aggregated") into a single short signature. Widely used in blockchain protocols (Ethereum). Requires a special class of elliptic curve (pairing-friendly, e.g. BLS12-381).
 
+**BLS12-381**
+A pairing-friendly elliptic curve widely used in zero-knowledge proofs, threshold signatures, and blockchain protocols. Named after Barreto-Lynn-Scott with a 381-bit prime field.
+
 **Blowfish**
 An older 64-bit block cipher. Its small block size makes it vulnerable to the birthday attack for large data volumes. Superseded by AES and Twofish.
 
@@ -116,6 +125,9 @@ A series of technical recommendations published by the German BSI. Key documents
 ---
 
 ## C
+
+**CABF — CA/Browser Forum**
+An industry consortium of Certificate Authorities and browser vendors that sets requirements for publicly trusted TLS/SSL certificates (Baseline Requirements, EV Guidelines). Referenced as an authority in the status tables alongside NIST, BSI, and IANA.
 
 **Camellia**
 A 128-bit block cipher developed by NTT and Mitsubishi, approved by NIST, ISO, and ETSI. Performance and security are comparable to AES. Used in Japanese government and TLS deployments.
@@ -171,6 +183,9 @@ A multi-algorithm scheme that combines multiple component algorithms of the same
 **Composite ML-DSA**
 An IETF standard (draft-ietf-lamps-pq-composite-sigs-15, LAMPS WG, February 2026) defining 18 composite signature algorithms that combine ML-DSA (FIPS 204) with a traditional algorithm (RSA-PSS, RSA-PKCS#1v1.5, ECDSA, Ed25519, or Ed448). Each algorithm has a registered OID in the `1.3.6.1.5.5.7.6` arc. The signing process generates two independent component signatures (one ML-DSA, one traditional) serialised as a pair; verification requires both to succeed. Composite ML-DSA provides **EUF-CMA** (existential unforgeability) but not **SUF-CMA** (strong unforgeability); see those entries. Motivation: allows organisations to add post-quantum protection to existing PKIX infrastructure without replacing the traditional cryptography, reducing re-certification overhead. Security holds as long as either component algorithm remains unbroken.
 
+**CRC — Cyclic Redundancy Check**
+A non-cryptographic error-detecting code used for data integrity in storage and transmission. Not collision-resistant; unsuitable for security purposes. Variants: CRC-16, CRC-32.
+
 **CRQC — Cryptographically Relevant Quantum Computer**
 A quantum computer powerful enough to run Shor's algorithm against deployed public-key cryptographic parameters (e.g., factor 2048-bit RSA, compute discrete logarithms on P-256). No CRQC exists as of 2026. The "harvest now, decrypt later" threat assumes adversaries collect ciphertext today for future decryption once a CRQC becomes available. NIST IR 8547 uses this term to frame the PQC migration urgency.
 
@@ -210,6 +225,9 @@ A PKI protocol (RFC 5272-5274) that wraps certificate requests and responses in 
 **CMS — Cryptographic Message Syntax**
 A standard format (RFC 5652) for wrapping data with cryptographic operations — signing, encrypting, or both. Used in S/MIME email and code-signing certificates. The IETF LAMPS working group is standardising ML-DSA (post-quantum signatures) for CMS.
 
+**CNG — Cryptography Next Generation**
+The modern Windows cryptographic API (successor to CryptoAPI/CAPI), providing access to platform random number generators (BCryptGenRandom), key storage, and algorithm implementations.
+
 **CNSA 1.0 — Commercial National Security Algorithm Suite 1.0**
 The original NSA algorithm suite (CNSSP 15 Annex B) for National Security Systems. Required ECDH/ECDSA P-384, RSA-3072, DH-3072, SHA-384, and AES-256. Superseded by CNSA 2.0, which mandates post-quantum algorithms (ML-KEM-1024, ML-DSA-87) with transition deadlines of 2025-2035.
 
@@ -248,6 +266,9 @@ A block cipher mode that turns the cipher into a stream cipher by encrypting suc
 
 **CTR_DRBG — Counter-Mode Deterministic Random Bit Generator**
 A NIST SP 800-90A random number generator using a block cipher (AES or 3DES) in counter mode. The most widely deployed DRBG, used internally by Windows BCryptGenRandom and Intel RDRAND. The 3DES variant is deprecated.
+
+**CTS — Ciphertext Stealing**
+A block cipher mode variant that avoids padding by "stealing" bits from the previous ciphertext block. Used with CBC or ECB to encrypt data whose length is not a multiple of the block size.
 
 **Curve25519 / X25519**
 A modern elliptic curve designed by Daniel Bernstein optimised for speed and resistance to implementation errors. X25519 is the Diffie-Hellman key exchange using Curve25519. It is the default key-exchange algorithm in TLS 1.3.
@@ -304,6 +325,9 @@ A random number generator that produces output deterministically from an initial
 **DSA — Digital Signature Algorithm**
 A US government signature standard (FIPS 186). Uses a discrete-logarithm problem over a finite field. Key sizes below 2048 bits are deprecated; superseded by ECDSA and EdDSA for new designs.
 
+**DTLS — Datagram Transport Layer Security**
+The UDP-adapted version of TLS, providing the same security guarantees (confidentiality, integrity, authentication) over unreliable datagram transport. Used in VoIP, WebRTC, and IoT protocols. Current version: DTLS 1.3 (RFC 9147).
+
 **Dual_EC_DRBG — Dual Elliptic Curve Deterministic Random Bit Generator**
 A DRBG mechanism originally included in NIST SP 800-90A that used elliptic curve operations to generate pseudorandom output. Withdrawn from SP 800-90A Rev. 1 (June 2015) after Snowden documents (2013) confirmed a deliberate NSA kleptographic backdoor via the choice of default elliptic curve points. Must never be used. Its inclusion in RSA BSAFE via a $10M contract (Reuters, 2013) made it the most widely deployed backdoored random number generator in history.
 
@@ -316,6 +340,9 @@ Parameters controlling how aggressively ciphertext components are compressed in 
 
 **EasyCrypt**
 A formal verification framework for cryptographic proofs, used to verify the security of implementations written in the Jasmin programming language. The mlkem-libjade implementation in the PQ Code Package uses EasyCrypt-level proofs.
+
+**EAX — EAX Mode**
+An AEAD mode for block ciphers based on CTR encryption and OMAC authentication. Simpler than GCM but slower; used in some embedded and IPsec contexts.
 
 **Encapsulation Key**
 The public component of a KEM key pair. The encapsulating party uses this key to produce a ciphertext and a shared secret. In ML-KEM (FIPS 203), the encapsulation key is a compressed representation of the public matrix and vector. SP 800-227 §4.2 requires assurance of ownership before using a static encapsulation key. See also: Decapsulation Key, KEM.
@@ -331,6 +358,9 @@ A key-exchange algorithm performing Diffie-Hellman key agreement using elliptic 
 
 **ECDSA — Elliptic Curve Digital Signature Algorithm**
 A widely used signature algorithm based on elliptic curves. Defined in FIPS 186-5. Requires a random nonce per signature — if the nonce is ever reused or weak, the private key can be recovered (PlayStation 3 vulnerability).
+
+**ECGDSA — Elliptic Curve German Digital Signature Algorithm**
+A variant of ECDSA specified in BSI TR-03111. Uses a different signature equation; approved by BSI but not by NIST.
 
 **EFS — Encrypting File System**
 A Windows NTFS feature providing transparent file-level encryption using per-file symmetric keys (AES or 3DES) protected by user certificates. Key recovery is managed through a designated recovery agent.
@@ -364,6 +394,9 @@ A simple HTTPS-based protocol (RFC 7030) for X.509 certificate enrollment and re
 
 **ETSI — European Telecommunications Standards Institute**
 A European standards body producing standards for telecommunications, electronic signatures, and quantum-safe cryptography. Works alongside 3GPP and CEN/CENELEC.
+
+**eSTREAM**
+A European research project (2004-2008) that selected a portfolio of recommended stream ciphers. Software profile winners include Salsa20, Rabbit, HC-128, and SOBER-128. Hardware profile winners include Grain and Trivium.
 
 **EUF-CMA — Existential Unforgeability under Chosen-Message Attack**
 The standard security notion for digital signature schemes. It states that an adversary with access to a signing oracle (the ability to request signatures on any messages of their choice) cannot produce a valid signature on any new message not previously signed — even after receiving polynomially many signatures. A signature scheme that achieves EUF-CMA is considered cryptographically secure for general use. ML-DSA, SLH-DSA, FN-DSA, LMS, and XMSS are all designed to achieve EUF-CMA. The "existential" qualifier means the adversary is allowed to choose which message to forge (the strongest form). See also **IND-CCA2** for the analogous notion for encryption.
@@ -411,6 +444,9 @@ A generic technique for converting an interactive identification scheme (a "sigm
 **FO-Transform — Fujisaki-Okamoto Transform**
 A generic technique for converting an IND-CPA-secure public-key encryption scheme (or a passively secure KEM) into an IND-CCA2-secure KEM. The transform works by hashing the randomness used for encryption into the key material, so that any decryption that fails to reproduce the expected ciphertext is rejected. First introduced by Fujisaki and Okamoto (1999). All NIST-standardised lattice KEMs use a variant of the FO-transform: ML-KEM uses the Hofheinz-Hövelmanns-Kiltz (HHK) modular variant with tightly provable security. The FO-transform enables tight security proofs in both the ROM and the QROM, which is why all NIST PQC KEM finalists adopted it.
 
+**FPE — Format-Preserving Encryption**
+Encryption that produces ciphertext in the same format and length as the plaintext (e.g., a 16-digit credit card number encrypts to another 16-digit number). NIST-approved algorithms: AES-FF1 (SP 800-38G) and AES-FF3-1 (SP 800-38G Rev 1).
+
 **FrodoKEM**
 A conservative lattice-based key encapsulation mechanism based on the plain Learning With Errors (LWE) problem rather than the structured (ring or module) variants used by ML-KEM. FrodoKEM has larger keys and ciphertexts but its security relies on a simpler, more well-studied mathematical problem. Not selected for NIST standardisation; available in the Cloudflare CIRCL library.
 
@@ -426,6 +462,9 @@ An AEAD (Authenticated Encryption with Associated Data) block cipher mode combin
 
 **GCM-SIV — GCM Synthetic IV**
 A nonce-misuse-resistant variant of GCM. If a nonce is accidentally reused, GCM-SIV leaks that two messages are identical, but does not expose the plaintext or allow forgery (unlike standard GCM). Slightly slower than GCM.
+
+**GEA — GPRS Encryption Algorithm**
+Stream ciphers used for data confidentiality in 2G/GPRS mobile networks. GEA-1 and GEA-2 have been shown to be intentionally weakened and are cryptographically broken. GEA-3 provides 64-bit security. Superseded by 128-EEA algorithms in 3G/4G/5G.
 
 **getrandom()**
 A Linux system call (kernel 3.17+) for obtaining cryptographically random bytes. Recommended for new Linux code: it blocks only at very early boot until the system has collected enough entropy, and never blocks thereafter.
@@ -461,8 +500,14 @@ A pre-hash variant of ML-DSA defined in FIPS 204 §6. Instead of signing the raw
 **HashSLH-DSA**
 A pre-hash variant of SLH-DSA defined in FIPS 205 §10. Analogous to HashML-DSA: the message is first hashed, then the hash output is signed by the SLH-DSA core. Twelve parameter sets parallel the twelve pure SLH-DSA variants. OIDs assigned in the arc `2.16.840.1.101.3.4.3.35`–`.46`. In CycloneDX: `HashSLH-DSA-(SHA2|SHAKE)-(128s|128f|192s|192f|256s|256f)[-{hashAlgorithm}]`.
 
+**HAVAL**
+A variable-length cryptographic hash function supporting 128-256 bit output with 3-5 rounds. Considered broken; collisions found for all round variants.
+
 **HAWK**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the Lattice Isomorphism Problem — a different hard problem from the lattices used in ML-DSA and ML-KEM.
+
+**HC-128 / HC-256**
+Stream ciphers from the eSTREAM portfolio (software profile). HC-128 targets 128-bit security; HC-256 targets 256-bit security. Based on table lookups updated at every step.
 
 **Hedged Signing**
 A signing mode (the default in ML-DSA) that injects an additional 32 random bytes from a DRBG alongside the message before signing. This provides protection against fault-injection attacks (attempts to induce hardware errors to leak the private key) and against weak random number generators.
@@ -498,7 +543,7 @@ The KEM construction defined in RFC 9180 §4.1 that builds a KEM from a Diffie-H
 A modern framework (RFC 9180, IRTF CFRG, February 2022) for public-key encryption combining: a **KEM** (key encapsulation — typically DHKEM), a **KDF** (key derivation — HKDF), and an **AEAD** (symmetric encryption — AES-GCM or ChaCha20-Poly1305). A ciphersuite is a triple (KEM, KDF, AEAD). The recipient holds a static key pair; the sender encapsulates an ephemeral shared secret with the recipient's public key and uses it to encrypt the payload. RFC 9180 defines four operational modes: **mode_base** (0x00, unauthenticated sender), **mode_psk** (0x01, PSK-authenticated sender), **mode_auth** (0x02, sender KEM-key authenticated via AuthEncap/AuthDecap), **mode_auth_psk** (0x03, both). Security: IND-CCA2 under classical assumptions (ROM). **Not post-quantum secure** — the KEM relies on ECDH; replace DHKEM with a PQC KEM (e.g. ML-KEM hybrid) for quantum resistance. Applications: TLS ECH (Encrypted Client Hello), MLS (Messaging Layer Security), email encryption (LAMPS WG), OHTTP (Oblivious HTTP).
 
 **HQC — Hamming Quasi-Cyclic**
-An IND-CCA2-secure post-quantum Key Encapsulation Mechanism (KEM) selected by NIST in March 2025 as the fifth PQC algorithm (code-based backup KEM). Security is based on the **Quasi-Cyclic Syndrome Decoding (QCSD)** problem — a variant of the NP-hard syndrome decoding problem for random linear codes over F₂, augmented by a quasi-cyclic structure that does not give adversaries a meaningful advantage beyond a small constant factor. HQC uses a double-circulant binary code with a concatenated **Reed-Muller / Reed-Solomon (RMRS)** error-correcting code for message encoding. IND-CCA2 security is obtained via the **Salted Fujisaki-Okamoto (SFO⊥) transform**. Hash functions: SHA3-512 (key/secret derivation), SHA3-256 (FO challenge), SHAKE256 (pseudorandom vector sampling). Three parameter sets target NIST levels 1/3/5 (HQC-128/192/256, also called HQC-1/3/5); encapsulation key sizes 2241/4514/7237 B; ciphertext sizes 4433/8978/14421 B; shared secret 32 B. A FIPS standard is expected ~2027 (NIST IR 8545 estimates draft + final ~2 years from the March 2025 announcement); SP 800-227 (draft, January 2025) will provide KEM usage guidance. OIDs are not yet assigned.
+An IND-CCA2-secure post-quantum Key Encapsulation Mechanism (KEM) selected by NIST in March 2025 as the fifth PQC algorithm (code-based backup KEM). Security is based on the **Quasi-Cyclic Syndrome Decoding (QCSD)** problem — a variant of the NP-hard syndrome decoding problem for random linear codes over F₂, augmented by a quasi-cyclic structure that does not give adversaries a meaningful advantage beyond a small constant factor. HQC uses a double-circulant binary code with a concatenated **Reed-Muller / Reed-Solomon (RMRS)** error-correcting code for message encoding. IND-CCA2 security is obtained via the **Salted Fujisaki-Okamoto (SFO⊥) transform**. Hash functions: SHA3-512 (key/secret derivation), SHA3-256 (FO challenge), SHAKE256 (pseudorandom vector sampling). Three parameter sets target NIST levels 1/3/5 (HQC-128/192/256, also called HQC-1/3/5); encapsulation key sizes 2241/4514/7237 B; ciphertext sizes 4433/8978/14421 B; shared secret 32 B. A FIPS standard is expected ~2027 (NIST IR 8545 estimates draft + final ~2 years from the March 2025 announcement); SP 800-227 (September 2025) provides KEM usage guidance. OIDs are not yet assigned.
 
 ---
 
@@ -510,11 +555,17 @@ A 64-bit block cipher, historically used in PGP. No longer recommended; supersed
 **IEEE 754**
 The international standard for floating-point arithmetic in computers. FN-DSA (Falcon) requires that the underlying processor strictly follows IEEE 754 rules during key generation and signing — non-compliant behaviour (e.g., extended precision in x87 mode, flush-to-zero) can produce incorrect or insecure output.
 
+**IACR — International Association for Cryptologic Research**
+The academic organization that runs the major cryptography conferences (CRYPTO, EUROCRYPT, ASIACRYPT) and publishes the IACR ePrint archive. Primary venue for cryptanalysis and new algorithm proposals.
+
 **IANA — Internet Assigned Numbers Authority**
 The organisation that manages protocol parameter registries for internet standards. Maintains the authoritative registries for TLS cipher suites, TLS supported groups, TLS signature schemes, IPsec transforms, SSH algorithms, and HPKE parameters. Each registry entry carries a numeric identifier, a description, and a "Recommended" flag (Y = recommended, N = not recommended, D = deprecated). IANA recommendation status is protocol-level guidance — it reflects interoperability requirements rather than cryptographic security assessments. See https://www.iana.org/assignments/tls-parameters/.
 
 **IETF — Internet Engineering Task Force**
 The organisation that develops and publishes Internet standards, published as RFCs. Working groups relevant to cryptography include CFRG (Crypto Forum Research Group) and LAMPS (Limited Additional Mechanisms for PKIX and SMIME).
+
+**IFC — Integer Factorisation Cryptography**
+The family of public-key algorithms whose security depends on the difficulty of factoring large integers. Includes RSA and Rabin. Vulnerable to quantum attack via Shor's algorithm.
 
 **IKE — Internet Key Exchange**
 The key agreement protocol used to set up IPsec security associations. IKEv2 is the current version.
@@ -538,7 +589,7 @@ A suite of protocols for encrypting and authenticating IP packets, used in VPNs.
 A special kind of mapping between elliptic curves that preserves their algebraic structure. The difficulty of computing isogenies between supersingular elliptic curves is the basis for the SQIsign post-quantum signature scheme. The earlier SIKE/SIDH key exchange (based on isogenies) was broken in 2022.
 
 **Iterations (KDF)**
-The number of times a KDF's core function is repeated. More iterations = more time required to check each password guess = more expensive brute-force attacks. NIST SP 800-132 (2023) recommends at least 600 000 iterations for PBKDF2-HMAC-SHA256.
+The number of times a KDF's core function is repeated. More iterations = more time required to check each password guess = more expensive brute-force attacks. OWASP (2023) recommends at least 600 000 iterations for PBKDF2-HMAC-SHA256; NIST SP 800-132 is being revised.
 
 **IV — Initialisation Vector**
 A random value used to initialise a block cipher mode (CBC, CFB, OFB) or AEAD construction. The IV ensures that encrypting the same message twice produces different ciphertext. The IV does not need to be secret but must be unpredictable (for CBC) or unique (for GCM/CTR).
@@ -571,6 +622,9 @@ A network authentication protocol (RFC 4120) using symmetric-key tickets issued 
 
 **Keccak**
 The cryptographic sponge function family designed by Guido Bertoni, Joan Daemen, Michaël Peeters, and Gilles Van Assche. Winner of the NIST hash function competition (2012). Keccak is the basis of the SHA-3 hash functions (FIPS 202), the SHAKE extendable-output functions, and the SP 800-185 derived functions (cSHAKE, KMAC, TupleHash, ParallelHash). Also used in the TUAK 3GPP authentication algorithm. The sponge construction absorbs input into a fixed-size internal state and squeezes output, enabling both fixed-length and arbitrary-length output modes.
+
+**KASUMI**
+A 64-bit block cipher used in 3GPP mobile networks for confidentiality (f8) and integrity (f9) in UMTS/3G. Derived from MISTY1 with simplified key scheduling. Related-key attacks exist but do not affect the 3GPP use case.
 
 **KAT — Known Answer Test**
 A set of pre-computed input/output pairs used to verify that a cryptographic implementation produces the correct results. If an implementation passes all KATs, it is more likely to be correct.
@@ -615,7 +669,7 @@ A function that deliberately slows down key derivation from a password to make b
 A function that merges two or more shared secrets (e.g., one classical and one post-quantum) into a single session key. Defined in NIST SP 800-56C §4.6.1 Eq.9 and §4.6.2 Eq.15. Used alongside CatKDF for hybrid PQC key agreement (BSI TR-02102-1 §2.2).
 
 **KyberSlash**
-A timing side-channel vulnerability (CVE-2023-49722) discovered in several CRYSTALS-Kyber / ML-KEM implementations where division operations on secret data leaked information through execution timing. Affected implementations including crystals-go, which was subsequently archived in favour of CIRCL.
+A timing side-channel vulnerability discovered in several CRYSTALS-Kyber / ML-KEM implementations where division operations on secret data leaked information through execution timing. Affected implementations including crystals-go, which was subsequently archived in favour of CIRCL.
 
 **Kyber**
 See **ML-KEM**. Kyber is the earlier name of the algorithm that became ML-KEM when standardised as FIPS 203.
@@ -647,6 +701,9 @@ The one-time signature primitive underlying LMS (RFC 8554, SP 800-208). Each LMO
 
 **LWE — Learning With Errors**
 A computational problem where the task is to distinguish noisy linear equations over a finite field from uniformly random samples. The hardness of LWE (and its structured variants Ring-LWE and Module-LWE) is the security foundation of the NIST PQC lattice-based algorithms: ML-KEM and ML-DSA use Module-LWE; FrodoKEM uses plain LWE. LWE is believed to be hard even for quantum computers, and has a worst-case-to-average-case reduction from lattice problems (GapSVP).
+
+**LWR — Learning With Rounding**
+A lattice-based computational problem related to LWE, where noise is introduced by rounding rather than explicit error addition. Used in Saber (NIST Round 3 finalist, not selected). Considered slightly more efficient than LWE but with less mature security analysis.
 
 **LUC**
 A public-key cryptosystem based on Lucas sequences, proposed as an alternative to RSA. Uses properties of Lucas functions rather than modular exponentiation. Historically significant but not widely deployed.
@@ -695,13 +752,16 @@ A post-quantum digital signature scheme (NIST Round 2 additional signatures) res
 A technique for constructing digital signature schemes by simulating a multi-party computation (MPC) protocol "in the head" of the signer. The signer runs a zero-knowledge proof protocol internally, committing to the views of virtual parties. Several NIST Round 2 additional signature candidates use this approach: FAEST, SDitH, MQOM, Mirath, PERK, and RYDE.
 
 **ML-DSA — Module-Lattice-Based Digital Signature Algorithm**
-The NIST standard digital signature algorithm (FIPS 204, August 2024), formerly known as CRYSTALS-Dilithium. Based on the hardness of lattice problems believed to be secure against quantum computers. Three parameter sets: ML-DSA-44 (128-bit security), ML-DSA-65 (192-bit), ML-DSA-87 (256-bit).
+The NIST standard digital signature algorithm (FIPS 204, August 2024), formerly known as CRYSTALS-Dilithium. Based on the hardness of lattice problems believed to be secure against quantum computers. Three parameter sets: ML-DSA-44 (NIST Level 2), ML-DSA-65 (NIST Level 3), ML-DSA-87 (NIST Level 5).
 
 **ML-KEM — Module-Lattice-Based Key-Encapsulation Mechanism**
 The NIST standard key encapsulation mechanism (FIPS 203, August 2024), formerly known as CRYSTALS-Kyber. Used to establish a shared secret (typically for use as an encryption key) using public-key cryptography resistant to quantum attacks. Three parameter sets: ML-KEM-512 (128-bit security), ML-KEM-768 (192-bit, recommended for TLS), ML-KEM-1024 (256-bit).
 
 **Mode of Operation**
 A technique for using a block cipher to encrypt messages longer than one block. Different modes have different security properties. Examples: ECB (insecure), CBC, CTR, GCM (AEAD).
+
+**MODP — Modular Exponentiation Group**
+Named finite-field Diffie-Hellman groups defined by their prime modulus size (e.g., MODP-2048, MODP-3072). Standardised in RFC 3526 and RFC 7919 (FFDHE). Used in IKEv2, SSH, and TLS key exchange.
 
 **Module Lattice**
 A lattice defined over polynomial rings, used in the CRYSTALS family (ML-KEM, ML-DSA). The "module" structure provides a balance between security and performance — module lattice problems are harder than ordinary lattice problems in the same dimension.
@@ -711,6 +771,9 @@ The mathematical hard problem underlying ML-KEM and ML-DSA. Module-LWE asks an a
 
 **MQOM — MQ on my Mind**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the hardness of the Multivariate Quadratic (MQ) problem.
+
+**MQV — Menezes-Qu-Vanstone**
+An authenticated key agreement protocol that provides implicit key authentication without separate signature exchange. Variants: ECMQV (elliptic curve), FFMQV (finite field). Referenced in SP 800-56A.
 
 **MPK / MSK**
 Master Public Key / Master Secret Key — terminology used in some key derivation hierarchies.
@@ -746,6 +809,9 @@ The US signals intelligence and cybersecurity agency. Defines the CNSA algorithm
 **NSM — National Security Memorandum**
 A White House directive setting national security policy. NSM-10 (2022) establishes PQC migration deadlines for US government systems, requiring transition to quantum-resistant algorithms by 2035.
 
+**NTG.1 — Non-deterministic True Random Number Generator (Class 1)**
+The highest assurance functionality class in BSI AIS 20/31. An NTG.1 generator combines a physical entropy source (TRNG) with a DRBG, providing continuous entropy estimation and health testing. Required for high-security applications in BSI-certified modules.
+
 **NSS — National Security Systems**
 US government information systems that handle classified or intelligence data, as defined by FISMA and governed by CNSS policy. All NSS must use CNSA-approved algorithms and NIAP/NSA-validated cryptographic modules.
 
@@ -764,6 +830,9 @@ A padding scheme for RSA encryption (RSAES-OAEP) that adds randomness and struct
 
 **OCB — Offset Codebook Mode**
 A patented AEAD mode with high performance. The patents have expired in most jurisdictions, but adoption has been limited due to historical licensing concerns.
+
+**OCSP — Online Certificate Status Protocol**
+A protocol (RFC 6960) for checking the revocation status of X.509 certificates in real time, as an alternative to downloading full Certificate Revocation Lists (CRLs). OCSP stapling (RFC 6066) embeds the response in the TLS handshake.
 
 **OFB — Output Feedback Mode**
 A block cipher mode that generates a keystream independently of the plaintext, then XORs it with the message. Rarely preferred over CTR for new designs.
@@ -811,8 +880,14 @@ Standards (RFC 8018 / PKCS#5) for deriving a cryptographic key from a password. 
 **PBES1 / PBES2 — Password-Based Encryption Scheme**
 Standards for encrypting data with a password-derived key. PBES2 (using PBKDF2 + AES) is the recommended variant; PBES1 is deprecated.
 
+**PBMAC1 — Password-Based MAC (Scheme 1)**
+A MAC construction from PKCS#5 (RFC 8018) that derives a MAC key from a password using PBKDF2, then applies HMAC. Used in PKCS#12 and CMS for password-based integrity protection.
+
 **PCG — Permuted Congruential Generator**
 A non-cryptographic PRNG using a linear congruential generator with a non-linear output permutation. Excellent statistical properties; very fast. Not cryptographically secure.
+
+**PEM — Privacy-Enhanced Mail**
+A Base64 encoding format for cryptographic objects (certificates, keys, CSRs) enclosed between `-----BEGIN ...-----` and `-----END ...-----` headers. Despite the name, PEM is used far beyond email — it is the standard text format for X.509 certificates and PKCS#8 private keys.
 
 **Perfect Forward Secrecy**
 See **Forward Secrecy**.
@@ -825,6 +900,9 @@ An optional byte string supplied when instantiating a DRBG. It mixes application
 
 **PFS**
 See **Forward Secrecy**.
+
+**PHC — Password Hashing Competition**
+An open competition (2013-2015) to select improved password hashing algorithms. Winner: Argon2. Special recognitions: Catena, Lyra2, Makwa, yescrypt.
 
 **PKCS — Public-Key Cryptography Standards**
 A series of standards originally published by RSA Laboratories. Key documents: PKCS#1 (RSA cryptography), PKCS#5 (password-based cryptography), PKCS#7 (message syntax), PKCS#12 (personal information exchange / certificate stores).
@@ -927,6 +1005,9 @@ The maximum number of generate calls before a DRBG must reseed from a fresh entr
 **RFC — Request for Comments**
 The document series published by the IETF that defines Internet standards and protocols. Relevant RFCs include: RFC 2104 (HMAC), RFC 5869 (HKDF), RFC 7914 (scrypt), RFC 8017 (RSA / PKCS#1), RFC 8018 (PBKDF2 / PBES), RFC 8032 (EdDSA), RFC 8554 (LMS), RFC 9106 (Argon2), RFC 9180 (HPKE).
 
+**RIPEMD — RACE Integrity Primitives Evaluation Message Digest**
+A family of cryptographic hash functions. RIPEMD-160 (160-bit output) is the most widely used variant, still employed in Bitcoin address generation. RIPEMD-128 is considered insecure; the original RIPEMD (128-bit) is broken.
+
 **Ristretto255 / Decaf448**
 Techniques for constructing prime-order groups from the Curve25519 and Curve448 elliptic curves, avoiding cofactor-related implementation pitfalls. Used in OPAQUE and SPAKE2+.
 
@@ -994,6 +1075,9 @@ The current mainstream hash function family. SHA-256 is the most widely used (12
 **SHA-3 (SHA3-224, SHA3-256, SHA3-384, SHA3-512)**
 The third-generation hash standard (FIPS 202, 2015), based on the Keccak sponge construction — an entirely different design from SHA-1 and SHA-2. Provides structural diversity: an attack on SHA-2 would not automatically apply to SHA-3.
 
+**SHACAL — SHACAL-1 / SHACAL-2**
+Block ciphers derived from the compression functions of SHA-1 and SHA-256 respectively. SHACAL-2 was selected by the NESSIE project. 256-bit block size, 512-bit key.
+
 **SHAKE128 / SHAKE256**
 Extendable-Output Functions (XOFs) from the SHA-3 family. Unlike SHA-3 which produces a fixed-length output, SHAKE can produce any desired output length. SHAKE128 provides 128-bit security for outputs ≥ 32 bytes; SHAKE256 provides 256-bit security for outputs ≥ 64 bytes.
 
@@ -1051,6 +1135,9 @@ A password-based authentication protocol where the client proves knowledge of a 
 **SSH — Secure Shell**
 A protocol for encrypted remote login and file transfer. Uses ECDH (typically X25519) for key exchange, AES-CTR or ChaCha20-Poly1305 for encryption, and HMAC or AEAD for integrity.
 
+**SSL — Secure Sockets Layer**
+The predecessor protocol to TLS. SSL 2.0 and 3.0 are both disallowed (RFC 6176, RFC 7568) due to fundamental security flaws. All modern deployments use TLS 1.2 or 1.3. The name "SSL" persists colloquially (e.g., "SSL certificate") but technically refers to the obsolete protocol.
+
 **SUF-CMA — Strong Unforgeability under Chosen-Message Attack**
 A stronger security notion for digital signatures than EUF-CMA. EUF-CMA requires that an attacker cannot produce a valid signature on a message they have not previously queried; SUF-CMA additionally requires that the attacker cannot produce any *new* valid signature on a *previously signed* message (i.e. even if a valid (m, σ) pair is known, producing a different valid σ' on the same m must be infeasible). SUF-CMA is relevant in protocols where signature uniqueness matters (e.g. non-repudiation, transaction systems). Composite ML-DSA provides EUF-CMA but not SUF-CMA, because an attacker could potentially substitute one component signature for another valid one. Most modern schemes including ML-DSA itself are EUF-CMA; RSA-PSS and Ed25519 are SUF-CMA. See also **EUF-CMA**.
 
@@ -1075,6 +1162,12 @@ See **Authentication Tag**.
 
 **3DES — Triple DES**
 A legacy cipher applying DES three times with either two or three independent keys. Provides approximately 112-bit effective security. Deprecated for encryption (NIST 2019), disallowed for new systems (NIST 2024). Replaced by AES.
+
+**TDEA — Triple Data Encryption Algorithm**
+The formal name for Triple DES (3DES). Three-key TDEA (3TDEA) uses three independent 56-bit keys; two-key TDEA (2TDEA) reuses the first key. Disallowed for encryption by NIST after 2023 (SP 800-131A Rev 2); decryption-only for legacy processing.
+
+**TEA / XTEA — Tiny Encryption Algorithm / Extended TEA**
+Simple, compact block ciphers (64-bit block, 128-bit key) designed for constrained environments. TEA has known weaknesses (equivalent keys, related-key attacks); XTEA addresses some of these. Neither is recommended for security-critical applications.
 
 **TSIG — Transaction Signature**
 A mechanism (RFC 2845) for authenticating DNS messages (zone transfers, dynamic updates) using shared-secret HMAC signatures. HMAC-SHA-256 is the recommended algorithm; HMAC-MD5 is disallowed for federal use.
@@ -1146,6 +1239,9 @@ The initial key agreement protocol used in the Signal messaging app. Combines mu
 **X448**
 The Diffie-Hellman key exchange function using Curve448, providing approximately 224-bit security.
 
+**XCBC — Extended CBC-MAC**
+A MAC construction (RFC 3566) based on AES-CBC that uses three keys derived from one, avoiding the length-extension weakness of plain CBC-MAC. Used in IPsec (AES-XCBC-MAC-96).
+
 **XChaCha20-Poly1305**
 A variant of ChaCha20-Poly1305 with a 192-bit nonce (compared to 96-bit), making it safe to use with randomly generated nonces (random 96-bit nonces have a non-trivial collision probability after ~2³² messages).
 
@@ -1199,62 +1295,76 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | AES | Advanced Encryption Standard |
 | AIS | Anforderungen an Implementierungen mit Sicherheitszertifikat (BSI technical guideline) |
 | AKA | Authentication and Key Agreement (3GPP) |
+| ANSI | American National Standards Institute |
 | ANSSI | Agence Nationale de la Sécurité des Systèmes d'Information |
 | ASN.1 | Abstract Syntax Notation One |
 | BSI | Bundesamt für Sicherheit in der Informationstechnik |
 | BSI TR | BSI Technical Regulation |
+| CABF | CA/Browser Forum |
 | CAVP | Cryptographic Algorithm Validation Program |
+| CBC | Cipher Block Chaining |
 | CBMC | C Bounded Model Checker |
 | CBOM | Cryptography Bill of Materials |
-| CBC | Cipher Block Chaining |
-| CMC | Certificate Management over CMS |
-| CMP | Certificate Management Protocol |
 | CC | Common Criteria |
 | CFRG | Crypto Forum Research Group |
 | CMAC | Cipher-Based Message Authentication Code |
+| CMC | Certificate Management over CMS |
+| CMP | Certificate Management Protocol |
 | CMVP | Cryptographic Module Validation Program |
 | CMS | Cryptographic Message Syntax |
+| CNG | Cryptography Next Generation |
 | CNSA | Commercial National Security Algorithm Suite |
 | COSE | Concise Object Signing and Encryption |
+| CRC | Cyclic Redundancy Check |
 | CSRC | Computer Security Resource Center (NIST) |
 | cSHAKE | Customisable SHAKE |
 | CSPRNG | Cryptographically Secure Pseudorandom Number Generator |
-| CTR | Counter mode |
+| CTR | Counter Mode |
+| CTS | Ciphertext Stealing |
 | DFR | Decryption Failure Rate |
-| DLIES | Discrete Logarithm Integrated Encryption Scheme |
-| DNSSEC | Domain Name System Security Extensions |
 | DH | Diffie-Hellman |
 | DHKEM | Diffie-Hellman Key Encapsulation Mechanism |
+| DLIES | Discrete Logarithm Integrated Encryption Scheme |
+| DNSSEC | Domain Name System Security Extensions |
 | DRBG | Deterministic Random Bit Generator |
 | DSA | Digital Signature Algorithm |
+| DTLS | Datagram Transport Layer Security |
+| EAX | EAX Mode (AEAD) |
 | ECB | Electronic Codebook |
 | ECC CDH | Elliptic Curve Cofactor Diffie-Hellman |
 | ECDH | Elliptic Curve Diffie-Hellman |
-| EUF-CMA | Existential Unforgeability under Chosen-Message Attack |
 | ECDSA | Elliptic Curve Digital Signature Algorithm |
+| ECGDSA | Elliptic Curve German Digital Signature Algorithm |
 | ECIES | Elliptic Curve Integrated Encryption Scheme |
 | EdDSA | Edwards-Curve Digital Signature Algorithm |
 | EFS | Encrypting File System |
 | ENISA | European Union Agency for Cybersecurity |
 | EST | Enrollment over Secure Transport |
 | ETSI | European Telecommunications Standards Institute |
+| EUF-CMA | Existential Unforgeability under Chosen-Message Attack |
 | FFDH | Finite Field Diffie-Hellman |
 | FIPS | Federal Information Processing Standards |
 | FISMA | Federal Information Security Modernization Act |
-| FN-DSA | FFT over NTRU-Lattice Digital Signature Algorithm (Falcon) |
+| FN-DSA | FFT over NTRU-Lattice-Based Digital Signature Algorithm (Falcon) |
 | FORS | Forest of Random Subsets |
+| FPE | Format-Preserving Encryption |
 | GCM | Galois/Counter Mode |
+| GEA | GPRS Encryption Algorithm |
 | GHASH | Galois Hash (authentication in GCM) |
 | GMAC | Galois Message Authentication Code |
-| HRNG | Hardware Random Number Generator |
-| HSM | Hardware Security Module |
+| HAVAL | Variable-Length Cryptographic Hash Function |
 | HKDF | HMAC-Based Key Derivation Function |
 | HMAC | Keyed-Hash Message Authentication Code |
 | HNDL | Harvest Now, Decrypt Later |
 | HPKE | Hybrid Public Key Encryption |
 | HQC | Hamming Quasi-Cyclic |
+| HRNG | Hardware Random Number Generator |
+| HSM | Hardware Security Module |
+| HSS | Hierarchical Signature Scheme |
+| IACR | International Association for Cryptologic Research |
 | IEEE | Institute of Electrical and Electronics Engineers |
 | IETF | Internet Engineering Task Force |
+| IFC | Integer Factorisation Cryptography |
 | IKE | Internet Key Exchange |
 | IND-CCA2 | Indistinguishability under Adaptive Chosen-Ciphertext Attack |
 | IND-CPA | Indistinguishability under Chosen-Plaintext Attack |
@@ -1265,6 +1375,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | JCE | Java Cryptography Extension |
 | JEP | JDK Enhancement Proposal |
 | JOSE | JSON Object Signing and Encryption |
+| KASUMI | 3GPP Block Cipher (derived from MISTY1) |
 | KAT | Known Answer Test |
 | KDF | Key Derivation Function |
 | KEM | Key Encapsulation Mechanism |
@@ -1273,80 +1384,93 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | LAMPS | Limited Additional Mechanisms for PKIX and SMIME |
 | LCG | Linear Congruential Generator |
 | LIP | Lattice Isomorphism Problem |
-| HSS | Hierarchical Signature Scheme |
 | LMS | Leighton-Micali Signature |
 | LMOTS | Leighton-Micali One-Time Signature |
 | LWE | Learning With Errors |
+| LWR | Learning With Rounding |
 | MAC | Message Authentication Code |
 | MGF | Mask Generation Function |
-| MLS | Messaging Layer Security |
 | MitH | MPC-in-the-Head |
-| ML-DSA | Module-Lattice Digital Signature Algorithm |
-| ML-KEM | Module-Lattice Key-Encapsulation Mechanism |
+| ML-DSA | Module-Lattice-Based Digital Signature Algorithm |
+| ML-KEM | Module-Lattice-Based Key-Encapsulation Mechanism |
+| MLS | Messaging Layer Security |
+| MODP | Modular Exponentiation Group |
+| MQV | Menezes-Qu-Vanstone (authenticated key agreement) |
 | NIAP | National Information Assurance Partnership |
 | NIST | National Institute of Standards and Technology |
 | NIST IR | NIST Internal/Interagency Report |
 | NSA | National Security Agency |
 | NSM | National Security Memorandum |
 | NSS | National Security Systems |
-| NTT | Number Theoretic Transform |
+| NTG.1 | Non-deterministic True Random Number Generator (Class 1) |
 | NTRU | Number Theoretic Research Unit (lattice type) |
+| NTT | Number Theoretic Transform |
 | OAEP | Optimal Asymmetric Encryption Padding |
+| OCSP | Online Certificate Status Protocol |
 | OID | Object Identifier |
-| OQS | Open Quantum Safe |
 | OPAQUE | Oblivious PRF + Asymmetric Password-Authenticated KE |
 | OPRF | Oblivious Pseudorandom Function |
-| OTS | One-Time Signature |
+| OQS | Open Quantum Safe |
 | OTAR | Over-The-Air Rekeying |
+| OTS | One-Time Signature |
 | OWASP | Open Web Application Security Project |
 | PAKE | Password-Authenticated Key Exchange |
 | PBKDF | Password-Based Key Derivation Function |
 | PBES | Password-Based Encryption Scheme |
+| PBMAC1 | Password-Based MAC (Scheme 1) |
 | PCG | Permuted Congruential Generator |
+| PEM | Privacy-Enhanced Mail |
 | PFS | Perfect Forward Secrecy |
+| PHC | Password Hashing Competition |
+| PKCS | Public-Key Cryptography Standards |
 | PKI | Public Key Infrastructure |
 | PKIX | Public Key Infrastructure using X.509 |
-| PSK | Pre-Shared Key |
 | PMU | Performance Monitoring Unit |
-| PKCS | Public-Key Cryptography Standards |
 | PQC | Post-Quantum Cryptography |
 | PQCA | Post-Quantum Cryptography Alliance |
 | PQCP | PQ Code Package |
 | PRF | Pseudorandom Function |
 | PRNG | Pseudorandom Number Generator |
+| PSK | Pre-Shared Key |
 | PSS | Probabilistic Signature Scheme |
-| RBG | Random Bit Generator |
 | QKD | Quantum Key Distribution |
 | QROM | Quantum Random Oracle Model |
+| RBG | Random Bit Generator |
 | RFC | Request for Comments |
+| RIPEMD | RACE Integrity Primitives Evaluation Message Digest |
 | RSA | Rivest-Shamir-Adleman |
 | S/MIME | Secure/Multipurpose Internet Mail Extensions |
 | SBOM | Software Bill of Materials |
 | SCA | Software Composition Analysis |
 | SHA | Secure Hash Algorithm |
+| SHACAL | Block Ciphers derived from SHA Compression Functions |
 | SHAKE | Secure Hash Algorithm Keccak (extendable output) |
-| SNOW 3G | Stream cipher for 3GPP (4G LTE) |
-| SNOW-V | Stream cipher candidate for 5G |
 | SIS | Short Integer Solution |
 | SIV | Synthetic Initialisation Vector |
 | SLH-DSA | Stateless Hash-Based Digital Signature Standard |
 | SM2/SM3/SM4 | ShāngMì (Chinese cryptographic standards) |
 | SM9 | ShāngMì 9 (Chinese pairing-based cryptographic standard) |
+| SNOW 3G | Stream cipher for 3GPP (4G LTE) |
+| SNOW-V | Stream cipher candidate for 5G |
 | SPDX | Software Package Data Exchange |
 | SRTP | Secure Real-time Transport Protocol |
 | SRP | Secure Remote Password |
 | SSH | Secure Shell |
+| SSL | Secure Sockets Layer |
 | SUF-CMA | Strong Unforgeability under Chosen-Message Attack |
+| TDEA | Triple Data Encryption Algorithm |
+| TEA | Tiny Encryption Algorithm |
 | TLS | Transport Layer Security |
-| TSIG | Transaction Signature (DNS) |
 | TPM | Trusted Platform Module |
 | TRNG | True Random Number Generator |
+| TSIG | Transaction Signature (DNS) |
 | UMAC | Universal Message Authentication Code |
 | UOV | Unbalanced Oil and Vinegar |
-| ZUC | Stream cipher for 3GPP (128-EEA3/128-EIA3) |
 | VOLEitH | Vector Oblivious Linear Evaluation in the Head |
 | WOTS+ | Winternitz One-Time Signature Plus |
 | X3DH | Extended Triple Diffie-Hellman |
-| XTR | Efficient Compact Subgroup Trace Representation |
+| XCBC | Extended CBC-MAC |
 | XOF | Extendable-Output Function |
+| XTR | Efficient Compact Subgroup Trace Representation |
 | XTS | XEX Tweakable-Code-Book Mode with Ciphertext Stealing |
+| ZUC | Stream cipher for 3GPP (128-EEA3/128-EIA3) |
