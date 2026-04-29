@@ -104,9 +104,9 @@ It depends on PQClean sources and will require a migration path after the PQClea
 ## 3. Round 2 additional Signature Candidates
 
 Implementations are at submission quality, not production quality. Many do not use semantic
-version tags. The Round 2 tweak deadline was January 2025. NIST is evaluating candidates with
-down-selection expected mid-to-late 2025 and a final standard potentially by 2026-2027
-(NIST IR 8545). CROSS and MAYO are currently prioritised.
+version tags. The Round 2 tweak deadline was January 2025; NIST down-selection has narrowed
+the field with CROSS and MAYO prioritised. A final additional-signature standard is expected
+in the 2026-2027 timeframe (NIST IR 8545).
 
 ### 3.1 Multivariate-based
 
@@ -141,7 +141,7 @@ and van Woerden. Uses NTRU lattices without the floating-point Gaussian sampler 
 
 CROSS (Codes and Restricted Objects Signature Scheme) and LESS (Linear Equivalence Signature
 Scheme) are based on code equivalence problems. LESS, PERK, RYDE, and QR-UOV do not have
-widely maintained public GitHub organisations as of Q1 2026; implementations are distributed
+widely maintained public GitHub organisations as of Q2 2026; implementations are distributed
 via algorithm websites and the NIST CSRC submission packages.
 
 ### 3.4 MPC-in-the-Head (MitH)
@@ -387,7 +387,7 @@ implementations now in CIRCL.
 `pyca/cryptography` inherits PQC support directly from its OpenSSL backend: applications using
 OpenSSL >= 3.5.0 gain ML-KEM, ML-DSA, and SLH-DSA without any code changes, provided the
 system's OpenSSL build includes the FIPS provider. PyCryptodome and PyNaCl have no PQC roadmap
-items as of Q1 2026.
+items as of Q2 2026.
 
 ---
 
@@ -752,11 +752,10 @@ RNGs are typically OS or hardware facilities, not standalone libraries:
 
 6. **Round 2 additional signatures** — Implementations are at submission-quality, not production
    quality. Many do not use semantic version tags; the Round 2 tweak deadline was January 2025.
-   NIST is evaluating additional signature candidates (CROSS, MAYO prioritised) with down-selection
-   expected mid-to-late 2025 and final standard potentially by 2026-2027 (NIST IR 8545).
-   LESS, PERK, RYDE, and QR-UOV do not have widely-found public GitHub organisations as of
-   Q1 2026; implementations are distributed via their respective algorithm websites and the
-   NIST CSRC submission packages.
+   NIST has narrowed the field (CROSS and MAYO prioritised); a final additional-signature
+   standard is expected in the 2026-2027 timeframe (NIST IR 8545). LESS, PERK, RYDE, and QR-UOV
+   do not have widely-found public GitHub organisations as of Q2 2026; implementations are
+   distributed via their respective algorithm websites and the NIST CSRC submission packages.
 
 7. **FAEST-avx v2.0.1** — The AVX2-optimised C++ implementation is at version 2.0.1, matching
    the FAEST v2 specification. The reference C implementation (`faest-ref`) tracks the same
