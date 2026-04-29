@@ -195,6 +195,9 @@ def build_parameters_diagram() -> str:
                 Param("{dkmLength}", "derived keying material length"),
                 Param("{length}", "generic length parameter"),
                 Param("{parameterSet}", "algorithm parameter set"),
+                Param("{blockSize}", "block size (Threefish)"),
+                Param("{width}", "checksum width (CRC, Adler, Fletcher)"),
+                Param("{stateSize}", "internal state size (Skein)"),
             ]),
             Subsection("§2 Mode & Variant", [
                 Param("{mode}", "cipher mode (GCM, CBC, CTR, …)"),
@@ -203,10 +206,15 @@ def build_parameters_diagram() -> str:
                 Param("{blockCipher}", "underlying block cipher"),
                 Param("{encryptionAlgorithm}", "encryption primitive"),
                 Param("{kem}", "KEM algorithm"),
-                Param("{otherBlockCipher}", "secondary block cipher"),
+                Param("{radix}", "FPE alphabet size (FF1, FF3-1)"),
+                Param("{function}", "3GPP-XOR / MILENAGE / TUAK"),
+                Param("{operation}", "SM9 operation"),
+                Param("{level}", "BIKE security level"),
+                Param("{classicalAlgorithm}", "Composite ML-DSA classical pair"),
             ]),
             Subsection("§3 Hash & Digest", [
                 Param("{hashAlgorithm}", "hash function (SHA-256, …)"),
+                Param("{hashFamily}", "SHA2 | SHAKE (SLH-DSA, WOTS+)"),
                 Param("{maskGenAlgorithm}", "MGF (typically MGF1)"),
                 Param("{prf}", "pseudorandom function"),
                 Param("{auxFunction}", "auxiliary function"),
@@ -295,9 +303,13 @@ def build_parameters_diagram() -> str:
                 Param("{context}", "domain separation"),
                 Param("{deterministicSigning}", "hedged | deterministic"),
             ], fill="#f0f6ff"),
-            Subsection("HQC  (NIST Round 4, FIPS pending)", [
+            Subsection("HQC  (NIST selection 2025-03; FIPS pending)", [
                 Param("{parameterSet}", "128 | 192 | 256 (L1 | L3 | L5)"),
-                Param("internal params", "n, k, w, wr, we (fixed per set)"),
+                Param("{n}, {n1}, {n2}", "code lengths (RM/RS concatenated)"),
+                Param("{k}", "message length"),
+                Param("{w}, {wr}, {we}", "Hamming weights"),
+                Param("{delta}", "RS decoding capacity"),
+                Param("{spec}", "v2025-08-22 (FIPS-aligned)"),
             ], fill="#f0f6ff"),
             Subsection("Pre-Hash Variants", [
                 Param("{preHashVariant}", "HashML-DSA | HashSLH-DSA"),
