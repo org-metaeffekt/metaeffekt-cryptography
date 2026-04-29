@@ -219,7 +219,7 @@
 
 ## 8. Summary
 
-### Entries by Sub-type
+### Entries by Sub-Type
 
 | Sub-type | Count |
 |---|---|
@@ -248,7 +248,7 @@
 Note: PSK cipher suites using ECDHE or DHE key exchange are counted in the PSK
 category since PSK authentication is their distinguishing characteristic.
 
-### Cross-protocol Entry Counts
+### Cross-Protocol Entry Counts
 
 | Protocol | Sub-type | Count |
 |---|---|---|
@@ -351,7 +351,7 @@ category since PSK authentication is their distinguishing characteristic.
 | ipsec-auth:aes-xcbc-96 | `AES-CMAC` |
 | ipsec-auth:hmac-sha1-96 | `HMAC-SHA-1` |
 
-## 11. X.509 Composite Signatures
+## 11. X.509 composite Signatures
 
 | OID | Name | Components |
 |---|---|---|

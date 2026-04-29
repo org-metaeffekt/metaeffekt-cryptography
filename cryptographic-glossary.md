@@ -533,7 +533,7 @@ The authentication-only mode of GCM — AES-GCM with no plaintext (empty message
 The polynomial-hash function used inside GCM to compute the authentication tag. Operates over a Galois field — hence the name. Implementation must be constant-time to avoid timing attacks.
 
 **GOST 28147-89 / GOST R 34.12**
-Russian block cipher standards. Mandatory for Russian government systems; rarely used elsewhere.
+Russian national block cipher standards. **GOST 28147-89** (1989; RFC 5830) is the legacy 64-bit block cipher with implementation-defined S-boxes. **GOST R 34.12-2015** supersedes it with two ciphers: **Magma** (RFC 8891 — the 64-bit cipher with fixed S-boxes; "Magma" is the new name for what is essentially GOST 28147-89 with a chosen S-box set) and **Kuznyechik** / **Grasshopper** (RFC 7801 — a new 128-bit block cipher). Mandatory for Russian government and financial systems; rarely used elsewhere.
 
 **Grain-128AEAD**
 A lightweight stream cipher with built-in authentication, standardised in ISO/IEC 29192-3. Designed for constrained environments (IoT, embedded, RFID) where AES-based constructions carry too much overhead. Uses a 128-bit key and 96-bit nonce. The authenticated variant (Grain-128AEAD) was a finalist in the NIST Lightweight Cryptography competition. In CycloneDX: `Grain-128-*`.
@@ -767,6 +767,9 @@ A timing side-channel vulnerability discovered in several CRYSTALS-Kyber / ML-KE
 **Kyber**
 See **ML-KEM**. Kyber is the earlier name of the algorithm that became ML-KEM when standardised as FIPS 203.
 
+**Kuznyechik**
+See **Grasshopper**. Russian "Кузнечик" (grasshopper) is the native name; **Grasshopper** is the English translation used in IETF RFC 7801. The 128-bit Russian block cipher standardised in GOST R 34.12-2015, companion to Magma.
+
 ---
 
 ## L
@@ -819,6 +822,9 @@ A short value computed from a message and a secret key, used to verify both the 
 
 **Montgomery Curve**
 An elliptic curve of the form By² = x³ + Ax² + x. This form enables the Montgomery ladder algorithm — a method for computing scalar multiplication that is naturally constant-time (immune to timing side-channel attacks), because the same operations are performed regardless of the scalar bits. NIST SP 800-186 approves two Montgomery curves: Curve25519 (A=486662, B=1, cofactor h=8) for 128-bit security and Curve448 (A=156326, B=1, cofactor h=4) for 224-bit security. Used via the X25519 and X448 Diffie-Hellman functions (RFC 7748).
+
+**Magma**
+The Russian 64-bit block cipher standardised in **GOST R 34.12-2015** and **IETF RFC 8891** (2020). 32-round Feistel structure, 256-bit key. Magma fixes the S-box set that was previously left implementation-defined in **GOST 28147-89** (RFC 5830) — that ambiguity in the older standard caused interoperability problems and weakened security in some deployments. Different OID (`1.2.643.7.1.1.5.1`) from legacy GOST 28147-89 (`1.2.643.2.2.21`). Companion to **Kuznyechik** (Grasshopper) in the same standard. Mandatory in Russian government and financial systems; "Not in CNSA 2.0" and "Not addressed in BSI TR-02102-1".
 
 **MAYO**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on multivariate polynomial equations.

@@ -1809,6 +1809,6 @@ The effective security strength of a cryptographic operation is determined by th
 
 ### Research Papers
 
-- Fluhrer, S. and Dang, Q. (2024). *Smaller Sphincs+* — proposes alternative SLH-DSA parameter sets for reduced signing volumes; cited in NIST PQC forum additional parameter sets request thread
+- Fluhrer, S. and Dang, Q. (2024). *Smaller SPHINCS+* — proposes alternative SLH-DSA parameter sets for reduced signing volumes; cited in NIST PQC forum additional parameter sets request thread
     - [IACR ePrint 2024/018](https://eprint.iacr.org/2024/018)
     - [PDF](https://eprint.iacr.org/2024/018.pdf)

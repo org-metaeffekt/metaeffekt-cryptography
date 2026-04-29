@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (13 files, 340 algorithm entries + 230 composite entries, 191 unique OIDs indexed).
+registry (13 files, 342 algorithm entries + 230 composite entries, 192 unique OIDs indexed).
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 
@@ -19,7 +19,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `InstanceValidationKdfTest` | 25 | All 25 KDF families (incl. CatKDF, KeyCombine) |
 | `InstanceValidationRngTest` | 31 | All 25 RNG families (incl. OS entropy APIs) |
 | `TemplateValidationTest` | 33 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
-| `CycloneDxRegistryCoverageTest` | 213 | Full CycloneDX cryptography-defs.json coverage (as of 2026-02-24) + all 33 cdx families + alternative pattern variants |
+| `CycloneDxRegistryCoverageTest` | 213 | Full CycloneDX cryptography-defs.json coverage (as of 2026-02-24) + all 34 cdx families + alternative pattern variants |
 | `SpdxCoverageTest` | 169 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
 | `CertificateAnalyserTest` | 5 | X.509 certificate analysis (RSA-2048, EC-P256) |
 | `CmsAnalyserTest` | 7 | CMS/PKCS#7 SignedData + EnvelopedData analysis |
@@ -36,16 +36,16 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 
 | Registry file | Families | With segments | Fixed identifiers | Wildcard |
 |---------------|:--------:|:-------------:|:-----------------:|:--------:|
-| `cr-symmetric-ciphers.yaml` | 77 | 28 | 10 | 39 |
+| `cr-symmetric-ciphers.yaml` | 78 | 29 | 10 | 39 |
 | `cr-hash-functions.yaml` | 49 | 20 | 28 | 1 |
 | `cr-macs.yaml` | 14 | 8 | 6 | 0 |
 | `cr-asymmetric.yaml` | 37 | 27 | 4 | 6 |
 | `cr-pqc.yaml` | 40 | 20 | 5 | 15 |
 | `cr-kdfs.yaml` | 27 | 21 | 3 | 3 |
 | `cr-rngs.yaml` | 25 | 8 | 15 | 2 |
-| `cr-cdx.yaml` | 33 | 3 | 30 | 0 |
+| `cr-cdx.yaml` | 34 | 3 | 31 | 0 |
 | `cr-spdx.yaml` | 38 | 0 | 38 | 0 |
-| **Total** | **340** | **143** | **139** | **58** |
+| **Total** | **342** | **144** | **140** | **58** |
 
 ### Family Validation Modes
 

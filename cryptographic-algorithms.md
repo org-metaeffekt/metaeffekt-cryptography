@@ -111,8 +111,9 @@ Cryptographic Algorithms
 | `rc5` | RC5 | Symmetric block cipher (deprecated) | `1.2.840.113549.3.8` | `RC5-*` | Rivest 1994 |
 | `rc6` | RC6 | Symmetric block cipher | — | `RC6-[128\|192\|256]-*` | AES finalist (1998) |
 | `serpent` | Serpent | Symmetric block cipher | — | `Serpent-[128\|192\|256]-*` | AES finalist (1998) |
-| `gost-28147-89` | GOST 28147-89 · Magma | Symmetric block cipher | `1.2.643.2.2.21` | `GOST-28147-*` | GOST R 34.12-2015; RFC 4357 |
-| `grasshopper` | Grasshopper · Kuznyechik | Symmetric block cipher | `1.2.643.7.1.1.5.2` | `Grasshopper-*` | GOST R 34.12-2015; RFC 7801 |
+| `gost-28147-89` | GOST 28147-89 | Symmetric block cipher (legacy; implementation-defined S-boxes) | `1.2.643.2.2.21` | `GOST-28147-*` | GOST 28147-89; RFC 5830 / RFC 4357 |
+| `magma` | Magma | Symmetric block cipher (64-bit; fixed S-boxes) | `1.2.643.7.1.1.5.1` | `Magma-*` | GOST R 34.12-2015; RFC 8891 |
+| `grasshopper` | Grasshopper · Kuznyechik | Symmetric block cipher (128-bit) | `1.2.643.7.1.1.5.2` | `Grasshopper-*` | GOST R 34.12-2015; RFC 7801 |
 
 ---
 
@@ -762,7 +763,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 
 | Category | Count |
 |:---|:---|
-| Symmetric block ciphers (approved + legacy, incl. 2TDEA) | 41 |
+| Symmetric block ciphers (approved + legacy, incl. 2TDEA, Magma) | 42 |
 | Symmetric stream ciphers (incl. 3GPP: A5, EEA/EIA, MILENAGE, TUAK) | 32 |
 | Block cipher modes (inc. AEAD, FPE, tweakable, Ascon-AEAD128) | 36 |
 | Hash functions and XOFs (incl. SP 800-185 TupleHash/ParallelHash, GOSTR3411) | 46 |
@@ -789,7 +790,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Non-cryptographic PRNGs (incl. Xoroshiro) | 7 |
 | Padding / encoding schemes | 5 |
 | Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
-| **Total** | **~422** |
+| **Total** | **~425** |
 
 ---
 
@@ -840,7 +841,7 @@ The 7 entries with no CycloneDX pattern are structural or encoding constructs (p
 | Pre-standard hybrid KEMs (§19 generic) | ❌ No | 3 | `x25519kyber768` (pre-FIPS 203), `p256mlkem768`, `composite-sig` (generic) — not in CycloneDX. (`x25519mlkem768` is in CycloneDX.) |
 | ristretto255, decaf448 (§10) | ❌ No | 2 | Point-compression abstractions for Curve25519/448; no CycloneDX pattern defined. |
 | Historical / legacy + SPDX-only (§20–§27) | ❌ No | 72 | Obscure historical ciphers, eSTREAM portfolio, legacy hashes, protocol containers. Many are in the SPDX list but absent from CycloneDX. |
-| **Total not in CycloneDX registry** | | **163** | |
+| **Total not in CycloneDX registry** | | **162** | |
 
 ### Relationship to `cryptographic-parameters.md`
 

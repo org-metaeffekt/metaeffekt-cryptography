@@ -25,7 +25,7 @@ problems:
 
 ## Decisions
 
-### 1. Per-authority Status Model
+### 1. Per-Authority Status Model
 
 Every status assessment is qualified by its authority. There is no unqualified
 `status` field.

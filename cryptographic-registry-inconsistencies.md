@@ -95,7 +95,7 @@ variants to the EdDSA segment vocabulary.
 
 ---
 
-## 4. Choice-in-Name vs Dash-Separated Family: SHAKE, KMAC, TupleHash
+## 4. Choice-in-Name vs Dash-separated Family: SHAKE, KMAC, TupleHash
 
 | Source | Pattern |
 |--------|---------|
