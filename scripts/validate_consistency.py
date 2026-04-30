@@ -592,6 +592,38 @@ def check_heading_style(base: Path) -> bool:
             # Strip code spans and section-number prefix
             stripped = re.sub(r"`[^`]*`", "", heading)
             stripped = re.sub(r"^\d+(\.\d+)*\.?\s*", "", stripped)
+
+            # ── §9.3 acronym-expansion exception ──
+            # Mask out parenthesised content where the word initials align with a
+            # preceding (or following) all-uppercase acronym. Inside such a span,
+            # capitalisation is preserved by design — don't flag those words.
+            def _mask_expansions(text: str) -> str:
+                def _word_initials(s: str) -> str:
+                    return "".join(w[0].upper() for w in re.findall(r"[A-Za-z]+", s))
+                # Pattern A: ACRONYM [version] (Word Word Word)
+                def _sub_a(m):
+                    acr, exp = m.group(1), m.group(2)
+                    initials = _word_initials(exp)
+                    # alignment: acronym letters are a subsequence prefix of the initials,
+                    # tolerating one extra letter per multi-letter component (e.g. HMAC).
+                    if initials.startswith(acr) or acr.startswith(initials):
+                        return m.group(0).replace(exp, " " * len(exp))
+                    return m.group(0)
+                # Allow optional version-style suffix between the acronym and the bracket
+                # (e.g. "CNSA 2.0", "TLS 1.3 Support", "TR-02102-1 v2026-01")
+                text = re.sub(r"\b([A-Z][A-Z0-9-]{1,})(?:\s+[v0-9][\w.-]*)*\s*\(([^()]+)\)", _sub_a, text)
+                # Pattern B: Word Word Word (ACRONYM)  — allow comma between words
+                def _sub_b(m):
+                    exp, acr = m.group(1), m.group(2)
+                    initials = _word_initials(exp)
+                    if initials.endswith(acr) or acr.endswith(initials):
+                        return " " * len(exp) + m.group(0)[len(exp):]
+                    return m.group(0)
+                text = re.sub(r"((?:[A-Z][A-Za-z-]+[,;]?\s+){1,6}[A-Z][A-Za-z-]+)\s*\(([A-Z][A-Z0-9-]{1,})\)", _sub_b, text)
+                return text
+
+            stripped = _mask_expansions(stripped)
+
             # Tokenise into word-like sequences with their position in stripped text
             tokens = list(re.finditer(r"[A-Za-z][A-Za-z']*", stripped))
             if not tokens:
