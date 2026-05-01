@@ -12,9 +12,12 @@
 > [cryptographic-algorithm-status.md](cryptographic-algorithm-status.md).
 >
 > **Primary sources:** BSI TR-02102-2 v2026-01 (TLS) · BSI TR-02102-3 v2026-01 (IPsec) ·
-> BSI TR-02102-4 v2026-01 (SSH) · NSA CNSA 2.0 (PP-22-1338, Sep 2022) ·
+> BSI TR-02102-4 v2026-01 (SSH) · NIST SP 800-52 Rev 2 (Aug 2019, TLS) · NSA CNSA 2.0 (PP-22-1338, Sep 2022) ·
 > ENISA "Post-Quantum Cryptography" v2 (May 2021) · NIST SP 800-57 Part 3 Rev 1 (Jan 2015) ·
 > NIST IR 8547 IPD (Nov 2024)
+>
+> For per-cipher-suite TLS recommendations from NIST and BSI side-by-side, see
+> [cryptographic-tls-cipher-suites.md §12 / §13 / §14](cryptographic-tls-cipher-suites.md#12-bsi-tr-02102-2-v2026-01-tls-recommendations).
 
 ---
 

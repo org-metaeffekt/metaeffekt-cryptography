@@ -10,10 +10,11 @@
 >
 > **Primary sources:** NIST SP 800-57 Pt 1 Rev 5 (May 2020; Rev 6 IPD Dec 2025) · SP 800-57 Pt 2 Rev 1 (May 2019) · SP 800-57 Pt 3 Rev 1 (Jan 2015) ·
 > SP 800-107 Rev 1 · SP 800-131A Rev 2 (Rev 3 IPD Oct 2024) · SP 800-38 series ·
+> SP 800-52 Rev 2 (Aug 2019, TLS) ·
 > SP 800-56A Rev 3 · SP 800-56B/C · SP 800-90A Rev 1 (Rev 2 pre-draft 2025) · SP 800-90B · SP 800-132 · SP 800-135 ·
 > SP 800-186 · SP 800-208 · NIST IR 8214C · FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (IPD) ·
 > NSA CNSA 2.0 (PP-22-1338, Sep 2022) ·
-> BSI TR-02102-1 v2026-01 (2026-01-23) · BSI TR-02102-2 v2026-01 (2025-12-27) ·
+> BSI TR-02102-1 v2026-01 (2026-01-23) · BSI TR-02102-2 v2026-01 (2026-01-27) ·
 > BSI TR-02102-3 v2026-01 (2026-01-27) · BSI TR-02102-4 v2026-01 (2026-01-27) · BSI AIS 20/31 v3 (2022) ·
 > NIST SP 800-227 (Sep 2025) · NIST IR 8547 IPD (Nov 2024) ·
 > ENISA "Post-Quantum Cryptography: Current state and quantum mitigation" v2 (May 2021)
@@ -507,12 +508,15 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 | Version | NIST | Sources | Notes |
 |:---|:---|:---|:---|
-| **TLS 1.3** | ✅ Recommended | RFC 8446; BSI TR-02102-2 (2024) | ECDHE-only forward secrecy; AEAD-only cipher suites; no renegotiation |
-| **TLS 1.2** + strong ciphers | ⚠ Conditional | RFC 5246; BSI TR-02102-2 | Acceptable with ECDHE + AES-GCM + SHA-256+; disable RC4, 3DES, CBC-SHA1 cipher suites |
-| **TLS 1.0 / 1.1** | 🚫 Disallowed | RFC 8996; BSI TR-02102-2 | POODLE, BEAST, SWEET32; disallowed |
-| **SSL 3.0** | 🚫 Disallowed | RFC 7568 | POODLE; disallowed |
-| **TLS 1.2 cipher suites with SHA-1** | 🚫 Disallowed | BSI TR-02102-2; RFC 9155 | e.g., TLS_RSA_WITH_AES_128_CBC_SHA; disallowed for new configurations |
+| **TLS 1.3** | ✅ Recommended | RFC 8446; NIST SP 800-52 Rev 2 §3.1; BSI TR-02102-2 v2026-01 | ECDHE-only forward secrecy; AEAD-only cipher suites; no renegotiation. NIST `shall` support since 2024-01-01; BSI use up to 2032+. |
+| **TLS 1.2** + strong ciphers | ⚠ Conditional | RFC 5246; NIST SP 800-52 Rev 2 §3.1; BSI TR-02102-2 v2026-01 §3.2 | Acceptable with ECDHE + AES-GCM + SHA-256+; disable RC4, 3DES, CBC-SHA1 cipher suites. **BSI `use up to 2031`** (no quantum-safe key agreement standardisable for TLS 1.2). |
+| **TLS 1.0 / 1.1** | 🚫 Disallowed | RFC 8996; BSI TR-02102-2 v2026-01 | POODLE, BEAST, SWEET32; disallowed. NIST `may` support only when interop with non-government systems requires it (SP 800-52r2 §3.1). |
+| **SSL 3.0** | 🚫 Disallowed | RFC 7568; NIST SP 800-52 Rev 2 §3.1 | POODLE; disallowed; NIST `shall not`. |
+| **TLS 1.2 cipher suites with SHA-1** | 🚫 Disallowed | BSI TR-02102-2 v2026-01; RFC 9155 | e.g., TLS_RSA_WITH_AES_128_CBC_SHA; disallowed for new configurations |
 | **TLS cipher suites with NULL / EXPORT** | 🚫 Disallowed | — | No encryption / deliberately weakened |
+
+> Per-suite tables and authority comparison (IETF / IANA / NIST / BSI) live in
+> [cryptographic-tls-cipher-suites.md §12 / §13 / §14](cryptographic-tls-cipher-suites.md#12-bsi-tr-02102-2-v2026-01-tls-recommendations).
 
 ---
 

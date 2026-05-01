@@ -302,13 +302,13 @@ Reconcile these numbers across all documents:
 
 | Source | Priority | Status | Rationale |
 |:---|:---|:---|:---|
-| SP 800-52 Rev 2 (TLS) | High | Not ingested | TLS cipher suite guidelines (US federal); would expand `cryptographic-tls-cipher-suites.md` and add an authority column alongside IETF/IANA/BSI |
-| BSI TR-02102-2 (TLS) | High | Partially ingested (10 refs in algorithm-status; 1 in protocol-status) | Companion to already-ingested TR-02102-1/3/4; needs structured TLS-suite tables |
-| FIPS 140-3 IG | Medium | Not ingested | Implementation guidance for FIPS 140 level requirements |
+| FIPS 140-3 IG | High | Not ingested | Implementation guidance for FIPS 140 level requirements; companion to already-ingested validation programme references |
 | SP 800-57 Rev 6 IPD | Medium | Partially ingested (3 refs in algorithm-status) | December 2025 initial public draft; PQC key management — expand once final draft published |
 | ENISA "Post-Quantum Cryptography" Report (2024) | Medium | Partially ingested (referenced in PSK quantum mitigation, glossary) | EU PQC migration guidance; could deepen the governance file's EU section |
 | NIST IR 8547 (PQC Migration) | Low | Ingested (March 2025) | Already cited; keep tracked for revisions |
 | NIST SP 800-227 (KEM Usage) | Low | Ingested (September 2025) | Cited in glossary, parameters; verified current |
+| ~~SP 800-52 Rev 2 (TLS)~~ | — | **Ingested 2026-05-01** (cryptographic-tls-cipher-suites.md §13; glossary entry) | TLS cipher suite guidelines for US federal use; integrated as authority column alongside IETF/IANA/BSI |
+| ~~BSI TR-02102-2 v2026-01 (TLS)~~ | — | **Ingested 2026-05-01** (cryptographic-tls-cipher-suites.md §12; glossary entry) | Structured TLS-suite tables with `use up to` deadlines; quantum-migration anchor for 2032 |
 | ~~SP 800-131A Rev 2~~ | — | **Ingested** (25 refs in algorithm-status) | Removed from list — fully integrated |
 | ~~SP 800-56Ar3~~ | — | **Ingested** (17 refs in algorithm-status) | Removed from list — fully integrated |
 

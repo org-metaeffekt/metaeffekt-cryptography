@@ -135,7 +135,10 @@ A semantically secure probabilistic public-key encryption scheme based on the Bl
 Germany's Federal Office for Information Security. Publishes algorithm recommendations (TR-02102 series) and standards for random number generators (AIS 20/31). A major authority alongside NIST for European deployments.
 
 **BSI TR — BSI Technical Regulation**
-A series of technical recommendations published by the German BSI. Key documents for cryptography: TR-02102-1 (cryptographic algorithms and key lengths), TR-02102-2 (TLS), TR-02102-3 (IPsec), TR-02102-4 (SSH). Updated annually; the current edition is TR-02102-1 (2026-01).
+A series of technical recommendations published by the German BSI. Key documents for cryptography: TR-02102-1 (cryptographic algorithms and key lengths), TR-02102-2 (TLS), TR-02102-3 (IPsec), TR-02102-4 (SSH). Updated annually; the current editions are all v2026-01 (January 2026).
+
+**BSI TR-02102-2 — Use of Transport Layer Security (TLS)**
+The TLS-specific volume of BSI TR-02102, current edition v2026-01 (2026-01-27). Specifies recommended TLS versions, cipher suites, Diffie-Hellman groups, signature algorithms, and TLS extensions for German federal use, with explicit `use up to` deadlines for each entry. Security level: 120 bits. Prediction horizon: 7 years. v2026-01 introduced discontinuation of RSA signatures with PKCS #1 v1.5 padding (2025), DSA suite end-of-life (2029), TLS 1.2 end-of-recommendation (2031), and the migration to hybrid quantum-safe key agreement (`SecP256r1MLKEM768` / `SecP384r1MLKEM1024`) from 2032.
 
 ---
 
@@ -1286,7 +1289,10 @@ A next-generation stream cipher designed as a candidate replacement for SNOW 3G 
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on multivariate polynomial cryptography.
 
 **SP 800 — NIST Special Publication 800 Series**
-A series of NIST computer security publications providing guidance, recommendations, and technical details. Key documents: SP 800-57 (key management), SP 800-90A (DRBGs), SP 800-90B (entropy sources), SP 800-131A (algorithm transitions), SP 800-132 (PBKDF), SP 800-186 (elliptic curves), SP 800-208 (hash-based signatures).
+A series of NIST computer security publications providing guidance, recommendations, and technical details. Key documents: SP 800-52 Rev 2 (TLS), SP 800-57 (key management), SP 800-90A (DRBGs), SP 800-90B (entropy sources), SP 800-131A (algorithm transitions), SP 800-132 (PBKDF), SP 800-186 (elliptic curves), SP 800-208 (hash-based signatures), SP 800-227 (KEM usage), SP 800-232 (Ascon).
+
+**SP 800-52 Rev 2 — Guidelines for the Selection, Configuration, and Use of TLS Implementations**
+NIST guidance (Kerry McKay & David Cooper, August 2019) for US federal departments and agencies on selecting and configuring TLS. Headline requirements: TLS 1.2 with FIPS-based cipher suites is the minimum supported protocol; TLS 1.3 support required since January 1, 2024; the cryptographic module **shall** be FIPS 140-validated; all cryptography **shall** provide ≥ 112 bits of security. Mandates only NIST-approved cipher suites, lists allowed suites by certificate type (ECDSA / RSA / DSA / DH / ECDH), and deprecates RSA key transport. Companion to BSI TR-02102-2 in the multi-authority TLS comparison.
 
 **SPAKE2 / SPAKE2+**
 A simple, efficient Password-Authenticated Key Exchange protocol. Provides mutual authentication; SPAKE2+ additionally provides augmented (server-not-equal-to-client) properties.

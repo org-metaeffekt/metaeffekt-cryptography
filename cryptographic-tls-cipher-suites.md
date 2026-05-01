@@ -1,8 +1,20 @@
 # TLS Cipher Suite and Group Analysis
 
-> Auto-generated from the IANA TLS Parameters registries via
-> `scripts/generate_iana_composites.py`. Re-generate with
-> `python3 scripts/generate_iana_composites.py`.
+> §1–§11 are derived from the IANA TLS Parameters registries via
+> `scripts/generate_iana_composites.py` (cipher suites, supported groups,
+> signature schemes; cr-tls.yaml). §12 and §13 overlay authority-specific
+> recommendations from BSI TR-02102-2 v2026-01 (German Federal Office for
+> Information Security, January 2026) and NIST SP 800-52 Revision 2
+> (August 2019).
+>
+> **Authorities covered:**
+>
+> | Authority | Document | Status |
+> |:---|:---|:---|
+> | **IANA** | TLS cipher suite registry | Recommended/Not-Recommended interop flag |
+> | **IETF** | RFC 8446 (TLS 1.3), RFC 5246 (TLS 1.2), RFC 8996 (TLS 1.0/1.1 deprecation) | Protocol-level MUST/SHOULD/MAY |
+> | **NIST** | SP 800-52 Rev 2 (Aug 2019) | US federal — minimum cipher-suite set with FIPS 140 validation requirement |
+> | **BSI** | TR-02102-2 v2026-01 (Jan 2026) | German federal — `use up to` deadlines, 120-bit security level, 7-year prediction horizon |
 >
 > For algorithm-level status, see [cryptographic-algorithm-status.md](cryptographic-algorithm-status.md).
 > For protocol-level guidance, see [cryptographic-protocol-status.md](cryptographic-protocol-status.md).
@@ -368,3 +380,432 @@ category since PSK authentication is their distinguishing characteristic.
 | 2.16.840.1.114027.80.8.1.10 | MLDSA87-ECDSA-P384-SHA512 | `ML-DSA-87` + `ECDSA-P-384-SHA-512` |
 | 2.16.840.1.114027.80.8.1.11 | MLDSA87-ECDSA-brainpoolP384r1-SHA512 | `ML-DSA-87` + `ECDSA-brainpoolP384r1-SHA-512` |
 | 2.16.840.1.114027.80.8.1.12 | MLDSA87-Ed448 | `ML-DSA-87` + `EdDSA-Ed448` |
+
+---
+
+## 12. BSI TR-02102-2 v2026-01 (TLS) Recommendations
+
+> **Source:** Federal Office for Information Security (BSI), TR-02102-2
+> v2026-01 "Use of Transport Layer Security (TLS)", January 27, 2026.
+> Security level: 120 bits. Prediction period: 7 years (recommendations valid up to 2032+).
+>
+> **`Use up to` semantics:** the year denotes the end of the recommended period; a "+" suffix means the period may be extended beyond that year if a future revision so directs. **2026 is the final recommended year** for entries that already had limited applicability in v2025-01.
+
+### 12.1 Recommended TLS Versions (TR-02102-2 §3.2 Table 2)
+
+| TLS version | Specification | Use up to |
+|:---|:---|:---|
+| TLS 1.3 | RFC 8446 | 2032+ |
+| TLS 1.2 | RFC 5246 | **2031** (no quantum-safe key agreement standardisable for TLS 1.2) |
+| TLS 1.1, TLS 1.0, SSLv2, SSLv3 | — | **Not recommended** (RFC 8996, RFC 6176, RFC 7568) |
+
+### 12.2 TLS 1.2 (EC)DHE Cipher Suites (TR-02102-2 §3.3.1.1 Table 3)
+
+Cipher suites with Perfect Forward Secrecy. CBC suites are recommended **only in conjunction with the Encrypt-then-MAC extension** (RFC 7366).
+
+| Cipher suite | IANA | Spec | Use up to |
+|:---|:---|:---|:---|
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x23` | RFC 5289 | 2031 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x24` | RFC 5289 | 2031 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2B` | RFC 5289 | 2031 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2C` | RFC 5289 | 2031 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CCM` | `0xC0,0xAC` | RFC 7251 | 2031 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CCM` | `0xC0,0xAD` | RFC 7251 | 2031 |
+| `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x27` | RFC 5289 | 2031 |
+| `TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x28` | RFC 5289 | 2031 |
+| `TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2F` | RFC 5289 | 2031 |
+| `TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x30` | RFC 5289 | 2031 |
+| `TLS_DHE_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x40` | RFC 5246 | **2029** (DSA discontinuation) |
+| `TLS_DHE_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x6A` | RFC 5246 | 2029 |
+| `TLS_DHE_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA2` | RFC 5288 | 2029 |
+| `TLS_DHE_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA3` | RFC 5288 | 2029 |
+| `TLS_DHE_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x67` | RFC 5246 | 2029 |
+| `TLS_DHE_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x6B` | RFC 5246 | 2029 |
+| `TLS_DHE_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0x9E` | RFC 5288 | 2029 |
+| `TLS_DHE_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0x9F` | RFC 5288 | 2029 |
+| `TLS_DHE_RSA_WITH_AES_128_CCM` | `0xC0,0x9E` | RFC 6655 | 2029 |
+| `TLS_DHE_RSA_WITH_AES_256_CCM` | `0xC0,0x9F` | RFC 6655 | 2029 |
+
+> **Note:** TLS_DHE_* cipher suites are scheduled for IETF deprecation
+> (draft-ietf-tls-deprecate-obsolete-kex). BSI mirrors that schedule with the 2029 cut-off.
+
+### 12.3 TLS 1.2 (EC)DH Cipher Suites without PFS (TR-02102-2 §3.3.1.2 Table 4)
+
+Fallback when PFS suites are unavailable. **All entries: use up to 2026** — last year of recommendation.
+
+| Cipher suite | IANA | Use up to |
+|:---|:---|:---|
+| `TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x25` | 2026 |
+| `TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x26` | 2026 |
+| `TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2D` | 2026 |
+| `TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2E` | 2026 |
+| `TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x29` | 2026 |
+| `TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x2A` | 2026 |
+| `TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x31` | 2026 |
+| `TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x32` | 2026 |
+| `TLS_DH_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x3E` | 2026 |
+| `TLS_DH_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x68` | 2026 |
+| `TLS_DH_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA4` | 2026 |
+| `TLS_DH_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA5` | 2026 |
+| `TLS_DH_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x3F` | 2026 |
+| `TLS_DH_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x69` | 2026 |
+| `TLS_DH_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0xA0` | 2026 |
+| `TLS_DH_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0xA1` | 2026 |
+
+### 12.4 TLS 1.2 PSK Cipher Suites (TR-02102-2 §3.3.1.3 Table 5)
+
+| Cipher suite | IANA | Spec | Use up to | PFS |
+|:---|:---|:---|:---|:---|
+| `TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256` | `0xC0,0x37` | RFC 5489 | 2031 | ✓ |
+| `TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA384` | `0xC0,0x38` | RFC 5489 | 2031 | ✓ |
+| `TLS_ECDHE_PSK_WITH_AES_128_GCM_SHA256` | `0xD0,0x01` | RFC 8442 | 2031 | ✓ |
+| `TLS_ECDHE_PSK_WITH_AES_256_GCM_SHA384` | `0xD0,0x02` | RFC 8442 | 2031 | ✓ |
+| `TLS_ECDHE_PSK_WITH_AES_128_CCM_SHA256` | `0xD0,0x05` | RFC 8442 | 2031 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_128_CBC_SHA256` | `0x00,0xB2` | RFC 5487 | 2029 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_256_CBC_SHA384` | `0x00,0xB3` | RFC 5487 | 2029 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_128_GCM_SHA256` | `0x00,0xAA` | RFC 5487 | 2029 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_256_GCM_SHA384` | `0x00,0xAB` | RFC 5487 | 2029 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_128_CCM` | `0xC0,0xA6` | RFC 6655 | 2029 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_256_CCM` | `0xC0,0xA7` | RFC 6655 | 2029 | ✓ |
+| `TLS_RSA_PSK_WITH_AES_128_CBC_SHA256` | `0x00,0xB6` | RFC 5487 | 2026 | ✗ |
+| `TLS_RSA_PSK_WITH_AES_256_CBC_SHA384` | `0x00,0xB7` | RFC 5487 | 2026 | ✗ |
+| `TLS_RSA_PSK_WITH_AES_128_GCM_SHA256` | `0x00,0xAC` | RFC 5487 | 2026 | ✗ |
+| `TLS_RSA_PSK_WITH_AES_256_GCM_SHA384` | `0x00,0xAD` | RFC 5487 | 2026 | ✗ |
+
+> **Note:** Cipher suites of the form `TLS_PSK_*` (no ephemeral key, no random number)
+> are **not recommended** by BSI — security depends solely on the entropy and confidentiality of the PSK.
+
+### 12.5 TLS 1.2 Diffie-Hellman Groups (TR-02102-2 §3.3.2 Table 6)
+
+| Group | IANA | Spec | Use up to |
+|:---|:---|:---|:---|
+| `secp256r1` | 23 | RFC 8422 | 2031 |
+| `secp384r1` | 24 | RFC 8422 | 2031 |
+| `secp521r1` | 25 | RFC 8422 | 2031 |
+| `brainpoolP256r1` | 26 | RFC 7027 | 2031 |
+| `brainpoolP384r1` | 27 | RFC 7027 | 2031 |
+| `brainpoolP512r1` | 28 | RFC 7027 | 2031 |
+| `ffdhe3072` | 257 | RFC 7919 | 2029 |
+| `ffdhe4096` | 258 | RFC 7919 | 2029 |
+
+### 12.6 TLS 1.2 Signature Algorithms (TR-02102-2 §3.3.3 Tables 7+8)
+
+| Signature algorithm | IANA | Use up to |
+|:---|:---|:---|
+| `rsa` (PKCS #1 v1.5) | 1 | **2025** (PKCS #1 v1.5 padding discontinuation per TR-02102-1 §1.5) |
+| `dsa` | 2 | 2029 |
+| `ecdsa` | 3 | 2031 |
+| `sha256` (hash for sig) | 4 | 2031 |
+| `sha384` (hash for sig) | 5 | 2031 |
+| `sha512` (hash for sig) | 6 | 2031 |
+
+> **Note:** RSA-PSS in TLS 1.2 follows the recommendations of TR-02102-1 §1.3 and §4.2.3 (Tables 11/12).
+
+### 12.7 TLS 1.3 PSK Modes (TR-02102-2 §3.4.1 Table 9)
+
+| PSK mode | IANA | Spec | Use up to |
+|:---|:---|:---|:---|
+| `psk_ke` | 0 | RFC 8446 | **2026** (no Perfect Forward Secrecy) |
+| `psk_dhe_ke` | 1 | RFC 8446 | 2032+ |
+
+> **Note:** 0-RTT data is **not recommended** (replay risk).
+
+### 12.8 TLS 1.3 Diffie-Hellman Groups (TR-02102-2 §3.4.2 Table 10)
+
+| Group | IANA | Spec | Use up to |
+|:---|:---|:---|:---|
+| `secp256r1` | 23 | RFC 8422 | 2031 |
+| `secp384r1` | 24 | RFC 8422 | 2031 |
+| `secp521r1` | 25 | RFC 8422 | 2031 |
+| `brainpoolP256r1tls13` | 31 | RFC 8734 | 2031 |
+| `brainpoolP384r1tls13` | 32 | RFC 8734 | 2031 |
+| `brainpoolP512r1tls13` | 33 | RFC 8734 | 2031 |
+| `ffdhe3072` | 257 | RFC 7919 | 2031 |
+| `ffdhe4096` | 258 | RFC 7919 | 2031 |
+
+> **Note (quantum migration):** From 2032 onwards, classical (EC)DHE applies **exclusively to hybrid use with quantum-safe mechanisms**. BSI intends to recommend `SecP256r1MLKEM768` and `SecP384r1MLKEM1024` (draft-ietf-tls-ecdhe-mlkem) once the corresponding RFC has been adopted.
+
+### 12.9 TLS 1.3 Signature Algorithms — `signature_algorithms` (TR-02102-2 §3.4.3 Table 11)
+
+| Signature algorithm | IANA | Use up to |
+|:---|:---|:---|
+| `rsa_pss_rsae_sha256` | `0x0804` | 2032+ |
+| `rsa_pss_rsae_sha384` | `0x0805` | 2032+ |
+| `rsa_pss_rsae_sha512` | `0x0806` | 2032+ |
+| `rsa_pss_pss_sha256` | `0x0809` | 2032+ |
+| `rsa_pss_pss_sha384` | `0x080A` | 2032+ |
+| `rsa_pss_pss_sha512` | `0x080B` | 2032+ |
+| `ecdsa_secp256r1_sha256` | `0x0403` | 2032+ |
+| `ecdsa_secp384r1_sha384` | `0x0503` | 2032+ |
+| `ecdsa_secp521r1_sha512` | `0x0603` | 2032+ |
+| `ecdsa_brainpoolP256r1tls13_sha256` | `0x081A` | 2032+ |
+| `ecdsa_brainpoolP384r1tls13_sha384` | `0x081B` | 2032+ |
+| `ecdsa_brainpoolP512r1tls13_sha512` | `0x081C` | 2032+ |
+
+### 12.10 TLS 1.3 Signature Algorithms — `signature_algorithms_cert` (TR-02102-2 §3.4.3 Table 12)
+
+Adds three PKCS #1 v1.5 entries to Table 11; their `use up to` is 2025 (PKCS #1 v1.5 padding discontinuation):
+
+| Signature algorithm | IANA | Use up to |
+|:---|:---|:---|
+| `rsa_pkcs1_sha256` | `0x0401` | **2025** |
+| `rsa_pkcs1_sha384` | `0x0501` | **2025** |
+| `rsa_pkcs1_sha512` | `0x0601` | **2025** |
+
+(All Table 11 entries also apply to `signature_algorithms_cert` with the same 2032+ deadlines.)
+
+### 12.11 TLS 1.3 Cipher Suites (TR-02102-2 §3.4.4 Table 13)
+
+| Cipher suite | IANA | Use up to |
+|:---|:---|:---|
+| `TLS_AES_128_GCM_SHA256` | `0x13,0x01` | 2032+ |
+| `TLS_AES_256_GCM_SHA384` | `0x13,0x02` | 2032+ |
+| `TLS_AES_128_CCM_SHA256` | `0x13,0x04` | 2032+ |
+
+> **Note:** `TLS_CHACHA20_POLY1305_SHA256` (`0x13,0x03`) is **not recommended** by BSI (no dedicated stream-cipher recommendations in TR-02102-1). `TLS_AES_128_CCM_8_SHA256` (`0x13,0x05`, 8-byte tag) is also absent — BSI prefers full 16-byte authentication tags.
+
+### 12.12 TLS Extensions (TR-02102-2 §3.3.4, §3.4.5)
+
+| Extension | RFC | BSI guidance |
+|:---|:---|:---|
+| Encrypt-then-MAC | RFC 7366 | **Recommended** (mandatory companion for any CBC suite in §12.2/§12.3/§12.4) |
+| Extended Master Secret | RFC 7627 | **Recommended** (mitigates triple-handshake attack) |
+| supported_groups (TLS 1.2 ECDHE) | RFC 8422 | Recommended |
+| supported_groups (TLS 1.2 DHE) | RFC 7919 | Recommended |
+| signature_algorithms (TLS 1.2) | RFC 5246 | Recommended |
+| Renegotiation Indication | RFC 5746 | Required if renegotiation used; client-initiated renegotiation should be rejected by the server |
+| truncated_hmac | RFC 6066 | **Not recommended** (truncates MAC to 80 bits) |
+| Heartbeat | RFC 6520 | **Not recommended** (Heartbleed) |
+| TLS compression | — | **Not recommended** (CRIME) |
+
+### 12.13 Key Lengths (TR-02102-2 §3.6.1 Table 14)
+
+| Algorithm | Minimum key length | Use from | Use up to |
+|:---|:---|:---|:---|
+| ECDSA (sig keys) | 250 bit | — | 2032+ |
+| DSA (sig keys) | 3000 bit | 2023 | 2029 |
+| RSA (sig keys) | 3000 bit | 2023 | 2032+ |
+| ECDH (key agreement) | 250 bit | — | 2032+ |
+| DH (key agreement) | 3000 bit | 2023 | **2031** (then hybrid only) |
+
+### 12.14 Random Number Generators (TR-02102-2 §4.3)
+
+For TLS key/signature generation, an RNG of class **DRG.3, DRG.4, DRT.1, PTG.3, or NTG.1** per [BSI AIS 20/31] is required.
+
+---
+
+## 13. NIST SP 800-52 Revision 2 (TLS) Recommendations
+
+> **Source:** NIST SP 800-52 Rev 2 "Guidelines for the Selection, Configuration, and Use of Transport Layer Security (TLS) Implementations" (August 2019), Kerry McKay & David Cooper.
+>
+> **Audience:** US federal departments and agencies. Servers handling sensitive but unclassified federal data.
+>
+> **Headline requirements:** TLS 1.2 with FIPS-based cipher suites is the minimum supported protocol; TLS 1.3 support required since January 1, 2024. The cryptographic module **shall** be FIPS 140-validated. All cryptography **shall** provide at least **112 bits of security**. The server **shall** be configured to use only NIST-approved cipher suites.
+
+### 13.1 Protocol Version Support (SP 800-52r2 §3.1, §4.1)
+
+| Version | Server requirement | Client requirement |
+|:---|:---|:---|
+| TLS 1.3 | **shall** support (since 2024-01-01) | **shall** support (since 2024-01-01) |
+| TLS 1.2 | **shall** support (configured with FIPS-based suites) | **shall** support |
+| TLS 1.1 | **may** support only when interop with non-government systems requires | same |
+| TLS 1.0 | **may** support only when interop with non-government systems requires | same |
+| SSLv3 / SSLv2 | **shall not** be supported | **shall not** be supported |
+
+### 13.2 TLS 1.2 Cipher Suites by Server Certificate Type (SP 800-52r2 §3.3.1.1)
+
+> Suites listed below are the NIST-approved minimum set; servers **shall** be configured to use only suites from this list.
+
+#### 13.2.1 ECDSA Server Certificate
+
+| Cipher suite | IANA | Available in |
+|:---|:---|:---|
+| `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2B` | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2C` | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CCM` | `0xC0,0xAC` | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CCM` | `0xC0,0xAD` | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8` | `0xC0,0xAE` | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8` | `0xC0,0xAF` | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x23` | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x24` | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA` | `0xC0,0x09` | TLS 1.0 / 1.1 / 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA` | `0xC0,0x0A` | TLS 1.0 / 1.1 / 1.2 |
+
+#### 13.2.2 RSA Server Certificate
+
+| Cipher suite | IANA | Available in |
+|:---|:---|:---|
+| `TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2F` | TLS 1.2 |
+| `TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x30` | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0x9E` | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0x9F` | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_128_CCM` | `0xC0,0x9E` | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_256_CCM` | `0xC0,0x9F` | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_128_CCM_8` | `0xC0,0xA2` | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_256_CCM_8` | `0xC0,0xA3` | TLS 1.2 |
+| `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x27` | TLS 1.2 |
+| `TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x28` | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x67` | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x6B` | TLS 1.2 |
+| `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA` | `0xC0,0x13` | TLS 1.0 / 1.1 / 1.2 |
+| `TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA` | `0xC0,0x14` | TLS 1.0 / 1.1 / 1.2 |
+| `TLS_DHE_RSA_WITH_AES_128_CBC_SHA` | `0x00,0x33` | TLS 1.0 / 1.1 / 1.2 |
+| `TLS_DHE_RSA_WITH_AES_256_CBC_SHA` | `0x00,0x39` | TLS 1.0 / 1.1 / 1.2 |
+
+#### 13.2.3 DSA Server Certificate
+
+| Cipher suite | IANA | Available in |
+|:---|:---|:---|
+| `TLS_DHE_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA2` | TLS 1.2 |
+| `TLS_DHE_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA3` | TLS 1.2 |
+| `TLS_DHE_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x40` | TLS 1.2 |
+| `TLS_DHE_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x6A` | TLS 1.2 |
+| `TLS_DHE_DSS_WITH_AES_128_CBC_SHA` | `0x00,0x32` | TLS 1.0 / 1.1 / 1.2 |
+| `TLS_DHE_DSS_WITH_AES_256_CBC_SHA` | `0x00,0x38` | TLS 1.0 / 1.1 / 1.2 |
+
+#### 13.2.4 DH Server Certificate (DSA-signed)
+
+| Cipher suite | IANA |
+|:---|:---|
+| `TLS_DH_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA4` |
+| `TLS_DH_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA5` |
+| `TLS_DH_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x3E` |
+| `TLS_DH_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x68` |
+| `TLS_DH_DSS_WITH_AES_128_CBC_SHA` | `0x00,0x30` |
+| `TLS_DH_DSS_WITH_AES_256_CBC_SHA` | `0x00,0x36` |
+
+#### 13.2.5 DH Server Certificate (RSA-signed)
+
+| Cipher suite | IANA |
+|:---|:---|
+| `TLS_DH_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0xA0` |
+| `TLS_DH_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0xA1` |
+| `TLS_DH_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x3F` |
+| `TLS_DH_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x69` |
+| `TLS_DH_RSA_WITH_AES_128_CBC_SHA` | `0x00,0x31` |
+| `TLS_DH_RSA_WITH_AES_256_CBC_SHA` | `0x00,0x37` |
+
+#### 13.2.6 ECDH Server Certificate (ECDSA-signed)
+
+| Cipher suite | IANA |
+|:---|:---|
+| `TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2D` |
+| `TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2E` |
+| `TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x25` |
+| `TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x26` |
+| `TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA` | `0xC0,0x04` |
+| `TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA` | `0xC0,0x05` |
+
+#### 13.2.7 ECDH Server Certificate (RSA-signed)
+
+| Cipher suite | IANA |
+|:---|:---|
+| `TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x31` |
+| `TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x32` |
+| `TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x29` |
+| `TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x2A` |
+| `TLS_ECDH_RSA_WITH_AES_128_CBC_SHA` | `0xC0,0x0E` |
+| `TLS_ECDH_RSA_WITH_AES_256_CBC_SHA` | `0xC0,0x0F` |
+
+### 13.3 TLS 1.3 Cipher Suites (SP 800-52r2 §3.3.1.2)
+
+| Cipher suite | IANA |
+|:---|:---|
+| `TLS_AES_128_GCM_SHA256` | `0x13,0x01` |
+| `TLS_AES_256_GCM_SHA384` | `0x13,0x02` |
+| `TLS_AES_128_CCM_SHA256` | `0x13,0x04` |
+| `TLS_AES_128_CCM_8_SHA256` | `0x13,0x05` |
+
+> **Compatibility:** TLS 1.3 cipher suites work with RSA and ECDSA server certificates; DSA and DH certificates are **not supported** by TLS 1.3. They may also be used with pre-shared keys per Appendix C.
+
+### 13.4 Cipher Suite Preference Ordering (SP 800-52r2 §3.3.1.1)
+
+When multiple acceptable suites are configured, NIST recommends ordering preference as:
+
+1. Prefer ephemeral over static — DHE over DH, ECDHE over ECDH (provides Perfect Forward Secrecy)
+2. Prefer GCM or CCM modes over CBC (AEAD prevents padding/timing attacks)
+3. Prefer CCM over CCM_8 (longer authentication tag)
+
+### 13.5 TLS Extensions (SP 800-52r2 §3.4)
+
+**Mandatory (server `shall` support):**
+
+| Extension | RFC | Applies to TLS |
+|:---|:---|:---|
+| Renegotiation Indication | RFC 5746 | 1.0, 1.1, 1.2 |
+| Server Name Indication (SNI) | RFC 6066 | 1.0, 1.1, 1.2, 1.3 |
+| Extended Master Secret | RFC 7627 | 1.0, 1.1, 1.2 |
+| Signature Algorithms | RFC 5246 / RFC 8446 | 1.2, 1.3 |
+| Certificate Status Request (OCSP stapling) | RFC 6066 | 1.0, 1.1, 1.2, 1.3 |
+
+**Conditional (server `shall` support if applicable):**
+
+| Extension | When applicable |
+|:---|:---|
+| Fallback Signaling Cipher Suite Value (SCSV) | Server supports versions prior to TLS 1.2 and not 1.3 |
+| Supported Groups | Server supports ephemeral ECDH cipher suites or TLS 1.3 |
+| Key Share | Server supports TLS 1.3 |
+| EC Point Format | Server supports EC cipher suites |
+| Multiple Certificate Status | OCSP available for server certificate (`should`) |
+| Trusted CA Indication | Memory-constrained clients with multi-CA issuance |
+
+**Discouraged:** Heartbeat (Heartbleed); compression (CRIME); truncated_hmac.
+
+### 13.6 Validated Cryptography (SP 800-52r2 §3.3.3)
+
+- The cryptographic module used by the server **shall** be FIPS 140-validated.
+- All algorithms in configured cipher suites **and** the random number generator **shall** be within the validation scope.
+- The RBG **shall** be validated per the SP 800-90 series (SP 800-90A/B/C).
+- All ephemeral keys **shall** offer at least 112 bits of security; all symmetric keys protecting TLS data **shall** offer at least 112 bits of security.
+- Server/client certificate signature **shall** offer at least 112 bits of security and use SHA-224 or stronger.
+
+### 13.7 RSA Key Transport (Appendix D)
+
+NIST is **deprecating** RSA key transport in TLS. RSA key transport cipher suites are listed in Appendix D for transition use only and **shall not** be used for new federal deployments.
+
+---
+
+## 14. Authority Recommendation Summary
+
+This section condenses the per-suite recommendations from §12 (BSI) and §13 (NIST) into a single comparison.
+
+### 14.1 TLS Versions
+
+| Version | IETF | NIST SP 800-52r2 | BSI TR-02102-2 v2026-01 |
+|:---|:---|:---|:---|
+| TLS 1.3 | RFC 8446 (current) | **shall** support (since 2024-01-01) | ✓ Recommended (use up to 2032+) |
+| TLS 1.2 | RFC 5246 (legacy) | **shall** support, FIPS-based suites | ✓ Recommended (**use up to 2031**) |
+| TLS 1.1 | Deprecated (RFC 8996) | **may** support — interop only | Not recommended |
+| TLS 1.0 | Deprecated (RFC 8996) | **may** support — interop only | Not recommended |
+| SSLv3 / SSLv2 | Prohibited (RFC 7568, RFC 6176) | **shall not** | Not recommended |
+
+### 14.2 TLS 1.3 Cipher Suites
+
+| IANA | Cipher suite | NIST | BSI |
+|:---|:---|:---|:---|
+| `0x13,0x01` | TLS_AES_128_GCM_SHA256 | ✓ | ✓ (use up to 2032+) |
+| `0x13,0x02` | TLS_AES_256_GCM_SHA384 | ✓ | ✓ (use up to 2032+) |
+| `0x13,0x03` | TLS_CHACHA20_POLY1305_SHA256 | not listed | not recommended |
+| `0x13,0x04` | TLS_AES_128_CCM_SHA256 | ✓ | ✓ (use up to 2032+) |
+| `0x13,0x05` | TLS_AES_128_CCM_8_SHA256 | ✓ | not recommended (8-byte tag) |
+
+### 14.3 Notable NIST/BSI Divergences
+
+| Topic | NIST stance | BSI stance |
+|:---|:---|:---|
+| ChaCha20-Poly1305 | Not in SP 800-52r2 (no FIPS 140 validation path for ChaCha20 as of 2019) | Not recommended (BSI does not endorse stream ciphers in TR-02102-1) |
+| 3DES cipher suites | **shall not** use (insufficient data limit per single key) | Not recommended (subsumed by TR-02102-1 disallowance) |
+| RSA key transport | Deprecated (Appendix D, transition only) | Not present in TR-02102-2 (covered by TR-02102-1 PKCS #1 v1.5 disallowance from 2025) |
+| RSA-PSS in TLS 1.2 | Approved when used | Recommended (TR-02102-1 §1.3, §4.2.3) |
+| Brainpool curves | Not listed in primary suites | ✓ Recommended (TLS 1.2 codes 26/27/28; TLS 1.3 codes 31/32/33) |
+| PSK without ephemeral | Acceptable per Appendix C | **Not recommended** (`TLS_PSK_*`) |
+| Key length minimum | 112 bits security | 120 bits security (3000-bit RSA/DH, 250-bit EC) |
+| TLS 1.3 PSK without DHE (`psk_ke`) | No specific stance | Recommended only **until 2026** (no PFS) |
+| Quantum migration | Not addressed (2019 publication) | Hybrid only from 2032; intends to recommend `SecP256r1MLKEM768` / `SecP384r1MLKEM1024` |
+
+### 14.4 Document Currency
+
+| Document | Edition | Date | Status |
+|:---|:---|:---|:---|
+| NIST SP 800-52 Rev 2 | Rev 2 | August 2019 | Current — no Rev 3 announced. Pre-PQC; quantum-safe migration covered separately by NIST IR 8547. |
+| BSI TR-02102-2 | v2026-01 | 2026-01-27 | Current — annual revision cycle. Next expected v2027-01 (~Jan 2027). |
