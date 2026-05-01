@@ -504,25 +504,31 @@ NIST IR 8547 defines federal Deadlines for migrating away from classical asymmet
 ## 7. Kerberos (SP 800-57 Part 3 Rev 1 §6)
 
 > **Source:** NIST SP 800-57 Part 3 Rev 1, January 2015.
-
+>
 > **Authorities:** IETF RFC 6649 (deprecate DES, RC4-HMAC-EXP), RFC 8429 (deprecate 3DES, RC4-HMAC), RFC 8009 (AES-SHA2 for Kerberos 5); NIST SP 800-57 Part 3 + SP 800-131A Rev 2; BSI TR-02102-1 v2026-01.
+>
+> **Source of truth:** [`cr-kerberos.yaml`](ae-pattern-validator/src/main/resources/registry/cr-kerberos.yaml).
 
+<!-- AUTOGEN:BEGIN kerberos -->
 | Mechanism | Algorithm | IETF | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|:---|
-| Encryption | aes128-cts-hmac-sha1-96 | ◯ MAY (RFC 3962) | ✓ Approved | ✓ Approved | RFC 3962; SHA-1 used in MAC, not signature — still acceptable |
-| Encryption | aes256-cts-hmac-sha1-96 | ◯ MAY (RFC 3962) | ✓ Approved | ✓ Approved | RFC 3962 |
-| Encryption | aes128-cts-hmac-sha256-128 | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | RFC 8009; modern Kerberos default |
-| Encryption | aes256-cts-hmac-sha384-192 | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | RFC 8009; preferred for new deployments |
-| Encryption | DES (all variants) | ❌ SHOULD NOT (RFC 6649) | 🚫 Disallowed | 🚫 Disallowed | RFC 6649; **shall not** be used |
-| Encryption | RC4-HMAC | ❌ SHOULD NOT (RFC 8429) | 🚫 Disallowed | 🚫 Disallowed | RFC 8429; replaced by AES |
-| Encryption | 3DES (des3-cbc-sha1-kd) | ❌ SHOULD NOT (RFC 8429) | 🚫 Disallowed | 🚫 Disallowed | RFC 8429; SP 800-131A Rev 2 disallowed since 2024 |
-| Integrity (MAC) | HMAC-SHA-1 | ◯ MAY (RFC 3962) | ✓ Approved | ⚠ Conditional | NIST permits HMAC-SHA-1 at 112-bit security through 2030; BSI cautious |
-| Integrity (MAC) | HMAC-SHA-256-128 | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | Used in aes128-cts-hmac-sha256-128 |
-| Integrity (MAC) | HMAC-SHA-384-192 | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | Used in aes256-cts-hmac-sha384-192 |
-| Key exchange (PKINIT) | DH ≥ 2048 bits | ◯ MAY (RFC 4556) | 🔜 Transitional | 🔜 Transitional | ≥ 112-bit security; acceptable through 2030 |
-| Key exchange (PKINIT) | DH ≥ 3072 bits | ◯ MAY (RFC 4556) | ✓ Approved | ✓ Approved | Meets BSI ≥3000-bit requirement |
-| Key transport (PKINIT) | RSA ≥ 2048 bits | ◯ MAY (RFC 4556) | 🔜 Transitional | 🔜 Transitional | RFC 4556 |
-| Password RNG | SP 800-90A DRBG | — | ✅ Recommended | ✅ Recommended | For random password generation |
+| Encryption | `krb:aes128-cts-hmac-sha1-96` | ◯ MAY (RFC 3962) | ✓ Approved | ✓ Approved | AES-128-CBC + HMAC-SHA-1 truncated to 96 bits; RFC 3962; SHA-1 used in MAC, not signature — still acceptable |
+| Encryption | `krb:aes256-cts-hmac-sha1-96` | ◯ MAY (RFC 3962) | ✓ Approved | ✓ Approved | AES-256-CBC + HMAC-SHA-1 truncated to 96 bits; RFC 3962 |
+| Encryption | `krb:aes128-cts-hmac-sha256-128` | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | AES-128-CBC + HMAC-SHA-256 truncated to 128 bits; RFC 8009 |
+| Encryption | `krb:aes256-cts-hmac-sha384-192` | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | AES-256-CBC + HMAC-SHA-384 truncated to 192 bits; RFC 8009 |
+| Encryption | `krb:des-cbc-md5` | ❌ SHOULD NOT (RFC 6649) | 🚫 Disallowed | 🚫 Disallowed | DES-CBC + MD5 (legacy); RFC 6649 deprecates DES variants; **shall not** be used |
+| Encryption | `krb:rc4-hmac` | ❌ SHOULD NOT (RFC 8429) | 🚫 Disallowed | 🚫 Disallowed | RC4 + HMAC-MD5; RFC 8429 |
+| Encryption | `krb:rc4-hmac-exp` | ❌ SHOULD NOT (RFC 6649) | 🚫 Disallowed | 🚫 Disallowed | RC4 + HMAC-MD5 (40-bit export-grade); RFC 6649 deprecates |
+| Encryption | `krb:des3-cbc-sha1-kd` | ❌ SHOULD NOT (RFC 8429) | 🚫 Disallowed | 🚫 Disallowed | 3DES-CBC + HMAC-SHA-1 with key derivation; RFC 8429 |
+| Integrity (MAC) | `krb:hmac-sha1` | ◯ MAY (RFC 3962) | ✓ Approved | ⚠ Conditional | HMAC-SHA-1 (truncated to 96 bits in Kerberos contexts); NIST permits HMAC-SHA-1 at 112-bit security through 2030; BSI cautious |
+| Integrity (MAC) | `krb:hmac-sha256-128` | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | HMAC-SHA-256 truncated to 128 bits |
+| Integrity (MAC) | `krb:hmac-sha384-192` | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | HMAC-SHA-384 truncated to 192 bits |
+| Key exchange (PKINIT) | `krb:pkinit-dh-2048` | ◯ MAY (RFC 4556) | 🔜 Transitional | 🔜 Transitional (use up to 2030) | PKINIT Diffie-Hellman ≥ 2048 bits; RFC 4556 PKINIT pre-authentication |
+| Key exchange (PKINIT) | `krb:pkinit-dh-3072` | ◯ MAY (RFC 4556) | ✓ Approved | ✓ Approved | PKINIT Diffie-Hellman ≥ 3072 bits; meets BSI ≥3000-bit requirement |
+| Key exchange (PKINIT) | `krb:pkinit-rsa-2048` | ◯ MAY (RFC 4556) | 🔜 Transitional | 🔜 Transitional (use up to 2030) | PKINIT RSA key transport ≥ 2048 bits; RFC 4556 PKINIT pre-authentication |
+<!-- AUTOGEN:END kerberos -->
+
+> **Password RNG:** SP 800-90A DRBG — recommended for random password generation (algorithm-level guidance lives in `cryptographic-algorithm-status.md` §10).
 
 ---
 
@@ -533,32 +539,42 @@ NIST IR 8547 defines federal Deadlines for migrating away from classical asymmet
 ### 8.1 Zone Data Signing Algorithms
 
 > **Authorities:** IETF RFC 8624 §3.1 (DNSSEC algorithm requirements); NIST SP 800-57 Part 3 + SP 800-131A Rev 2; BSI TR-02102-1 v2026-01.
+>
+> **Source of truth:** [`cr-dnssec.yaml`](ae-pattern-validator/src/main/resources/registry/cr-dnssec.yaml).
 
-| Suite | Authentication | Hash | IETF (signing) | NIST | BSI | Notes |
-|:---|:---|:---|:---|:---|:---|:---|
-| RSASHA256 | RSA | SHA-256 | ✅ MUST | ✓ Approved | ✓ Approved | RFC 8624 §3.1; mandatory for new signing |
-| RSASHA512 | RSA | SHA-512 | ❌ NOT RECOMMENDED | ✓ Approved | ✓ Approved | RFC 8624 §3.1: validation MUST, but signing NOT RECOMMENDED |
-| ECDSAP256SHA256 | ECDSA P-256 | SHA-256 | ✅ MUST | ✓ Approved | ✅ Recommended | RFC 8624 §3.1; recommended default for new zones |
-| ECDSAP384SHA384 | ECDSA P-384 | SHA-384 | ◯ MAY | ✅ Recommended | ✅ Recommended | RFC 8624 §3.1: signing MAY, validation RECOMMENDED |
-| ED25519 | EdDSA Curve25519 | — | ✓ RECOMMENDED | ✓ Approved | ✅ Recommended | RFC 8080; expected future default per RFC 8624 §3.1 |
-| ED448 | EdDSA Curve448 | — | ◯ MAY | ✓ Approved | ✓ Approved | RFC 8624 §3.1: signing MAY, validation RECOMMENDED |
-| RSASHA1 / RSASHA1-NSEC3-SHA1 | RSA | SHA-1 | ❌ NOT RECOMMENDED | 🚫 Disallowed | 🚫 Disallowed | RFC 8624 §3.1: validation MUST (legacy), signing NOT RECOMMENDED |
-| RSAMD5 | RSA | MD5 | 🚫 MUST NOT | 🚫 Disallowed | 🚫 Disallowed | RFC 8624 §3.1 |
-| DSA / DSA-NSEC3-SHA1 | DSA | SHA-1 | 🚫 MUST NOT | 🚫 Disallowed | 🚫 Disallowed | RFC 8624 §3.1 |
+<!-- AUTOGEN:BEGIN dnssec-zone-signing -->
+| Algorithm | Description | IETF | NIST | BSI | Notes |
+|:---|:---|:---|:---|:---|:---|
+| `dnssec:RSASHA256` | RSA + SHA-256 | ✅ MUST (RFC 8624 §3.1) | ✓ Approved | ✓ Approved | RFC 8624 §3.1; mandatory for new signing |
+| `dnssec:RSASHA512` | RSA + SHA-512 | ❌ SHOULD NOT (RFC 8624 §3.1) | ✓ Approved | ✓ Approved | RFC 8624 §3.1: validation MUST, but signing NOT RECOMMENDED |
+| `dnssec:ECDSAP256SHA256` | ECDSA P-256 + SHA-256 | ✅ MUST (RFC 8624 §3.1) | ✓ Approved | ✅ Recommended | recommended default for new zones |
+| `dnssec:ECDSAP384SHA384` | ECDSA P-384 + SHA-384 | ◯ MAY (RFC 8624 §3.1) | ✅ Recommended | ✅ Recommended | RFC 8624 §3.1: signing MAY, validation RECOMMENDED |
+| `dnssec:ED25519` | EdDSA Curve25519 | ✓ SHOULD (RFC 8624 §3.1; RFC 8080) | ✓ Approved | ✅ Recommended | expected future default per RFC 8624 §3.1 |
+| `dnssec:ED448` | EdDSA Curve448 | ◯ MAY (RFC 8624 §3.1; RFC 8080) | ✓ Approved | ✓ Approved | RFC 8624 §3.1: signing MAY, validation RECOMMENDED |
+| `dnssec:RSASHA1` | RSA + SHA-1 (legacy) | ❌ SHOULD NOT (RFC 8624 §3.1) | 🚫 Disallowed | 🚫 Disallowed | RFC 8624 §3.1: validation MUST (legacy), signing NOT RECOMMENDED |
+| `dnssec:RSASHA1-NSEC3-SHA1` | RSA + SHA-1 with NSEC3 hash (legacy) | ❌ SHOULD NOT (RFC 8624 §3.1) | 🚫 Disallowed | 🚫 Disallowed | NSEC3 (RFC 5155) variant of RSASHA1 |
+| `dnssec:RSAMD5` | RSA + MD5 | 🚫 MUST NOT (RFC 8624 §3.1) | 🚫 Disallowed | 🚫 Disallowed | RFC 8624 §3.1 |
+| `dnssec:DSA` | DSA + SHA-1 | 🚫 MUST NOT (RFC 8624 §3.1) | 🚫 Disallowed | 🚫 Disallowed | RFC 8624 §3.1 |
+| `dnssec:DSA-NSEC3-SHA1` | DSA + SHA-1 with NSEC3 hash | 🚫 MUST NOT (RFC 8624 §3.1) | 🚫 Disallowed | 🚫 Disallowed | NSEC3 variant of DSA |
+<!-- AUTOGEN:END dnssec-zone-signing -->
 
 ### 8.2 TSIG Message Authentication
 
 > **Authorities:** IETF RFC 8945 (TSIG, replaces RFC 2845); NIST SP 800-57 Part 3 + SP 800-131A Rev 2; BSI TR-02102-1 v2026-01. RFC 8624 does not address TSIG algorithms.
+>
+> **Source of truth:** [`cr-dnssec.yaml`](ae-pattern-validator/src/main/resources/registry/cr-dnssec.yaml).
 
-| Suite | IETF | NIST | BSI | Notes |
+<!-- AUTOGEN:BEGIN dnssec-tsig -->
+| Algorithm | IETF | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|
-| HMAC-SHA-1 | ✅ MUST (RFC 8945) | ✓ Approved | ⚠ Conditional | RFC 8945 §6 mandatory for interop; HMAC-SHA-1 still acceptable through 2030 |
-| HMAC-SHA-224 | ◯ MAY (RFC 8945) | ✓ Approved | ✓ Approved | |
-| HMAC-SHA-256 | ✅ MUST (RFC 8945) | ✅ Recommended | ✅ Recommended | RFC 8945 §6 mandatory |
-| HMAC-SHA-384 | ◯ MAY (RFC 8945) | ✓ Approved | ✅ Recommended | |
-| HMAC-SHA-512 | ◯ MAY (RFC 8945) | ✓ Approved | ✅ Recommended | |
-| GSS-TSIG | ◯ MAY (RFC 3645) | ✓ Approved | ✓ Approved | Generic Security Service algorithm |
-| HMAC-MD5 | ◯ MAY (RFC 8945) | 🚫 Disallowed | 🚫 Disallowed | RFC 8945 retains for backward compat; **shall not** be used per NIST/BSI |
+| `dnssec-tsig:hmac-sha1` | ✅ MUST (RFC 8945 §6) | ✓ Approved | ⚠ Conditional | mandatory for interop; HMAC-SHA-1 still acceptable through 2030 |
+| `dnssec-tsig:hmac-sha224` | ◯ MAY (RFC 8945 §6) | ✓ Approved | ✓ Approved |  |
+| `dnssec-tsig:hmac-sha256` | ✅ MUST (RFC 8945 §6) | ✅ Recommended | ✅ Recommended | RFC 8945 §6 mandatory |
+| `dnssec-tsig:hmac-sha384` | ◯ MAY (RFC 8945 §6) | ✓ Approved | ✅ Recommended |  |
+| `dnssec-tsig:hmac-sha512` | ◯ MAY (RFC 8945 §6) | ✓ Approved | ✅ Recommended |  |
+| `dnssec-tsig:gss-tsig` | ◯ MAY (RFC 3645) | ✓ Approved | ✓ Approved |  |
+| `dnssec-tsig:hmac-md5` | ◯ MAY (RFC 8945 §6) | 🚫 Disallowed | 🚫 Disallowed | RFC 8945 retains for backward compat; **shall not** be used per NIST/BSI |
+<!-- AUTOGEN:END dnssec-tsig -->
 
 ### 8.3 Key Management
 

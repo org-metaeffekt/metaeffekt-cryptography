@@ -42,6 +42,8 @@ REGISTRY_DIR = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources"
 TLS_YAML = REGISTRY_DIR / "cr-tls.yaml"
 SSH_YAML = REGISTRY_DIR / "cr-ssh.yaml"
 IPSEC_YAML = REGISTRY_DIR / "cr-ipsec.yaml"
+KERBEROS_YAML = REGISTRY_DIR / "cr-kerberos.yaml"
+DNSSEC_YAML = REGISTRY_DIR / "cr-dnssec.yaml"
 
 PROTOCOL_STATUS_MD = REPO_ROOT / "cryptographic-protocol-status.md"
 TLS_CIPHER_SUITES_MD = REPO_ROOT / "cryptographic-tls-cipher-suites.md"
@@ -212,6 +214,52 @@ def render_ipsec_esp_table(entries: list) -> str:
 
 def render_ipsec_auth_table(entries: list) -> str:
     rows = by_subtype(entries, "ipsecIntegrity")
+    lines = ["| Algorithm | IETF | NIST | BSI | Notes |",
+             "|:---|:---|:---|:---|:---|"]
+    for e in rows:
+        notes_str = "; ".join(e.get("remarks", []))
+        lines.append(
+            f"| `{e['id']}` | {render_ietf(e)} | {render_nist(e)} | {render_bsi(e)} | {notes_str} |"
+        )
+    return "\n".join(lines)
+
+
+def render_kerberos_table(entries: list) -> str:
+    """Single Kerberos table covering enc-types, integrity, and PKINIT KEX —
+    a Mechanism column distinguishes the three sub-types."""
+    sub_label = {
+        "krbEncType":   "Encryption",
+        "krbIntegrity": "Integrity (MAC)",
+        "krbKex":       "Key exchange (PKINIT)",
+    }
+    lines = ["| Mechanism | Algorithm | IETF | NIST | BSI | Notes |",
+             "|:---|:---|:---|:---|:---|:---|"]
+    for e in entries:
+        mech = sub_label.get(e.get("subType"), e.get("subType", ""))
+        notes_str = entry_description(e)
+        if e.get("remarks"):
+            extras = "; ".join(e["remarks"])
+            notes_str = f"{notes_str}; {extras}" if notes_str else extras
+        lines.append(
+            f"| {mech} | `{e['id']}` | {render_ietf(e)} | {render_nist(e)} | {render_bsi(e)} | {notes_str} |"
+        )
+    return "\n".join(lines)
+
+
+def render_dnssec_zone_table(entries: list) -> str:
+    rows = by_subtype(entries, "dnssecAlgorithm")
+    lines = ["| Algorithm | Description | IETF | NIST | BSI | Notes |",
+             "|:---|:---|:---|:---|:---|:---|"]
+    for e in rows:
+        notes_str = "; ".join(e.get("remarks", []))
+        lines.append(
+            f"| `{e['id']}` | {entry_description(e)} | {render_ietf(e)} | {render_nist(e)} | {render_bsi(e)} | {notes_str} |"
+        )
+    return "\n".join(lines)
+
+
+def render_dnssec_tsig_table(entries: list) -> str:
+    rows = by_subtype(entries, "dnssecTsig")
     lines = ["| Algorithm | IETF | NIST | BSI | Notes |",
              "|:---|:---|:---|:---|:---|"]
     for e in rows:
@@ -435,6 +483,8 @@ def main():
     tls = load_entries(TLS_YAML)
     ssh = load_entries(SSH_YAML)
     ipsec = load_entries(IPSEC_YAML)
+    kerberos = load_entries(KERBEROS_YAML)
+    dnssec = load_entries(DNSSEC_YAML)
 
     sections_protocol = {
         "ssh-kex":                   render_ssh_table(ssh, "sshKex"),
@@ -444,6 +494,9 @@ def main():
         "ipsec-dh-groups":           render_ipsec_dh_table(ipsec),
         "ipsec-esp-encryption":      render_ipsec_esp_table(ipsec),
         "ipsec-integrity":           render_ipsec_auth_table(ipsec),
+        "kerberos":                  render_kerberos_table(kerberos),
+        "dnssec-zone-signing":       render_dnssec_zone_table(dnssec),
+        "dnssec-tsig":               render_dnssec_tsig_table(dnssec),
     }
 
     sections_tls = {

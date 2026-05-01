@@ -36,6 +36,8 @@ REPO_ROOT = SCRIPT_DIR.parent
 OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-tls.yaml"
 SSH_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-ssh.yaml"
 IPSEC_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-ipsec.yaml"
+KERBEROS_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-kerberos.yaml"
+DNSSEC_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-dnssec.yaml"
 DEFAULT_CACHE_DIR = SCRIPT_DIR / ".iana-cache"
 
 # ── IANA CSV URLs ──────────────────────────────────────────────────────────────
@@ -596,6 +598,288 @@ IPSEC_ENTRIES = {
         "nist": ("disallowed", "MD5 broken — disallowed"),
         "bsi":  ("disallowed", None, "§3.4"),
         "remarks": ["MD5 collision attacks; truncated to 96 bits"],
+    },
+}
+
+
+# ── Kerberos overlay (NIST SP 800-57 Part 3 Rev 1 §6) ────────────────────────
+#
+# Sources: NIST SP 800-57 Part 3 Rev 1 (Jan 2015); IETF RFC 6649 (deprecate
+# DES, RC4-HMAC-EXP), RFC 8429 (deprecate 3DES, RC4-HMAC), RFC 8009
+# (AES-SHA2 for Kerberos 5), RFC 3962 (AES for Kerberos 5), RFC 4556 (PKINIT);
+# BSI TR-02102-1 v2026-01.
+
+_NIST_KERB_DOC = "SP 800-57 Part 3 Rev 1 §6"
+_BSI_KERB_DOC = "TR-02102-1 v2026-01"
+
+KERBEROS_ENTRIES = {
+    # Encryption types
+    "krb:aes128-cts-hmac-sha1-96": {
+        "subType": "krbEncType", "components": ["AES-128-CBC", "HMAC-SHA-1"],
+        "description": "AES-128-CBC + HMAC-SHA-1 truncated to 96 bits",
+        "ietf": ("MAY",       "RFC 3962"),
+        "nist": ("approved",  "AES-128 — approved"),
+        "bsi":  ("approved",  None, "§3.3"),
+        "remarks": ["RFC 3962; SHA-1 used in MAC, not signature — still acceptable"],
+    },
+    "krb:aes256-cts-hmac-sha1-96": {
+        "subType": "krbEncType", "components": ["AES-256-CBC", "HMAC-SHA-1"],
+        "description": "AES-256-CBC + HMAC-SHA-1 truncated to 96 bits",
+        "ietf": ("MAY",       "RFC 3962"),
+        "nist": ("approved",  "AES-256 — approved"),
+        "bsi":  ("approved",  None, "§3.3"),
+        "remarks": ["RFC 3962"],
+    },
+    "krb:aes128-cts-hmac-sha256-128": {
+        "subType": "krbEncType", "components": ["AES-128-CBC", "HMAC-SHA-256"],
+        "description": "AES-128-CBC + HMAC-SHA-256 truncated to 128 bits",
+        "ietf": ("SHOULD",     "RFC 8009"),
+        "nist": ("recommended", "modern Kerberos default"),
+        "bsi":  ("recommended", None, "§3.3"),
+        "remarks": ["RFC 8009"],
+    },
+    "krb:aes256-cts-hmac-sha384-192": {
+        "subType": "krbEncType", "components": ["AES-256-CBC", "HMAC-SHA-384"],
+        "description": "AES-256-CBC + HMAC-SHA-384 truncated to 192 bits",
+        "ietf": ("SHOULD",     "RFC 8009"),
+        "nist": ("recommended", "preferred for new deployments"),
+        "bsi":  ("recommended", None, "§3.3"),
+        "remarks": ["RFC 8009"],
+    },
+    "krb:des-cbc-md5": {
+        "subType": "krbEncType", "components": ["DES-CBC", "MD5"],
+        "description": "DES-CBC + MD5 (legacy)",
+        "ietf": ("SHOULD-NOT", "RFC 6649"),
+        "nist": ("disallowed",  "DES — broken; disallowed"),
+        "bsi":  ("disallowed",  None, "broken"),
+        "remarks": ["RFC 6649 deprecates DES variants; **shall not** be used"],
+    },
+    "krb:rc4-hmac": {
+        "subType": "krbEncType", "components": ["RC4", "HMAC-MD5"],
+        "description": "RC4 + HMAC-MD5",
+        "ietf": ("SHOULD-NOT", "RFC 8429"),
+        "nist": ("disallowed",  "RC4 broken; replaced by AES"),
+        "bsi":  ("disallowed",  None, "RC4 broken"),
+        "remarks": ["RFC 8429"],
+    },
+    "krb:rc4-hmac-exp": {
+        "subType": "krbEncType", "components": ["RC4", "HMAC-MD5"],
+        "description": "RC4 + HMAC-MD5 (40-bit export-grade)",
+        "ietf": ("SHOULD-NOT", "RFC 6649"),
+        "nist": ("disallowed",  "40-bit export key; broken"),
+        "bsi":  ("disallowed",  None, "40-bit export key"),
+        "remarks": ["RFC 6649 deprecates"],
+    },
+    "krb:des3-cbc-sha1-kd": {
+        "subType": "krbEncType", "components": ["3DES-CBC", "HMAC-SHA-1"],
+        "description": "3DES-CBC + HMAC-SHA-1 with key derivation",
+        "ietf": ("SHOULD-NOT", "RFC 8429"),
+        "nist": ("disallowed",  "3DES disallowed for encryption since 2024 (SP 800-131A Rev 2)"),
+        "bsi":  ("disallowed",  None, "3DES disallowed"),
+        "remarks": ["RFC 8429"],
+    },
+    # Integrity / MAC
+    "krb:hmac-sha1": {
+        "subType": "krbIntegrity", "components": ["HMAC-SHA-1"],
+        "description": "HMAC-SHA-1 (truncated to 96 bits in Kerberos contexts)",
+        "ietf": ("MAY",         "RFC 3962"),
+        "nist": ("approved",    "HMAC-SHA-1 — 112-bit security; transitional through 2030"),
+        "bsi":  ("conditional", None, "transitional"),
+        "remarks": ["NIST permits HMAC-SHA-1 at 112-bit security through 2030; BSI cautious"],
+    },
+    "krb:hmac-sha256-128": {
+        "subType": "krbIntegrity", "components": ["HMAC-SHA-256"],
+        "description": "HMAC-SHA-256 truncated to 128 bits",
+        "ietf": ("SHOULD",      "RFC 8009"),
+        "nist": ("recommended", "used in aes128-cts-hmac-sha256-128"),
+        "bsi":  ("recommended", None, "§3.3"),
+    },
+    "krb:hmac-sha384-192": {
+        "subType": "krbIntegrity", "components": ["HMAC-SHA-384"],
+        "description": "HMAC-SHA-384 truncated to 192 bits",
+        "ietf": ("SHOULD",      "RFC 8009"),
+        "nist": ("recommended", "used in aes256-cts-hmac-sha384-192"),
+        "bsi":  ("recommended", None, "§3.3"),
+    },
+    # PKINIT key exchange / transport
+    "krb:pkinit-dh-2048": {
+        "subType": "krbKex", "components": ["FFDH-ffdhe2048"],
+        "description": "PKINIT Diffie-Hellman ≥ 2048 bits",
+        "ietf": ("MAY",          "RFC 4556"),
+        "nist": ("transitional", "112-bit security; transitional through 2030"),
+        "bsi":  ("transitional", "2030", "§2.3.3"),
+        "remarks": ["RFC 4556 PKINIT pre-authentication"],
+    },
+    "krb:pkinit-dh-3072": {
+        "subType": "krbKex", "components": ["FFDH-ffdhe3072"],
+        "description": "PKINIT Diffie-Hellman ≥ 3072 bits",
+        "ietf": ("MAY",          "RFC 4556"),
+        "nist": ("approved",     "128-bit security"),
+        "bsi":  ("approved",     None, "§2.3.3"),
+        "remarks": ["meets BSI ≥3000-bit requirement"],
+    },
+    "krb:pkinit-rsa-2048": {
+        "subType": "krbKex", "components": ["RSA-2048"],
+        "description": "PKINIT RSA key transport ≥ 2048 bits",
+        "ietf": ("MAY",          "RFC 4556"),
+        "nist": ("transitional", "112-bit security; transitional through 2030"),
+        "bsi":  ("transitional", "2030", "§2.3.2"),
+        "remarks": ["RFC 4556 PKINIT pre-authentication"],
+    },
+}
+
+
+# ── DNSSEC overlay (NIST SP 800-57 Part 3 Rev 1 §8; RFC 8624; RFC 8945) ──────
+#
+# Sources: NIST SP 800-57 Part 3 Rev 1 (Jan 2015); IETF RFC 8624 (DNSSEC algorithm
+# requirements), RFC 8945 (TSIG), RFC 5155 (NSEC3); BSI TR-02102-1 v2026-01.
+
+_NIST_DNS_DOC = "SP 800-57 Part 3 Rev 1 §8"
+_BSI_DNS_DOC = "TR-02102-1 v2026-01"
+
+DNSSEC_ENTRIES = {
+    # Zone signing algorithms (RFC 8624 §3.1)
+    "dnssec:RSASHA256": {
+        "subType": "dnssecAlgorithm", "components": ["RSASSA-PKCS1-v1_5-SHA-256"],
+        "description": "RSA + SHA-256",
+        "ietf": ("MUST",      "RFC 8624 §3.1"),
+        "nist": ("approved",  "RSA-SHA-256 — approved"),
+        "bsi":  ("approved",  None, "§5.3"),
+        "remarks": ["RFC 8624 §3.1; mandatory for new signing"],
+    },
+    "dnssec:RSASHA512": {
+        "subType": "dnssecAlgorithm", "components": ["RSASSA-PKCS1-v1_5-SHA-512"],
+        "description": "RSA + SHA-512",
+        "ietf": ("SHOULD-NOT", "RFC 8624 §3.1"),
+        "nist": ("approved",   "RSA-SHA-512 — approved (validation MUST)"),
+        "bsi":  ("approved",   None, "§5.3"),
+        "remarks": ["RFC 8624 §3.1: validation MUST, but signing NOT RECOMMENDED"],
+    },
+    "dnssec:ECDSAP256SHA256": {
+        "subType": "dnssecAlgorithm", "components": ["ECDSA-P-256-SHA-256"],
+        "description": "ECDSA P-256 + SHA-256",
+        "ietf": ("MUST",       "RFC 8624 §3.1"),
+        "nist": ("approved",   "ECDSA P-256/SHA-256 — approved"),
+        "bsi":  ("recommended", None, "§5.3"),
+        "remarks": ["recommended default for new zones"],
+    },
+    "dnssec:ECDSAP384SHA384": {
+        "subType": "dnssecAlgorithm", "components": ["ECDSA-P-384-SHA-384"],
+        "description": "ECDSA P-384 + SHA-384",
+        "ietf": ("MAY",        "RFC 8624 §3.1"),
+        "nist": ("recommended", "ECDSA P-384/SHA-384 — approved"),
+        "bsi":  ("recommended", None, "§5.3"),
+        "remarks": ["RFC 8624 §3.1: signing MAY, validation RECOMMENDED"],
+    },
+    "dnssec:ED25519": {
+        "subType": "dnssecAlgorithm", "components": ["EdDSA-Ed25519"],
+        "description": "EdDSA Curve25519",
+        "ietf": ("SHOULD",     "RFC 8624 §3.1; RFC 8080"),
+        "nist": ("approved",   "Ed25519 — approved (FIPS 186-5)"),
+        "bsi":  ("recommended", None, "§5.4.4"),
+        "remarks": ["expected future default per RFC 8624 §3.1"],
+    },
+    "dnssec:ED448": {
+        "subType": "dnssecAlgorithm", "components": ["EdDSA-Ed448"],
+        "description": "EdDSA Curve448",
+        "ietf": ("MAY",        "RFC 8624 §3.1; RFC 8080"),
+        "nist": ("approved",   "Ed448 — approved (FIPS 186-5)"),
+        "bsi":  ("approved",   None, "§5.4.4"),
+        "remarks": ["RFC 8624 §3.1: signing MAY, validation RECOMMENDED"],
+    },
+    "dnssec:RSASHA1": {
+        "subType": "dnssecAlgorithm", "components": ["RSASSA-PKCS1-v1_5-SHA-1"],
+        "description": "RSA + SHA-1 (legacy)",
+        "ietf": ("SHOULD-NOT", "RFC 8624 §3.1"),
+        "nist": ("disallowed",  "SHA-1 disallowed for digital signatures"),
+        "bsi":  ("disallowed",  None, "SHA-1 disallowed"),
+        "remarks": ["RFC 8624 §3.1: validation MUST (legacy), signing NOT RECOMMENDED"],
+    },
+    "dnssec:RSASHA1-NSEC3-SHA1": {
+        "subType": "dnssecAlgorithm", "components": ["RSASSA-PKCS1-v1_5-SHA-1"],
+        "description": "RSA + SHA-1 with NSEC3 hash (legacy)",
+        "ietf": ("SHOULD-NOT", "RFC 8624 §3.1"),
+        "nist": ("disallowed",  "SHA-1 disallowed for digital signatures"),
+        "bsi":  ("disallowed",  None, "SHA-1 disallowed"),
+        "remarks": ["NSEC3 (RFC 5155) variant of RSASHA1"],
+    },
+    "dnssec:RSAMD5": {
+        "subType": "dnssecAlgorithm", "components": ["RSASSA-PKCS1-v1_5-MD5"],
+        "description": "RSA + MD5",
+        "ietf": ("MUST-NOT",   "RFC 8624 §3.1"),
+        "nist": ("disallowed",  "MD5 broken — disallowed"),
+        "bsi":  ("disallowed",  None, "MD5 broken"),
+        "remarks": ["RFC 8624 §3.1"],
+    },
+    "dnssec:DSA": {
+        "subType": "dnssecAlgorithm", "components": ["DSA", "SHA-1"],
+        "description": "DSA + SHA-1",
+        "ietf": ("MUST-NOT",   "RFC 8624 §3.1"),
+        "nist": ("disallowed",  "DSA disallowed for new signatures (FIPS 186-5)"),
+        "bsi":  ("disallowed",  None, "DSA disallowed"),
+        "remarks": ["RFC 8624 §3.1"],
+    },
+    "dnssec:DSA-NSEC3-SHA1": {
+        "subType": "dnssecAlgorithm", "components": ["DSA", "SHA-1"],
+        "description": "DSA + SHA-1 with NSEC3 hash",
+        "ietf": ("MUST-NOT",   "RFC 8624 §3.1"),
+        "nist": ("disallowed",  "DSA disallowed"),
+        "bsi":  ("disallowed",  None, "DSA disallowed"),
+        "remarks": ["NSEC3 variant of DSA"],
+    },
+
+    # TSIG message authentication (RFC 8945)
+    "dnssec-tsig:hmac-sha1": {
+        "subType": "dnssecTsig", "components": ["HMAC-SHA-1"],
+        "description": "HMAC-SHA-1",
+        "ietf": ("MUST",        "RFC 8945 §6"),
+        "nist": ("approved",    "HMAC-SHA-1 — transitional through 2030"),
+        "bsi":  ("conditional", None, "§5.5"),
+        "remarks": ["mandatory for interop; HMAC-SHA-1 still acceptable through 2030"],
+    },
+    "dnssec-tsig:hmac-sha224": {
+        "subType": "dnssecTsig", "components": ["HMAC-SHA-224"],
+        "description": "HMAC-SHA-224",
+        "ietf": ("MAY",         "RFC 8945 §6"),
+        "nist": ("approved",    "HMAC-SHA-224"),
+        "bsi":  ("approved",    None, "§5.5"),
+    },
+    "dnssec-tsig:hmac-sha256": {
+        "subType": "dnssecTsig", "components": ["HMAC-SHA-256"],
+        "description": "HMAC-SHA-256",
+        "ietf": ("MUST",        "RFC 8945 §6"),
+        "nist": ("recommended", "HMAC-SHA-256"),
+        "bsi":  ("recommended", None, "§5.5"),
+        "remarks": ["RFC 8945 §6 mandatory"],
+    },
+    "dnssec-tsig:hmac-sha384": {
+        "subType": "dnssecTsig", "components": ["HMAC-SHA-384"],
+        "description": "HMAC-SHA-384",
+        "ietf": ("MAY",         "RFC 8945 §6"),
+        "nist": ("approved",    "HMAC-SHA-384"),
+        "bsi":  ("recommended", None, "§5.5"),
+    },
+    "dnssec-tsig:hmac-sha512": {
+        "subType": "dnssecTsig", "components": ["HMAC-SHA-512"],
+        "description": "HMAC-SHA-512",
+        "ietf": ("MAY",         "RFC 8945 §6"),
+        "nist": ("approved",    "HMAC-SHA-512"),
+        "bsi":  ("recommended", None, "§5.5"),
+    },
+    "dnssec-tsig:gss-tsig": {
+        "subType": "dnssecTsig", "components": ["GSS-API"],
+        "description": "GSS-TSIG (Generic Security Service)",
+        "ietf": ("MAY",         "RFC 3645"),
+        "nist": ("approved",    "GSS-API mediated"),
+        "bsi":  ("approved",    None, "§5.5"),
+    },
+    "dnssec-tsig:hmac-md5": {
+        "subType": "dnssecTsig", "components": ["HMAC-MD5"],
+        "description": "HMAC-MD5",
+        "ietf": ("MAY",         "RFC 8945 §6"),
+        "nist": ("disallowed",  "MD5 broken"),
+        "bsi":  ("disallowed",  None, "MD5 broken"),
+        "remarks": ["RFC 8945 retains for backward compat; **shall not** be used per NIST/BSI"],
     },
 }
 
@@ -1746,6 +2030,180 @@ def format_ipsec_entry(entry: dict) -> str:
     return "\n".join(lines)
 
 
+def _build_overlay_entry(name: str, spec: dict, protocol_label: str) -> dict:
+    """Generic overlay-entry builder used by Kerberos and DNSSEC generators.
+    Mirrors the IPsec entry shape: ietf / ietfIkev2 / nist / bsi / remarks /
+    requires / description.
+    """
+    entry = {
+        "id": name,
+        "subType": spec["subType"],
+        "components": list(spec["components"]),
+    }
+    if spec.get("description"):
+        entry["description"] = spec["description"]
+    ietf = spec.get("ietf")
+    if ietf:
+        level, source = ietf
+        entry["ietf"] = {"source": source}
+        if level:
+            entry["ietf"]["level"] = level
+    nist = spec.get("nist")
+    if nist:
+        status, note = nist
+        entry["nist"] = {
+            "source": _nist_doc_for(protocol_label),
+            "status": status,
+            "note": note,
+        }
+    bsi = spec.get("bsi")
+    if bsi:
+        status, use_up_to, section = bsi
+        entry["bsi"] = {
+            "source": f"{_bsi_doc_for(protocol_label)} {section}" if section else _bsi_doc_for(protocol_label),
+            "status": status,
+        }
+        if use_up_to:
+            entry["bsi"]["useUpTo"] = use_up_to
+        if spec.get("requires"):
+            entry["bsi"]["requires"] = list(spec["requires"])
+    remarks = spec.get("remarks")
+    if remarks:
+        entry["remarks"] = list(remarks)
+    return entry
+
+
+def _nist_doc_for(protocol_label: str) -> str:
+    return {
+        "Kerberos": _NIST_KERB_DOC,
+        "DNSSEC":   _NIST_DNS_DOC,
+    }.get(protocol_label, "")
+
+
+def _bsi_doc_for(protocol_label: str) -> str:
+    return {
+        "Kerberos": _BSI_KERB_DOC,
+        "DNSSEC":   _BSI_DNS_DOC,
+    }.get(protocol_label, "")
+
+
+def _format_overlay_entry(entry: dict, protocol: str) -> str:
+    """Common formatter for Kerberos / DNSSEC entries (same shape as IPsec)."""
+    lines = []
+    lines.append(f'  - id: {yaml_str(entry["id"])}')
+    lines.append(f'    type: "composite"')
+    lines.append(f'    subType: {yaml_str(entry["subType"])}')
+    lines.append(f'    protocol: {yaml_str(protocol)}')
+    if entry.get("description"):
+        lines.append(f'    description: {yaml_str(entry["description"])}')
+
+    ietf = entry.get("ietf")
+    if ietf:
+        lines.append(f'    ietf:')
+        lines.append(f'      source: {yaml_str(ietf["source"])}')
+        if "level" in ietf:
+            lines.append(f'      level: {yaml_str(ietf["level"])}')
+
+    nist = entry.get("nist")
+    if nist:
+        lines.append(f'    nist:')
+        lines.append(f'      source: {yaml_str(nist["source"])}')
+        lines.append(f'      status: {yaml_str(nist["status"])}')
+        if "note" in nist:
+            lines.append(f'      note: {yaml_str(nist["note"])}')
+
+    bsi = entry.get("bsi")
+    if bsi:
+        lines.append(f'    bsi:')
+        lines.append(f'      source: {yaml_str(bsi["source"])}')
+        lines.append(f'      status: {yaml_str(bsi["status"])}')
+        if "useUpTo" in bsi:
+            lines.append(f'      useUpTo: {yaml_str(bsi["useUpTo"])}')
+        if bsi.get("requires"):
+            lines.append(f'      requires:')
+            for req in bsi["requires"]:
+                lines.append(f'        - {yaml_str(req)}')
+
+    remarks = entry.get("remarks", [])
+    if remarks:
+        lines.append(f'    remarks:')
+        for r in remarks:
+            lines.append(f'      - {yaml_str(r)}')
+
+    components = entry.get("components", [])
+    comp_str = ", ".join(yaml_str(c) for c in components)
+    lines.append(f'    components: [{comp_str}]')
+
+    return "\n".join(lines)
+
+
+def generate_kerberos_entries() -> list[dict]:
+    return [_build_overlay_entry(name, spec, "Kerberos")
+            for name, spec in KERBEROS_ENTRIES.items()]
+
+
+def generate_dnssec_entries() -> list[dict]:
+    return [_build_overlay_entry(name, spec, "DNSSEC")
+            for name, spec in DNSSEC_ENTRIES.items()]
+
+
+def generate_kerberos_yaml(entries: list[dict]) -> str:
+    parts = [
+        "# Kerberos protocol composites",
+        "#",
+        "# Auto-generated from hardcoded lookup tables with IETF, NIST, and BSI overlays.",
+        "# Source of truth for per-algorithm Kerberos recommendations from:",
+        "#   - IETF  RFC 6649 (deprecate DES, RC4-HMAC-EXP), RFC 8429 (deprecate 3DES,",
+        "#         RC4-HMAC), RFC 8009 (AES-SHA2 for Kerberos 5), RFC 3962 (AES for",
+        "#         Kerberos 5), RFC 4556 (PKINIT)",
+        "#   - NIST  SP 800-57 Part 3 Rev 1 §6 + SP 800-131A Rev 2",
+        "#   - BSI   TR-02102-1 v2026-01",
+        "#",
+        "# Do not edit manually; regenerate with:",
+        "#   python scripts/generate_iana_composites.py",
+        "#",
+        "# Authority overlay table lives in scripts/generate_iana_composites.py",
+        "# (KERBEROS_ENTRIES). Update that table when the upstream documents are revised.",
+        "#",
+        "# Part of the ae-pattern-validator validation registry.",
+        'version: "2.0"',
+        "",
+        "entries:",
+    ]
+    for entry in entries:
+        parts.append("")
+        parts.append(_format_overlay_entry(entry, "Kerberos"))
+    return "\n".join(parts) + "\n"
+
+
+def generate_dnssec_yaml(entries: list[dict]) -> str:
+    parts = [
+        "# DNSSEC protocol composites: zone-signing algorithms and TSIG message authentication",
+        "#",
+        "# Auto-generated from hardcoded lookup tables with IETF, NIST, and BSI overlays.",
+        "# Source of truth for per-algorithm DNSSEC recommendations from:",
+        "#   - IETF  RFC 8624 (DNSSEC algorithm requirements), RFC 8945 (TSIG),",
+        "#         RFC 8080 (Ed25519/Ed448 in DNSSEC), RFC 5155 (NSEC3)",
+        "#   - NIST  SP 800-57 Part 3 Rev 1 §8 + SP 800-131A Rev 2",
+        "#   - BSI   TR-02102-1 v2026-01",
+        "#",
+        "# Do not edit manually; regenerate with:",
+        "#   python scripts/generate_iana_composites.py",
+        "#",
+        "# Authority overlay table lives in scripts/generate_iana_composites.py",
+        "# (DNSSEC_ENTRIES). Update that table when the upstream documents are revised.",
+        "#",
+        "# Part of the ae-pattern-validator validation registry.",
+        'version: "2.0"',
+        "",
+        "entries:",
+    ]
+    for entry in entries:
+        parts.append("")
+        parts.append(_format_overlay_entry(entry, "DNSSEC"))
+    return "\n".join(parts) + "\n"
+
+
 def generate_ipsec_yaml(entries: list[dict]) -> str:
     """Generate the full IPsec YAML document."""
     parts = []
@@ -1830,6 +2288,18 @@ def main():
     ipsec_yaml_text = generate_ipsec_yaml(ipsec_entries)
     print(f"  Generated: {len(ipsec_entries)} entries")
 
+    # Generate Kerberos composites
+    print("\nProcessing Kerberos algorithms...")
+    kerberos_entries = generate_kerberos_entries()
+    kerberos_yaml_text = generate_kerberos_yaml(kerberos_entries)
+    print(f"  Generated: {len(kerberos_entries)} entries")
+
+    # Generate DNSSEC composites
+    print("\nProcessing DNSSEC algorithms...")
+    dnssec_entries = generate_dnssec_entries()
+    dnssec_yaml_text = generate_dnssec_yaml(dnssec_entries)
+    print(f"  Generated: {len(dnssec_entries)} entries")
+
     print(f"\n=== Summary ===")
     print(f"  TLS cipher suites:    {len(cs_entries)}")
     print(f"  TLS supported groups: {len(sg_entries)}")
@@ -1838,6 +2308,8 @@ def main():
     print(f"  TLS decomp failures:  {len(cs_failures) + len(sg_failures) + len(ss_failures)}")
     print(f"  SSH entries:          {len(ssh_entries)}")
     print(f"  IPsec entries:        {len(ipsec_entries)}")
+    print(f"  Kerberos entries:     {len(kerberos_entries)}")
+    print(f"  DNSSEC entries:       {len(dnssec_entries)}")
 
     if args.check:
         check_ok = True
@@ -1845,6 +2317,8 @@ def main():
             (OUTPUT_PATH, yaml_text, "cr-tls.yaml"),
             (SSH_OUTPUT_PATH, ssh_yaml_text, "cr-ssh.yaml"),
             (IPSEC_OUTPUT_PATH, ipsec_yaml_text, "cr-ipsec.yaml"),
+            (KERBEROS_OUTPUT_PATH, kerberos_yaml_text, "cr-kerberos.yaml"),
+            (DNSSEC_OUTPUT_PATH, dnssec_yaml_text, "cr-dnssec.yaml"),
         ]:
             if not path.exists():
                 print(f"\nERROR: {path} does not exist for comparison", file=sys.stderr)
@@ -1866,6 +2340,10 @@ def main():
         print(f"  Written to {SSH_OUTPUT_PATH}")
         IPSEC_OUTPUT_PATH.write_text(ipsec_yaml_text, encoding="utf-8")
         print(f"  Written to {IPSEC_OUTPUT_PATH}")
+        KERBEROS_OUTPUT_PATH.write_text(kerberos_yaml_text, encoding="utf-8")
+        print(f"  Written to {KERBEROS_OUTPUT_PATH}")
+        DNSSEC_OUTPUT_PATH.write_text(dnssec_yaml_text, encoding="utf-8")
+        print(f"  Written to {DNSSEC_OUTPUT_PATH}")
 
 
 if __name__ == "__main__":

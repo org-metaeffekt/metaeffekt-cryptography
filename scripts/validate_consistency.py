@@ -266,6 +266,110 @@ def check_status_values(families: list[dict]) -> bool:
     return ok
 
 
+def check_composite_schema(families: list[dict]) -> bool:
+    """Check that composite-entry fields (description, remarks, references[],
+    ietf/ietfIkev2 blocks, bsi.requires) conform to the documented schema.
+    Algorithm-level entries are not affected — these checks only apply to
+    entries that carry the composite-shape fields.
+    """
+    ok = True
+    valid_ietf_levels = {"MUST", "MUST-", "SHOULD", "SHOULD-NOT", "MAY", "MUST-NOT"}
+
+    for fam in families:
+        name = fam.get("family", fam.get("id", "<unknown>"))
+
+        # remarks: must be a list of strings when present
+        remarks = fam.get("remarks")
+        if remarks is not None:
+            if not isinstance(remarks, list):
+                print(f"  FAIL  {name} remarks: must be a list (got {type(remarks).__name__})")
+                ok = False
+            else:
+                for i, r in enumerate(remarks):
+                    if not isinstance(r, str):
+                        print(f"  FAIL  {name} remarks[{i}]: must be a string (got {type(r).__name__})")
+                        ok = False
+
+        # description: string when present
+        desc = fam.get("description")
+        if desc is not None and not isinstance(desc, str):
+            print(f"  FAIL  {name} description: must be a string (got {type(desc).__name__})")
+            ok = False
+
+        # iana.references[]: each entry must be a {ref[, note]} dict
+        iana = fam.get("iana") or {}
+        refs = iana.get("references")
+        if refs is not None:
+            if not isinstance(refs, list):
+                print(f"  FAIL  {name} iana.references: must be a list")
+                ok = False
+            else:
+                for i, r in enumerate(refs):
+                    if not isinstance(r, dict):
+                        print(f"  FAIL  {name} iana.references[{i}]: must be a mapping with `ref` field")
+                        ok = False
+                        continue
+                    if "ref" not in r:
+                        print(f"  FAIL  {name} iana.references[{i}]: missing required `ref` field")
+                        ok = False
+                    extra = set(r.keys()) - {"ref", "note"}
+                    if extra:
+                        print(f"  FAIL  {name} iana.references[{i}]: unexpected key(s) {sorted(extra)}")
+                        ok = False
+
+        # ietf and ietfIkev2: same shape — { source: str, level?: enum }
+        for block_name in ("ietf", "ietfIkev2"):
+            block = fam.get(block_name)
+            if block is None:
+                continue
+            if not isinstance(block, dict):
+                print(f"  FAIL  {name} {block_name}: must be a mapping")
+                ok = False
+                continue
+            if "source" not in block:
+                print(f"  FAIL  {name} {block_name}: missing required `source` field")
+                ok = False
+            level = block.get("level")
+            if level is not None and level not in valid_ietf_levels:
+                print(f"  FAIL  {name} {block_name}.level: '{level}' not in {sorted(valid_ietf_levels)}")
+                ok = False
+
+        # bsi.requires: list of strings when present
+        bsi = fam.get("bsi") or {}
+        requires = bsi.get("requires")
+        if requires is not None:
+            if not isinstance(requires, list):
+                print(f"  FAIL  {name} bsi.requires: must be a list")
+                ok = False
+            else:
+                for i, r in enumerate(requires):
+                    if not isinstance(r, str):
+                        print(f"  FAIL  {name} bsi.requires[{i}]: must be a string")
+                        ok = False
+
+        # bsi.useUpTo: string ending in optional "+"
+        useUpTo = bsi.get("useUpTo")
+        if useUpTo is not None:
+            if not isinstance(useUpTo, str):
+                print(f"  FAIL  {name} bsi.useUpTo: must be a string (got {type(useUpTo).__name__})")
+                ok = False
+            elif not re.fullmatch(r"\d{4}\+?", useUpTo):
+                print(f"  FAIL  {name} bsi.useUpTo: '{useUpTo}' must be a 4-digit year, optionally suffixed with '+'")
+                ok = False
+
+    if ok:
+        n_with_remarks = sum(1 for f in families if f.get("remarks"))
+        n_with_refs = sum(1 for f in families
+                          if (f.get("iana") or {}).get("references"))
+        n_with_requires = sum(1 for f in families
+                              if (f.get("bsi") or {}).get("requires"))
+        n_with_ikev2 = sum(1 for f in families if f.get("ietfIkev2"))
+        print(f"  OK    composite schema valid "
+              f"(remarks: {n_with_remarks}, iana.references: {n_with_refs}, "
+              f"bsi.requires: {n_with_requires}, ietfIkev2: {n_with_ikev2})")
+    return ok
+
+
 def check_duplicate_families(families: list[dict]) -> bool:
     """Check 6: no duplicate family names across all YAML files."""
     names = [f.get("family", "<unknown>") for f in families]
@@ -758,7 +862,9 @@ def main():
         ("7. OID format",                             lambda: check_oid_format(families)),
         ("8. Test count vs report",                   lambda: check_test_count(base)),
         ("9. NIST/BSI authority divergence",          lambda: check_authority_divergence(base)),
-        ("10. Heading style (noun-only rule)",         lambda: check_heading_style(base)),
+        ("10. Heading style (noun-only rule)",        lambda: check_heading_style(base)),
+        ("11. Composite schema (description / remarks / references / ietfIkev2 / bsi.requires)",
+                                                       lambda: check_composite_schema(families)),
     ]
 
     for title, fn in checks:
