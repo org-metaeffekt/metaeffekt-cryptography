@@ -35,6 +35,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
 OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-tls.yaml"
 SSH_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-ssh.yaml"
+IPSEC_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-ipsec.yaml"
 DEFAULT_CACHE_DIR = SCRIPT_DIR / ".iana-cache"
 
 # ── IANA CSV URLs ──────────────────────────────────────────────────────────────
@@ -53,6 +54,7 @@ CIPHER_MAP = {
     "AES_128_CCM": "AES-128-CCM",
     "AES_256_CCM": "AES-256-CCM",
     "AES_128_CCM_8": "AES-128-CCM",
+    "AES_256_CCM_8": "AES-256-CCM",
     "AES_128_CBC": "AES-128-CBC",
     "AES_256_CBC": "AES-256-CBC",
     "3DES_EDE_CBC": "3DES-CBC",
@@ -99,6 +101,12 @@ GROUP_MAP = {
     "ffdhe4096": "FFDH-ffdhe4096",
     "ffdhe6144": "FFDH-ffdhe6144",
     "ffdhe8192": "FFDH-ffdhe8192",
+    "brainpoolP256r1": "ECDH-brainpoolP256r1",
+    "brainpoolP384r1": "ECDH-brainpoolP384r1",
+    "brainpoolP512r1": "ECDH-brainpoolP512r1",
+    "brainpoolP256r1tls13": "ECDH-brainpoolP256r1",
+    "brainpoolP384r1tls13": "ECDH-brainpoolP384r1",
+    "brainpoolP512r1tls13": "ECDH-brainpoolP512r1",
     "X25519MLKEM768": ["ECDH-Curve25519", "ML-KEM-768"],
     "SecP256r1MLKEM768": ["ECDH-P-256", "ML-KEM-768"],
     "SecP384r1MLKEM1024": ["ECDH-P-384", "ML-KEM-1024"],
@@ -111,6 +119,9 @@ SIG_MAP = {
     "ecdsa_secp256r1_sha256": "ECDSA-P-256-SHA-256",
     "ecdsa_secp384r1_sha384": "ECDSA-P-384-SHA-384",
     "ecdsa_secp521r1_sha512": "ECDSA-P-521-SHA-512",
+    "ecdsa_brainpoolP256r1tls13_sha256": "ECDSA-brainpoolP256r1-SHA-256",
+    "ecdsa_brainpoolP384r1tls13_sha384": "ECDSA-brainpoolP384r1-SHA-384",
+    "ecdsa_brainpoolP512r1tls13_sha512": "ECDSA-brainpoolP512r1-SHA-512",
     "rsa_pss_rsae_sha256": "RSASSA-PSS-SHA-256",
     "rsa_pss_rsae_sha384": "RSASSA-PSS-SHA-384",
     "rsa_pss_rsae_sha512": "RSASSA-PSS-SHA-512",
@@ -133,21 +144,31 @@ SIG_MAP = {
 
 SSH_KEX_MAP = {
     "curve25519-sha256": ["ECDH-Curve25519", "SHA-256"],
+    "curve25519-sha256@libssh.org": ["ECDH-Curve25519", "SHA-256"],
     "ecdh-sha2-nistp256": ["ECDH-P-256", "SHA-256"],
     "ecdh-sha2-nistp384": ["ECDH-P-384", "SHA-384"],
     "ecdh-sha2-nistp521": ["ECDH-P-521", "SHA-512"],
     "diffie-hellman-group14-sha256": ["FFDH-ffdhe2048", "SHA-256"],
+    "diffie-hellman-group15-sha512": ["FFDH-ffdhe3072", "SHA-512"],
     "diffie-hellman-group16-sha512": ["FFDH-ffdhe4096", "SHA-512"],
+    "diffie-hellman-group17-sha512": ["FFDH-ffdhe6144", "SHA-512"],
     "diffie-hellman-group18-sha512": ["FFDH-ffdhe8192", "SHA-512"],
+    "diffie-hellman-group-exchange-sha256": ["FFDH", "SHA-256"],
+    "diffie-hellman-group14-sha1": ["FFDH-ffdhe2048", "SHA-1"],
+    "diffie-hellman-group1-sha1": ["FFDH-1024", "SHA-1"],
+    "diffie-hellman-group-exchange-sha1": ["FFDH", "SHA-1"],
 }
 
 SSH_HOST_AUTH_MAP = {
     "ssh-ed25519": ["EdDSA-Ed25519"],
+    "ssh-ed448": ["EdDSA-Ed448"],
     "ecdsa-sha2-nistp256": ["ECDSA-P-256-SHA-256"],
     "ecdsa-sha2-nistp384": ["ECDSA-P-384-SHA-384"],
     "ecdsa-sha2-nistp521": ["ECDSA-P-521-SHA-512"],
     "rsa-sha2-256": ["RSASSA-PSS-SHA-256"],
     "rsa-sha2-512": ["RSASSA-PSS-SHA-512"],
+    "ssh-rsa": ["RSASSA-PKCS1-v1_5-SHA-1"],
+    "ssh-dss": ["DSA-SHA-1"],
 }
 
 SSH_CIPHER_MAP = {
@@ -159,13 +180,787 @@ SSH_CIPHER_MAP = {
     "aes128-ctr": ["AES-128-CTR"],
     "aes256-cbc": ["AES-256-CBC"],
     "3des-cbc": ["3DES-CBC"],
+    "arcfour": ["RC4"],
+    "arcfour128": ["RC4"],
+    "arcfour256": ["RC4"],
 }
 
 SSH_MAC_MAP = {
     "hmac-sha2-256-etm@openssh.com": ["HMAC-SHA-256"],
     "hmac-sha2-512-etm@openssh.com": ["HMAC-SHA-512"],
+    "umac-128-etm@openssh.com": ["UMAC"],
     "hmac-sha2-256": ["HMAC-SHA-256"],
     "hmac-sha2-512": ["HMAC-SHA-512"],
+    "hmac-sha1": ["HMAC-SHA-1"],
+    "hmac-sha1-96": ["HMAC-SHA-1"],
+    "hmac-md5": ["HMAC-MD5"],
+    "hmac-md5-96": ["HMAC-MD5"],
+}
+
+
+# ── BSI TR-02102-4 v2026-01 + IETF/NIST overlay (SSH recommendations) ─────────
+#
+# Source: BSI TR-02102-4 v2026-01 (2026-01-27); IETF RFC 9142 (Oct 2021); NIST
+# SP 800-131A Rev 2. Tuple form: (status, source). For BSI, when an algorithm
+# is "transitional", the note encodes the deadline.
+
+_BSI_SSH_DOC = "TR-02102-4 v2026-01"
+_NIST_SSH_DOC = "SP 800-131A Rev 2"
+_IETF_SSH_DOCS = {
+    "kex": "RFC 9142",
+    "auth": "RFC 8332/8709/5656",
+    "cipher": "RFC 4253/4344/5647/8758",
+    "mac": "RFC 4253/6668",
+}
+
+# Tuple form per overlay: (status[, useUpTo or note])
+# IETF status uses RFC 9142 / RFC 8332 / RFC 5656 / RFC 4253 requirement levels.
+
+BSI_SSH = {
+    # KEX
+    "curve25519-sha256":                    {"bsi": ("recommended",  None,   "§3.1.1")},
+    "curve25519-sha256@libssh.org":         {"bsi": ("recommended",  None,   "§3.1.1; OpenSSH alias predating RFC 8731")},
+    "ecdh-sha2-nistp256":                   {"bsi": ("approved",     None,   "§3.1.3")},
+    "ecdh-sha2-nistp384":                   {"bsi": ("approved",     None,   "§3.1.3")},
+    "ecdh-sha2-nistp521":                   {"bsi": ("approved",     None,   "§3.1.3")},
+    "diffie-hellman-group14-sha256":        {"bsi": ("transitional", "2030", "§3.2.2")},
+    "diffie-hellman-group16-sha512":        {"bsi": ("approved",     None,   "§3.2.2")},
+    "diffie-hellman-group18-sha512":        {"bsi": ("approved",     None,   "§3.2.2")},
+    "diffie-hellman-group14-sha1":          {"bsi": ("disallowed",   None,   "SHA-1 disallowed")},
+    "diffie-hellman-group1-sha1":           {"bsi": ("disallowed",   None,   "1024-bit DH and SHA-1")},
+    "diffie-hellman-group-exchange-sha1":   {"bsi": ("disallowed",   None,   "SHA-1 disallowed")},
+    # group15-sha512, group17-sha512, group-exchange-sha256 not listed in BSI table — no bsi: block
+    # Host auth
+    "ssh-ed25519":                          {"bsi": ("recommended",  None,   "§4.1")},
+    "ecdsa-sha2-nistp256":                  {"bsi": ("approved",     None,   "§4.1")},
+    "ecdsa-sha2-nistp384":                  {"bsi": ("approved",     None,   "§4.1")},
+    "ecdsa-sha2-nistp521":                  {"bsi": ("approved",     None,   "§4.1")},
+    "rsa-sha2-256":                         {"bsi": ("approved",     None,   "§4.1")},
+    "rsa-sha2-512":                         {"bsi": ("approved",     None,   "§4.1")},
+    "ssh-rsa":                              {"bsi": ("disallowed",   None,   "RSA with SHA-1")},
+    "ssh-dss":                              {"bsi": ("disallowed",   None,   "DSA-1024")},
+    # ssh-ed448 not listed in BSI table
+    # Symmetric encryption
+    "chacha20-poly1305@openssh.com":        {"bsi": ("recommended",  None,   "§5.1")},
+    "aes256-gcm@openssh.com":               {"bsi": ("recommended",  None,   "§5.1")},
+    "aes128-gcm@openssh.com":               {"bsi": ("recommended",  None,   "§5.1")},
+    "aes256-ctr":                           {"bsi": ("conditional",  None,   "§5.1"), "requires": ["encrypt-then-MAC (HMAC-ETM)"]},
+    "aes192-ctr":                           {"bsi": ("conditional",  None,   "§5.1"), "requires": ["encrypt-then-MAC (HMAC-ETM)"]},
+    "aes128-ctr":                           {"bsi": ("conditional",  None,   "§5.1"), "requires": ["encrypt-then-MAC (HMAC-ETM)"]},
+    "aes256-cbc":                           {"bsi": ("deprecated",   None,   "§5.1")},
+    "3des-cbc":                             {"bsi": ("disallowed",   None,   "§5.1")},
+    "arcfour":                              {"bsi": ("disallowed",   None,   "RC4 — broken")},
+    "arcfour128":                           {"bsi": ("disallowed",   None,   "RC4 — broken")},
+    "arcfour256":                           {"bsi": ("disallowed",   None,   "RC4 — broken")},
+    # MACs
+    "hmac-sha2-256-etm@openssh.com":        {"bsi": ("recommended",  None,   "§6.1")},
+    "hmac-sha2-512-etm@openssh.com":        {"bsi": ("recommended",  None,   "§6.1")},
+    "umac-128-etm@openssh.com":             {"bsi": ("approved",     None,   "§6.1; OpenSSH extension")},
+    "hmac-sha2-256":                        {"bsi": ("conditional",  None,   "§6.1"), "requires": ["CTR-mode cipher"]},
+    "hmac-sha2-512":                        {"bsi": ("conditional",  None,   "§6.1"), "requires": ["CTR-mode cipher"]},
+    "hmac-sha1":                            {"bsi": ("disallowed",   None,   "SHA-1 disallowed")},
+    "hmac-sha1-96":                         {"bsi": ("disallowed",   None,   "SHA-1 disallowed")},
+    "hmac-md5":                             {"bsi": ("disallowed",   None,   "MD5 broken")},
+    "hmac-md5-96":                          {"bsi": ("disallowed",   None,   "MD5 broken")},
+}
+
+NIST_SSH = {
+    # KEX (NIST status from SP 800-131A Rev 2 algorithm transitions)
+    "curve25519-sha256":                    ("approved",     "ECDH (Curve25519) — approved"),
+    "curve25519-sha256@libssh.org":         ("approved",     "OpenSSH alias for curve25519-sha256"),
+    "ecdh-sha2-nistp256":                   ("approved",     "ECDH P-256 — approved"),
+    "ecdh-sha2-nistp384":                   ("approved",     "ECDH P-384 — approved"),
+    "ecdh-sha2-nistp521":                   ("approved",     "ECDH P-521 — approved"),
+    "diffie-hellman-group14-sha256":        ("transitional", "FFDH 2048-bit — 112-bit security; transitional through 2030"),
+    "diffie-hellman-group15-sha512":        ("approved",     "FFDH 3072-bit — 128-bit security"),
+    "diffie-hellman-group16-sha512":        ("approved",     "FFDH 4096-bit — approved"),
+    "diffie-hellman-group17-sha512":        ("approved",     "FFDH 6144-bit — approved"),
+    "diffie-hellman-group18-sha512":        ("approved",     "FFDH 8192-bit — approved"),
+    "diffie-hellman-group-exchange-sha256": ("approved",     "client-chosen group; SHA-256"),
+    "diffie-hellman-group14-sha1":          ("disallowed",   "SHA-1 disallowed for digital-signature use"),
+    "diffie-hellman-group1-sha1":           ("disallowed",   "1024-bit DH and SHA-1 — both disallowed"),
+    "diffie-hellman-group-exchange-sha1":   ("disallowed",   "SHA-1 disallowed"),
+    # Host auth
+    "ssh-ed25519":                          ("approved",     "EdDSA Ed25519 — approved (FIPS 186-5)"),
+    "ssh-ed448":                            ("approved",     "EdDSA Ed448 — approved (FIPS 186-5)"),
+    "ecdsa-sha2-nistp256":                  ("approved",     "ECDSA P-256/SHA-256 — approved"),
+    "ecdsa-sha2-nistp384":                  ("approved",     "ECDSA P-384/SHA-384 — approved"),
+    "ecdsa-sha2-nistp521":                  ("approved",     "ECDSA P-521/SHA-512 — approved"),
+    "rsa-sha2-256":                         ("approved",     "RSA-SHA-256 — approved with ≥ 2048-bit key"),
+    "rsa-sha2-512":                         ("approved",     "RSA-SHA-512 — approved with ≥ 2048-bit key"),
+    "ssh-rsa":                              ("disallowed",   "RSA with SHA-1 — disallowed for digital signatures"),
+    "ssh-dss":                              ("disallowed",   "DSA-1024 — disallowed"),
+    # Symmetric encryption
+    "chacha20-poly1305@openssh.com":        ("approved",     "ChaCha20-Poly1305 — approved (RFC 7539)"),
+    "aes256-gcm@openssh.com":                ("approved",    "AES-256-GCM — approved"),
+    "aes128-gcm@openssh.com":                ("approved",    "AES-128-GCM — approved"),
+    "aes256-ctr":                           ("approved",     "AES-256-CTR — approved"),
+    "aes192-ctr":                           ("approved",     "AES-192-CTR — approved"),
+    "aes128-ctr":                           ("approved",     "AES-128-CTR — approved"),
+    "aes256-cbc":                           ("conditional",  "CBC mode acceptable but not preferred"),
+    "3des-cbc":                             ("disallowed",   "3DES disallowed for encryption since 2024 (SP 800-131A Rev 2)"),
+    "arcfour":                              ("disallowed",   "RC4 — broken; disallowed since 2015"),
+    "arcfour128":                           ("disallowed",   "RC4 — broken; disallowed since 2015"),
+    "arcfour256":                           ("disallowed",   "RC4 — broken; disallowed since 2015"),
+    # MACs
+    "hmac-sha2-256-etm@openssh.com":        ("approved",     "HMAC-SHA-256 (ETM)"),
+    "hmac-sha2-512-etm@openssh.com":        ("approved",     "HMAC-SHA-512 (ETM)"),
+    "umac-128-etm@openssh.com":             ("conditional",  "UMAC not FIPS-approved"),
+    "hmac-sha2-256":                        ("approved",     "HMAC-SHA-256"),
+    "hmac-sha2-512":                        ("approved",     "HMAC-SHA-512"),
+    "hmac-sha1":                            ("disallowed",   "SHA-1 disallowed for HMAC use"),
+    "hmac-sha1-96":                         ("disallowed",   "SHA-1 disallowed; truncated to 96 bits"),
+    "hmac-md5":                             ("disallowed",   "MD5 broken — disallowed"),
+    "hmac-md5-96":                          ("disallowed",   "MD5 broken — disallowed"),
+}
+
+# ── BSI TR-02102-3 v2026-01 + IETF/NIST overlay (IPsec recommendations) ──────
+#
+# Source: BSI TR-02102-3 v2026-01 (2026-01-27); IETF RFC 8221 (ESP/AH), RFC 8247
+# (IKEv2 algorithms); NIST SP 800-131A Rev 2 + SP 800-186.
+#
+# Schema mirrors SSH: each ID maps to (subType, components, ietf, nist, bsi).
+
+_BSI_IPSEC_DOC = "TR-02102-3 v2026-01"
+_NIST_IPSEC_DOC = "SP 800-131A Rev 2"
+
+# Master IPsec entry table. Each value is a dict with subType, components, and
+# optional ietf/nist/bsi overlays. Sources of truth for cr-ipsec.yaml.
+IPSEC_ENTRIES = {
+    # ── DH groups (IKEv2 Key Exchange) ──
+    "ipsec-dh:group14": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-ffdhe2048"],
+        "description": "2048-bit MODP; 112-bit security",
+        "ietf": ("MUST",   "RFC 8247 §2.4"),
+        "nist": ("transitional", "FFDH 2048-bit; 112-bit security; transitional through 2030"),
+        "bsi":  ("transitional", "2030", "§3.2.2; 112-bit security"),
+    },
+    "ipsec-dh:group15": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-ffdhe3072"],
+        "description": "3072-bit MODP; 128-bit security",
+        "nist": ("approved", "FFDH 3072-bit; 128-bit security"),
+        "bsi":  ("approved", None, "§3.2.2"),
+    },
+    "ipsec-dh:group16": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-ffdhe4096"],
+        "description": "4096-bit MODP",
+        "nist": ("approved", "FFDH 4096-bit"),
+        "bsi":  ("approved", None, "§3.2.2"),
+    },
+    "ipsec-dh:group17": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-ffdhe6144"],
+        "description": "6144-bit MODP",
+        "nist": ("approved", "FFDH 6144-bit"),
+        "bsi":  ("approved", None, "§3.2.2"),
+    },
+    "ipsec-dh:group18": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-ffdhe8192"],
+        "description": "8192-bit MODP",
+        "nist": ("approved", "FFDH 8192-bit"),
+        "bsi":  ("approved", None, "§3.2.2"),
+    },
+    "ipsec-dh:group19": {
+        "subType": "ipsecDhGroup", "components": ["ECDH-P-256"],
+        "description": "P-256 (secp256r1); 128-bit security",
+        "ietf": ("SHOULD", "RFC 8247 §2.4"),
+        "nist": ("approved", "ECDH P-256"),
+        "bsi":  ("approved", None, "§3.2.1"),
+    },
+    "ipsec-dh:group20": {
+        "subType": "ipsecDhGroup", "components": ["ECDH-P-384"],
+        "description": "P-384 (secp384r1); 192-bit security",
+        "nist": ("approved", "ECDH P-384"),
+        "bsi":  ("approved", None, "§3.2.1"),
+    },
+    "ipsec-dh:group21": {
+        "subType": "ipsecDhGroup", "components": ["ECDH-P-521"],
+        "description": "P-521 (secp521r1); 256-bit security",
+        "nist": ("approved", "ECDH P-521"),
+        "bsi":  ("approved", None, "§3.2.1"),
+    },
+    "ipsec-dh:group31": {
+        "subType": "ipsecDhGroup", "components": ["ECDH-Curve25519"],
+        "description": "Curve25519; 128-bit security",
+        "ietf": (None, "RFC 8031"),
+        "nist": ("approved", "ECDH Curve25519"),
+        "bsi":  ("recommended", None, "§3.2.1"),
+        "remarks": ["constant-time scalar multiplication"],
+    },
+    "ipsec-dh:group32": {
+        "subType": "ipsecDhGroup", "components": ["ECDH-Curve448"],
+        "description": "Curve448; 224-bit security",
+        "ietf": (None, "RFC 8031"),
+        "nist": ("approved", "ECDH Curve448"),
+        "bsi":  ("recommended", None, "§3.2.1"),
+        "remarks": ["constant-time scalar multiplication"],
+    },
+
+    # ── Disallowed / suspect DH groups ──
+    "ipsec-dh:group25": {
+        "subType": "ipsecDhGroup", "components": ["ECDH-P-192"],
+        "description": "P-192 ECP; below 128-bit security",
+        "nist": ("disallowed", "P-192 below 112-bit security floor"),
+        "bsi":  ("deprecated", None, "below 128-bit security"),
+    },
+    "ipsec-dh:group26": {
+        "subType": "ipsecDhGroup", "components": ["ECDH-P-224"],
+        "description": "P-224 ECP; 112-bit security",
+        "nist": ("transitional", "P-224 — 112-bit security; transitional through 2030"),
+        "bsi":  ("transitional", "2030", "112-bit security"),
+    },
+    "ipsec-dh:group5": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-1536"],
+        "description": "1536-bit MODP; below 112-bit security",
+        "ietf": ("SHOULD-NOT", "RFC 8247 §2.4"),
+        "nist": ("disallowed", "1536-bit MODP — below 112-bit security floor"),
+        "bsi":  ("disallowed", None, "below 112-bit security"),
+    },
+    "ipsec-dh:group2": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-1024"],
+        "description": "1024-bit MODP; 80-bit security",
+        "ietf": ("SHOULD-NOT", "RFC 8247 §2.4"),
+        "nist": ("disallowed", "1024-bit MODP — 80-bit security; disallowed"),
+        "bsi":  ("disallowed", None, "80-bit security"),
+    },
+    "ipsec-dh:group1": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-768"],
+        "description": "768-bit MODP; below 80-bit security",
+        "ietf": ("MUST-NOT", "RFC 8247 §2.4"),
+        "nist": ("disallowed", "768-bit MODP — below 80-bit security; disallowed"),
+        "bsi":  ("disallowed", None, "below 80-bit security"),
+    },
+    "ipsec-dh:group22": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-1024"],
+        "description": "1024-bit MODP with subgroup; suspect parameters",
+        "ietf": ("MUST-NOT", "RFC 8247 §2.4"),
+        "nist": ("disallowed", "suspect subgroup parameters"),
+        "bsi":  ("disallowed", None, "suspect subgroup parameters"),
+        "remarks": ["1024-bit prime with 160-bit subgroup; provenance of parameters questioned"],
+    },
+    "ipsec-dh:group23": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-2048"],
+        "description": "2048-bit MODP with 224-bit subgroup; suspect parameters",
+        "ietf": ("SHOULD-NOT", "RFC 8247 §2.4"),
+        "nist": ("disallowed", "suspect subgroup parameters"),
+        "bsi":  ("disallowed", None, "suspect subgroup parameters"),
+    },
+    "ipsec-dh:group24": {
+        "subType": "ipsecDhGroup", "components": ["FFDH-2048"],
+        "description": "2048-bit MODP with 256-bit subgroup; suspect parameters",
+        "ietf": ("SHOULD-NOT", "RFC 8247 §2.4"),
+        "nist": ("disallowed", "suspect subgroup parameters"),
+        "bsi":  ("disallowed", None, "suspect subgroup parameters"),
+    },
+
+    # ── ESP Encryption Transforms ──
+    "ipsec-esp:aes-128-gcm": {
+        "subType": "espTransform", "components": ["AES-128-GCM"],
+        "ietf": ("MUST",   "RFC 8221 §5"),
+        "ietfIkev2": ("SHOULD", "RFC 8247 §2.1"),
+        "nist": ("approved", "AES-128-GCM AEAD"),
+        "bsi":  ("recommended", None, "§3.3.1"),
+        "remarks": ["AEAD; RFC 4106 (ESP), RFC 5282 (IKE)"],
+    },
+    "ipsec-esp:aes-256-gcm": {
+        "subType": "espTransform", "components": ["AES-256-GCM"],
+        "ietf": ("MUST",   "RFC 8221 §5"),
+        "ietfIkev2": ("SHOULD", "RFC 8247 §2.1"),
+        "nist": ("approved", "AES-256-GCM AEAD"),
+        "bsi":  ("recommended", None, "§3.3.1"),
+        "remarks": ["AEAD; RFC 4106 (ESP), RFC 5282 (IKE)"],
+    },
+    "ipsec-esp:aes-128-ccm": {
+        "subType": "espTransform", "components": ["AES-128-CCM"],
+        "ietf": ("SHOULD", "RFC 8221 §5"),
+        "ietfIkev2": ("SHOULD", "RFC 8247 §2.1; SHOULD only for IoT"),
+        "nist": ("approved", "AES-128-CCM AEAD"),
+        "bsi":  ("approved", None, "§3.3.1"),
+        "remarks": ["AEAD; RFC 4309"],
+    },
+    "ipsec-esp:chacha20-poly1305": {
+        "subType": "espTransform", "components": ["ChaCha20-Poly1305"],
+        "ietf": ("SHOULD", "RFC 8221 §5; RFC 7634"),
+        "ietfIkev2": ("SHOULD", "RFC 8247 §2.1"),
+        "nist": ("approved", "ChaCha20-Poly1305 AEAD"),
+        "bsi":  ("approved", None, "§3.3.1"),
+        "remarks": ["AEAD; RFC 7634"],
+    },
+    "ipsec-esp:aes-128-cbc": {
+        "subType": "espTransform", "components": ["AES-128-CBC"],
+        "ietf": ("MUST",   "RFC 8221 §5"),
+        "ietfIkev2": ("MUST", "RFC 8247 §2.1"),
+        "nist": ("conditional", "AES-128-CBC — pair with separate integrity"),
+        "bsi":  ("conditional", None, "§3.3.1"),
+        "requires": ["separate integrity transform (HMAC-SHA-2 or AES-XCBC-MAC)"],
+        "remarks": ["no AEAD", "RFC 4106 (ESP) and RFC 5282 (IKE) define AEAD alternatives"],
+    },
+    "ipsec-esp:aes-256-cbc": {
+        "subType": "espTransform", "components": ["AES-256-CBC"],
+        "ietf": ("MUST",   "RFC 8221 §5"),
+        "ietfIkev2": ("MUST", "RFC 8247 §2.1"),
+        "nist": ("conditional", "AES-256-CBC — pair with separate integrity"),
+        "bsi":  ("conditional", None, "§3.3.1"),
+        "requires": ["separate integrity transform (HMAC-SHA-2 or AES-XCBC-MAC)"],
+        "remarks": ["no AEAD", "RFC 4106 (ESP) and RFC 5282 (IKE) define AEAD alternatives"],
+    },
+    "ipsec-esp:3des-cbc": {
+        "subType": "espTransform", "components": ["3DES-CBC"],
+        "ietf": ("SHOULD-NOT", "RFC 8221 §5"),
+        "ietfIkev2": ("MAY", "RFC 8247 §2.1"),
+        "nist": ("disallowed", "3DES — disallowed for encryption since 2024 (SP 800-131A Rev 2)"),
+        "bsi":  ("disallowed", None, "§3.3.1"),
+        "remarks": ["64-bit block; birthday-bound vulnerable above 32 GB"],
+    },
+    "ipsec-esp:aes-128-ctr": {
+        "subType": "espTransform", "components": ["AES-128-CTR"],
+        "ietf": ("MAY", "RFC 8221 §5"),
+        "nist": ("approved", "AES-128-CTR — approved"),
+        "bsi":  ("conditional", None, "§3.3.1"),
+        "requires": ["separate integrity transform"],
+        "remarks": ["no AEAD"],
+    },
+    "ipsec-esp:aes-192-ctr": {
+        "subType": "espTransform", "components": ["AES-192-CTR"],
+        "ietf": ("MAY", "RFC 8221 §5"),
+        "nist": ("approved", "AES-192-CTR — approved"),
+        "bsi":  ("conditional", None, "§3.3.1"),
+        "requires": ["separate integrity transform"],
+        "remarks": ["no AEAD"],
+    },
+    "ipsec-esp:aes-256-ctr": {
+        "subType": "espTransform", "components": ["AES-256-CTR"],
+        "ietf": ("MAY", "RFC 8221 §5"),
+        "nist": ("approved", "AES-256-CTR — approved"),
+        "bsi":  ("conditional", None, "§3.3.1"),
+        "requires": ["separate integrity transform"],
+        "remarks": ["no AEAD"],
+    },
+    "ipsec-esp:des-cbc": {
+        "subType": "espTransform", "components": ["DES-CBC"],
+        "ietf": ("MUST-NOT", "RFC 8221 §5"),
+        "nist": ("disallowed", "DES — 56-bit key broken; disallowed"),
+        "bsi":  ("disallowed", None, "56-bit key broken"),
+        "remarks": ["56-bit key; brute-forceable"],
+    },
+
+    # ── IKEv2 Integrity / PRF ──
+    "ipsec-auth:hmac-sha2-256-128": {
+        "subType": "ipsecIntegrity", "components": ["HMAC-SHA-256"],
+        "ietf": ("MUST",   "RFC 8221 §6; RFC 4868"),
+        "ietfIkev2": ("MUST", "RFC 8247 §2.2; PRF_HMAC_SHA2_256 is also MUST as IKEv2 PRF"),
+        "nist": ("approved", "HMAC-SHA2-256"),
+        "bsi":  ("recommended", None, "§3.4"),
+        "remarks": ["truncated to 128 bits per RFC 4868"],
+    },
+    "ipsec-auth:hmac-sha2-384-192": {
+        "subType": "ipsecIntegrity", "components": ["HMAC-SHA-384"],
+        "ietf": (None, "RFC 4868"),
+        "nist": ("approved", "HMAC-SHA2-384"),
+        "bsi":  ("recommended", None, "§3.4"),
+        "remarks": ["truncated to 192 bits per RFC 4868"],
+    },
+    "ipsec-auth:hmac-sha2-512-256": {
+        "subType": "ipsecIntegrity", "components": ["HMAC-SHA-512"],
+        "ietf": ("SHOULD", "RFC 8221 §6; RFC 4868"),
+        "ietfIkev2": ("SHOULD", "RFC 8247 §2.2; SHOULD+ as IKEv2 PRF"),
+        "nist": ("approved", "HMAC-SHA2-512"),
+        "bsi":  ("recommended", None, "§3.4"),
+        "remarks": ["truncated to 256 bits per RFC 4868"],
+    },
+    "ipsec-auth:aes-xcbc-96": {
+        "subType": "ipsecIntegrity", "components": ["AES-CMAC"],
+        "ietf": ("SHOULD", "RFC 8221 §6; RFC 3566"),
+        "nist": ("conditional", "AES-XCBC — 96-bit truncation"),
+        "bsi":  ("approved", None, "§3.4"),
+        "remarks": ["RFC 3566; SHOULD for IoT, MAY for general VPN", "96-bit truncation"],
+    },
+    "ipsec-auth:hmac-sha1-96": {
+        "subType": "ipsecIntegrity", "components": ["HMAC-SHA-1"],
+        "ietf": ("MUST-",  "RFC 8221 §6"),
+        "nist": ("disallowed", "HMAC-SHA-1 — disallowed for new use"),
+        "bsi":  ("disallowed", None, "§3.4"),
+        "remarks": ["downgraded from MUST to MUST-", "SHA-1 collision-vulnerable"],
+    },
+    "ipsec-auth:aes-cmac-96": {
+        "subType": "ipsecIntegrity", "components": ["AES-CMAC"],
+        "description": "AES-CMAC; 96-bit truncation",
+        "ietf": (None, "RFC 4494"),
+        "nist": ("approved", "AES-CMAC-96 — approved"),
+        "bsi":  ("approved", None, "§3.4"),
+        "remarks": ["RFC 4494; not addressed in RFC 8221 / RFC 8247"],
+    },
+    "ipsec-auth:hmac-md5-96": {
+        "subType": "ipsecIntegrity", "components": ["HMAC-MD5"],
+        "description": "HMAC-MD5; 96-bit truncation",
+        "ietf": ("MUST-NOT", "RFC 8221 §6"),
+        "nist": ("disallowed", "MD5 broken — disallowed"),
+        "bsi":  ("disallowed", None, "§3.4"),
+        "remarks": ["MD5 collision attacks; truncated to 96 bits"],
+    },
+}
+
+
+# IETF status from RFC 9142 (KEX), RFC 8332/8709/5656 (auth), RFC 4253/4344/5647/8758 (ciphers), RFC 4253/6668 (MACs).
+# Tuple: (level, section_or_rfc) — level is one of "MUST", "SHOULD", "MAY", "SHOULD-NOT", "MUST-NOT".
+
+REMARKS_SSH = {
+    # KEX
+    "curve25519-sha256":              ["constant-time scalar multiplication", "ECDH/Curve25519 + SHA-256"],
+    "diffie-hellman-group14-sha256":  ["2048-bit MODP; 112-bit security"],
+    "diffie-hellman-group16-sha512":  ["4096-bit MODP"],
+    "diffie-hellman-group18-sha512":  ["8192-bit MODP"],
+    # Host auth
+    "ssh-ed25519":                    ["constant-time signing", "EdDSA over Curve25519"],
+    "rsa-sha2-256":                   ["RSA ≥ 3072 bits recommended; ≥ 2048 transitional through 2030"],
+    "rsa-sha2-512":                   ["RSA ≥ 3072 bits recommended"],
+    # Symmetric encryption
+    "chacha20-poly1305@openssh.com":  ["AEAD; preferred over CBC+MAC and CTR+MAC", "OpenSSH-specific (no IETF SSH RFC counterpart)"],
+    "aes256-gcm@openssh.com":         ["AEAD; preferred over CBC+MAC and CTR+MAC"],
+    "aes128-gcm@openssh.com":         ["AEAD; preferred over CBC+MAC and CTR+MAC"],
+    "aes256-ctr":                     ["no AEAD"],
+    "aes192-ctr":                     ["no AEAD"],
+    "aes128-ctr":                     ["no AEAD"],
+    "aes256-cbc":                     ["CBC padding-oracle risk", "prefer AES-GCM (AEAD) or AES-CTR + HMAC-ETM"],
+    "3des-cbc":                       ["64-bit block; birthday-bound vulnerable above 32 GB", "disallowed for encryption since 2024 (SP 800-131A Rev 2)"],
+    # MACs
+    "hmac-sha2-256-etm@openssh.com":  ["encrypt-then-MAC; preferred construction", "OpenSSH-specific (no IETF SSH RFC counterpart)"],
+    "hmac-sha2-512-etm@openssh.com":  ["encrypt-then-MAC; preferred construction", "OpenSSH-specific (no IETF SSH RFC counterpart)"],
+    "umac-128-etm@openssh.com":       ["UMAC-128 (RFC 4418); OpenSSH-specific"],
+    "hmac-sha2-256":                  ["MAC-then-Encrypt construction"],
+    "hmac-sha2-512":                  ["MAC-then-Encrypt construction"],
+    # New legacy / disallowed entries
+    "curve25519-sha256@libssh.org":   ["alias for curve25519-sha256"],
+    "diffie-hellman-group15-sha512":  ["3072-bit MODP; not in BSI table"],
+    "diffie-hellman-group17-sha512":  ["6144-bit MODP; not in BSI table"],
+    "diffie-hellman-group-exchange-sha256": ["client-chosen group (RFC 4419)"],
+    "diffie-hellman-group14-sha1":    ["RFC 9142 §3.4 retains MAY despite SHA-1 — NIST/BSI disallow"],
+    "diffie-hellman-group1-sha1":     ["1024-bit MODP + SHA-1"],
+    "diffie-hellman-group-exchange-sha1": ["SHA-1"],
+    "ssh-ed448":                      ["EdDSA over Curve448; not listed in BSI table"],
+    "ssh-rsa":                        ["RSA with SHA-1; OpenSSH disabled by default since 8.8"],
+    "ssh-dss":                        ["DSA-1024 with SHA-1"],
+    "arcfour":                        ["RC4; cryptographically broken; explicitly removed by RFC 8758"],
+    "arcfour128":                     ["RC4; cryptographically broken; explicitly removed by RFC 8758"],
+    "arcfour256":                     ["RC4; cryptographically broken; explicitly removed by RFC 8758"],
+    "hmac-sha1":                      ["SHA-1; was REQUIRED in RFC 4253"],
+    "hmac-sha1-96":                   ["SHA-1; truncated to 96 bits"],
+    "hmac-md5":                       ["MD5; collision-vulnerable"],
+    "hmac-md5-96":                    ["MD5; truncated to 96 bits"],
+}
+
+
+# REMARKS_TLS — top-level remarks for TLS composite entries.
+# Most TLS entries get all the citation context they need from iana.references[]
+# (the IANA-CSV-derived list with semantic notes). Use this dict only for
+# entries where an algorithm-intrinsic fact materially aids interpretation.
+
+REMARKS_TLS = {
+    # TLS 1.3 baseline
+    "TLS_AES_128_GCM_SHA256":              ["AEAD; default TLS 1.3 baseline", "128-bit security"],
+    "TLS_AES_256_GCM_SHA384":              ["AEAD; 256-bit security"],
+    "TLS_AES_128_CCM_SHA256":              ["AEAD with 16-byte tag", "128-bit security"],
+    "TLS_AES_128_CCM_8_SHA256":            ["AEAD with 8-byte tag — BSI prefers full 16-byte tags"],
+    "TLS_CHACHA20_POLY1305_SHA256":        ["AEAD", "BSI does not recommend stream ciphers (TR-02102-1)"],
+    # TLS 1.2 PSK without PFS — explains why BSI useUpTo is shorter than DHE_PSK / ECDHE_PSK
+    "TLS_RSA_PSK_WITH_AES_128_CBC_SHA256": ["no Perfect Forward Secrecy (RSA key transport in PSK derivation)"],
+    "TLS_RSA_PSK_WITH_AES_256_CBC_SHA384": ["no Perfect Forward Secrecy (RSA key transport in PSK derivation)"],
+    "TLS_RSA_PSK_WITH_AES_128_GCM_SHA256": ["no Perfect Forward Secrecy (RSA key transport in PSK derivation)"],
+    "TLS_RSA_PSK_WITH_AES_256_GCM_SHA384": ["no Perfect Forward Secrecy (RSA key transport in PSK derivation)"],
+    # TLS 1.2 (EC)DH non-PFS — explains BSI's 2026 short-deadline
+    "TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256": ["static-key cipher suite — no Perfect Forward Secrecy"],
+    "TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384": ["static-key cipher suite — no Perfect Forward Secrecy"],
+    "TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256":   ["static-key cipher suite — no Perfect Forward Secrecy"],
+    "TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384":   ["static-key cipher suite — no Perfect Forward Secrecy"],
+    "TLS_DH_DSS_WITH_AES_128_GCM_SHA256":     ["static-key cipher suite — no Perfect Forward Secrecy"],
+    "TLS_DH_DSS_WITH_AES_256_GCM_SHA384":     ["static-key cipher suite — no Perfect Forward Secrecy"],
+    "TLS_DH_RSA_WITH_AES_128_GCM_SHA256":     ["static-key cipher suite — no Perfect Forward Secrecy"],
+    "TLS_DH_RSA_WITH_AES_256_GCM_SHA384":     ["static-key cipher suite — no Perfect Forward Secrecy"],
+    # TLS 1.2 CBC suites — Lucky 13 / Encrypt-then-MAC requirement
+    "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256": ["CBC mode — pair with Encrypt-then-MAC extension (RFC 7366) to mitigate Lucky 13"],
+    "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384": ["CBC mode — pair with Encrypt-then-MAC extension (RFC 7366) to mitigate Lucky 13"],
+    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256":   ["CBC mode — pair with Encrypt-then-MAC extension (RFC 7366) to mitigate Lucky 13"],
+    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384":   ["CBC mode — pair with Encrypt-then-MAC extension (RFC 7366) to mitigate Lucky 13"],
+    "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256":     ["CBC mode — pair with Encrypt-then-MAC extension (RFC 7366) to mitigate Lucky 13"],
+    "TLS_DHE_DSS_WITH_AES_256_CBC_SHA256":     ["CBC mode — pair with Encrypt-then-MAC extension (RFC 7366) to mitigate Lucky 13"],
+    "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256":     ["CBC mode — pair with Encrypt-then-MAC extension (RFC 7366) to mitigate Lucky 13"],
+    "TLS_DHE_RSA_WITH_AES_256_CBC_SHA256":     ["CBC mode — pair with Encrypt-then-MAC extension (RFC 7366) to mitigate Lucky 13"],
+}
+
+
+IETF_SSH = {
+    # KEX — RFC 9142
+    "curve25519-sha256":                    ("SHOULD",     "RFC 9142 §3.1.1"),
+    "curve25519-sha256@libssh.org":         (None,         "OpenSSH alias predating RFC 8731"),
+    "ecdh-sha2-nistp256":                   ("SHOULD",     "RFC 9142 §3.1.3"),
+    "ecdh-sha2-nistp384":                   ("SHOULD",     "RFC 9142 §3.1.3"),
+    "ecdh-sha2-nistp521":                   ("SHOULD",     "RFC 9142 §3.1.3"),
+    "diffie-hellman-group14-sha256":        ("MUST",       "RFC 9142 §3.2.2"),
+    "diffie-hellman-group15-sha512":        ("MAY",        "RFC 9142 §3.2.2"),
+    "diffie-hellman-group16-sha512":        ("SHOULD",     "RFC 9142 §3.2.2"),
+    "diffie-hellman-group17-sha512":        ("MAY",        "RFC 9142 §3.2.2"),
+    "diffie-hellman-group18-sha512":        ("MAY",        "RFC 9142 §3.2.2"),
+    "diffie-hellman-group-exchange-sha256": ("MAY",        "RFC 9142 §3.2.1"),
+    "diffie-hellman-group14-sha1":          ("MAY",        "RFC 9142 §3.4"),
+    "diffie-hellman-group1-sha1":           ("SHOULD-NOT", "RFC 9142 §3.4"),
+    "diffie-hellman-group-exchange-sha1":   ("SHOULD-NOT", "RFC 9142 §3.2.1"),
+    # Host auth
+    "ssh-ed25519":                          ("MAY",        "RFC 8709"),
+    "ssh-ed448":                            ("MAY",        "RFC 8709"),
+    "ecdsa-sha2-nistp256":                  ("MAY",        "RFC 5656"),
+    "ecdsa-sha2-nistp384":                  ("MAY",        "RFC 5656"),
+    "ecdsa-sha2-nistp521":                  ("MAY",        "RFC 5656"),
+    "rsa-sha2-256":                         ("SHOULD",     "RFC 8332 §3.3"),
+    "rsa-sha2-512":                         ("SHOULD",     "RFC 8332 §3.3"),
+    "ssh-rsa":                              ("SHOULD-NOT", "RFC 8332 §3.3"),
+    "ssh-dss":                              ("SHOULD-NOT", "RFC 4253"),
+    # Symmetric encryption
+    "chacha20-poly1305@openssh.com":        (None,         "OpenSSH extension — not in any IETF SSH RFC"),
+    "aes256-gcm@openssh.com":               ("MAY",        "RFC 5647"),
+    "aes128-gcm@openssh.com":               ("MAY",        "RFC 5647"),
+    "aes256-ctr":                           ("SHOULD",     "RFC 4344 §4"),
+    "aes192-ctr":                           ("SHOULD",     "RFC 4344 §4"),
+    "aes128-ctr":                           ("SHOULD",     "RFC 4344 §4"),
+    "aes256-cbc":                           ("MAY",        "RFC 4253"),
+    "3des-cbc":                             ("MAY",        "RFC 4253"),
+    "arcfour":                              ("MUST-NOT",   "RFC 8758"),
+    "arcfour128":                           ("MUST-NOT",   "RFC 8758"),
+    "arcfour256":                           ("MUST-NOT",   "RFC 8758"),
+    # MACs
+    "hmac-sha2-256-etm@openssh.com":        (None,         "OpenSSH extension — not in any IETF SSH RFC"),
+    "hmac-sha2-512-etm@openssh.com":        (None,         "OpenSSH extension — not in any IETF SSH RFC"),
+    "umac-128-etm@openssh.com":             (None,         "OpenSSH extension — not in any IETF SSH RFC"),
+    "hmac-sha2-256":                        ("SHOULD",     "RFC 6668"),
+    "hmac-sha2-512":                        ("SHOULD",     "RFC 6668"),
+    "hmac-sha1":                            ("MAY",        "RFC 4253"),
+    "hmac-sha1-96":                         ("MAY",        "RFC 4253"),
+    "hmac-md5":                             ("MAY",        "RFC 4253"),
+    "hmac-md5-96":                          ("MAY",        "RFC 4253"),
+}
+
+
+# ── BSI TR-02102-2 v2026-01 overlay (TLS recommendations) ─────────────────────
+#
+# Source of truth for BSI's per-cipher-suite TLS recommendations. Values are
+# emitted into the cr-tls.yaml entries' `bsi:` block. `useUpTo` follows BSI's
+# notation: a year, optionally with a "+" suffix meaning the period may be
+# extended in a future revision.
+#
+# Document: BSI TR-02102-2 "Use of Transport Layer Security (TLS)", v2026-01,
+# 2026-01-27. Tables 3, 4, 5 (cipher suites), 6, 10 (DH groups), 7, 11, 12
+# (signature algorithms), 13 (TLS 1.3 cipher suites).
+
+_BSI_DOC = "TR-02102-2 v2026-01"
+
+BSI_TLS_CIPHER_SUITES = {
+    # TLS 1.3 — Table 13
+    "TLS_AES_128_GCM_SHA256":                          ("recommended", "2032+", "§3.4.4 Table 13"),
+    "TLS_AES_256_GCM_SHA384":                          ("recommended", "2032+", "§3.4.4 Table 13"),
+    "TLS_AES_128_CCM_SHA256":                          ("recommended", "2032+", "§3.4.4 Table 13"),
+    # TLS 1.2 (EC)DHE PFS — Table 3 (use up to 2031 for ECDHE; 2029 for DHE)
+    "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256":         ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384":         ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256":         ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384":         ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_ECDHE_ECDSA_WITH_AES_128_CCM":                ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_ECDHE_ECDSA_WITH_AES_256_CCM":                ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256":           ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384":           ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256":           ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384":           ("recommended", "2031",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256":             ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_DSS_WITH_AES_256_CBC_SHA256":             ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_DSS_WITH_AES_128_GCM_SHA256":             ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_DSS_WITH_AES_256_GCM_SHA384":             ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256":             ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_RSA_WITH_AES_256_CBC_SHA256":             ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256":             ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384":             ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_RSA_WITH_AES_128_CCM":                    ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    "TLS_DHE_RSA_WITH_AES_256_CCM":                    ("recommended", "2029",  "§3.3.1.1 Table 3"),
+    # TLS 1.2 (EC)DH non-PFS — Table 4 (use up to 2026)
+    "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256":          ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384":          ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256":          ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384":          ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256":            ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384":            ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256":            ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384":            ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_DH_DSS_WITH_AES_128_CBC_SHA256":              ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_DH_DSS_WITH_AES_256_CBC_SHA256":              ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_DH_DSS_WITH_AES_128_GCM_SHA256":              ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_DH_DSS_WITH_AES_256_GCM_SHA384":              ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_DH_RSA_WITH_AES_128_CBC_SHA256":              ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_DH_RSA_WITH_AES_256_CBC_SHA256":              ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_DH_RSA_WITH_AES_128_GCM_SHA256":              ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    "TLS_DH_RSA_WITH_AES_256_GCM_SHA384":              ("recommended", "2026",  "§3.3.1.2 Table 4"),
+    # TLS 1.2 PSK — Table 5
+    "TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256":           ("recommended", "2031",  "§3.3.1.3 Table 5"),
+    "TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA384":           ("recommended", "2031",  "§3.3.1.3 Table 5"),
+    "TLS_ECDHE_PSK_WITH_AES_128_GCM_SHA256":           ("recommended", "2031",  "§3.3.1.3 Table 5"),
+    "TLS_ECDHE_PSK_WITH_AES_256_GCM_SHA384":           ("recommended", "2031",  "§3.3.1.3 Table 5"),
+    "TLS_ECDHE_PSK_WITH_AES_128_CCM_SHA256":           ("recommended", "2031",  "§3.3.1.3 Table 5"),
+    "TLS_DHE_PSK_WITH_AES_128_CBC_SHA256":             ("recommended", "2029",  "§3.3.1.3 Table 5"),
+    "TLS_DHE_PSK_WITH_AES_256_CBC_SHA384":             ("recommended", "2029",  "§3.3.1.3 Table 5"),
+    "TLS_DHE_PSK_WITH_AES_128_GCM_SHA256":             ("recommended", "2029",  "§3.3.1.3 Table 5"),
+    "TLS_DHE_PSK_WITH_AES_256_GCM_SHA384":             ("recommended", "2029",  "§3.3.1.3 Table 5"),
+    "TLS_DHE_PSK_WITH_AES_128_CCM":                    ("recommended", "2029",  "§3.3.1.3 Table 5"),
+    "TLS_DHE_PSK_WITH_AES_256_CCM":                    ("recommended", "2029",  "§3.3.1.3 Table 5"),
+    "TLS_RSA_PSK_WITH_AES_128_CBC_SHA256":             ("recommended", "2026",  "§3.3.1.3 Table 5"),
+    "TLS_RSA_PSK_WITH_AES_256_CBC_SHA384":             ("recommended", "2026",  "§3.3.1.3 Table 5"),
+    "TLS_RSA_PSK_WITH_AES_128_GCM_SHA256":             ("recommended", "2026",  "§3.3.1.3 Table 5"),
+    "TLS_RSA_PSK_WITH_AES_256_GCM_SHA384":             ("recommended", "2026",  "§3.3.1.3 Table 5"),
+}
+
+# Human-readable descriptions for TLS supported groups, rendered as the
+# Description column in the §12.5 / §12.8 markdown tables. Optional — the
+# renderer falls back to the IANA name when no description is supplied.
+DESCRIPTIONS_TLS_GROUPS = {
+    "secp256r1":             "P-256 (secp256r1); 128-bit security",
+    "secp384r1":             "P-384 (secp384r1); 192-bit security",
+    "secp521r1":             "P-521 (secp521r1); 256-bit security",
+    "x25519":                "Curve25519; 128-bit security",
+    "x448":                  "Curve448; 224-bit security",
+    "brainpoolP256r1":       "Brainpool P-256r1 (TLS 1.2); 128-bit security",
+    "brainpoolP384r1":       "Brainpool P-384r1 (TLS 1.2); 192-bit security",
+    "brainpoolP512r1":       "Brainpool P-512r1 (TLS 1.2); 256-bit security",
+    "brainpoolP256r1tls13":  "Brainpool P-256r1 (TLS 1.3); 128-bit security",
+    "brainpoolP384r1tls13":  "Brainpool P-384r1 (TLS 1.3); 192-bit security",
+    "brainpoolP512r1tls13":  "Brainpool P-512r1 (TLS 1.3); 256-bit security",
+    "ffdhe2048":             "2048-bit FFDHE (named, RFC 7919); 112-bit security",
+    "ffdhe3072":             "3072-bit FFDHE (named, RFC 7919); 128-bit security",
+    "ffdhe4096":             "4096-bit FFDHE (named, RFC 7919)",
+    "ffdhe6144":             "6144-bit FFDHE (named, RFC 7919)",
+    "ffdhe8192":             "8192-bit FFDHE (named, RFC 7919)",
+    "X25519MLKEM768":        "hybrid: X25519 (128-bit classical) + ML-KEM-768 (NIST Level 3)",
+    "SecP256r1MLKEM768":     "hybrid: P-256 (128-bit classical) + ML-KEM-768 (NIST Level 3)",
+    "SecP384r1MLKEM1024":    "hybrid: P-384 (192-bit classical) + ML-KEM-1024 (NIST Level 5)",
+    "MLKEM512":              "ML-KEM-512 (post-quantum; NIST Level 1)",
+    "MLKEM768":              "ML-KEM-768 (post-quantum; NIST Level 3)",
+    "MLKEM1024":             "ML-KEM-1024 (post-quantum; NIST Level 5)",
+}
+
+# DH groups (Tables 6 + 10). IANA value as dict key (string form, e.g. "23").
+BSI_TLS_GROUPS = {
+    # TLS 1.2 — Table 6 / TLS 1.3 — Table 10
+    "secp256r1":            ("recommended", "2031",  "§3.3.2 Table 6 / §3.4.2 Table 10"),
+    "secp384r1":            ("recommended", "2031",  "§3.3.2 Table 6 / §3.4.2 Table 10"),
+    "secp521r1":            ("recommended", "2031",  "§3.3.2 Table 6 / §3.4.2 Table 10"),
+    "brainpoolP256r1":      ("recommended", "2031",  "§3.3.2 Table 6 (TLS 1.2 only)"),
+    "brainpoolP384r1":      ("recommended", "2031",  "§3.3.2 Table 6 (TLS 1.2 only)"),
+    "brainpoolP512r1":      ("recommended", "2031",  "§3.3.2 Table 6 (TLS 1.2 only)"),
+    "brainpoolP256r1tls13": ("recommended", "2031",  "§3.4.2 Table 10 (TLS 1.3 only)"),
+    "brainpoolP384r1tls13": ("recommended", "2031",  "§3.4.2 Table 10 (TLS 1.3 only)"),
+    "brainpoolP512r1tls13": ("recommended", "2031",  "§3.4.2 Table 10 (TLS 1.3 only)"),
+    # ffdhe groups have different end dates per TLS version (2029 for TLS 1.2, 2031 for TLS 1.3)
+    # We pick the longer horizon and document the nuance in `note`.
+    "ffdhe3072":            ("recommended", "2031",  "§3.3.2 Table 6 (2029 TLS 1.2) / §3.4.2 Table 10 (2031 TLS 1.3)"),
+    "ffdhe4096":            ("recommended", "2031",  "§3.3.2 Table 6 (2029 TLS 1.2) / §3.4.2 Table 10 (2031 TLS 1.3)"),
+}
+
+# Signature schemes (Tables 7 + 11/12). Keyed on IANA description string used
+# in the signature_schemes registry.
+BSI_TLS_SIGS = {
+    # TLS 1.3 — Table 11 (signature_algorithms)
+    "rsa_pss_rsae_sha256":              ("recommended", "2032+", "§3.4.3 Table 11"),
+    "rsa_pss_rsae_sha384":              ("recommended", "2032+", "§3.4.3 Table 11"),
+    "rsa_pss_rsae_sha512":              ("recommended", "2032+", "§3.4.3 Table 11"),
+    "rsa_pss_pss_sha256":               ("recommended", "2032+", "§3.4.3 Table 11"),
+    "rsa_pss_pss_sha384":               ("recommended", "2032+", "§3.4.3 Table 11"),
+    "rsa_pss_pss_sha512":               ("recommended", "2032+", "§3.4.3 Table 11"),
+    "ecdsa_secp256r1_sha256":           ("recommended", "2032+", "§3.4.3 Table 11"),
+    "ecdsa_secp384r1_sha384":           ("recommended", "2032+", "§3.4.3 Table 11"),
+    "ecdsa_secp521r1_sha512":           ("recommended", "2032+", "§3.4.3 Table 11"),
+    "ecdsa_brainpoolP256r1tls13_sha256": ("recommended", "2032+", "§3.4.3 Table 11"),
+    "ecdsa_brainpoolP384r1tls13_sha384": ("recommended", "2032+", "§3.4.3 Table 11"),
+    "ecdsa_brainpoolP512r1tls13_sha512": ("recommended", "2032+", "§3.4.3 Table 11"),
+    # TLS 1.3 — Table 12 (signature_algorithms_cert): adds three PKCS #1 v1.5
+    "rsa_pkcs1_sha256":                 ("recommended", "2025",  "§3.4.3 Table 12 (signature_algorithms_cert; PKCS #1 v1.5)"),
+    "rsa_pkcs1_sha384":                 ("recommended", "2025",  "§3.4.3 Table 12 (signature_algorithms_cert; PKCS #1 v1.5)"),
+    "rsa_pkcs1_sha512":                 ("recommended", "2025",  "§3.4.3 Table 12 (signature_algorithms_cert; PKCS #1 v1.5)"),
+}
+
+# ── NIST SP 800-52 Rev 2 overlay (TLS recommendations) ────────────────────────
+#
+# Source of truth for NIST's per-cipher-suite TLS recommendations. SP 800-52r2
+# is a "shall be configured to use only NIST-approved cipher suites"-style
+# requirement document; no use-up-to dates are assigned. Status is "approved"
+# for any suite that appears in §3.3.1.1 or §3.3.1.2 as allowed for federal use.
+#
+# Document: NIST SP 800-52 Rev 2 "Guidelines for the Selection, Configuration,
+# and Use of Transport Layer Security (TLS) Implementations", August 2019.
+
+_NIST_DOC = "SP 800-52 Rev 2"
+
+NIST_TLS_CIPHER_SUITES = {
+    # TLS 1.3 — §3.3.1.2
+    "TLS_AES_128_GCM_SHA256":                          ("approved", "§3.3.1.2"),
+    "TLS_AES_256_GCM_SHA384":                          ("approved", "§3.3.1.2"),
+    "TLS_AES_128_CCM_SHA256":                          ("approved", "§3.3.1.2"),
+    "TLS_AES_128_CCM_8_SHA256":                        ("approved", "§3.3.1.2"),
+    # TLS 1.2 ECDSA cert — §3.3.1.1.1
+    "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256":         ("approved", "§3.3.1.1.1"),
+    "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384":         ("approved", "§3.3.1.1.1"),
+    "TLS_ECDHE_ECDSA_WITH_AES_128_CCM":                ("approved", "§3.3.1.1.1"),
+    "TLS_ECDHE_ECDSA_WITH_AES_256_CCM":                ("approved", "§3.3.1.1.1"),
+    "TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8":              ("approved", "§3.3.1.1.1"),
+    "TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8":              ("approved", "§3.3.1.1.1"),
+    "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256":         ("approved", "§3.3.1.1.1"),
+    "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384":         ("approved", "§3.3.1.1.1"),
+    "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA":            ("approved", "§3.3.1.1.1 (TLS 1.0/1.1/1.2 interop only)"),
+    "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA":            ("approved", "§3.3.1.1.1 (TLS 1.0/1.1/1.2 interop only)"),
+    # TLS 1.2 RSA cert — §3.3.1.1.2
+    "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256":           ("approved", "§3.3.1.1.2"),
+    "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384":           ("approved", "§3.3.1.1.2"),
+    "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256":             ("approved", "§3.3.1.1.2"),
+    "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384":             ("approved", "§3.3.1.1.2"),
+    "TLS_DHE_RSA_WITH_AES_128_CCM":                    ("approved", "§3.3.1.1.2"),
+    "TLS_DHE_RSA_WITH_AES_256_CCM":                    ("approved", "§3.3.1.1.2"),
+    "TLS_DHE_RSA_WITH_AES_128_CCM_8":                  ("approved", "§3.3.1.1.2"),
+    "TLS_DHE_RSA_WITH_AES_256_CCM_8":                  ("approved", "§3.3.1.1.2"),
+    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256":           ("approved", "§3.3.1.1.2"),
+    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384":           ("approved", "§3.3.1.1.2"),
+    "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256":             ("approved", "§3.3.1.1.2"),
+    "TLS_DHE_RSA_WITH_AES_256_CBC_SHA256":             ("approved", "§3.3.1.1.2"),
+    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA":              ("approved", "§3.3.1.1.2 (TLS 1.0/1.1/1.2 interop only)"),
+    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA":              ("approved", "§3.3.1.1.2 (TLS 1.0/1.1/1.2 interop only)"),
+    "TLS_DHE_RSA_WITH_AES_128_CBC_SHA":                ("approved", "§3.3.1.1.2 (TLS 1.0/1.1/1.2 interop only)"),
+    "TLS_DHE_RSA_WITH_AES_256_CBC_SHA":                ("approved", "§3.3.1.1.2 (TLS 1.0/1.1/1.2 interop only)"),
+    # TLS 1.2 DSA cert — §3.3.1.1.3
+    "TLS_DHE_DSS_WITH_AES_128_GCM_SHA256":             ("approved", "§3.3.1.1.3"),
+    "TLS_DHE_DSS_WITH_AES_256_GCM_SHA384":             ("approved", "§3.3.1.1.3"),
+    "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256":             ("approved", "§3.3.1.1.3"),
+    "TLS_DHE_DSS_WITH_AES_256_CBC_SHA256":             ("approved", "§3.3.1.1.3"),
+    "TLS_DHE_DSS_WITH_AES_128_CBC_SHA":                ("approved", "§3.3.1.1.3 (TLS 1.0/1.1/1.2 interop only)"),
+    "TLS_DHE_DSS_WITH_AES_256_CBC_SHA":                ("approved", "§3.3.1.1.3 (TLS 1.0/1.1/1.2 interop only)"),
+    # TLS 1.2 DH-DSS-signed cert — §3.3.1.1.4
+    "TLS_DH_DSS_WITH_AES_128_GCM_SHA256":              ("approved", "§3.3.1.1.4"),
+    "TLS_DH_DSS_WITH_AES_256_GCM_SHA384":              ("approved", "§3.3.1.1.4"),
+    "TLS_DH_DSS_WITH_AES_128_CBC_SHA256":              ("approved", "§3.3.1.1.4"),
+    "TLS_DH_DSS_WITH_AES_256_CBC_SHA256":              ("approved", "§3.3.1.1.4"),
+    "TLS_DH_DSS_WITH_AES_128_CBC_SHA":                 ("approved", "§3.3.1.1.4 (TLS 1.0/1.1/1.2 interop only)"),
+    "TLS_DH_DSS_WITH_AES_256_CBC_SHA":                 ("approved", "§3.3.1.1.4 (TLS 1.0/1.1/1.2 interop only)"),
+    # TLS 1.2 DH-RSA-signed cert — §3.3.1.1.4
+    "TLS_DH_RSA_WITH_AES_128_GCM_SHA256":              ("approved", "§3.3.1.1.4"),
+    "TLS_DH_RSA_WITH_AES_256_GCM_SHA384":              ("approved", "§3.3.1.1.4"),
+    "TLS_DH_RSA_WITH_AES_128_CBC_SHA256":              ("approved", "§3.3.1.1.4"),
+    "TLS_DH_RSA_WITH_AES_256_CBC_SHA256":              ("approved", "§3.3.1.1.4"),
+    "TLS_DH_RSA_WITH_AES_128_CBC_SHA":                 ("approved", "§3.3.1.1.4 (TLS 1.0/1.1/1.2 interop only)"),
+    "TLS_DH_RSA_WITH_AES_256_CBC_SHA":                 ("approved", "§3.3.1.1.4 (TLS 1.0/1.1/1.2 interop only)"),
+    # TLS 1.2 ECDH-ECDSA-signed cert — §3.3.1.1.5
+    "TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256":          ("approved", "§3.3.1.1.5"),
+    "TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384":          ("approved", "§3.3.1.1.5"),
+    "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256":          ("approved", "§3.3.1.1.5"),
+    "TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384":          ("approved", "§3.3.1.1.5"),
+    "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA":             ("approved", "§3.3.1.1.5 (TLS 1.0/1.1/1.2 interop only)"),
+    "TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA":             ("approved", "§3.3.1.1.5 (TLS 1.0/1.1/1.2 interop only)"),
+    # TLS 1.2 ECDH-RSA-signed cert — §3.3.1.1.5
+    "TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256":            ("approved", "§3.3.1.1.5"),
+    "TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384":            ("approved", "§3.3.1.1.5"),
+    "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256":            ("approved", "§3.3.1.1.5"),
+    "TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384":            ("approved", "§3.3.1.1.5"),
+    "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA":               ("approved", "§3.3.1.1.5 (TLS 1.0/1.1/1.2 interop only)"),
+    "TLS_ECDH_RSA_WITH_AES_256_CBC_SHA":               ("approved", "§3.3.1.1.5 (TLS 1.0/1.1/1.2 interop only)"),
 }
 
 
@@ -207,6 +1002,48 @@ def parse_csv(text: str) -> list[dict]:
     return list(csv.DictReader(clean_lines))
 
 
+# ── IANA reference parsing ────────────────────────────────────────────────────
+#
+# IANA references appear in the form `[RFC5246][RFC-ietf-tls-deprecate-...]`.
+# We extract each [...] token, normalise `RFC1234` → `RFC 1234`, and attach a
+# semantic note when the token is a known IETF in-progress track.
+
+_REF_TOKEN_RE = re.compile(r"\[([^\]]+)\]")
+_RFC_NUMBER_RE = re.compile(r"^RFC(\d+)$")
+
+_REFERENCE_NOTES = {
+    "RFC-ietf-tls-deprecate-obsolete-kex-08":   "scheduled for deprecation (TLS 1.2 obsolete-kex draft)",
+    "RFC-ietf-tls-rfc8446bis-13":               "TLS 1.3 RFC 8446bis revision",
+    "RFC-ietf-tls-tls13-pkcs1-07":              "TLS 1.3 PKCS #1 v1.5 signature draft",
+    "RFC9155":                                  "deprecates SHA-1 and MD5 in TLS",
+    "RFC9847":                                  "deprecates obsolete TLS supported groups",
+    "RFC6347":                                  "DTLS 1.2 mapping",
+}
+
+
+def parse_iana_references(reference_field: str) -> list[dict]:
+    """Parse an IANA Reference column value into a list of {ref[, note]} dicts.
+
+    Each `[...]` token becomes one entry. `RFC1234` is normalised to `RFC 1234`;
+    other tokens are kept as-is. Known semantic notes from `_REFERENCE_NOTES`
+    are attached automatically.
+    """
+    refs = []
+    for raw in _REF_TOKEN_RE.findall(reference_field or ""):
+        m = _RFC_NUMBER_RE.match(raw)
+        if m:
+            normalised = f"RFC {m.group(1)}"
+        else:
+            normalised = raw
+        entry = {"ref": normalised}
+        # Look up note by both raw and normalised key
+        note = _REFERENCE_NOTES.get(raw) or _REFERENCE_NOTES.get(normalised)
+        if note:
+            entry["note"] = note
+        refs.append(entry)
+    return refs
+
+
 # ── Cipher suite decomposition ─────────────────────────────────────────────────
 
 # TLS 1.3 pattern: TLS_<CIPHER>_<HASH>
@@ -215,6 +1052,10 @@ TLS13_RE = re.compile(r"^TLS_([A-Za-z0-9_]+?)_(SHA\d*|SM3|ASCONHASH256)$")
 # TLS 1.2 pattern: TLS_<KEX>_<AUTH>_WITH_<CIPHER>_<HASH>
 # Also handles TLS_<KEX>_WITH_<CIPHER>_<HASH> (PSK without separate auth)
 TLS12_WITH_RE = re.compile(r"^TLS_(.+?)_WITH_(.+?)_(SHA\d*|MD5|SM3)$")
+
+# CCM-suffixed suites (RFC 6655 / RFC 7251) — `_CCM` or `_CCM_8` ending,
+# implicit SHA-256 for the PRF / HKDF.
+TLS12_CCM_RE = re.compile(r"^TLS_(.+?)_WITH_(AES_(?:128|256)_CCM(?:_8)?)$")
 
 
 def decompose_tls13(name: str) -> Optional[dict]:
@@ -235,11 +1076,16 @@ def decompose_tls13(name: str) -> Optional[dict]:
 
 def decompose_tls12(name: str) -> Optional[dict]:
     """Decompose a TLS 1.2 (or earlier) cipher suite name into components."""
-    m = TLS12_WITH_RE.match(name)
-    if not m:
-        return None
-
-    kex_auth_raw, cipher_raw, hash_raw = m.group(1), m.group(2), m.group(3)
+    # Handle CCM-suffixed suites first (no SHA in the name; implicit SHA-256).
+    m_ccm = TLS12_CCM_RE.match(name)
+    if m_ccm:
+        kex_auth_raw, cipher_raw = m_ccm.group(1), m_ccm.group(2)
+        hash_raw = "SHA256"
+    else:
+        m = TLS12_WITH_RE.match(name)
+        if not m:
+            return None
+        kex_auth_raw, cipher_raw, hash_raw = m.group(1), m.group(2), m.group(3)
 
     # Map cipher
     cipher = CIPHER_MAP.get(cipher_raw)
@@ -325,6 +1171,17 @@ def yaml_str(s: str) -> str:
     return f'"{s}"'
 
 
+def format_ref_inline(r: dict) -> str:
+    """Format a single reference dict as an inline-flow YAML mapping.
+
+    Produces `{ ref: "..." }` or `{ ref: "...", note: "..." }`.
+    """
+    parts = [f'ref: {yaml_str(r["ref"])}']
+    if "note" in r:
+        parts.append(f'note: {yaml_str(r["note"])}')
+    return "{ " + ", ".join(parts) + " }"
+
+
 def format_entry(entry: dict) -> str:
     """Format a single registry entry as YAML text."""
     lines = []
@@ -332,6 +1189,8 @@ def format_entry(entry: dict) -> str:
     lines.append(f'    type: "composite"')
     lines.append(f'    subType: {yaml_str(entry["subType"])}')
     lines.append(f'    protocol: "TLS"')
+    if entry.get("description"):
+        lines.append(f'    description: {yaml_str(entry["description"])}')
 
     # protocolVersions
     pvs = entry.get("protocolVersions", [])
@@ -345,6 +1204,43 @@ def format_entry(entry: dict) -> str:
     lines.append(f'      value: {yaml_str(iana["value"])}')
     rec = iana.get("recommended", False)
     lines.append(f'      recommended: {"true" if rec else "false"}')
+    # references list — emit inline-flow per item for compactness
+    references = iana.get("references", [])
+    if references:
+        lines.append(f'      references:')
+        for r in references:
+            lines.append(f'        - {format_ref_inline(r)}')
+
+    # nist block (SP 800-52 Rev 2 overlay)
+    nist = entry.get("nist")
+    if nist:
+        lines.append(f'    nist:')
+        lines.append(f'      source: {yaml_str(nist["source"])}')
+        lines.append(f'      status: {yaml_str(nist["status"])}')
+        if "note" in nist:
+            lines.append(f'      note: {yaml_str(nist["note"])}')
+
+    # bsi block (TR-02102-2 v2026-01 overlay)
+    bsi = entry.get("bsi")
+    if bsi:
+        lines.append(f'    bsi:')
+        lines.append(f'      source: {yaml_str(bsi["source"])}')
+        lines.append(f'      status: {yaml_str(bsi["status"])}')
+        if "useUpTo" in bsi:
+            lines.append(f'      useUpTo: {yaml_str(bsi["useUpTo"])}')
+        if bsi.get("requires"):
+            lines.append(f'      requires:')
+            for req in bsi["requires"]:
+                lines.append(f'        - {yaml_str(req)}')
+        if "note" in bsi:
+            lines.append(f'      note: {yaml_str(bsi["note"])}')
+
+    # remarks (algorithm-intrinsic / editorial; not tied to a citation or authority)
+    remarks = entry.get("remarks", [])
+    if remarks:
+        lines.append(f'    remarks:')
+        for r in remarks:
+            lines.append(f'      - {yaml_str(r)}')
 
     # components
     components = entry.get("components", [])
@@ -359,9 +1255,18 @@ def generate_yaml(entries: list[dict]) -> str:
     parts = []
     parts.append("# TLS protocol composites: cipher suites, supported groups, and signature schemes")
     parts.append("#")
-    parts.append("# Auto-generated from IANA TLS parameter registries.")
+    parts.append("# Auto-generated from IANA TLS parameter registries with NIST and BSI authority")
+    parts.append("# overlays. Source of truth for per-cipher-suite recommendations from:")
+    parts.append("#   - IANA  (recommended flag from the TLS Parameters registry)")
+    parts.append("#   - NIST  SP 800-52 Rev 2 (Aug 2019) — federal allowed cipher suites by cert type")
+    parts.append("#   - BSI   TR-02102-2 v2026-01 (Jan 2026) — recommendations with `useUpTo` deadlines")
+    parts.append("#")
     parts.append("# Do not edit manually; regenerate with:")
     parts.append("#   python scripts/generate_iana_composites.py")
+    parts.append("#")
+    parts.append("# Authority overlay tables live in scripts/generate_iana_composites.py")
+    parts.append("# (BSI_TLS_CIPHER_SUITES, BSI_TLS_GROUPS, BSI_TLS_SIGS, NIST_TLS_CIPHER_SUITES).")
+    parts.append("# Update those tables when the upstream documents are revised.")
     parts.append("#")
     parts.append("# Part of the ae-pattern-validator validation registry.")
     parts.append("# See README.md in this directory for schema documentation.")
@@ -438,9 +1343,31 @@ def process_cipher_suites(csv_text: str) -> tuple[list[dict], list[str]]:
                 "registry": "tls-cipher-suites",
                 "value": value,
                 "recommended": recommended == "Y",
+                "references": parse_iana_references(row.get("Reference", "")),
             },
             "components": result["components"],
         }
+        # NIST SP 800-52 Rev 2 overlay
+        nist_entry = NIST_TLS_CIPHER_SUITES.get(desc)
+        if nist_entry:
+            status, section = nist_entry
+            entry["nist"] = {
+                "source": f"{_NIST_DOC} {section}",
+                "status": status,
+            }
+        # BSI TR-02102-2 v2026-01 overlay
+        bsi_entry = BSI_TLS_CIPHER_SUITES.get(desc)
+        if bsi_entry:
+            status, use_up_to, section = bsi_entry
+            entry["bsi"] = {
+                "source": f"{_BSI_DOC} {section}",
+                "status": status,
+                "useUpTo": use_up_to,
+            }
+        # remarks (algorithm-intrinsic notes)
+        remarks = REMARKS_TLS.get(desc)
+        if remarks:
+            entry["remarks"] = list(remarks)
         entries.append(entry)
 
     return entries, failures
@@ -484,9 +1411,21 @@ def process_supported_groups(csv_text: str) -> tuple[list[dict], list[str]]:
                 "registry": "tls-supported-groups",
                 "value": value,
                 "recommended": recommended == "Y",
+                "references": parse_iana_references(row.get("Reference", "")),
             },
             "components": components,
         }
+        if desc in DESCRIPTIONS_TLS_GROUPS:
+            entry["description"] = DESCRIPTIONS_TLS_GROUPS[desc]
+        # BSI TR-02102-2 v2026-01 overlay (Tables 6 + 10)
+        bsi_entry = BSI_TLS_GROUPS.get(desc)
+        if bsi_entry:
+            status, use_up_to, section = bsi_entry
+            entry["bsi"] = {
+                "source": f"{_BSI_DOC} {section}",
+                "status": status,
+                "useUpTo": use_up_to,
+            }
         entries.append(entry)
 
     return entries, failures
@@ -521,9 +1460,19 @@ def process_signature_schemes(csv_text: str) -> tuple[list[dict], list[str]]:
                 "registry": "tls-signature-schemes",
                 "value": value,
                 "recommended": recommended == "Y",
+                "references": parse_iana_references(row.get("Reference", "")),
             },
             "components": [mapping],
         }
+        # BSI TR-02102-2 v2026-01 overlay (Tables 11/12)
+        bsi_entry = BSI_TLS_SIGS.get(desc)
+        if bsi_entry:
+            status, use_up_to, section = bsi_entry
+            entry["bsi"] = {
+                "source": f"{_BSI_DOC} {section}",
+                "status": status,
+                "useUpTo": use_up_to,
+            }
         entries.append(entry)
 
     return entries, failures
@@ -531,37 +1480,71 @@ def process_signature_schemes(csv_text: str) -> tuple[list[dict], list[str]]:
 
 # ── SSH composite generation ──────────────────────────────────────────────────
 
+def _attach_ssh_overlays(entry: dict) -> dict:
+    """Attach IETF / NIST / BSI overlays + remarks to an SSH entry."""
+    name = entry["id"]
+    ietf = IETF_SSH.get(name)
+    if ietf:
+        level, source = ietf
+        entry["ietf"] = {"source": source}
+        if level:
+            entry["ietf"]["level"] = level
+    nist = NIST_SSH.get(name)
+    if nist:
+        status, note = nist
+        entry["nist"] = {
+            "source": _NIST_SSH_DOC,
+            "status": status,
+            "note": note,
+        }
+    bsi = BSI_SSH.get(name)
+    if bsi and bsi.get("bsi"):
+        status, use_up_to, section = bsi["bsi"]
+        entry["bsi"] = {
+            "source": f"{_BSI_SSH_DOC} {section}" if section else _BSI_SSH_DOC,
+            "status": status,
+        }
+        if use_up_to:
+            entry["bsi"]["useUpTo"] = use_up_to
+        if bsi.get("requires"):
+            entry["bsi"]["requires"] = list(bsi["requires"])
+    remarks = REMARKS_SSH.get(name)
+    if remarks:
+        entry["remarks"] = list(remarks)
+    return entry
+
+
 def generate_ssh_entries() -> list[dict]:
     """Generate SSH composite entries from hardcoded lookup tables."""
     entries = []
 
     for name, components in SSH_KEX_MAP.items():
-        entries.append({
+        entries.append(_attach_ssh_overlays({
             "id": name,
             "subType": "sshKex",
             "components": components,
-        })
+        }))
 
     for name, components in SSH_HOST_AUTH_MAP.items():
-        entries.append({
+        entries.append(_attach_ssh_overlays({
             "id": name,
             "subType": "sshHostAuth",
             "components": components,
-        })
+        }))
 
     for name, components in SSH_CIPHER_MAP.items():
-        entries.append({
+        entries.append(_attach_ssh_overlays({
             "id": name,
             "subType": "sshCipher",
             "components": components,
-        })
+        }))
 
     for name, components in SSH_MAC_MAP.items():
-        entries.append({
+        entries.append(_attach_ssh_overlays({
             "id": name,
             "subType": "sshMac",
             "components": components,
-        })
+        }))
 
     return entries
 
@@ -573,6 +1556,47 @@ def format_ssh_entry(entry: dict) -> str:
     lines.append(f'    type: "composite"')
     lines.append(f'    subType: {yaml_str(entry["subType"])}')
     lines.append(f'    protocol: "SSH"')
+    if entry.get("description"):
+        lines.append(f'    description: {yaml_str(entry["description"])}')
+
+    # ietf block (RFC 9142 / 8332 / 8709 / 5656 / 4253 / 4344 / 5647 / 6668)
+    ietf = entry.get("ietf")
+    if ietf:
+        lines.append(f'    ietf:')
+        lines.append(f'      source: {yaml_str(ietf["source"])}')
+        if "level" in ietf:
+            lines.append(f'      level: {yaml_str(ietf["level"])}')
+
+    # nist block (SP 800-131A Rev 2 transition guidance)
+    nist = entry.get("nist")
+    if nist:
+        lines.append(f'    nist:')
+        lines.append(f'      source: {yaml_str(nist["source"])}')
+        lines.append(f'      status: {yaml_str(nist["status"])}')
+        if "note" in nist:
+            lines.append(f'      note: {yaml_str(nist["note"])}')
+
+    # bsi block (TR-02102-4 v2026-01)
+    bsi = entry.get("bsi")
+    if bsi:
+        lines.append(f'    bsi:')
+        lines.append(f'      source: {yaml_str(bsi["source"])}')
+        lines.append(f'      status: {yaml_str(bsi["status"])}')
+        if "useUpTo" in bsi:
+            lines.append(f'      useUpTo: {yaml_str(bsi["useUpTo"])}')
+        if bsi.get("requires"):
+            lines.append(f'      requires:')
+            for req in bsi["requires"]:
+                lines.append(f'        - {yaml_str(req)}')
+        if "note" in bsi:
+            lines.append(f'      note: {yaml_str(bsi["note"])}')
+
+    # remarks
+    remarks = entry.get("remarks", [])
+    if remarks:
+        lines.append(f'    remarks:')
+        for r in remarks:
+            lines.append(f'      - {yaml_str(r)}')
 
     components = entry.get("components", [])
     comp_str = ", ".join(yaml_str(c) for c in components)
@@ -584,12 +1608,21 @@ def format_ssh_entry(entry: dict) -> str:
 def generate_ssh_yaml(entries: list[dict]) -> str:
     """Generate the full SSH YAML document."""
     parts = []
-    parts.append("# SSH protocol composites")
-    parts.append("# Algorithms from IANA SSH Parameters and RFC 9142, RFC 8332, RFC 8709")
+    parts.append("# SSH protocol composites: KEX, host auth, ciphers, MACs")
     parts.append("#")
-    parts.append("# Auto-generated from hardcoded lookup tables.")
+    parts.append("# Auto-generated from hardcoded lookup tables with NIST and BSI authority")
+    parts.append("# overlays. Source of truth for per-algorithm SSH recommendations from:")
+    parts.append("#   - IETF  RFC 9142 (KEX), RFC 8332/8709/5656 (auth), RFC 4253/4344/5647/8758")
+    parts.append("#         (ciphers), RFC 4253/6668 (MACs) — IETF requirement level (MUST/SHOULD/MAY)")
+    parts.append("#   - NIST  SP 800-131A Rev 2 — algorithm transition status")
+    parts.append("#   - BSI   TR-02102-4 v2026-01 — recommendations and migration deadlines")
+    parts.append("#")
     parts.append("# Do not edit manually; regenerate with:")
     parts.append("#   python scripts/generate_iana_composites.py")
+    parts.append("#")
+    parts.append("# Authority overlay tables live in scripts/generate_iana_composites.py")
+    parts.append("# (BSI_SSH, NIST_SSH, IETF_SSH). Update those tables when the upstream")
+    parts.append("# documents are revised.")
     parts.append("#")
     parts.append("# Part of the ae-pattern-validator validation registry.")
     parts.append('version: "2.0"')
@@ -603,8 +1636,148 @@ def generate_ssh_yaml(entries: list[dict]) -> str:
     return "\n".join(parts) + "\n"
 
 
+def generate_ipsec_entries() -> list[dict]:
+    """Generate IPsec composite entries from IPSEC_ENTRIES with overlays."""
+    entries = []
+    for name, spec in IPSEC_ENTRIES.items():
+        entry = {
+            "id": name,
+            "subType": spec["subType"],
+            "components": list(spec["components"]),
+        }
+        if spec.get("description"):
+            entry["description"] = spec["description"]
+        ietf = spec.get("ietf")
+        if ietf:
+            level, source = ietf
+            entry["ietf"] = {"source": source}
+            if level:
+                entry["ietf"]["level"] = level
+        ietf_ikev2 = spec.get("ietfIkev2")
+        if ietf_ikev2:
+            level, source = ietf_ikev2
+            entry["ietfIkev2"] = {"source": source}
+            if level:
+                entry["ietfIkev2"]["level"] = level
+        nist = spec.get("nist")
+        if nist:
+            status, note = nist
+            entry["nist"] = {
+                "source": _NIST_IPSEC_DOC,
+                "status": status,
+                "note": note,
+            }
+        bsi = spec.get("bsi")
+        if bsi:
+            status, use_up_to, section = bsi
+            entry["bsi"] = {
+                "source": f"{_BSI_IPSEC_DOC} {section}" if section else _BSI_IPSEC_DOC,
+                "status": status,
+            }
+            if use_up_to:
+                entry["bsi"]["useUpTo"] = use_up_to
+            if spec.get("requires"):
+                entry["bsi"]["requires"] = list(spec["requires"])
+        remarks = spec.get("remarks")
+        if remarks:
+            entry["remarks"] = list(remarks)
+        entries.append(entry)
+    return entries
+
+
+def format_ipsec_entry(entry: dict) -> str:
+    """Format a single IPsec registry entry as YAML text."""
+    lines = []
+    lines.append(f'  - id: {yaml_str(entry["id"])}')
+    lines.append(f'    type: "composite"')
+    lines.append(f'    subType: {yaml_str(entry["subType"])}')
+    lines.append(f'    protocol: "IPsec"')
+    if entry.get("description"):
+        lines.append(f'    description: {yaml_str(entry["description"])}')
+
+    ietf = entry.get("ietf")
+    if ietf:
+        lines.append(f'    ietf:')
+        lines.append(f'      source: {yaml_str(ietf["source"])}')
+        if "level" in ietf:
+            lines.append(f'      level: {yaml_str(ietf["level"])}')
+
+    # ietfIkev2 — RFC 8247 IKEv2 control-plane requirement level (separate
+    # from RFC 8221 ESP/AH data-plane level above; the two RFCs disagree on
+    # requirement level for several transforms).
+    ietf_ikev2 = entry.get("ietfIkev2")
+    if ietf_ikev2:
+        lines.append(f'    ietfIkev2:')
+        lines.append(f'      source: {yaml_str(ietf_ikev2["source"])}')
+        if "level" in ietf_ikev2:
+            lines.append(f'      level: {yaml_str(ietf_ikev2["level"])}')
+
+    nist = entry.get("nist")
+    if nist:
+        lines.append(f'    nist:')
+        lines.append(f'      source: {yaml_str(nist["source"])}')
+        lines.append(f'      status: {yaml_str(nist["status"])}')
+        if "note" in nist:
+            lines.append(f'      note: {yaml_str(nist["note"])}')
+
+    bsi = entry.get("bsi")
+    if bsi:
+        lines.append(f'    bsi:')
+        lines.append(f'      source: {yaml_str(bsi["source"])}')
+        lines.append(f'      status: {yaml_str(bsi["status"])}')
+        if "useUpTo" in bsi:
+            lines.append(f'      useUpTo: {yaml_str(bsi["useUpTo"])}')
+        if bsi.get("requires"):
+            lines.append(f'      requires:')
+            for req in bsi["requires"]:
+                lines.append(f'        - {yaml_str(req)}')
+
+    # remarks
+    remarks = entry.get("remarks", [])
+    if remarks:
+        lines.append(f'    remarks:')
+        for r in remarks:
+            lines.append(f'      - {yaml_str(r)}')
+
+    components = entry.get("components", [])
+    comp_str = ", ".join(yaml_str(c) for c in components)
+    lines.append(f'    components: [{comp_str}]')
+
+    return "\n".join(lines)
+
+
+def generate_ipsec_yaml(entries: list[dict]) -> str:
+    """Generate the full IPsec YAML document."""
+    parts = []
+    parts.append("# IPsec / IKEv2 protocol composites: DH groups, ESP transforms, integrity/PRF")
+    parts.append("#")
+    parts.append("# Auto-generated from hardcoded lookup tables with IETF, NIST, and BSI overlays.")
+    parts.append("# Source of truth for per-algorithm IPsec recommendations from:")
+    parts.append("#   - IETF  RFC 8221 (ESP/AH data plane), RFC 8247 (IKEv2 control plane),")
+    parts.append("#         RFC 7296 (IKEv2), RFC 4868 (HMAC-SHA2), RFC 4106/5282/7634 (AEAD modes)")
+    parts.append("#   - NIST  SP 800-131A Rev 2 + SP 800-186 — algorithm transitions and curves")
+    parts.append("#   - BSI   TR-02102-3 v2026-01 — recommendations and migration deadlines")
+    parts.append("#")
+    parts.append("# Do not edit manually; regenerate with:")
+    parts.append("#   python scripts/generate_iana_composites.py")
+    parts.append("#")
+    parts.append("# Authority overlay tables live in scripts/generate_iana_composites.py")
+    parts.append("# (IPSEC_ENTRIES). Update that table when the upstream documents are revised.")
+    parts.append("#")
+    parts.append("# Part of the ae-pattern-validator validation registry.")
+    parts.append('version: "2.0"')
+    parts.append("")
+    parts.append("entries:")
+
+    for entry in entries:
+        parts.append("")
+        parts.append(format_ipsec_entry(entry))
+
+    return "\n".join(parts) + "\n"
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Generate cr-tls.yaml and cr-ssh.yaml from IANA registries")
+    parser = argparse.ArgumentParser(description="Generate cr-tls.yaml, cr-ssh.yaml, and cr-ipsec.yaml from IANA registries with NIST/BSI overlays")
     parser.add_argument("--check", action="store_true",
                         help="Compare generated output with existing file; exit non-zero on differences")
     parser.add_argument("--cache-dir", type=Path, default=DEFAULT_CACHE_DIR,
@@ -651,6 +1824,12 @@ def main():
     ssh_yaml_text = generate_ssh_yaml(ssh_entries)
     print(f"  Generated: {len(ssh_entries)} entries")
 
+    # Generate IPsec composites from hardcoded tables
+    print("\nProcessing IPsec algorithms...")
+    ipsec_entries = generate_ipsec_entries()
+    ipsec_yaml_text = generate_ipsec_yaml(ipsec_entries)
+    print(f"  Generated: {len(ipsec_entries)} entries")
+
     print(f"\n=== Summary ===")
     print(f"  TLS cipher suites:    {len(cs_entries)}")
     print(f"  TLS supported groups: {len(sg_entries)}")
@@ -658,29 +1837,24 @@ def main():
     print(f"  TLS total entries:    {len(all_entries)}")
     print(f"  TLS decomp failures:  {len(cs_failures) + len(sg_failures) + len(ss_failures)}")
     print(f"  SSH entries:          {len(ssh_entries)}")
+    print(f"  IPsec entries:        {len(ipsec_entries)}")
 
     if args.check:
         check_ok = True
-        if not OUTPUT_PATH.exists():
-            print(f"\nERROR: {OUTPUT_PATH} does not exist for comparison", file=sys.stderr)
-            check_ok = False
-        else:
-            existing = OUTPUT_PATH.read_text(encoding="utf-8")
-            if existing == yaml_text:
-                print(f"\n  cr-tls.yaml is up to date.")
-            else:
-                print(f"\n  ERROR: cr-tls.yaml is out of date! Re-run without --check to regenerate.",
-                      file=sys.stderr)
+        for path, generated, label in [
+            (OUTPUT_PATH, yaml_text, "cr-tls.yaml"),
+            (SSH_OUTPUT_PATH, ssh_yaml_text, "cr-ssh.yaml"),
+            (IPSEC_OUTPUT_PATH, ipsec_yaml_text, "cr-ipsec.yaml"),
+        ]:
+            if not path.exists():
+                print(f"\nERROR: {path} does not exist for comparison", file=sys.stderr)
                 check_ok = False
-        if not SSH_OUTPUT_PATH.exists():
-            print(f"\nERROR: {SSH_OUTPUT_PATH} does not exist for comparison", file=sys.stderr)
-            check_ok = False
-        else:
-            existing_ssh = SSH_OUTPUT_PATH.read_text(encoding="utf-8")
-            if existing_ssh == ssh_yaml_text:
-                print(f"  cr-ssh.yaml is up to date.")
+                continue
+            existing = path.read_text(encoding="utf-8")
+            if existing == generated:
+                print(f"  {label} is up to date.")
             else:
-                print(f"\n  ERROR: cr-ssh.yaml is out of date! Re-run without --check to regenerate.",
+                print(f"\n  ERROR: {label} is out of date! Re-run without --check to regenerate.",
                       file=sys.stderr)
                 check_ok = False
         sys.exit(0 if check_ok else 1)
@@ -690,6 +1864,8 @@ def main():
         print(f"\n  Written to {OUTPUT_PATH}")
         SSH_OUTPUT_PATH.write_text(ssh_yaml_text, encoding="utf-8")
         print(f"  Written to {SSH_OUTPUT_PATH}")
+        IPSEC_OUTPUT_PATH.write_text(ipsec_yaml_text, encoding="utf-8")
+        print(f"  Written to {IPSEC_OUTPUT_PATH}")
 
 
 if __name__ == "__main__":

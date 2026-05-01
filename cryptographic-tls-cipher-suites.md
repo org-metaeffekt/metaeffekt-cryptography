@@ -1,20 +1,17 @@
 # TLS Cipher Suite and Group Analysis
 
-> §1–§11 are derived from the IANA TLS Parameters registries via
-> `scripts/generate_iana_composites.py` (cipher suites, supported groups,
-> signature schemes; cr-tls.yaml). §12 and §13 overlay authority-specific
-> recommendations from BSI TR-02102-2 v2026-01 (German Federal Office for
-> Information Security, January 2026) and NIST SP 800-52 Revision 2
-> (August 2019).
+> **Source of truth:** [`ae-pattern-validator/.../registry/cr-tls.yaml`](ae-pattern-validator/src/main/resources/registry/cr-tls.yaml) — every cipher suite, supported group, and signature scheme entry carries an `iana:` block (with `recommended:` flag), an optional `nist:` block (SP 800-52 Rev 2 status + section reference), and an optional `bsi:` block (TR-02102-2 v2026-01 status + `useUpTo:` year + table reference). Regenerate with `python3 scripts/generate_iana_composites.py`. The Python file holds the BSI/NIST overlay tables — update them when the upstream documents are revised.
+>
+> §1–§11 below are the human-readable view of the IANA portion (cipher suites, supported groups, signature schemes). §12 and §13 are the human-readable view of the BSI and NIST overlays. §14 is the side-by-side authority comparison.
 >
 > **Authorities covered:**
 >
 > | Authority | Document | Status |
 > |:---|:---|:---|
-> | **IANA** | TLS cipher suite registry | Recommended/Not-Recommended interop flag |
-> | **IETF** | RFC 8446 (TLS 1.3), RFC 5246 (TLS 1.2), RFC 8996 (TLS 1.0/1.1 deprecation) | Protocol-level MUST/SHOULD/MAY |
-> | **NIST** | SP 800-52 Rev 2 (Aug 2019) | US federal — minimum cipher-suite set with FIPS 140 validation requirement |
-> | **BSI** | TR-02102-2 v2026-01 (Jan 2026) | German federal — `use up to` deadlines, 120-bit security level, 7-year prediction horizon |
+> | **IANA** | TLS cipher suite registry | Recommended/Not-Recommended interop flag (encoded as `iana.recommended` in cr-tls.yaml) |
+> | **IETF** | RFC 8446 (TLS 1.3), RFC 5246 (TLS 1.2), RFC 8996 (TLS 1.0/1.1 deprecation) | Protocol-level MUST/SHOULD/MAY (referenced in §1–§11 notes) |
+> | **NIST** | SP 800-52 Rev 2 (Aug 2019) | US federal — minimum cipher-suite set with FIPS 140 validation requirement (encoded as `nist.status` / `nist.source` in cr-tls.yaml) |
+> | **BSI** | TR-02102-2 v2026-01 (Jan 2026) | German federal — `use up to` deadlines, 120-bit security level, 7-year prediction horizon (encoded as `bsi.status` / `bsi.useUpTo` / `bsi.source` in cr-tls.yaml) |
 >
 > For algorithm-level status, see [cryptographic-algorithm-status.md](cryptographic-algorithm-status.md).
 > For protocol-level guidance, see [cryptographic-protocol-status.md](cryptographic-protocol-status.md).
@@ -403,28 +400,30 @@ category since PSK authentication is their distinguishing characteristic.
 
 Cipher suites with Perfect Forward Secrecy. CBC suites are recommended **only in conjunction with the Encrypt-then-MAC extension** (RFC 7366).
 
+<!-- AUTOGEN:BEGIN tls-bsi-12-2 -->
 | Cipher suite | IANA | Spec | Use up to |
 |:---|:---|:---|:---|
-| `TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x23` | RFC 5289 | 2031 |
-| `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x24` | RFC 5289 | 2031 |
-| `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2B` | RFC 5289 | 2031 |
-| `TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2C` | RFC 5289 | 2031 |
-| `TLS_ECDHE_ECDSA_WITH_AES_128_CCM` | `0xC0,0xAC` | RFC 7251 | 2031 |
-| `TLS_ECDHE_ECDSA_WITH_AES_256_CCM` | `0xC0,0xAD` | RFC 7251 | 2031 |
-| `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x27` | RFC 5289 | 2031 |
-| `TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x28` | RFC 5289 | 2031 |
-| `TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2F` | RFC 5289 | 2031 |
-| `TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x30` | RFC 5289 | 2031 |
-| `TLS_DHE_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x40` | RFC 5246 | **2029** (DSA discontinuation) |
-| `TLS_DHE_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x6A` | RFC 5246 | 2029 |
-| `TLS_DHE_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA2` | RFC 5288 | 2029 |
-| `TLS_DHE_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA3` | RFC 5288 | 2029 |
+| `TLS_DHE_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x40` | RFC 5246 | 2029 |
 | `TLS_DHE_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x67` | RFC 5246 | 2029 |
+| `TLS_DHE_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x6A` | RFC 5246 | 2029 |
 | `TLS_DHE_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x6B` | RFC 5246 | 2029 |
 | `TLS_DHE_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0x9E` | RFC 5288 | 2029 |
 | `TLS_DHE_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0x9F` | RFC 5288 | 2029 |
+| `TLS_DHE_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA2` | RFC 5288 | 2029 |
+| `TLS_DHE_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA3` | RFC 5288 | 2029 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x23` | RFC 5289 | 2031 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x24` | RFC 5289 | 2031 |
+| `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x27` | RFC 5289 | 2031 |
+| `TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x28` | RFC 5289 | 2031 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2B` | RFC 5289 | 2031 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2C` | RFC 5289 | 2031 |
+| `TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2F` | RFC 5289 | 2031 |
+| `TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x30` | RFC 5289 | 2031 |
 | `TLS_DHE_RSA_WITH_AES_128_CCM` | `0xC0,0x9E` | RFC 6655 | 2029 |
 | `TLS_DHE_RSA_WITH_AES_256_CCM` | `0xC0,0x9F` | RFC 6655 | 2029 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CCM` | `0xC0,0xAC` | RFC 7251 | 2031 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CCM` | `0xC0,0xAD` | RFC 7251 | 2031 |
+<!-- AUTOGEN:END tls-bsi-12-2 -->
 
 > **Note:** TLS_DHE_* cipher suites are scheduled for IETF deprecation
 > (draft-ietf-tls-deprecate-obsolete-kex). BSI mirrors that schedule with the 2029 cut-off.
@@ -433,60 +432,66 @@ Cipher suites with Perfect Forward Secrecy. CBC suites are recommended **only in
 
 Fallback when PFS suites are unavailable. **All entries: use up to 2026** — last year of recommendation.
 
-| Cipher suite | IANA | Use up to |
-|:---|:---|:---|
-| `TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x25` | 2026 |
-| `TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x26` | 2026 |
-| `TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2D` | 2026 |
-| `TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2E` | 2026 |
-| `TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x29` | 2026 |
-| `TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x2A` | 2026 |
-| `TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x31` | 2026 |
-| `TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x32` | 2026 |
-| `TLS_DH_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x3E` | 2026 |
-| `TLS_DH_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x68` | 2026 |
-| `TLS_DH_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA4` | 2026 |
-| `TLS_DH_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA5` | 2026 |
-| `TLS_DH_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x3F` | 2026 |
-| `TLS_DH_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x69` | 2026 |
-| `TLS_DH_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0xA0` | 2026 |
-| `TLS_DH_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0xA1` | 2026 |
+<!-- AUTOGEN:BEGIN tls-bsi-12-3 -->
+| Cipher suite | IANA | Spec | Use up to |
+|:---|:---|:---|:---|
+| `TLS_DH_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x3E` | RFC 5246 | **2026** |
+| `TLS_DH_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x3F` | RFC 5246 | **2026** |
+| `TLS_DH_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x68` | RFC 5246 | **2026** |
+| `TLS_DH_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x69` | RFC 5246 | **2026** |
+| `TLS_DH_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0xA0` | RFC 5288 | **2026** |
+| `TLS_DH_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0xA1` | RFC 5288 | **2026** |
+| `TLS_DH_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA4` | RFC 5288 | **2026** |
+| `TLS_DH_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA5` | RFC 5288 | **2026** |
+| `TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x25` | RFC 5289 | **2026** |
+| `TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x26` | RFC 5289 | **2026** |
+| `TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x29` | RFC 5289 | **2026** |
+| `TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x2A` | RFC 5289 | **2026** |
+| `TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2D` | RFC 5289 | **2026** |
+| `TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2E` | RFC 5289 | **2026** |
+| `TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x31` | RFC 5289 | **2026** |
+| `TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x32` | RFC 5289 | **2026** |
+<!-- AUTOGEN:END tls-bsi-12-3 -->
 
 ### 12.4 TLS 1.2 PSK Cipher Suites (TR-02102-2 §3.3.1.3 Table 5)
 
+<!-- AUTOGEN:BEGIN tls-bsi-12-4 -->
 | Cipher suite | IANA | Spec | Use up to | PFS |
-|:---|:---|:---|:---|:---|
+|:---|:---|:---|:---|:---:|
+| `TLS_DHE_PSK_WITH_AES_128_GCM_SHA256` | `0x00,0xAA` | RFC 5487 | 2029 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_256_GCM_SHA384` | `0x00,0xAB` | RFC 5487 | 2029 | ✓ |
+| `TLS_RSA_PSK_WITH_AES_128_GCM_SHA256` | `0x00,0xAC` | RFC 5487 | **2026** | ✗ |
+| `TLS_RSA_PSK_WITH_AES_256_GCM_SHA384` | `0x00,0xAD` | RFC 5487 | **2026** | ✗ |
+| `TLS_DHE_PSK_WITH_AES_128_CBC_SHA256` | `0x00,0xB2` | RFC 5487 | 2029 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_256_CBC_SHA384` | `0x00,0xB3` | RFC 5487 | 2029 | ✓ |
+| `TLS_RSA_PSK_WITH_AES_128_CBC_SHA256` | `0x00,0xB6` | RFC 5487 | **2026** | ✗ |
+| `TLS_RSA_PSK_WITH_AES_256_CBC_SHA384` | `0x00,0xB7` | RFC 5487 | **2026** | ✗ |
 | `TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256` | `0xC0,0x37` | RFC 5489 | 2031 | ✓ |
 | `TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA384` | `0xC0,0x38` | RFC 5489 | 2031 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_128_CCM` | `0xC0,0xA6` | RFC 6655 | 2029 | ✓ |
+| `TLS_DHE_PSK_WITH_AES_256_CCM` | `0xC0,0xA7` | RFC 6655 | 2029 | ✓ |
 | `TLS_ECDHE_PSK_WITH_AES_128_GCM_SHA256` | `0xD0,0x01` | RFC 8442 | 2031 | ✓ |
 | `TLS_ECDHE_PSK_WITH_AES_256_GCM_SHA384` | `0xD0,0x02` | RFC 8442 | 2031 | ✓ |
 | `TLS_ECDHE_PSK_WITH_AES_128_CCM_SHA256` | `0xD0,0x05` | RFC 8442 | 2031 | ✓ |
-| `TLS_DHE_PSK_WITH_AES_128_CBC_SHA256` | `0x00,0xB2` | RFC 5487 | 2029 | ✓ |
-| `TLS_DHE_PSK_WITH_AES_256_CBC_SHA384` | `0x00,0xB3` | RFC 5487 | 2029 | ✓ |
-| `TLS_DHE_PSK_WITH_AES_128_GCM_SHA256` | `0x00,0xAA` | RFC 5487 | 2029 | ✓ |
-| `TLS_DHE_PSK_WITH_AES_256_GCM_SHA384` | `0x00,0xAB` | RFC 5487 | 2029 | ✓ |
-| `TLS_DHE_PSK_WITH_AES_128_CCM` | `0xC0,0xA6` | RFC 6655 | 2029 | ✓ |
-| `TLS_DHE_PSK_WITH_AES_256_CCM` | `0xC0,0xA7` | RFC 6655 | 2029 | ✓ |
-| `TLS_RSA_PSK_WITH_AES_128_CBC_SHA256` | `0x00,0xB6` | RFC 5487 | 2026 | ✗ |
-| `TLS_RSA_PSK_WITH_AES_256_CBC_SHA384` | `0x00,0xB7` | RFC 5487 | 2026 | ✗ |
-| `TLS_RSA_PSK_WITH_AES_128_GCM_SHA256` | `0x00,0xAC` | RFC 5487 | 2026 | ✗ |
-| `TLS_RSA_PSK_WITH_AES_256_GCM_SHA384` | `0x00,0xAD` | RFC 5487 | 2026 | ✗ |
+<!-- AUTOGEN:END tls-bsi-12-4 -->
 
 > **Note:** Cipher suites of the form `TLS_PSK_*` (no ephemeral key, no random number)
 > are **not recommended** by BSI — security depends solely on the entropy and confidentiality of the PSK.
 
 ### 12.5 TLS 1.2 Diffie-Hellman Groups (TR-02102-2 §3.3.2 Table 6)
 
-| Group | IANA | Spec | Use up to |
-|:---|:---|:---|:---|
-| `secp256r1` | 23 | RFC 8422 | 2031 |
-| `secp384r1` | 24 | RFC 8422 | 2031 |
-| `secp521r1` | 25 | RFC 8422 | 2031 |
-| `brainpoolP256r1` | 26 | RFC 7027 | 2031 |
-| `brainpoolP384r1` | 27 | RFC 7027 | 2031 |
-| `brainpoolP512r1` | 28 | RFC 7027 | 2031 |
-| `ffdhe3072` | 257 | RFC 7919 | 2029 |
-| `ffdhe4096` | 258 | RFC 7919 | 2029 |
+<!-- AUTOGEN:BEGIN tls-bsi-12-5 -->
+| Group | Description | IANA | Spec | Use up to |
+|:---|:---|:---|:---|:---|
+| `secp256r1` | P-256 (secp256r1); 128-bit security | 23 | RFC 8422 | 2031 |
+| `secp384r1` | P-384 (secp384r1); 192-bit security | 24 | RFC 8422 | 2031 |
+| `secp521r1` | P-521 (secp521r1); 256-bit security | 25 | RFC 8422 | 2031 |
+| `brainpoolP256r1` | Brainpool P-256r1 (TLS 1.2); 128-bit security | 26 | RFC 7027 | 2031 |
+| `brainpoolP384r1` | Brainpool P-384r1 (TLS 1.2); 192-bit security | 27 | RFC 7027 | 2031 |
+| `brainpoolP512r1` | Brainpool P-512r1 (TLS 1.2); 256-bit security | 28 | RFC 7027 | 2031 |
+| `ffdhe3072` | 3072-bit FFDHE (named, RFC 7919); 128-bit security | 257 | RFC 7919 | 2031 |
+| `ffdhe4096` | 4096-bit FFDHE (named, RFC 7919) | 258 | RFC 7919 | 2031 |
+<!-- AUTOGEN:END tls-bsi-12-5 -->
 
 ### 12.6 TLS 1.2 Signature Algorithms (TR-02102-2 §3.3.3 Tables 7+8)
 
@@ -512,57 +517,67 @@ Fallback when PFS suites are unavailable. **All entries: use up to 2026** — la
 
 ### 12.8 TLS 1.3 Diffie-Hellman Groups (TR-02102-2 §3.4.2 Table 10)
 
-| Group | IANA | Spec | Use up to |
-|:---|:---|:---|:---|
-| `secp256r1` | 23 | RFC 8422 | 2031 |
-| `secp384r1` | 24 | RFC 8422 | 2031 |
-| `secp521r1` | 25 | RFC 8422 | 2031 |
-| `brainpoolP256r1tls13` | 31 | RFC 8734 | 2031 |
-| `brainpoolP384r1tls13` | 32 | RFC 8734 | 2031 |
-| `brainpoolP512r1tls13` | 33 | RFC 8734 | 2031 |
-| `ffdhe3072` | 257 | RFC 7919 | 2031 |
-| `ffdhe4096` | 258 | RFC 7919 | 2031 |
+<!-- AUTOGEN:BEGIN tls-bsi-12-8 -->
+| Group | Description | IANA | Spec | Use up to |
+|:---|:---|:---|:---|:---|
+| `secp256r1` | P-256 (secp256r1); 128-bit security | 23 | RFC 8422 | 2031 |
+| `secp384r1` | P-384 (secp384r1); 192-bit security | 24 | RFC 8422 | 2031 |
+| `secp521r1` | P-521 (secp521r1); 256-bit security | 25 | RFC 8422 | 2031 |
+| `brainpoolP256r1tls13` | Brainpool P-256r1 (TLS 1.3); 128-bit security | 31 | RFC 8734 | 2031 |
+| `brainpoolP384r1tls13` | Brainpool P-384r1 (TLS 1.3); 192-bit security | 32 | RFC 8734 | 2031 |
+| `brainpoolP512r1tls13` | Brainpool P-512r1 (TLS 1.3); 256-bit security | 33 | RFC 8734 | 2031 |
+| `ffdhe3072` | 3072-bit FFDHE (named, RFC 7919); 128-bit security | 257 | RFC 7919 | 2031 |
+| `ffdhe4096` | 4096-bit FFDHE (named, RFC 7919) | 258 | RFC 7919 | 2031 |
+<!-- AUTOGEN:END tls-bsi-12-8 -->
 
 > **Note (quantum migration):** From 2032 onwards, classical (EC)DHE applies **exclusively to hybrid use with quantum-safe mechanisms**. BSI intends to recommend `SecP256r1MLKEM768` and `SecP384r1MLKEM1024` (draft-ietf-tls-ecdhe-mlkem) once the corresponding RFC has been adopted.
 
-### 12.9 TLS 1.3 Signature Algorithms — `signature_algorithms` (TR-02102-2 §3.4.3 Table 11)
+### 12.9 TLS 1.3 `signature_algorithms` Extension (TR-02102-2 §3.4.3 Table 11)
 
-| Signature algorithm | IANA | Use up to |
-|:---|:---|:---|
-| `rsa_pss_rsae_sha256` | `0x0804` | 2032+ |
-| `rsa_pss_rsae_sha384` | `0x0805` | 2032+ |
-| `rsa_pss_rsae_sha512` | `0x0806` | 2032+ |
-| `rsa_pss_pss_sha256` | `0x0809` | 2032+ |
-| `rsa_pss_pss_sha384` | `0x080A` | 2032+ |
-| `rsa_pss_pss_sha512` | `0x080B` | 2032+ |
-| `ecdsa_secp256r1_sha256` | `0x0403` | 2032+ |
-| `ecdsa_secp384r1_sha384` | `0x0503` | 2032+ |
-| `ecdsa_secp521r1_sha512` | `0x0603` | 2032+ |
-| `ecdsa_brainpoolP256r1tls13_sha256` | `0x081A` | 2032+ |
-| `ecdsa_brainpoolP384r1tls13_sha384` | `0x081B` | 2032+ |
-| `ecdsa_brainpoolP512r1tls13_sha512` | `0x081C` | 2032+ |
+<!-- AUTOGEN:BEGIN tls-bsi-12-9 -->
+| Signature algorithm | IANA | Spec | Use up to |
+|:---|:---|:---|:---|
+| `ecdsa_secp256r1_sha256` | `0x0403` | RFC-ietf-tls-rfc8446bis-13 | 2032+ |
+| `ecdsa_secp384r1_sha384` | `0x0503` | RFC-ietf-tls-rfc8446bis-13 | 2032+ |
+| `ecdsa_secp521r1_sha512` | `0x0603` | RFC-ietf-tls-rfc8446bis-13 | 2032+ |
+| `rsa_pss_rsae_sha256` | `0x0804` | RFC-ietf-tls-rfc8446bis-13 | 2032+ |
+| `rsa_pss_rsae_sha384` | `0x0805` | RFC-ietf-tls-rfc8446bis-13 | 2032+ |
+| `rsa_pss_rsae_sha512` | `0x0806` | RFC-ietf-tls-rfc8446bis-13 | 2032+ |
+| `rsa_pss_pss_sha256` | `0x0809` | RFC-ietf-tls-rfc8446bis-13 | 2032+ |
+| `rsa_pss_pss_sha384` | `0x080A` | RFC-ietf-tls-rfc8446bis-13 | 2032+ |
+| `rsa_pss_pss_sha512` | `0x080B` | RFC-ietf-tls-rfc8446bis-13 | 2032+ |
+| `ecdsa_brainpoolP256r1tls13_sha256` | `0x081A` | RFC 8734 | 2032+ |
+| `ecdsa_brainpoolP384r1tls13_sha384` | `0x081B` | RFC 8734 | 2032+ |
+| `ecdsa_brainpoolP512r1tls13_sha512` | `0x081C` | RFC 8734 | 2032+ |
+<!-- AUTOGEN:END tls-bsi-12-9 -->
 
-### 12.10 TLS 1.3 Signature Algorithms — `signature_algorithms_cert` (TR-02102-2 §3.4.3 Table 12)
+### 12.10 TLS 1.3 `signature_algorithms_cert` Extension (TR-02102-2 §3.4.3 Table 12)
 
 Adds three PKCS #1 v1.5 entries to Table 11; their `use up to` is 2025 (PKCS #1 v1.5 padding discontinuation):
 
-| Signature algorithm | IANA | Use up to |
-|:---|:---|:---|
-| `rsa_pkcs1_sha256` | `0x0401` | **2025** |
-| `rsa_pkcs1_sha384` | `0x0501` | **2025** |
-| `rsa_pkcs1_sha512` | `0x0601` | **2025** |
+<!-- AUTOGEN:BEGIN tls-bsi-12-10 -->
+| Signature algorithm | IANA | Spec | Use up to |
+|:---|:---|:---|:---|
+| `rsa_pkcs1_sha256` | `0x0401` | RFC-ietf-tls-rfc8446bis-13 | **2025** |
+| `rsa_pkcs1_sha384` | `0x0501` | RFC-ietf-tls-rfc8446bis-13 | **2025** |
+| `rsa_pkcs1_sha512` | `0x0601` | RFC-ietf-tls-rfc8446bis-13 | **2025** |
+<!-- AUTOGEN:END tls-bsi-12-10 -->
 
 (All Table 11 entries also apply to `signature_algorithms_cert` with the same 2032+ deadlines.)
 
 ### 12.11 TLS 1.3 Cipher Suites (TR-02102-2 §3.4.4 Table 13)
 
-| Cipher suite | IANA | Use up to |
-|:---|:---|:---|
-| `TLS_AES_128_GCM_SHA256` | `0x13,0x01` | 2032+ |
-| `TLS_AES_256_GCM_SHA384` | `0x13,0x02` | 2032+ |
-| `TLS_AES_128_CCM_SHA256` | `0x13,0x04` | 2032+ |
+> Auto-generated table merges TLS 1.3 cipher suites from cr-tls.yaml with both NIST and BSI columns. Suites without a BSI entry (e.g. `TLS_CHACHA20_POLY1305_SHA256`, `TLS_AES_128_CCM_8_SHA256`) appear with `—` in the BSI column.
 
-> **Note:** `TLS_CHACHA20_POLY1305_SHA256` (`0x13,0x03`) is **not recommended** by BSI (no dedicated stream-cipher recommendations in TR-02102-1). `TLS_AES_128_CCM_8_SHA256` (`0x13,0x05`, 8-byte tag) is also absent — BSI prefers full 16-byte authentication tags.
+<!-- AUTOGEN:BEGIN tls-bsi-12-11 -->
+| Cipher suite | IANA | NIST | BSI |
+|:---|:---|:---|:---|
+| `TLS_AES_128_GCM_SHA256` | `0x13,0x01` | ✓ Approved | ✅ Recommended (use up to 2032+) |
+| `TLS_AES_256_GCM_SHA384` | `0x13,0x02` | ✓ Approved | ✅ Recommended (use up to 2032+) |
+| `TLS_CHACHA20_POLY1305_SHA256` | `0x13,0x03` | — | — |
+| `TLS_AES_128_CCM_SHA256` | `0x13,0x04` | ✓ Approved | ✅ Recommended (use up to 2032+) |
+| `TLS_AES_128_CCM_8_SHA256` | `0x13,0x05` | ✓ Approved | — |
+<!-- AUTOGEN:END tls-bsi-12-11 -->
 
 ### 12.12 TLS Extensions (TR-02102-2 §3.3.4, §3.4.5)
 
@@ -618,103 +633,109 @@ For TLS key/signature generation, an RNG of class **DRG.3, DRG.4, DRT.1, PTG.3, 
 
 #### 13.2.1 ECDSA Server Certificate
 
-| Cipher suite | IANA | Available in |
-|:---|:---|:---|
-| `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2B` | TLS 1.2 |
-| `TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2C` | TLS 1.2 |
-| `TLS_ECDHE_ECDSA_WITH_AES_128_CCM` | `0xC0,0xAC` | TLS 1.2 |
-| `TLS_ECDHE_ECDSA_WITH_AES_256_CCM` | `0xC0,0xAD` | TLS 1.2 |
-| `TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8` | `0xC0,0xAE` | TLS 1.2 |
-| `TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8` | `0xC0,0xAF` | TLS 1.2 |
-| `TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x23` | TLS 1.2 |
-| `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x24` | TLS 1.2 |
-| `TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA` | `0xC0,0x09` | TLS 1.0 / 1.1 / 1.2 |
-| `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA` | `0xC0,0x0A` | TLS 1.0 / 1.1 / 1.2 |
+<!-- AUTOGEN:BEGIN tls-nist-13-2-1 -->
+| Cipher suite | IANA | Spec | Available in |
+|:---|:---|:---|:---|
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA` | `0xC0,0x09` | RFC 8422 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA` | `0xC0,0x0A` | RFC 8422 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x23` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x24` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2B` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2C` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CCM` | `0xC0,0xAC` | RFC 7251 | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CCM` | `0xC0,0xAD` | RFC 7251 | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8` | `0xC0,0xAE` | RFC 7251 | TLS 1.2 |
+| `TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8` | `0xC0,0xAF` | RFC 7251 | TLS 1.2 |
+<!-- AUTOGEN:END tls-nist-13-2-1 -->
 
 #### 13.2.2 RSA Server Certificate
 
-| Cipher suite | IANA | Available in |
-|:---|:---|:---|
-| `TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2F` | TLS 1.2 |
-| `TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x30` | TLS 1.2 |
-| `TLS_DHE_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0x9E` | TLS 1.2 |
-| `TLS_DHE_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0x9F` | TLS 1.2 |
-| `TLS_DHE_RSA_WITH_AES_128_CCM` | `0xC0,0x9E` | TLS 1.2 |
-| `TLS_DHE_RSA_WITH_AES_256_CCM` | `0xC0,0x9F` | TLS 1.2 |
-| `TLS_DHE_RSA_WITH_AES_128_CCM_8` | `0xC0,0xA2` | TLS 1.2 |
-| `TLS_DHE_RSA_WITH_AES_256_CCM_8` | `0xC0,0xA3` | TLS 1.2 |
-| `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x27` | TLS 1.2 |
-| `TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x28` | TLS 1.2 |
-| `TLS_DHE_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x67` | TLS 1.2 |
-| `TLS_DHE_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x6B` | TLS 1.2 |
-| `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA` | `0xC0,0x13` | TLS 1.0 / 1.1 / 1.2 |
-| `TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA` | `0xC0,0x14` | TLS 1.0 / 1.1 / 1.2 |
-| `TLS_DHE_RSA_WITH_AES_128_CBC_SHA` | `0x00,0x33` | TLS 1.0 / 1.1 / 1.2 |
-| `TLS_DHE_RSA_WITH_AES_256_CBC_SHA` | `0x00,0x39` | TLS 1.0 / 1.1 / 1.2 |
+<!-- AUTOGEN:BEGIN tls-nist-13-2-2 -->
+| Cipher suite | IANA | Spec | Available in |
+|:---|:---|:---|:---|
+| `TLS_DHE_RSA_WITH_AES_128_CBC_SHA` | `0x00,0x33` | RFC 5246 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_DHE_RSA_WITH_AES_256_CBC_SHA` | `0x00,0x39` | RFC 5246 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_DHE_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x67` | RFC 5246 | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x6B` | RFC 5246 | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0x9E` | RFC 5288 | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0x9F` | RFC 5288 | TLS 1.2 |
+| `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA` | `0xC0,0x13` | RFC 8422 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA` | `0xC0,0x14` | RFC 8422 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x27` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x28` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2F` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x30` | RFC 5289 | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_128_CCM` | `0xC0,0x9E` | RFC 6655 | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_256_CCM` | `0xC0,0x9F` | RFC 6655 | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_128_CCM_8` | `0xC0,0xA2` | RFC 6655 | TLS 1.2 |
+| `TLS_DHE_RSA_WITH_AES_256_CCM_8` | `0xC0,0xA3` | RFC 6655 | TLS 1.2 |
+<!-- AUTOGEN:END tls-nist-13-2-2 -->
 
 #### 13.2.3 DSA Server Certificate
 
-| Cipher suite | IANA | Available in |
-|:---|:---|:---|
-| `TLS_DHE_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA2` | TLS 1.2 |
-| `TLS_DHE_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA3` | TLS 1.2 |
-| `TLS_DHE_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x40` | TLS 1.2 |
-| `TLS_DHE_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x6A` | TLS 1.2 |
-| `TLS_DHE_DSS_WITH_AES_128_CBC_SHA` | `0x00,0x32` | TLS 1.0 / 1.1 / 1.2 |
-| `TLS_DHE_DSS_WITH_AES_256_CBC_SHA` | `0x00,0x38` | TLS 1.0 / 1.1 / 1.2 |
+<!-- AUTOGEN:BEGIN tls-nist-13-2-3 -->
+| Cipher suite | IANA | Spec | Available in |
+|:---|:---|:---|:---|
+| `TLS_DHE_DSS_WITH_AES_128_CBC_SHA` | `0x00,0x32` | RFC 5246 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_DHE_DSS_WITH_AES_256_CBC_SHA` | `0x00,0x38` | RFC 5246 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_DHE_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x40` | RFC 5246 | TLS 1.2 |
+| `TLS_DHE_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x6A` | RFC 5246 | TLS 1.2 |
+| `TLS_DHE_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA2` | RFC 5288 | TLS 1.2 |
+| `TLS_DHE_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA3` | RFC 5288 | TLS 1.2 |
+<!-- AUTOGEN:END tls-nist-13-2-3 -->
 
-#### 13.2.4 DH Server Certificate (DSA-signed)
+#### 13.2.4 DH Server Certificate (DSA- or RSA-signed)
 
-| Cipher suite | IANA |
-|:---|:---|
-| `TLS_DH_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA4` |
-| `TLS_DH_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA5` |
-| `TLS_DH_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x3E` |
-| `TLS_DH_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x68` |
-| `TLS_DH_DSS_WITH_AES_128_CBC_SHA` | `0x00,0x30` |
-| `TLS_DH_DSS_WITH_AES_256_CBC_SHA` | `0x00,0x36` |
+> SP 800-52r2 §3.3.1.1.4 covers both DH-DSS and DH-RSA cert types.
 
-#### 13.2.5 DH Server Certificate (RSA-signed)
+<!-- AUTOGEN:BEGIN tls-nist-13-2-4 -->
+| Cipher suite | IANA | Spec | Available in |
+|:---|:---|:---|:---|
+| `TLS_DH_DSS_WITH_AES_128_CBC_SHA` | `0x00,0x30` | RFC 5246 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_DH_RSA_WITH_AES_128_CBC_SHA` | `0x00,0x31` | RFC 5246 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_DH_DSS_WITH_AES_256_CBC_SHA` | `0x00,0x36` | RFC 5246 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_DH_RSA_WITH_AES_256_CBC_SHA` | `0x00,0x37` | RFC 5246 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_DH_DSS_WITH_AES_128_CBC_SHA256` | `0x00,0x3E` | RFC 5246 | TLS 1.2 |
+| `TLS_DH_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x3F` | RFC 5246 | TLS 1.2 |
+| `TLS_DH_DSS_WITH_AES_256_CBC_SHA256` | `0x00,0x68` | RFC 5246 | TLS 1.2 |
+| `TLS_DH_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x69` | RFC 5246 | TLS 1.2 |
+| `TLS_DH_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0xA0` | RFC 5288 | TLS 1.2 |
+| `TLS_DH_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0xA1` | RFC 5288 | TLS 1.2 |
+| `TLS_DH_DSS_WITH_AES_128_GCM_SHA256` | `0x00,0xA4` | RFC 5288 | TLS 1.2 |
+| `TLS_DH_DSS_WITH_AES_256_GCM_SHA384` | `0x00,0xA5` | RFC 5288 | TLS 1.2 |
+<!-- AUTOGEN:END tls-nist-13-2-4 -->
 
-| Cipher suite | IANA |
-|:---|:---|
-| `TLS_DH_RSA_WITH_AES_128_GCM_SHA256` | `0x00,0xA0` |
-| `TLS_DH_RSA_WITH_AES_256_GCM_SHA384` | `0x00,0xA1` |
-| `TLS_DH_RSA_WITH_AES_128_CBC_SHA256` | `0x00,0x3F` |
-| `TLS_DH_RSA_WITH_AES_256_CBC_SHA256` | `0x00,0x69` |
-| `TLS_DH_RSA_WITH_AES_128_CBC_SHA` | `0x00,0x31` |
-| `TLS_DH_RSA_WITH_AES_256_CBC_SHA` | `0x00,0x37` |
+#### 13.2.5 ECDH Server Certificate (ECDSA- or RSA-signed)
 
-#### 13.2.6 ECDH Server Certificate (ECDSA-signed)
+> SP 800-52r2 §3.3.1.1.5 covers both ECDH-ECDSA and ECDH-RSA cert types.
 
-| Cipher suite | IANA |
-|:---|:---|
-| `TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2D` |
-| `TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2E` |
-| `TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x25` |
-| `TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x26` |
-| `TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA` | `0xC0,0x04` |
-| `TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA` | `0xC0,0x05` |
-
-#### 13.2.7 ECDH Server Certificate (RSA-signed)
-
-| Cipher suite | IANA |
-|:---|:---|
-| `TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x31` |
-| `TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x32` |
-| `TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x29` |
-| `TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x2A` |
-| `TLS_ECDH_RSA_WITH_AES_128_CBC_SHA` | `0xC0,0x0E` |
-| `TLS_ECDH_RSA_WITH_AES_256_CBC_SHA` | `0xC0,0x0F` |
+<!-- AUTOGEN:BEGIN tls-nist-13-2-5 -->
+| Cipher suite | IANA | Spec | Available in |
+|:---|:---|:---|:---|
+| `TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA` | `0xC0,0x04` | RFC 8422 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA` | `0xC0,0x05` | RFC 8422 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_ECDH_RSA_WITH_AES_128_CBC_SHA` | `0xC0,0x0E` | RFC 8422 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_ECDH_RSA_WITH_AES_256_CBC_SHA` | `0xC0,0x0F` | RFC 8422 | TLS 1.0 / 1.1 / 1.2 (interop only) |
+| `TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x25` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x26` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256` | `0xC0,0x29` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384` | `0xC0,0x2A` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x2D` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x2E` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256` | `0xC0,0x31` | RFC 5289 | TLS 1.2 |
+| `TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384` | `0xC0,0x32` | RFC 5289 | TLS 1.2 |
+<!-- AUTOGEN:END tls-nist-13-2-5 -->
 
 ### 13.3 TLS 1.3 Cipher Suites (SP 800-52r2 §3.3.1.2)
 
-| Cipher suite | IANA |
-|:---|:---|
-| `TLS_AES_128_GCM_SHA256` | `0x13,0x01` |
-| `TLS_AES_256_GCM_SHA384` | `0x13,0x02` |
-| `TLS_AES_128_CCM_SHA256` | `0x13,0x04` |
-| `TLS_AES_128_CCM_8_SHA256` | `0x13,0x05` |
+<!-- AUTOGEN:BEGIN tls-nist-13-3 -->
+| Cipher suite | IANA | Spec | Available in |
+|:---|:---|:---|:---|
+| `TLS_AES_128_GCM_SHA256` | `0x13,0x01` | RFC-ietf-tls-rfc8446bis-13 | TLS 1.3 |
+| `TLS_AES_256_GCM_SHA384` | `0x13,0x02` | RFC-ietf-tls-rfc8446bis-13 | TLS 1.3 |
+| `TLS_AES_128_CCM_SHA256` | `0x13,0x04` | RFC-ietf-tls-rfc8446bis-13 | TLS 1.3 |
+| `TLS_AES_128_CCM_8_SHA256` | `0x13,0x05` | RFC-ietf-tls-rfc8446bis-13 | TLS 1.3 |
+<!-- AUTOGEN:END tls-nist-13-3 -->
 
 > **Compatibility:** TLS 1.3 cipher suites work with RSA and ECDSA server certificates; DSA and DH certificates are **not supported** by TLS 1.3. They may also be used with pre-shared keys per Appendix C.
 

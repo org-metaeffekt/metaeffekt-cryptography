@@ -28,69 +28,89 @@ Recommendations for SSH protocol usage. Source: BSI TR-02102-4, Version 2026-01 
 ### 1.1 Key Exchange
 
 > **Authorities:** IETF RFC 9142 (Oct 2021); NIST SP 800-131A Rev 2; BSI TR-02102-4 v2026-01.
+>
+> **Source of truth:** [`cr-ssh.yaml`](ae-pattern-validator/src/main/resources/registry/cr-ssh.yaml) — every entry, including non-recommended legacy/disallowed algorithms, is encoded in the registry and surfaced via the auto-generated table below.
 
+<!-- AUTOGEN:BEGIN ssh-kex -->
 | Algorithm | IETF | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|
-| `curve25519-sha256` | ✓ SHOULD (§3.1.1) | ✓ Approved | ✅ Recommended | RFC 8731; ECDH/Curve25519+SHA-256; constant-time |
-| `curve25519-sha256@libssh.org` | — | ✓ Approved | ✅ Recommended | OpenSSH alias predating RFC 8731 |
-| `ecdh-sha2-nistp256` | ✓ SHOULD (§3.1.3) | ✓ Approved | ✓ Approved | RFC 5656; P-256 |
-| `ecdh-sha2-nistp384` | ✓ SHOULD (§3.1.3) | ✓ Approved | ✓ Approved | RFC 5656; P-384 |
-| `ecdh-sha2-nistp521` | ✓ SHOULD (§3.1.3) | ✓ Approved | ✓ Approved | RFC 5656; P-521 |
-| `diffie-hellman-group14-sha256` | ✅ MUST (§3.2.2) | 🔜 Transitional | 🔜 Transitional | RFC 8268; 2048-bit DH; 112-bit security; acceptable through 2030 |
-| `diffie-hellman-group15-sha512` | ◯ MAY (§3.2.2) | ✓ Approved | — | 3072-bit DH; 128-bit security; not listed in BSI table |
-| `diffie-hellman-group16-sha512` | ✓ SHOULD (§3.2.2) | ✓ Approved | ✓ Approved | RFC 8268; 4096-bit DH |
-| `diffie-hellman-group17-sha512` | ◯ MAY (§3.2.2) | ✓ Approved | — | 6144-bit DH; not listed in BSI table |
-| `diffie-hellman-group18-sha512` | ◯ MAY (§3.2.2) | ✓ Approved | ✓ Approved | RFC 8268; 8192-bit DH |
-| `diffie-hellman-group-exchange-sha256` | ◯ MAY (§3.2.1) | ✓ Approved | — | RFC 4419; client-chosen group; not listed in BSI table |
-| `diffie-hellman-group14-sha1` | ◯ MAY (§3.4) | 🚫 Disallowed | 🚫 Disallowed | RFC 9142 §3.4 retains MAY despite SHA-1; NIST/BSI disallow due to SHA-1 |
-| `diffie-hellman-group1-sha1` | ❌ SHOULD NOT (§3.4) | 🚫 Disallowed | 🚫 Disallowed | 1024-bit DH; SHA-1 |
-| `diffie-hellman-group-exchange-sha1` | ❌ SHOULD NOT (§3.2.1) | 🚫 Disallowed | 🚫 Disallowed | SHA-1 |
+| `curve25519-sha256` | ✓ SHOULD (RFC 9142 §3.1.1) | ✓ Approved | ✅ Recommended | constant-time scalar multiplication; ECDH/Curve25519 + SHA-256 |
+| `curve25519-sha256@libssh.org` | (OpenSSH alias predating RFC 8731) | ✓ Approved | ✅ Recommended | alias for curve25519-sha256 |
+| `ecdh-sha2-nistp256` | ✓ SHOULD (RFC 9142 §3.1.3) | ✓ Approved | ✓ Approved |  |
+| `ecdh-sha2-nistp384` | ✓ SHOULD (RFC 9142 §3.1.3) | ✓ Approved | ✓ Approved |  |
+| `ecdh-sha2-nistp521` | ✓ SHOULD (RFC 9142 §3.1.3) | ✓ Approved | ✓ Approved |  |
+| `diffie-hellman-group14-sha256` | ✅ MUST (RFC 9142 §3.2.2) | 🔜 Transitional | 🔜 Transitional (use up to 2030) | 2048-bit MODP; 112-bit security |
+| `diffie-hellman-group15-sha512` | ◯ MAY (RFC 9142 §3.2.2) | ✓ Approved | — | 3072-bit MODP; not in BSI table |
+| `diffie-hellman-group16-sha512` | ✓ SHOULD (RFC 9142 §3.2.2) | ✓ Approved | ✓ Approved | 4096-bit MODP |
+| `diffie-hellman-group17-sha512` | ◯ MAY (RFC 9142 §3.2.2) | ✓ Approved | — | 6144-bit MODP; not in BSI table |
+| `diffie-hellman-group18-sha512` | ◯ MAY (RFC 9142 §3.2.2) | ✓ Approved | ✓ Approved | 8192-bit MODP |
+| `diffie-hellman-group-exchange-sha256` | ◯ MAY (RFC 9142 §3.2.1) | ✓ Approved | — | client-chosen group (RFC 4419) |
+| `diffie-hellman-group14-sha1` | ◯ MAY (RFC 9142 §3.4) | 🚫 Disallowed | 🚫 Disallowed | RFC 9142 §3.4 retains MAY despite SHA-1 — NIST/BSI disallow |
+| `diffie-hellman-group1-sha1` | ❌ SHOULD NOT (RFC 9142 §3.4) | 🚫 Disallowed | 🚫 Disallowed | 1024-bit MODP + SHA-1 |
+| `diffie-hellman-group-exchange-sha1` | ❌ SHOULD NOT (RFC 9142 §3.2.1) | 🚫 Disallowed | 🚫 Disallowed | SHA-1 |
+<!-- AUTOGEN:END ssh-kex -->
 
 ### 1.2 Host Authentication
 
 > **Authorities:** IETF RFC 8332 (RSA-SHA2), RFC 8709 (Ed25519/Ed448), RFC 5656 (ECDSA), RFC 4253 (legacy); NIST SP 800-131A Rev 2; BSI TR-02102-4 v2026-01.
+>
+> **Source of truth:** [`cr-ssh.yaml`](ae-pattern-validator/src/main/resources/registry/cr-ssh.yaml).
 
+<!-- AUTOGEN:BEGIN ssh-host-auth -->
 | Algorithm | IETF | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|
-| `ssh-ed25519` | ✓ MAY (RFC 8709) | ✓ Approved | ✅ Recommended | EdDSA over Curve25519; constant-time |
-| `ssh-ed448` | ✓ MAY (RFC 8709) | ✓ Approved | — | EdDSA over Curve448; not listed in BSI table |
-| `ecdsa-sha2-nistp256` | ✓ MAY (RFC 5656) | ✓ Approved | ✓ Approved | ECDSA P-256 with SHA-256 |
-| `ecdsa-sha2-nistp384` | ✓ MAY (RFC 5656) | ✓ Approved | ✓ Approved | ECDSA P-384 with SHA-384 |
-| `ecdsa-sha2-nistp521` | ✓ MAY (RFC 5656) | ✓ Approved | ✓ Approved | ECDSA P-521 with SHA-512 |
-| `rsa-sha2-256` | ✓ SHOULD (RFC 8332 §3.3) | ✓ Approved | ✓ Approved | RSA ≥ 3072 bits with SHA-256; ≥ 2048 transitional through 2030 |
-| `rsa-sha2-512` | ✓ SHOULD (RFC 8332 §3.3) | ✓ Approved | ✓ Approved | RSA ≥ 3072 bits with SHA-512 |
+| `ssh-ed25519` | ◯ MAY (RFC 8709) | ✓ Approved | ✅ Recommended | constant-time signing; EdDSA over Curve25519 |
+| `ssh-ed448` | ◯ MAY (RFC 8709) | ✓ Approved | — | EdDSA over Curve448; not listed in BSI table |
+| `ecdsa-sha2-nistp256` | ◯ MAY (RFC 5656) | ✓ Approved | ✓ Approved |  |
+| `ecdsa-sha2-nistp384` | ◯ MAY (RFC 5656) | ✓ Approved | ✓ Approved |  |
+| `ecdsa-sha2-nistp521` | ◯ MAY (RFC 5656) | ✓ Approved | ✓ Approved |  |
+| `rsa-sha2-256` | ✓ SHOULD (RFC 8332 §3.3) | ✓ Approved | ✓ Approved | RSA ≥ 3072 bits recommended; ≥ 2048 transitional through 2030 |
+| `rsa-sha2-512` | ✓ SHOULD (RFC 8332 §3.3) | ✓ Approved | ✓ Approved | RSA ≥ 3072 bits recommended |
 | `ssh-rsa` | ❌ SHOULD NOT (RFC 8332 §3.3) | 🚫 Disallowed | 🚫 Disallowed | RSA with SHA-1; OpenSSH disabled by default since 8.8 |
-| `ssh-dss` | ❌ SHOULD NOT (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | DSA-1024; disallowed |
+| `ssh-dss` | ❌ SHOULD NOT (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | DSA-1024 with SHA-1 |
+<!-- AUTOGEN:END ssh-host-auth -->
 
 ### 1.3 Symmetric Encryption
 
 > **Authorities:** IETF RFC 4253 (original SSH-2 ciphers), RFC 4344 (CTR modes), RFC 5647 (AES-GCM in SSH), RFC 8758 (arcfour deprecation); NIST SP 800-131A Rev 2; BSI TR-02102-4 v2026-01.
+>
+> **Source of truth:** [`cr-ssh.yaml`](ae-pattern-validator/src/main/resources/registry/cr-ssh.yaml).
 
+<!-- AUTOGEN:BEGIN ssh-symmetric-encryption -->
 | Algorithm | IETF | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|
-| `chacha20-poly1305@openssh.com` | — | ✓ Approved | ✅ Recommended | OpenSSH extension; not in any IETF SSH RFC; ChaCha20-Poly1305 AEAD |
-| `aes256-gcm@openssh.com` | ✓ MAY (RFC 5647) | ✓ Approved | ✅ Recommended | AES-256-GCM AEAD; RFC 5647 defines AES-GCM in SSH |
-| `aes128-gcm@openssh.com` | ✓ MAY (RFC 5647) | ✓ Approved | ✅ Recommended | AES-128-GCM AEAD |
-| `aes256-ctr` | ✓ SHOULD (RFC 4344 §4) | ✓ Approved | ⚠ Conditional | CTR mode; use only with HMAC-ETM; no AEAD |
-| `aes192-ctr` | ✓ SHOULD (RFC 4344 §4) | ✓ Approved | ⚠ Conditional | CTR mode; use only with HMAC-ETM |
-| `aes128-ctr` | ✓ SHOULD (RFC 4344 §4) | ✓ Approved | ⚠ Conditional | CTR mode; use only with HMAC-ETM |
-| `aes256-cbc` | ◯ MAY (RFC 4253) | ⚠ Conditional | ❌ Deprecated | CBC mode; padding oracle risk; use GCM or CTR+ETM |
-| `3des-cbc` | ◯ MAY (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | 3DES; 64-bit block; birthday-bound vulnerable; SP 800-131A Rev 2 disallowed since 2024 |
-| `arcfour*` | 🚫 MUST NOT (RFC 8758) | 🚫 Disallowed | 🚫 Disallowed | RC4; cryptographically broken; explicitly removed by RFC 8758 |
+| `chacha20-poly1305@openssh.com` | (OpenSSH extension — not in any IETF SSH RFC) | ✓ Approved | ✅ Recommended | AEAD; preferred over CBC+MAC and CTR+MAC; OpenSSH-specific (no IETF SSH RFC counterpart) |
+| `aes256-gcm@openssh.com` | ◯ MAY (RFC 5647) | ✓ Approved | ✅ Recommended | AEAD; preferred over CBC+MAC and CTR+MAC |
+| `aes128-gcm@openssh.com` | ◯ MAY (RFC 5647) | ✓ Approved | ✅ Recommended | AEAD; preferred over CBC+MAC and CTR+MAC |
+| `aes256-ctr` | ✓ SHOULD (RFC 4344 §4) | ✓ Approved | ⚠ Conditional — requires encrypt-then-MAC (HMAC-ETM) | no AEAD |
+| `aes192-ctr` | ✓ SHOULD (RFC 4344 §4) | ✓ Approved | ⚠ Conditional — requires encrypt-then-MAC (HMAC-ETM) | no AEAD |
+| `aes128-ctr` | ✓ SHOULD (RFC 4344 §4) | ✓ Approved | ⚠ Conditional — requires encrypt-then-MAC (HMAC-ETM) | no AEAD |
+| `aes256-cbc` | ◯ MAY (RFC 4253) | ⚠ Conditional | ❌ Deprecated | CBC padding-oracle risk; prefer AES-GCM (AEAD) or AES-CTR + HMAC-ETM |
+| `3des-cbc` | ◯ MAY (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | 64-bit block; birthday-bound vulnerable above 32 GB; disallowed for encryption since 2024 (SP 800-131A Rev 2) |
+| `arcfour` | 🚫 MUST NOT (RFC 8758) | 🚫 Disallowed | 🚫 Disallowed | RC4; cryptographically broken; explicitly removed by RFC 8758 |
+| `arcfour128` | 🚫 MUST NOT (RFC 8758) | 🚫 Disallowed | 🚫 Disallowed | RC4; cryptographically broken; explicitly removed by RFC 8758 |
+| `arcfour256` | 🚫 MUST NOT (RFC 8758) | 🚫 Disallowed | 🚫 Disallowed | RC4; cryptographically broken; explicitly removed by RFC 8758 |
+<!-- AUTOGEN:END ssh-symmetric-encryption -->
 
 ### 1.4 MAC (for CTR-mode ciphers; not needed with AEAD)
 
 > **Authorities:** IETF RFC 4253 (original SSH-2 MACs), RFC 6668 (HMAC-SHA2 in SSH); NIST SP 800-131A Rev 2; BSI TR-02102-4 v2026-01. Note: ETM (encrypt-then-MAC) variants are OpenSSH extensions and not in any IETF SSH RFC.
+>
+> **Source of truth:** [`cr-ssh.yaml`](ae-pattern-validator/src/main/resources/registry/cr-ssh.yaml).
 
+<!-- AUTOGEN:BEGIN ssh-mac -->
 | Algorithm | IETF | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|
-| `hmac-sha2-256-etm@openssh.com` | — | ✓ Approved | ✅ Recommended | OpenSSH extension; encrypt-then-MAC; preferred construction |
-| `hmac-sha2-512-etm@openssh.com` | — | ✓ Approved | ✅ Recommended | OpenSSH extension; encrypt-then-MAC |
-| `umac-128-etm@openssh.com` | — | ⚠ Conditional | ✓ Approved | OpenSSH extension; UMAC not FIPS-approved |
-| `hmac-sha2-256` | ✓ SHOULD (RFC 6668) | ✓ Approved | ⚠ Conditional | MAC-then-Encrypt; acceptable only with CTR mode |
-| `hmac-sha2-512` | ✓ SHOULD (RFC 6668) | ✓ Approved | ⚠ Conditional | MAC-then-Encrypt; acceptable only with CTR mode |
-| `hmac-sha1*` | ◯ MAY (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | SHA-1; was REQUIRED in RFC 4253 |
-| `hmac-md5*` | ◯ MAY (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | MD5 |
+| `hmac-sha2-256-etm@openssh.com` | (OpenSSH extension — not in any IETF SSH RFC) | ✓ Approved | ✅ Recommended | encrypt-then-MAC; preferred construction; OpenSSH-specific (no IETF SSH RFC counterpart) |
+| `hmac-sha2-512-etm@openssh.com` | (OpenSSH extension — not in any IETF SSH RFC) | ✓ Approved | ✅ Recommended | encrypt-then-MAC; preferred construction; OpenSSH-specific (no IETF SSH RFC counterpart) |
+| `umac-128-etm@openssh.com` | (OpenSSH extension — not in any IETF SSH RFC) | ⚠ Conditional | ✓ Approved | UMAC-128 (RFC 4418); OpenSSH-specific |
+| `hmac-sha2-256` | ✓ SHOULD (RFC 6668) | ✓ Approved | ⚠ Conditional — requires CTR-mode cipher | MAC-then-Encrypt construction |
+| `hmac-sha2-512` | ✓ SHOULD (RFC 6668) | ✓ Approved | ⚠ Conditional — requires CTR-mode cipher | MAC-then-Encrypt construction |
+| `hmac-sha1` | ◯ MAY (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | SHA-1; was REQUIRED in RFC 4253 |
+| `hmac-sha1-96` | ◯ MAY (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | SHA-1; truncated to 96 bits |
+| `hmac-md5` | ◯ MAY (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | MD5; collision-vulnerable |
+| `hmac-md5-96` | ◯ MAY (RFC 4253) | 🚫 Disallowed | 🚫 Disallowed | MD5; truncated to 96 bits |
+<!-- AUTOGEN:END ssh-mac -->
 
 ---
 
@@ -100,55 +120,72 @@ Recommendations for IPsec with IKEv2. Source: BSI TR-02102-3, Version 2026-01 (2
 
 ### 2.1 IKEv2 Key Exchange (Diffie-Hellman groups)
 
-> **Authorities:** IETF RFC 8247 §2.4 (IKEv2 algorithms); NIST SP 800-131A Rev 2 + SP 800-186; BSI TR-02102-3 v2026-01. RFC 8247 does not address Groups 15–18, 20, 21, 25, 26, 31, 32 (these come from later RFCs and IANA registry assignments).
+> **Authorities:** IETF RFC 8247 §2.4 (IKEv2 algorithms); NIST SP 800-131A Rev 2 + SP 800-186; BSI TR-02102-3 v2026-01.
+>
+> **Source of truth:** [`cr-ipsec.yaml`](ae-pattern-validator/src/main/resources/registry/cr-ipsec.yaml).
 
-| Group | Description | IETF | NIST | BSI | Notes |
-|:---|:---|:---|:---|:---|:---|
-| Group 14 | 2048-bit MODP | ✅ MUST (§2.4) | 🔜 Transitional | 🔜 Transitional | 112-bit security; acceptable through 2030 |
-| Group 15 | 3072-bit MODP | — | ✓ Approved | ✓ Approved | 128-bit security |
-| Group 16 | 4096-bit MODP | — | ✓ Approved | ✓ Approved | |
-| Group 17 | 6144-bit MODP | — | ✓ Approved | ✓ Approved | |
-| Group 18 | 8192-bit MODP | — | ✓ Approved | ✓ Approved | |
-| Group 19 | 256-bit ECP (P-256) | ✓ SHOULD (§2.4) | ✓ Approved | ✓ Approved | |
-| Group 20 | 384-bit ECP (P-384) | — | ✓ Approved | ✓ Approved | |
-| Group 21 | 521-bit ECP (P-521) | — | ✓ Approved | ✓ Approved | |
-| Group 25 | 192-bit ECP | — | 🚫 Disallowed | ❌ Deprecated | < 128-bit security |
-| Group 26 | 224-bit ECP | — | 🔜 Transitional | 🔜 Transitional | 112-bit security; acceptable through 2030 |
-| Group 31 | Curve25519 | — | ✓ Approved | ✅ Recommended | RFC 8031; constant-time |
-| Group 32 | Curve448 | — | ✓ Approved | ✅ Recommended | RFC 8031; 224-bit security |
-| Group 5 | 1536-bit MODP | ❌ SHOULD NOT (§2.4) | 🚫 Disallowed | 🚫 Disallowed | < 112-bit security |
-| Group 2 | 1024-bit MODP | ❌ SHOULD NOT (§2.4) | 🚫 Disallowed | 🚫 Disallowed | 80-bit security |
-| Group 1 | 768-bit MODP | 🚫 MUST NOT (§2.4) | 🚫 Disallowed | 🚫 Disallowed | < 80-bit security |
-| Group 22 | 1024-bit MODP w/ subgroup | 🚫 MUST NOT (§2.4) | 🚫 Disallowed | 🚫 Disallowed | Suspect parameters |
-| Groups 23–24 | 2048-bit MODP w/ subgroup | ❌ SHOULD NOT (§2.4) | 🚫 Disallowed | 🚫 Disallowed | Suspect parameters |
+<!-- AUTOGEN:BEGIN ipsec-dh-groups -->
+| Group | Description | IETF | NIST | BSI |
+|:---|:---|:---|:---|:---|
+| `ipsec-dh:group14` | 2048-bit MODP; 112-bit security | ✅ MUST (RFC 8247 §2.4) | 🔜 Transitional | 🔜 Transitional (use up to 2030) |
+| `ipsec-dh:group15` | 3072-bit MODP; 128-bit security | — | ✓ Approved | ✓ Approved |
+| `ipsec-dh:group16` | 4096-bit MODP | — | ✓ Approved | ✓ Approved |
+| `ipsec-dh:group17` | 6144-bit MODP | — | ✓ Approved | ✓ Approved |
+| `ipsec-dh:group18` | 8192-bit MODP | — | ✓ Approved | ✓ Approved |
+| `ipsec-dh:group19` | P-256 (secp256r1); 128-bit security | ✓ SHOULD (RFC 8247 §2.4) | ✓ Approved | ✓ Approved |
+| `ipsec-dh:group20` | P-384 (secp384r1); 192-bit security | — | ✓ Approved | ✓ Approved |
+| `ipsec-dh:group21` | P-521 (secp521r1); 256-bit security | — | ✓ Approved | ✓ Approved |
+| `ipsec-dh:group31` | Curve25519; 128-bit security | (RFC 8031) | ✓ Approved | ✅ Recommended |
+| `ipsec-dh:group32` | Curve448; 224-bit security | (RFC 8031) | ✓ Approved | ✅ Recommended |
+| `ipsec-dh:group25` | P-192 ECP; below 128-bit security | — | 🚫 Disallowed | ❌ Deprecated |
+| `ipsec-dh:group26` | P-224 ECP; 112-bit security | — | 🔜 Transitional | 🔜 Transitional (use up to 2030) |
+| `ipsec-dh:group5` | 1536-bit MODP; below 112-bit security | ❌ SHOULD NOT (RFC 8247 §2.4) | 🚫 Disallowed | 🚫 Disallowed |
+| `ipsec-dh:group2` | 1024-bit MODP; 80-bit security | ❌ SHOULD NOT (RFC 8247 §2.4) | 🚫 Disallowed | 🚫 Disallowed |
+| `ipsec-dh:group1` | 768-bit MODP; below 80-bit security | 🚫 MUST NOT (RFC 8247 §2.4) | 🚫 Disallowed | 🚫 Disallowed |
+| `ipsec-dh:group22` | 1024-bit MODP with subgroup; suspect parameters | 🚫 MUST NOT (RFC 8247 §2.4) | 🚫 Disallowed | 🚫 Disallowed |
+| `ipsec-dh:group23` | 2048-bit MODP with 224-bit subgroup; suspect parameters | ❌ SHOULD NOT (RFC 8247 §2.4) | 🚫 Disallowed | 🚫 Disallowed |
+| `ipsec-dh:group24` | 2048-bit MODP with 256-bit subgroup; suspect parameters | ❌ SHOULD NOT (RFC 8247 §2.4) | 🚫 Disallowed | 🚫 Disallowed |
+<!-- AUTOGEN:END ipsec-dh-groups -->
 
 ### 2.2 IKEv2 Encryption (ESP and IKE SA)
 
 > **Authorities:** IETF RFC 8221 (ESP/AH data plane), RFC 8247 (IKEv2 control plane); NIST SP 800-131A Rev 2; BSI TR-02102-3 v2026-01. ESP and IKEv2 have slightly different requirement levels — table shows ESP (RFC 8221) status; IKEv2 differences noted.
+>
+> **Source of truth:** [`cr-ipsec.yaml`](ae-pattern-validator/src/main/resources/registry/cr-ipsec.yaml). The auto-generated rows list specific transform IDs (e.g. `ipsec-esp:aes-128-gcm`); the umbrella patterns shown in the hand-curated supplement aggregate per family.
 
-| Algorithm | IETF (ESP) | NIST | BSI | Notes |
+<!-- AUTOGEN:BEGIN ipsec-esp-encryption -->
+| Transform | IETF (ESP / IKEv2) | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|
-| `AES-[128\|192\|256]-GCM` | ✅ MUST (RFC 8221 §5) | ✓ Approved | ✅ Recommended | AEAD; RFC 4106 (ESP), RFC 5282 (IKE); RFC 8247: SHOULD for IKEv2 |
-| `AES-[128\|192\|256]-CCM` | ✓ SHOULD (RFC 8221 §5) | ✓ Approved | ✓ Approved | AEAD; RFC 4309; SHOULD only for IoT (RFC 8247) |
-| `ChaCha20-Poly1305` | ✓ SHOULD (RFC 8221 §5) | ✓ Approved | ✓ Approved | AEAD; RFC 7634; SHOULD in both RFC 8221 and 8247 |
-| `AES-[128\|192\|256]-CBC` | ✅ MUST (RFC 8221 §5) | ⚠ Conditional | ⚠ Conditional | Must pair with separate integrity algorithm; RFC 8247: MUST for IKEv2 |
-| `AES-[128\|192\|256]-CTR` | ◯ MAY (RFC 8221 §5) | ✓ Approved | ⚠ Conditional | Must pair with separate integrity algorithm |
-| `3DES-CBC` | ❌ SHOULD NOT (RFC 8221 §5) | 🚫 Disallowed | 🚫 Disallowed | 64-bit block; birthday bound; SP 800-131A disallowed since 2024; RFC 8247: MAY |
-| `DES-CBC` | 🚫 MUST NOT (RFC 8221 §5) | 🚫 Disallowed | 🚫 Disallowed | 56-bit key; broken |
+| `ipsec-esp:aes-128-gcm` | ESP: ✅ MUST (RFC 8221 §5)<br>IKEv2: ✓ SHOULD (RFC 8247 §2.1) | ✓ Approved | ✅ Recommended | AEAD; RFC 4106 (ESP), RFC 5282 (IKE) |
+| `ipsec-esp:aes-256-gcm` | ESP: ✅ MUST (RFC 8221 §5)<br>IKEv2: ✓ SHOULD (RFC 8247 §2.1) | ✓ Approved | ✅ Recommended | AEAD; RFC 4106 (ESP), RFC 5282 (IKE) |
+| `ipsec-esp:aes-128-ccm` | ESP: ✓ SHOULD (RFC 8221 §5)<br>IKEv2: ✓ SHOULD (RFC 8247 §2.1; SHOULD only for IoT) | ✓ Approved | ✓ Approved | AEAD; RFC 4309 |
+| `ipsec-esp:chacha20-poly1305` | ESP: ✓ SHOULD (RFC 8221 §5; RFC 7634)<br>IKEv2: ✓ SHOULD (RFC 8247 §2.1) | ✓ Approved | ✓ Approved | AEAD; RFC 7634 |
+| `ipsec-esp:aes-128-cbc` | ESP: ✅ MUST (RFC 8221 §5)<br>IKEv2: ✅ MUST (RFC 8247 §2.1) | ⚠ Conditional | ⚠ Conditional — requires separate integrity transform (HMAC-SHA-2 or AES-XCBC-MAC) | no AEAD; RFC 4106 (ESP) and RFC 5282 (IKE) define AEAD alternatives |
+| `ipsec-esp:aes-256-cbc` | ESP: ✅ MUST (RFC 8221 §5)<br>IKEv2: ✅ MUST (RFC 8247 §2.1) | ⚠ Conditional | ⚠ Conditional — requires separate integrity transform (HMAC-SHA-2 or AES-XCBC-MAC) | no AEAD; RFC 4106 (ESP) and RFC 5282 (IKE) define AEAD alternatives |
+| `ipsec-esp:3des-cbc` | ESP: ❌ SHOULD NOT (RFC 8221 §5)<br>IKEv2: ◯ MAY (RFC 8247 §2.1) | 🚫 Disallowed | 🚫 Disallowed | 64-bit block; birthday-bound vulnerable above 32 GB |
+| `ipsec-esp:aes-128-ctr` | ◯ MAY (RFC 8221 §5) | ✓ Approved | ⚠ Conditional — requires separate integrity transform | no AEAD |
+| `ipsec-esp:aes-192-ctr` | ◯ MAY (RFC 8221 §5) | ✓ Approved | ⚠ Conditional — requires separate integrity transform | no AEAD |
+| `ipsec-esp:aes-256-ctr` | ◯ MAY (RFC 8221 §5) | ✓ Approved | ⚠ Conditional — requires separate integrity transform | no AEAD |
+| `ipsec-esp:des-cbc` | 🚫 MUST NOT (RFC 8221 §5) | 🚫 Disallowed | 🚫 Disallowed | 56-bit key; brute-forceable |
+<!-- AUTOGEN:END ipsec-esp-encryption -->
 
 ### 2.3 IKEv2 Integrity / PRF
 
 > **Authorities:** IETF RFC 8221 §6 (ESP/AH integrity), RFC 8247 §2.2–§2.3 (IKEv2 PRF and integrity); NIST SP 800-131A Rev 2; BSI TR-02102-3 v2026-01.
+>
+> **Source of truth:** [`cr-ipsec.yaml`](ae-pattern-validator/src/main/resources/registry/cr-ipsec.yaml).
 
+<!-- AUTOGEN:BEGIN ipsec-integrity -->
 | Algorithm | IETF | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|
-| `HMAC-SHA2-256-128` | ✅ MUST (RFC 8221 §6) | ✓ Approved | ✅ Recommended | RFC 4868; PRF_HMAC_SHA2_256 also MUST in IKEv2 (RFC 8247 §2.2) |
-| `HMAC-SHA2-384-192` | — | ✓ Approved | ✅ Recommended | RFC 4868; not explicitly addressed in RFC 8247 |
-| `HMAC-SHA2-512-256` | ✓ SHOULD (RFC 8221 §6) | ✓ Approved | ✅ Recommended | RFC 4868; SHOULD+ for PRF in IKEv2 |
-| `AES-XCBC-96` | ✓ SHOULD (RFC 8221 §6) | ⚠ Conditional | ✓ Approved | RFC 3566; SHOULD for IoT; MAY for general VPN |
-| `AES-CMAC-96` | — | ✓ Approved | ✓ Approved | RFC 4494; not addressed in RFC 8221/8247 |
-| `HMAC-SHA1-96` | ⚠ MUST- (RFC 8221 §6) | 🚫 Disallowed | 🚫 Disallowed | SHA-1; downgraded from MUST to MUST- |
-| `HMAC-MD5-96` | 🚫 MUST NOT (RFC 8221 §6) | 🚫 Disallowed | 🚫 Disallowed | MD5 |
+| `ipsec-auth:hmac-sha2-256-128` | ESP: ✅ MUST (RFC 8221 §6; RFC 4868)<br>IKEv2: ✅ MUST (RFC 8247 §2.2; PRF_HMAC_SHA2_256 is also MUST as IKEv2 PRF) | ✓ Approved | ✅ Recommended | truncated to 128 bits per RFC 4868 |
+| `ipsec-auth:hmac-sha2-384-192` | (RFC 4868) | ✓ Approved | ✅ Recommended | truncated to 192 bits per RFC 4868 |
+| `ipsec-auth:hmac-sha2-512-256` | ESP: ✓ SHOULD (RFC 8221 §6; RFC 4868)<br>IKEv2: ✓ SHOULD (RFC 8247 §2.2; SHOULD+ as IKEv2 PRF) | ✓ Approved | ✅ Recommended | truncated to 256 bits per RFC 4868 |
+| `ipsec-auth:aes-xcbc-96` | ✓ SHOULD (RFC 8221 §6; RFC 3566) | ⚠ Conditional | ✓ Approved | RFC 3566; SHOULD for IoT, MAY for general VPN; 96-bit truncation |
+| `ipsec-auth:hmac-sha1-96` | ⚠ MUST- (RFC 8221 §6) | 🚫 Disallowed | 🚫 Disallowed | downgraded from MUST to MUST-; SHA-1 collision-vulnerable |
+| `ipsec-auth:aes-cmac-96` | (RFC 4494) | ✓ Approved | ✓ Approved | RFC 4494; not addressed in RFC 8221 / RFC 8247 |
+| `ipsec-auth:hmac-md5-96` | 🚫 MUST NOT (RFC 8221 §6) | 🚫 Disallowed | 🚫 Disallowed | MD5 collision attacks; truncated to 96 bits |
+<!-- AUTOGEN:END ipsec-integrity -->
 
 ---
 
@@ -472,19 +509,19 @@ NIST IR 8547 defines federal Deadlines for migrating away from classical asymmet
 
 | Mechanism | Algorithm | IETF | NIST | BSI | Notes |
 |:---|:---|:---|:---|:---|:---|
-| Encryption | aes128-cts-hmac-sha1-96 | ✓ MAY (RFC 3962) | ✓ Approved | ✓ Approved | RFC 3962; SHA-1 used in MAC, not signature — still acceptable |
-| Encryption | aes256-cts-hmac-sha1-96 | ✓ MAY (RFC 3962) | ✓ Approved | ✓ Approved | RFC 3962 |
+| Encryption | aes128-cts-hmac-sha1-96 | ◯ MAY (RFC 3962) | ✓ Approved | ✓ Approved | RFC 3962; SHA-1 used in MAC, not signature — still acceptable |
+| Encryption | aes256-cts-hmac-sha1-96 | ◯ MAY (RFC 3962) | ✓ Approved | ✓ Approved | RFC 3962 |
 | Encryption | aes128-cts-hmac-sha256-128 | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | RFC 8009; modern Kerberos default |
 | Encryption | aes256-cts-hmac-sha384-192 | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | RFC 8009; preferred for new deployments |
 | Encryption | DES (all variants) | ❌ SHOULD NOT (RFC 6649) | 🚫 Disallowed | 🚫 Disallowed | RFC 6649; **shall not** be used |
 | Encryption | RC4-HMAC | ❌ SHOULD NOT (RFC 8429) | 🚫 Disallowed | 🚫 Disallowed | RFC 8429; replaced by AES |
 | Encryption | 3DES (des3-cbc-sha1-kd) | ❌ SHOULD NOT (RFC 8429) | 🚫 Disallowed | 🚫 Disallowed | RFC 8429; SP 800-131A Rev 2 disallowed since 2024 |
-| Integrity (MAC) | HMAC-SHA-1 | ✓ MAY (RFC 3962) | ✓ Approved | ⚠ Conditional | NIST permits HMAC-SHA-1 at 112-bit security through 2030; BSI cautious |
+| Integrity (MAC) | HMAC-SHA-1 | ◯ MAY (RFC 3962) | ✓ Approved | ⚠ Conditional | NIST permits HMAC-SHA-1 at 112-bit security through 2030; BSI cautious |
 | Integrity (MAC) | HMAC-SHA-256-128 | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | Used in aes128-cts-hmac-sha256-128 |
 | Integrity (MAC) | HMAC-SHA-384-192 | ✓ SHOULD (RFC 8009) | ✅ Recommended | ✅ Recommended | Used in aes256-cts-hmac-sha384-192 |
-| Key exchange (PKINIT) | DH ≥ 2048 bits | ✓ MAY (RFC 4556) | 🔜 Transitional | 🔜 Transitional | ≥ 112-bit security; acceptable through 2030 |
-| Key exchange (PKINIT) | DH ≥ 3072 bits | ✓ MAY (RFC 4556) | ✓ Approved | ✓ Approved | Meets BSI ≥3000-bit requirement |
-| Key transport (PKINIT) | RSA ≥ 2048 bits | ✓ MAY (RFC 4556) | 🔜 Transitional | 🔜 Transitional | RFC 4556 |
+| Key exchange (PKINIT) | DH ≥ 2048 bits | ◯ MAY (RFC 4556) | 🔜 Transitional | 🔜 Transitional | ≥ 112-bit security; acceptable through 2030 |
+| Key exchange (PKINIT) | DH ≥ 3072 bits | ◯ MAY (RFC 4556) | ✓ Approved | ✓ Approved | Meets BSI ≥3000-bit requirement |
+| Key transport (PKINIT) | RSA ≥ 2048 bits | ◯ MAY (RFC 4556) | 🔜 Transitional | 🔜 Transitional | RFC 4556 |
 | Password RNG | SP 800-90A DRBG | — | ✅ Recommended | ✅ Recommended | For random password generation |
 
 ---
