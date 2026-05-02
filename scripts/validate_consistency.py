@@ -823,6 +823,86 @@ def check_test_count(base: Path) -> bool:
         return False
 
 
+CATEGORY_VOCABULARY = {
+    # symmetric/
+    "symmetric/block-cipher",
+    "symmetric/block-cipher/mode",
+    "symmetric/block-cipher/mode/aead",
+    "symmetric/block-cipher/mode/fpe",
+    "symmetric/block-cipher/mode/tweakable",
+    "symmetric/stream-cipher",
+    # hash/
+    "hash/cryptographic",
+    "hash/cryptographic/xof",
+    "hash/non-cryptographic",
+    # mac
+    "mac",
+    # asymmetric/
+    "asymmetric/encryption",
+    "asymmetric/kem",
+    "asymmetric/signature/stateless",
+    "asymmetric/signature/stateful",
+    "asymmetric/key-agreement",
+    # hpke
+    "hpke",
+    # curve
+    "curve",
+    # kdf/
+    "kdf",
+    "kdf/password",
+    "kdf/pbe",
+    # framework
+    "framework",
+    # rng/
+    "rng/drbg",
+    "rng/csprng",
+    "rng/csprng/stream-cipher",
+    "rng/os-entropy",
+    "rng/hardware",
+    "rng/non-crypto",
+    # padding
+    "padding",
+    # composite
+    "composite",
+}
+
+
+def check_category_vocabulary(families: list[dict]) -> bool:
+    """Check 13: every algorithm entry's `category:` (when present) must be in the
+    controlled vocabulary defined in management/registry-category-taxonomy.md.
+
+    Composite entries do not carry `category:` and are skipped. Algorithm
+    entries without `category:` are tolerated (annotation rolls out
+    file-by-file per the implementation plan); annotation progress is reported
+    informationally.
+    """
+    invalid = []
+    annotated = 0
+    total_algorithms = 0
+    for f in families:
+        if f.get("type") != "algorithm":
+            continue
+        total_algorithms += 1
+        cat = f.get("category")
+        if cat is None:
+            continue
+        annotated += 1
+        if cat not in CATEGORY_VOCABULARY:
+            invalid.append((f.get("id"), cat))
+
+    if invalid:
+        print(f"  FAIL  {len(invalid)} algorithm entries carry `category:` values outside the controlled vocabulary:")
+        for entry_id, cat in invalid[:20]:
+            print(f"          {entry_id!r} -> {cat!r}")
+        if len(invalid) > 20:
+            print(f"          ... and {len(invalid) - 20} more")
+        return False
+
+    pct = (annotated / total_algorithms * 100) if total_algorithms else 0
+    print(f"  OK    {annotated}/{total_algorithms} algorithm entries annotated ({pct:.0f}%); all values in controlled vocabulary")
+    return True
+
+
 def check_summary_counts(base: Path) -> bool:
     """Check 12: cryptographic-algorithms.md Summary Counts table — recompute the
     grand total by counting `| `id` |` rows across all sections and compare
@@ -909,6 +989,8 @@ def main():
                                                        lambda: check_composite_schema(families)),
         ("12. Summary Counts total (cryptographic-algorithms.md)",
                                                        lambda: check_summary_counts(base)),
+        ("13. Category vocabulary (registry-category-taxonomy.md)",
+                                                       lambda: check_category_vocabulary(families)),
     ]
 
     for title, fn in checks:
