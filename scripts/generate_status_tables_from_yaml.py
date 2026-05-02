@@ -47,6 +47,7 @@ DNSSEC_YAML = REGISTRY_DIR / "cr-dnssec.yaml"
 
 PROTOCOL_STATUS_MD = REPO_ROOT / "cryptographic-protocol-status.md"
 TLS_CIPHER_SUITES_MD = REPO_ROOT / "cryptographic-tls-cipher-suites.md"
+REGISTRY_README_MD = REGISTRY_DIR / "README.md"
 
 
 # ── Status rendering ──────────────────────────────────────────────────────────
@@ -446,6 +447,78 @@ def render_tls13_cipher_suites_simple(entries: list) -> str:
     return "\n".join(lines)
 
 
+# ── Registry category distribution ──────────────────────────────────────────
+
+ALGORITHM_YAML_FILES = [
+    "cr-symmetric-ciphers.yaml",
+    "cr-hash-functions.yaml",
+    "cr-macs.yaml",
+    "cr-asymmetric.yaml",
+    "cr-pqc.yaml",
+    "cr-kdfs.yaml",
+    "cr-rngs.yaml",
+    "cr-cdx.yaml",
+    "cr-spdx.yaml",
+]
+
+
+def render_category_distribution() -> str:
+    """Build a markdown table summarising YAML algorithm entries by category.
+
+    Counts entries (not markdown rows) per `category:` value and aggregates
+    by top-level branch. Unannotated entries (when annotation is incomplete)
+    are reported as a separate `(unannotated)` row.
+    """
+    from collections import Counter
+    counts: Counter = Counter()
+    total_algorithms = 0
+    unannotated = 0
+    for fname in ALGORITHM_YAML_FILES:
+        for entry in load_entries(REGISTRY_DIR / fname):
+            if entry.get("type") != "algorithm":
+                continue
+            total_algorithms += 1
+            cat = entry.get("category")
+            if cat is None:
+                unannotated += 1
+            else:
+                counts[cat] += 1
+
+    # Group by top-level branch, preserving spec order
+    BRANCH_ORDER = [
+        "symmetric", "hash", "mac", "asymmetric", "hpke",
+        "curve", "kdf", "framework", "rng", "padding", "composite",
+    ]
+    grouped: dict[str, list[tuple[str, int]]] = {b: [] for b in BRANCH_ORDER}
+    for cat, n in counts.items():
+        top = cat.split("/", 1)[0]
+        grouped.setdefault(top, []).append((cat, n))
+
+    lines = [
+        "| Category | Count |",
+        "|:---|---:|",
+    ]
+    annotated_total = 0
+    for branch in BRANCH_ORDER:
+        rows = sorted(grouped.get(branch, []), key=lambda t: t[0])
+        if not rows:
+            continue
+        for cat, n in rows:
+            lines.append(f"| `{cat}` | {n} |")
+            annotated_total += n
+    if unannotated:
+        lines.append(f"| _(unannotated)_ | {unannotated} |")
+    pct = (annotated_total / total_algorithms * 100) if total_algorithms else 0
+    lines.append(f"| **Total** | **{total_algorithms}** |")
+    lines.append("")
+    lines.append(
+        f"_Computed from `cr-*.yaml` algorithm entries. "
+        f"{annotated_total}/{total_algorithms} ({pct:.0f}%) annotated; "
+        f"see [`management/registry-category-taxonomy.md`](../../../../../management/registry-category-taxonomy.md) for the controlled vocabulary._"
+    )
+    return "\n".join(lines)
+
+
 # ── Marker substitution ───────────────────────────────────────────────────────
 
 MARKER_RE = re.compile(
@@ -516,9 +589,14 @@ def main():
         "tls-nist-13-3":     render_tls_nist_cipher_suites_section(tls, "§3.3.1.2"),
     }
 
+    sections_registry = {
+        "registry-category-distribution": render_category_distribution(),
+    }
+
     overall_ok = True
     for path, sections in [(PROTOCOL_STATUS_MD, sections_protocol),
-                           (TLS_CIPHER_SUITES_MD, sections_tls)]:
+                           (TLS_CIPHER_SUITES_MD, sections_tls),
+                           (REGISTRY_README_MD, sections_registry)]:
         original = path.read_text()
         new_text, replaced, missing = substitute(original, sections)
 
