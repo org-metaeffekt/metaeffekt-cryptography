@@ -2,13 +2,15 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (13 files, 342 algorithm entries + 257 composite entries, 192 unique OIDs indexed).
+registry (15 files, 342 algorithm entries + 321 composite entries, 192 unique OIDs indexed).
 The composite YAMLs encode authority overlays per entry: cr-tls.yaml (NIST SP 800-52 Rev 2
 + BSI TR-02102-2 v2026-01), cr-ssh.yaml (RFC 9142/8332/8709/etc. + NIST SP 800-131A Rev 2
 + BSI TR-02102-4 v2026-01), cr-ipsec.yaml (RFC 8221/8247 + NIST SP 800-131A Rev 2 +
-BSI TR-02102-3 v2026-01). The status-table markdown sections in cryptographic-tls-cipher-suites.md
-and cryptographic-protocol-status.md are regenerated from these YAMLs by
-`scripts/generate_status_tables_from_yaml.py`.
+BSI TR-02102-3 v2026-01), cr-kerberos.yaml (RFC 3962/6649/8009/8429/4556 + NIST SP 800-57
+Pt 3 + BSI TR-02102-1 v2026-01), cr-dnssec.yaml (RFC 8624/8945/8080 + NIST SP 800-57 Pt 3
++ BSI TR-02102-1 v2026-01). The status-table markdown sections in
+cryptographic-tls-cipher-suites.md and cryptographic-protocol-status.md are regenerated
+from these YAMLs by `scripts/generate_status_tables_from_yaml.py`.
 
 Build: `cd ae-pattern-validator && mvn clean verify`
 

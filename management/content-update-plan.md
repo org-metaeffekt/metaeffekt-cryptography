@@ -311,6 +311,9 @@ Reconcile these numbers across all documents:
 | ~~BSI TR-02102-2 v2026-01 (TLS)~~ | — | **Ingested 2026-05-01** (cryptographic-tls-cipher-suites.md §12; glossary entry) | Structured TLS-suite tables with `use up to` deadlines; quantum-migration anchor for 2032 |
 | ~~SP 800-131A Rev 2~~ | — | **Ingested** (25 refs in algorithm-status) | Removed from list — fully integrated |
 | ~~SP 800-56Ar3~~ | — | **Ingested** (17 refs in algorithm-status) | Removed from list — fully integrated |
+| ~~RFC 3962 / 6649 / 8009 / 8429 / 4556 (Kerberos)~~ | — | **Ingested 2026-05-02** (cr-kerberos.yaml, 14 composites; protocol-status §7) | Kerberos enc-types, integrity, PKINIT KEX/transport with IETF/NIST/BSI overlay |
+| ~~SP 800-57 Pt 3 Rev 1 §6 (Kerberos) / §8 (DNSSEC)~~ | — | **Ingested 2026-05-02** (cr-kerberos.yaml + cr-dnssec.yaml authority overlays) | Federal Kerberos and DNSSEC algorithm guidance integrated as `nist:` blocks per composite |
+| ~~RFC 8624 / 8945 / 8080 (DNSSEC + TSIG)~~ | — | **Ingested 2026-05-02** (cr-dnssec.yaml, 18 composites; protocol-status §8) | DNSSEC zone-signing algorithms + TSIG MACs with IETF/NIST/BSI overlay |
 
 ### 8.2 Markdown Structure Review
 
@@ -384,7 +387,7 @@ Conclusion: scope boundaries are clean. No compactness work outstanding.
 
 **Outstanding tooling candidates:**
 
-- [ ] Auto-generate the Summary Counts table in `cryptographic-algorithms.md` from YAML rather than maintaining manually (current count is `~424` and drifts when registry changes)
+- [ ] Auto-generate the Summary Counts table in `cryptographic-algorithms.md` from YAML rather than maintaining manually (current count is `~425` and drifts when registry changes)
 - [ ] Auto-generate the per-file Registry Statistics table in `management/validator-test-report.md` from YAML on each `mvn test` run
 - [ ] CI hook (GitHub Actions) that runs `validate_consistency.py` on every PR and blocks on failure
 - [ ] Pre-commit hook that runs the heading-style check (§9.6 verification step) on staged markdown files
