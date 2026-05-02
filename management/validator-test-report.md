@@ -27,7 +27,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `InstanceValidationKdfTest` | 25 | All 25 KDF families (incl. CatKDF, KeyCombine) |
 | `InstanceValidationRngTest` | 31 | All 25 RNG families (incl. OS entropy APIs) |
 | `TemplateValidationTest` | 33 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
-| `CycloneDxRegistryCoverageTest` | 213 | Full CycloneDX cryptography-defs.json coverage (as of 2026-02-24) + all 34 cdx families + alternative pattern variants |
+| `CycloneDxRegistryCoverageTest` | 215 | Full CycloneDX cryptography-defs.json coverage (as of 2026-02-24) + all 34 cdx families + alternative pattern variants |
 | `SpdxCoverageTest` | 169 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
 | `CertificateAnalyserTest` | 5 | X.509 certificate analysis (RSA-2048, EC-P256) |
 | `CmsAnalyserTest` | 7 | CMS/PKCS#7 SignedData + EnvelopedData analysis |
@@ -36,7 +36,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `MainTest` | 26 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
 | `AlgorithmRegistryTest` | 15 | Registry loading, duplicate detection, OID index, cross-validation, coverage |
 | `CompositeValidationTest` | 11 | Composite entry loading, TLS/SSH/X.509 component resolution, authority-aware validation |
-| **Total** | **786** | |
+| **Total** | **788** | |
 
 ---
 

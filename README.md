@@ -118,7 +118,7 @@ that adjustments can be applied accordingly.
 
 - **[cryptographic-registry-inconsistencies.md](cryptographic-registry-inconsistencies.md)** — Cross-reference of naming ambiguities and inconsistencies between the CycloneDX cryptography registry, the SPDX algorithm list, and this repository's taxonomy. Documents 16 concrete issues with eight resolution mechanisms. All CycloneDX and SPDX instance patterns are covered.
 
-- **[management/validator-test-report.md](management/validator-test-report.md)** — Test statistics for the pattern validator: 786 tests across 16 test classes covering instance validation by taxonomy, template/constraint validation, CycloneDX coverage (213 tests), SPDX coverage (169 tests), composite validation (11 tests), X.509 certificate analysis (5 tests), CMS analysis (7 tests), CBOM validation (8 tests), and CBOM generation (4 tests). Registry: 663 entries (342 algorithms + 321 composites), 15 files, 192 unique OIDs.
+- **[management/validator-test-report.md](management/validator-test-report.md)** — Test statistics for the pattern validator: 788 tests across 16 test classes covering instance validation by taxonomy, template/constraint validation, CycloneDX coverage (215 tests), SPDX coverage (169 tests), composite validation (11 tests), X.509 certificate analysis (5 tests), CMS analysis (7 tests), CBOM validation (8 tests), and CBOM generation (4 tests). Registry: 663 entries (342 algorithms + 321 composites), 15 files, 192 unique OIDs.
 
 - **[management/content-update-plan.md](management/content-update-plan.md)** — Content consistency, integrity, and synchronisation plan across all repository artefacts.
 
