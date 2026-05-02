@@ -823,6 +823,48 @@ def check_test_count(base: Path) -> bool:
         return False
 
 
+def check_summary_counts(base: Path) -> bool:
+    """Check 12: cryptographic-algorithms.md Summary Counts table — recompute the
+    grand total by counting `| `id` |` rows across all sections and compare
+    against the documented `**~NNN**` total.
+
+    The 27 individual category rows aren't validated mechanically (the YAML
+    schema doesn't yet carry a `category:` field), but the *total* is — that's
+    the figure that drifts most often when entries are added.
+
+    Tolerance: documented total uses a `~` prefix; absolute drift > 5 fails,
+    drift 1-5 reports INFO (acceptable rounding/sub-categorisation slack).
+    """
+    md = base / "cryptographic-algorithms.md"
+    if not md.exists():
+        print(f"  SKIP  cryptographic-algorithms.md not found")
+        return True
+
+    text = md.read_text()
+
+    # Documented total — match `| **Total** | **~425** |` or `| **Total** | **425** |`
+    m = re.search(r"\|\s*\*\*Total\*\*\s*\|\s*\*\*~?(\d+)\*\*\s*\|", text)
+    if not m:
+        print(f"  SKIP  no Summary Counts total row found")
+        return True
+    documented = int(m.group(1))
+
+    # Count `| `id` | Name | ... |` rows across the whole document. The leading
+    # `| \`<id>\` |` pattern is unique to entry rows in this file.
+    rows = [l for l in text.splitlines() if re.match(r"\|\s*`[^`]+`\s*\|", l)]
+    computed = len(rows)
+
+    drift = abs(documented - computed)
+    if drift == 0:
+        print(f"  OK    Summary Counts total {documented} matches {computed} `| `id` |` rows")
+        return True
+    if drift <= 5:
+        print(f"  INFO  Summary Counts documented ~{documented}, computed {computed} (drift {drift}, within ±5 tolerance)")
+        return True
+    print(f"  FAIL  Summary Counts documented ~{documented}, computed {computed} (drift {drift} > 5; refresh the table)")
+    return False
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -865,6 +907,8 @@ def main():
         ("10. Heading style (noun-only rule)",        lambda: check_heading_style(base)),
         ("11. Composite schema (description / remarks / references / ietfIkev2 / bsi.requires)",
                                                        lambda: check_composite_schema(families)),
+        ("12. Summary Counts total (cryptographic-algorithms.md)",
+                                                       lambda: check_summary_counts(base)),
     ]
 
     for title, fn in checks:

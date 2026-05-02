@@ -302,7 +302,7 @@ Reconcile these numbers across all documents:
 
 | Source | Priority | Status | Rationale |
 |:---|:---|:---|:---|
-| FIPS 140-3 IG | High | Not ingested | Implementation guidance for FIPS 140 level requirements; companion to already-ingested validation programme references |
+| ~~FIPS 140-3 IG~~ | — | **Ingested 2026-05-02** (cryptographic-glossary.md entry; companion reference to FIPS 140-3 validation programme) | Implementation guidance for FIPS 140 level requirements; shallow ingestion only — deeper integration with per-algorithm IG-section references deferred to a future pass |
 | SP 800-57 Rev 6 IPD | Medium | Partially ingested (3 refs in algorithm-status) | December 2025 initial public draft; PQC key management — expand once final draft published |
 | ENISA "Post-Quantum Cryptography" Report (2024) | Medium | Partially ingested (referenced in PSK quantum mitigation, glossary) | EU PQC migration guidance; could deepen the governance file's EU section |
 | NIST IR 8547 (PQC Migration) | Low | Ingested (March 2025) | Already cited; keep tracked for revisions |
@@ -384,10 +384,11 @@ Conclusion: scope boundaries are clean. No compactness work outstanding.
 - [x] `check_duplicate_families` — registry duplicate detection
 - [x] `check_status_values` — status vocabulary enforcement
 - [x] `check_deprecated_preferred_invariant` — preferredPattern flag invariants
+- [x] `check_summary_counts` — Summary Counts total drift detector (recomputes total from `| `id` |` rows; ±5 tolerance against documented `**~NNN**`)
 
 **Outstanding tooling candidates:**
 
-- [ ] Auto-generate the Summary Counts table in `cryptographic-algorithms.md` from YAML rather than maintaining manually (current count is `~425` and drifts when registry changes)
+- [ ] Auto-generate the full 27-row Summary Counts table in `cryptographic-algorithms.md` from YAML; requires adding a `category:` field to each algorithm entry (drift detector via `check_summary_counts` is implemented as an interim measure)
 - [ ] Auto-generate the per-file Registry Statistics table in `management/validator-test-report.md` from YAML on each `mvn test` run
 - [ ] CI hook (GitHub Actions) that runs `validate_consistency.py` on every PR and blocks on failure
 - [ ] Pre-commit hook that runs the heading-style check (§9.6 verification step) on staged markdown files

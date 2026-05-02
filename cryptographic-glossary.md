@@ -480,6 +480,9 @@ US government standards, published by NIST, defining requirements for cryptograp
 **FIPS 140-3**
 The current US government standard (and internationally recognised) for validating that a hardware or software cryptographic module meets security requirements. Systems handling classified or sensitive government data often require FIPS 140-3 validated cryptography.
 
+**FIPS 140-3 IG — Implementation Guidance**
+A NIST/CCCS-maintained living document interpreting the FIPS 140-3 standard and its companion ISO/IEC 19790:2012 / 24759:2017 references for the testing labs and module developers that participate in CMVP. The IG resolves ambiguities, codifies CMVP test policy, and adds approved/disallowed algorithm-use constraints that go beyond the base standard (for example, IG D.K limits the use of Triple-DES to 2²⁰ blocks under one key bundle; IG D.B governs vendor affirmation of approved algorithms; IG 9.x covers self-tests and entropy sources). Updates are issued quarterly. Important distinction: IG sections are *interpretive*, not standards in their own right — they bind module implementations seeking CMVP certification but not the underlying FIPS standards. Consult the latest IG when planning a module submission, since constraints in older revisions may be lifted or tightened. Companion document to SP 800-140x (the IG and the SP 800-140 series together form the testable corpus of FIPS 140-3 module requirements).
+
 **FIPS Provider**
 In OpenSSL 3.x, a loadable module that contains only FIPS 140-3 validated cryptographic algorithm implementations. When the FIPS provider is loaded, OpenSSL restricts itself to approved algorithms and operates within the validated cryptographic module boundary. OpenSSL 3.5.0 added ML-KEM, ML-DSA, and SLH-DSA to the FIPS provider.
 
