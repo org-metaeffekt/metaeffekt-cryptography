@@ -864,31 +864,45 @@ CATEGORY_VOCABULARY = {
     "padding",
     # composite
     "composite",
+    # sentinel for entries that span multiple categories (umbrella aliases like
+    # spdx:rsa, spdx:gost) or have no clear single mapping (spdx:dcc, ubi, uffizi, uxn)
+    "list",
 }
 
 
 def check_category_vocabulary(families: list[dict]) -> bool:
-    """Check 13: every algorithm entry's `category:` (when present) must be in the
+    """Check 13: every algorithm entry must carry a `category:` whose value is in the
     controlled vocabulary defined in management/registry-category-taxonomy.md.
 
-    Composite entries do not carry `category:` and are skipped. Algorithm
-    entries without `category:` are tolerated (annotation rolls out
-    file-by-file per the implementation plan); annotation progress is reported
-    informationally.
+    Composite entries do not carry `category:` and are skipped. The `"list"`
+    sentinel is reserved for entries spanning multiple categories (umbrella
+    aliases) or with no clear single mapping.
     """
     invalid = []
-    annotated = 0
+    missing = []
+    list_sentinel = 0
     total_algorithms = 0
     for f in families:
         if f.get("type") != "algorithm":
             continue
         total_algorithms += 1
         cat = f.get("category")
-        if cat is None:
+        if cat is None or cat == "":
+            missing.append(f.get("id"))
             continue
-        annotated += 1
         if cat not in CATEGORY_VOCABULARY:
             invalid.append((f.get("id"), cat))
+            continue
+        if cat == "list":
+            list_sentinel += 1
+
+    if missing:
+        print(f"  FAIL  {len(missing)} algorithm entries missing mandatory `category:` field:")
+        for entry_id in missing[:20]:
+            print(f"          {entry_id!r}")
+        if len(missing) > 20:
+            print(f"          ... and {len(missing) - 20} more")
+        return False
 
     if invalid:
         print(f"  FAIL  {len(invalid)} algorithm entries carry `category:` values outside the controlled vocabulary:")
@@ -898,8 +912,7 @@ def check_category_vocabulary(families: list[dict]) -> bool:
             print(f"          ... and {len(invalid) - 20} more")
         return False
 
-    pct = (annotated / total_algorithms * 100) if total_algorithms else 0
-    print(f"  OK    {annotated}/{total_algorithms} algorithm entries annotated ({pct:.0f}%); all values in controlled vocabulary")
+    print(f"  OK    {total_algorithms}/{total_algorithms} algorithm entries annotated; all values in controlled vocabulary ({list_sentinel} use the \"list\" sentinel)")
     return True
 
 

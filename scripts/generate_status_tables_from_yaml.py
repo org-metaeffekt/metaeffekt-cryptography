@@ -484,10 +484,13 @@ def render_category_distribution() -> str:
             else:
                 counts[cat] += 1
 
-    # Group by top-level branch, preserving spec order
+    # Group by top-level branch, preserving spec order. The "list" sentinel
+    # appears as its own pseudo-branch at the end (entries that span multiple
+    # categories or have no clear single mapping).
     BRANCH_ORDER = [
         "symmetric", "hash", "mac", "asymmetric", "hpke",
         "curve", "kdf", "framework", "rng", "padding", "composite",
+        "list",
     ]
     grouped: dict[str, list[tuple[str, int]]] = {b: [] for b in BRANCH_ORDER}
     for cat, n in counts.items():
@@ -506,14 +509,19 @@ def render_category_distribution() -> str:
         for cat, n in rows:
             lines.append(f"| `{cat}` | {n} |")
             annotated_total += n
+    # Surface any unexpected branch values (would indicate vocabulary drift)
+    for branch in sorted(set(grouped) - set(BRANCH_ORDER)):
+        for cat, n in sorted(grouped[branch], key=lambda t: t[0]):
+            lines.append(f"| `{cat}` _(unknown branch)_ | {n} |")
+            annotated_total += n
     if unannotated:
         lines.append(f"| _(unannotated)_ | {unannotated} |")
-    pct = (annotated_total / total_algorithms * 100) if total_algorithms else 0
     lines.append(f"| **Total** | **{total_algorithms}** |")
     lines.append("")
     lines.append(
         f"_Computed from `cr-*.yaml` algorithm entries. "
-        f"{annotated_total}/{total_algorithms} ({pct:.0f}%) annotated; "
+        f"{annotated_total}/{total_algorithms} annotated "
+        f"({grouped.get('list', []) and sum(n for _, n in grouped['list']) or 0} use the `\"list\"` sentinel); "
         f"see [`management/registry-category-taxonomy.md`](../../../../../management/registry-category-taxonomy.md) for the controlled vocabulary._"
     )
     return "\n".join(lines)
