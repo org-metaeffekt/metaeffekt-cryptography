@@ -864,9 +864,14 @@ CATEGORY_VOCABULARY = {
     "padding",
     # composite
     "composite",
-    # sentinel for entries that span multiple categories (umbrella aliases like
-    # spdx:rsa, spdx:gost) or have no clear single mapping (spdx:dcc, ubi, uffizi, uxn)
-    "list",
+    # sentinel: identifier is genuinely polysemous and maps to multiple
+    # canonical algorithms across different categories (e.g. spdx:rsa covers
+    # RSAES-OAEP and RSASSA-PSS; spdx:gost covers GOST cipher / signature / hash)
+    "unspecific",
+    # sentinel: identifier has no clear standard cryptographic mapping
+    # (e.g. spdx:dcc, spdx:uffizi, spdx:uxn — SPDX leftovers retained for
+    # backward compatibility but without an authoritative specification)
+    "unknown",
 }
 
 
@@ -874,13 +879,15 @@ def check_category_vocabulary(families: list[dict]) -> bool:
     """Check 13: every algorithm entry must carry a `category:` whose value is in the
     controlled vocabulary defined in management/registry-category-taxonomy.md.
 
-    Composite entries do not carry `category:` and are skipped. The `"list"`
-    sentinel is reserved for entries spanning multiple categories (umbrella
-    aliases) or with no clear single mapping.
+    Composite entries do not carry `category:` and are skipped. Two sentinel
+    values are reserved: `"unspecific"` for polysemous identifiers (umbrella
+    aliases that span multiple categories) and `"unknown"` for identifiers
+    without a clear standard cryptographic mapping.
     """
     invalid = []
     missing = []
-    list_sentinel = 0
+    unspecific = 0
+    unknown = 0
     total_algorithms = 0
     for f in families:
         if f.get("type") != "algorithm":
@@ -893,8 +900,10 @@ def check_category_vocabulary(families: list[dict]) -> bool:
         if cat not in CATEGORY_VOCABULARY:
             invalid.append((f.get("id"), cat))
             continue
-        if cat == "list":
-            list_sentinel += 1
+        if cat == "unspecific":
+            unspecific += 1
+        elif cat == "unknown":
+            unknown += 1
 
     if missing:
         print(f"  FAIL  {len(missing)} algorithm entries missing mandatory `category:` field:")
@@ -912,7 +921,7 @@ def check_category_vocabulary(families: list[dict]) -> bool:
             print(f"          ... and {len(invalid) - 20} more")
         return False
 
-    print(f"  OK    {total_algorithms}/{total_algorithms} algorithm entries annotated; all values in controlled vocabulary ({list_sentinel} use the \"list\" sentinel)")
+    print(f"  OK    {total_algorithms}/{total_algorithms} algorithm entries annotated; all values in controlled vocabulary ({unspecific} \"unspecific\", {unknown} \"unknown\")")
     return True
 
 

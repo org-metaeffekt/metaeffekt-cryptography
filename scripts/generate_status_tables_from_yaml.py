@@ -484,13 +484,14 @@ def render_category_distribution() -> str:
             else:
                 counts[cat] += 1
 
-    # Group by top-level branch, preserving spec order. The "list" sentinel
-    # appears as its own pseudo-branch at the end (entries that span multiple
-    # categories or have no clear single mapping).
+    # Group by top-level branch, preserving spec order. Two sentinel
+    # pseudo-branches appear at the end: `unspecific` for polysemous
+    # identifiers (umbrella aliases) and `unknown` for identifiers without a
+    # standard cryptographic mapping.
     BRANCH_ORDER = [
         "symmetric", "hash", "mac", "asymmetric", "hpke",
         "curve", "kdf", "framework", "rng", "padding", "composite",
-        "list",
+        "unspecific", "unknown",
     ]
     grouped: dict[str, list[tuple[str, int]]] = {b: [] for b in BRANCH_ORDER}
     for cat, n in counts.items():
@@ -518,10 +519,13 @@ def render_category_distribution() -> str:
         lines.append(f"| _(unannotated)_ | {unannotated} |")
     lines.append(f"| **Total** | **{total_algorithms}** |")
     lines.append("")
+    n_unspecific = sum(n for _, n in grouped.get("unspecific", []))
+    n_unknown = sum(n for _, n in grouped.get("unknown", []))
     lines.append(
         f"_Computed from `cr-*.yaml` algorithm entries. "
         f"{annotated_total}/{total_algorithms} annotated "
-        f"({grouped.get('list', []) and sum(n for _, n in grouped['list']) or 0} use the `\"list\"` sentinel); "
+        f"({n_unspecific} use the `\"unspecific\"` sentinel, "
+        f"{n_unknown} use the `\"unknown\"` sentinel); "
         f"see [`management/registry-category-taxonomy.md`](../../../../../management/registry-category-taxonomy.md) for the controlled vocabulary._"
     )
     return "\n".join(lines)
