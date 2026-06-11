@@ -925,6 +925,65 @@ def check_category_vocabulary(families: list[dict]) -> bool:
     return True
 
 
+LIFECYCLE_VOCABULARY = {
+    "standardised",   # final standard in force (FIPS, ISO, RFC standards track)
+    "draft",          # published draft, final pending
+    "selected",       # selected by standards body for standardisation, spec pending
+    "candidate",      # under active evaluation in a standards process
+    "withdrawn",      # formerly standardised, formally withdrawn
+    "broken",         # cryptanalytically compromised (terminal state of analysis)
+    "legacy",         # established by use, never standardised by a top-tier body
+    "unspecific",     # sentinel: spans multiple lifecycle states (umbrella aliases)
+    "unknown",        # sentinel: no documented standardisation history
+}
+
+
+def check_lifecycle_vocabulary(families: list[dict]) -> bool:
+    """Check 14: every algorithm entry must carry a `lifecycle:` whose value is in the
+    controlled vocabulary defined in management/registry-lifecycle-taxonomy.md.
+
+    Composite entries do not carry `lifecycle:` and are skipped. Two sentinel
+    values (`"unspecific"`, `"unknown"`) are reserved with the same semantics
+    as the category-field sentinels.
+    """
+    invalid = []
+    missing = []
+    counts: dict[str, int] = {}
+    total_algorithms = 0
+    for f in families:
+        if f.get("type") != "algorithm":
+            continue
+        total_algorithms += 1
+        lc = f.get("lifecycle")
+        if lc is None or lc == "":
+            missing.append(f.get("id"))
+            continue
+        if lc not in LIFECYCLE_VOCABULARY:
+            invalid.append((f.get("id"), lc))
+            continue
+        counts[lc] = counts.get(lc, 0) + 1
+
+    if missing:
+        print(f"  FAIL  {len(missing)} algorithm entries missing mandatory `lifecycle:` field:")
+        for entry_id in missing[:20]:
+            print(f"          {entry_id!r}")
+        if len(missing) > 20:
+            print(f"          ... and {len(missing) - 20} more")
+        return False
+
+    if invalid:
+        print(f"  FAIL  {len(invalid)} algorithm entries carry `lifecycle:` values outside the controlled vocabulary:")
+        for entry_id, lc in invalid[:20]:
+            print(f"          {entry_id!r} -> {lc!r}")
+        if len(invalid) > 20:
+            print(f"          ... and {len(invalid) - 20} more")
+        return False
+
+    summary = ", ".join(f"{n} {lc!r}" for lc, n in sorted(counts.items(), key=lambda kv: -kv[1]))
+    print(f"  OK    {total_algorithms}/{total_algorithms} algorithm entries annotated; {summary}")
+    return True
+
+
 def check_summary_counts(base: Path) -> bool:
     """Check 12: cryptographic-algorithms.md Summary Counts table — recompute the
     grand total by counting `| `id` |` rows across all sections and compare
@@ -1013,6 +1072,8 @@ def main():
                                                        lambda: check_summary_counts(base)),
         ("13. Category vocabulary (registry-category-taxonomy.md)",
                                                        lambda: check_category_vocabulary(families)),
+        ("14. Lifecycle vocabulary (registry-lifecycle-taxonomy.md)",
+                                                       lambda: check_lifecycle_vocabulary(families)),
     ]
 
     for title, fn in checks:

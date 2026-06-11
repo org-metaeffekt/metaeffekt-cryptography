@@ -531,6 +531,63 @@ def render_category_distribution() -> str:
     return "\n".join(lines)
 
 
+def render_lifecycle_distribution() -> str:
+    """Build a markdown table summarising YAML algorithm entries by lifecycle.
+
+    Parallel to render_category_distribution: counts entries per `lifecycle:`
+    value and reports sentinel counts separately.
+    """
+    from collections import Counter
+    counts: Counter = Counter()
+    total_algorithms = 0
+    unannotated = 0
+    for fname in ALGORITHM_YAML_FILES:
+        for entry in load_entries(REGISTRY_DIR / fname):
+            if entry.get("type") != "algorithm":
+                continue
+            total_algorithms += 1
+            lc = entry.get("lifecycle")
+            if lc is None:
+                unannotated += 1
+            else:
+                counts[lc] += 1
+
+    LIFECYCLE_ORDER = [
+        "standardised", "draft", "selected", "candidate",
+        "withdrawn", "broken", "legacy",
+        "unspecific", "unknown",
+    ]
+
+    lines = [
+        "| Lifecycle | Count |",
+        "|:---|---:|",
+    ]
+    annotated_total = 0
+    for lc in LIFECYCLE_ORDER:
+        n = counts.get(lc, 0)
+        if n == 0:
+            continue
+        lines.append(f"| `{lc}` | {n} |")
+        annotated_total += n
+    for lc in sorted(set(counts) - set(LIFECYCLE_ORDER)):
+        lines.append(f"| `{lc}` _(unknown vocab value)_ | {counts[lc]} |")
+        annotated_total += counts[lc]
+    if unannotated:
+        lines.append(f"| _(unannotated)_ | {unannotated} |")
+    lines.append(f"| **Total** | **{total_algorithms}** |")
+    lines.append("")
+    n_unspecific = counts.get("unspecific", 0)
+    n_unknown = counts.get("unknown", 0)
+    lines.append(
+        f"_Computed from `cr-*.yaml` algorithm entries. "
+        f"{annotated_total}/{total_algorithms} annotated "
+        f"({n_unspecific} use the `\"unspecific\"` sentinel, "
+        f"{n_unknown} use the `\"unknown\"` sentinel); "
+        f"see [`management/registry-lifecycle-taxonomy.md`](../../../../../management/registry-lifecycle-taxonomy.md) for the controlled vocabulary._"
+    )
+    return "\n".join(lines)
+
+
 # ── Marker substitution ───────────────────────────────────────────────────────
 
 MARKER_RE = re.compile(
@@ -603,6 +660,7 @@ def main():
 
     sections_registry = {
         "registry-category-distribution": render_category_distribution(),
+        "registry-lifecycle-distribution": render_lifecycle_distribution(),
     }
 
     overall_ok = True
