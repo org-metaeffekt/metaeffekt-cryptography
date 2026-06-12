@@ -390,6 +390,8 @@ Cryptographic Algorithms
 | `sp800-56c` | SP 800-56C KDF (one-step / two-step) | Key derivation function | — | `SP800-56C-{mode}-{hashAlgorithm}` | NIST SP 800-56C Rev 2 |
 | `ansi-x9-42` | ANSI X9.42 KDF | Key derivation function | — | `ANSI-KDF-X9.42-{hashAlgorithm}` | ANSI X9.42; SP 800-56A |
 | `ansi-x9-63` | ANSI X9.63 KDF | Key derivation function | — | `ANSI-KDF-X9.63-{hashAlgorithm}` | ANSI X9.63; SEC 1 |
+| `ssl-prf-30` | SSL 3.0 PRF (disallowed) | Protocol-specific KDF | — | `SSL30-PRF` | RFC 6101; protocol disallowed per RFC 7568 |
+| `tls-prf-10` | TLS 1.0/1.1 PRF (disallowed) | Protocol-specific KDF | — | `TLS10-PRF` | RFC 2246/4346; MD5+SHA-1 based; disallowed per RFC 8996, SP 800-131A Rev 2 |
 | `tls-prf-12` | TLS 1.2 PRF | Protocol-specific KDF | — | `TLS12-PRF-{hashAlgorithm}` | RFC 5246 |
 | `tls-kdf-13` | TLS 1.3 HKDF | Protocol-specific KDF | — | `TLS13-HKDF-{hashAlgorithm}` | RFC 8446 |
 | `ikev2-prf` | IKEv2 PRF | Protocol-specific KDF | — | `IKEv2-PRF-{hashAlgorithm}` | RFC 7296 |
@@ -491,6 +493,7 @@ The following were NIST Round 3 candidates. None were selected for standardisati
 |:---|:---|:---|:---|:---|:---|
 | `sqisign` | SQIsign (Special Quaternion Isogeny Signature) | PQC signature (isogeny) | — | `SQIsign-*` | NIST PQC Round 2; EUROCRYPT 2023 |
 | `sqisign2d` | SQIsign2D (2-dimensional variant) | PQC signature (isogeny) | — | `SQIsign2D-*` | NIST PQC Round 2; ASIACRYPT 2024 |
+| `alteq` | ALTEQ (Alternating Trilinear Form Equivalence) | PQC signature (group-action-based) | — | `ALTEQ-*` | NIST PQC Round 2; alternating trilinear forms |
 
 ### NIST Round 3 Signature Finalists and Alternates (broken or not progressed)
 
@@ -775,19 +778,19 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Digital Signatures, stateful | 4 |
 | Key agreement algorithms (incl. SPAKE2+, OPAQUE-3DH, MLS, SRTP) | 12 |
 | Named elliptic curves and groups | 20 |
-| Key derivation functions (incl. CatKDF, KeyCombine) | 11 |
+| Key derivation functions (incl. CatKDF, KeyCombine) | 13 |
 | Password hashing (incl. Windows) | 10 |
 | Password-based encryption frameworks | 3 |
 | PKCS / protocol frameworks | 7 |
 | Post-quantum KEMs (lifecycle breakdown below) | 31 |
-| Post-quantum signatures (lifecycle breakdown below) | 61 |
+| Post-quantum signatures (lifecycle breakdown below) | 62 |
 | NIST SP 800-90A DRBGs | 12 |
 | Accumulator-based CSPRNGs | 2 |
 | OS entropy APIs and hardware RNGs | 10 |
 | Non-cryptographic PRNGs (incl. Xoroshiro) | 7 |
 | Padding / encoding schemes | 5 |
 | Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
-| **Total** | **~425** |
+| **Total** | **~426** |
 
 ### Post-quantum Algorithm Counts by Lifecycle
 
