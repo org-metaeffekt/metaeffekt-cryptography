@@ -332,7 +332,7 @@ python3 scripts/validate_consistency.py
 Output: per-check OK/INFO/WARN/FAIL verdict, totals at end. Exit 0 on
 success, 1 on any FAIL.
 
-### 7.2 Single Check Snapshot (last three checks — taxonomy work)
+### 7.2 Single Check Snapshot (last three checks; taxonomy work)
 
 ```bash
 python3 scripts/validate_consistency.py 2>&1 | grep -A1 "12\.\|13\.\|14\."
