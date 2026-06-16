@@ -373,11 +373,11 @@ Cryptographic Algorithms
 | `bls12-381` | BLS12-381 | Pairing-friendly elliptic curve | — | `BLS-BLS12-381` | IETF draft-irtf-cfrg-bls-signature |
 | `ristretto255` | ristretto255 (Curve25519, cofactor-1 abstraction) | Elliptic curve group | — | — | draft-irtf-cfrg-ristretto255-decaf448 |
 | `decaf448` | decaf448 (Curve448, cofactor-1 abstraction) | Elliptic curve group | — | — | draft-irtf-cfrg-ristretto255-decaf448 |
-| `ffdhe2048` | ffdhe2048 (RFC 7919 DH group) | Finite-field group | `1.3.101.100` | `FFDH-ffdhe2048` | RFC 7919; SP 800-56A |
-| `ffdhe3072` | ffdhe3072 | Finite-field group | `1.3.101.101` | `FFDH-ffdhe3072` | RFC 7919 |
-| `ffdhe4096` | ffdhe4096 | Finite-field group | `1.3.101.102` | `FFDH-ffdhe4096` | RFC 7919 |
-| `ffdhe6144` | ffdhe6144 | Finite-field group | `1.3.101.103` | `FFDH-ffdhe6144` | RFC 7919 |
-| `ffdhe8192` | ffdhe8192 | Finite-field group | `1.3.101.104` | `FFDH-ffdhe8192` | RFC 7919 |
+| `ffdhe2048` | ffdhe2048 (RFC 7919 DH group) | Finite-field group | — | `FFDH-ffdhe2048` | RFC 7919; SP 800-56A |
+| `ffdhe3072` | ffdhe3072 | Finite-field group | — | `FFDH-ffdhe3072` | RFC 7919 |
+| `ffdhe4096` | ffdhe4096 | Finite-field group | — | `FFDH-ffdhe4096` | RFC 7919 |
+| `ffdhe6144` | ffdhe6144 | Finite-field group | — | `FFDH-ffdhe6144` | RFC 7919 |
+| `ffdhe8192` | ffdhe8192 | Finite-field group | — | `FFDH-ffdhe8192` | RFC 7919 |
 
 ---
 

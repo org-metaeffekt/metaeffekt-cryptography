@@ -403,6 +403,7 @@ Conclusion: scope boundaries are clean. No compactness work outstanding.
 - [x] `check_summary_counts` — Summary Counts total drift detector (recomputes total from `| `id` |` rows; ±5 tolerance against documented `**~NNN**`)
 - [x] `check_category_vocabulary` — every algorithm entry's `category:` value (when present) must be in the controlled vocabulary defined in [`registry-category-taxonomy.md`](registry-category-taxonomy.md); reports annotation coverage informationally
 - [x] `check_lifecycle_vocabulary` — every algorithm entry's `lifecycle:` value (when present) must be in the controlled vocabulary defined in [`registry-lifecycle-taxonomy.md`](registry-lifecycle-taxonomy.md); reports per-value counts
+- [x] `check_markdown_only_oids` (validator check 15) — every OID in `cryptographic-algorithms.md` must be backed by the YAML registry or be on a small allowlist of verified contextual references (BLAKE2, SM2 curve, PKCS#12, CMS, composite arc parent, draft hybrid). Guards against fabricated/confabulated OIDs entering the catalogue without single-source-of-truth backing — added 2026-06-15 after the OID verification sweep that caught and corrected the bogus ffdhe `1.3.101.100–104` OIDs (an early-session confabulation that reinterpreted RFC 7919 TLS codepoints as an OID arc)
 
 **Implemented schema enrichments:**
 

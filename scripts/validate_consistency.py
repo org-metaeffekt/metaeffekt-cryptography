@@ -1026,6 +1026,61 @@ def check_summary_counts(base: Path) -> bool:
     return False
 
 
+# Markdown OIDs that legitimately have no YAML family-OID backing — contextual
+# references in cryptographic-algorithms.md (cited in a description or as a
+# scheme/curve identifier), not registry family OIDs. Each was verified against
+# an authoritative source during the 2026-06 OID sweep. Any catalogue OID that
+# is neither in the YAML registry nor on this allowlist is treated as an error —
+# this is the guard that would have caught the fabricated ffdhe 1.3.101.100-104
+# OIDs (since corrected).
+MARKDOWN_ONLY_OID_ALLOWLIST = {
+    "1.3.6.1.4.1.1722.12.2.1.8": "BLAKE2b-256 (RFC 7693 arc)",
+    "1.3.6.1.4.1.1722.12.2.2.8": "BLAKE2s-256 (RFC 7693 arc)",
+    "1.2.156.10197.1.301":       "SM2 recommended curve sm2p256v1 (GM/T 0003-2012)",
+    "1.3.9999.0.1":              "X25519+ML-KEM-768 hybrid (experimental draft arc)",
+    "1.2.840.113549.1.12":       "PKCS#12 / PFX (RFC 7292)",
+    "1.2.840.113549.1.9.16":     "CMS / S-MIME id-smime (RFC 5652)",
+    "1.3.6.1.5.5.7.6":           "PKIX id-alg arc parent for composite sigs (leaves .37-.54 are YAML-backed)",
+}
+
+CATALOGUE_OID_RE = re.compile(r"\b\d+(?:\.\d+){3,}\b")
+
+
+def check_markdown_only_oids(families: list[dict], base: Path) -> bool:
+    """Check 15: every OID in cryptographic-algorithms.md must be backed by the
+    YAML registry (collect_oids) or be on MARKDOWN_ONLY_OID_ALLOWLIST.
+
+    Guards against fabricated/confabulated OIDs entering the catalogue without
+    single-source-of-truth backing.
+    """
+    md = base / "cryptographic-algorithms.md"
+    if not md.exists():
+        print("  SKIP  cryptographic-algorithms.md not found")
+        return True
+    md_oids = set(CATALOGUE_OID_RE.findall(md.read_text()))
+    yaml_oids = collect_oids(families)
+    markdown_only = md_oids - yaml_oids
+    unexpected = sorted(markdown_only - set(MARKDOWN_ONLY_OID_ALLOWLIST))
+    stale = sorted(set(MARKDOWN_ONLY_OID_ALLOWLIST) - markdown_only)
+
+    ok = True
+    if unexpected:
+        ok = False
+        print(f"  FAIL  {len(unexpected)} catalogue OID(s) absent from the YAML registry and not allowlisted")
+        print( "        (verify against an authoritative source, then add to YAML or MARKDOWN_ONLY_OID_ALLOWLIST):")
+        for o in unexpected:
+            print(f"          {o}")
+    if stale:
+        print(f"  INFO  {len(stale)} allowlisted OID(s) no longer in the catalogue (allowlist can be trimmed):")
+        for o in stale:
+            print(f"          {o}  ({MARKDOWN_ONLY_OID_ALLOWLIST[o]})")
+    if ok and not stale:
+        print(f"  OK    all catalogue OIDs YAML-backed or allowlisted ({len(MARKDOWN_ONLY_OID_ALLOWLIST)} verified contextual refs)")
+    elif ok:
+        print(f"  OK    no un-backed catalogue OIDs (allowlist: {len(MARKDOWN_ONLY_OID_ALLOWLIST)})")
+    return ok
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -1074,6 +1129,8 @@ def main():
                                                        lambda: check_category_vocabulary(families)),
         ("14. Lifecycle vocabulary (registry-lifecycle-taxonomy.md)",
                                                        lambda: check_lifecycle_vocabulary(families)),
+        ("15. Catalogue OIDs YAML-backed or allowlisted",
+                                                       lambda: check_markdown_only_oids(families, base)),
     ]
 
     for title, fn in checks:
