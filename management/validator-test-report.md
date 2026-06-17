@@ -95,7 +95,7 @@ matched — zero unmatched. Split into two test sets.
 |-----------|:-----:|---------|
 | Direct canonical match | 89 | AES, MD5, ECDH, PBKDF2, Fortuna |
 | Alias on canonical family | 8 | rijndael → AES, desede/tdes → 3DES, sms4 → SM4, chacha → ChaCha20, diffiehellman/dhe → FFDH, kazumi → KASUMI |
-| Deprecated `spdx:` family | 24 | spdx:shs, spdx:rsa, spdx:keccak, spdx:cast, spdx:gost, spdx:md160, spdx:tnepres, spdx:pkcs12 |
+| Deprecated `spdx:` family | 24 | spdx:shs, spdx:rsa, spdx:keccak, spdx:cast, spdx:gostr3412-2015, spdx:md160, spdx:tnepres, spdx:pkcs12 |
 | New `spdx:` family (no canonical) | 4 | spdx:dcc, spdx:ubi, spdx:uffizi, spdx:uxn |
 | Compound pattern match | 35 | SHA-256, SNOW-3G, GOSTR3410, ChaCha20-Poly1305 |
 

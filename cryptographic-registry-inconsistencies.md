@@ -458,7 +458,7 @@ These SPDX identifiers are registered as deprecated families with a `spdx:` pref
 | `shax` | `spdx:shax` | SHA | Generic SHA — ambiguous which variant |
 | `rsa` | `spdx:rsa` | RSASSA-PSS, RSAES-OAEP, etc. | Generic RSA — ambiguous sign vs encrypt |
 | `cast` | `spdx:cast` | CAST5, CAST6 | Generic CAST — ambiguous which variant |
-| `gost` | `spdx:gost` | GOST-28147, GOSTR3410, GOSTR3411 | Generic GOST — covers cipher, sig, and hash |
+| `gostr3412-2015` | `spdx:gostr3412-2015` | Magma | GOST R 34.12-2015 (RFC 8891); SPDX scopes this id to the 64-bit Magma cipher (was a mis-named `gost.yaml` upstream until 2026-06-03) |
 | `snow` | `spdx:snow` | SNOW-3G, SNOW-V | Generic SNOW — ambiguous which variant |
 | `grain` | `spdx:grain` | Grain-128 | Generic Grain — only Grain-128 is standardised |
 | `blake2` | `spdx:blake2` | BLAKE2b, BLAKE2s | Generic BLAKE2 — ambiguous which variant |

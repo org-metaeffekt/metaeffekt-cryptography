@@ -39,9 +39,8 @@ auto-generated end-to-end from YAML.
 Single primary lifecycle per entry — no `lifecycles:` list. An algorithm has
 *one* position in the standardisation pipeline at any given moment. When a
 single SBOM identifier covers multiple algorithms in different lifecycle
-states (e.g. `spdx:gost` covers GOST-28147 standardised + GOSTR3411
-standardised + GOSTR3410 standardised; or `spdx:rsa` standardised), use the
-`"unspecific"` sentinel matching the category convention.
+states (e.g. `spdx:rsa` covers RSAES-OAEP + RSASSA-PSS, both standardised),
+use the `"unspecific"` sentinel matching the category convention.
 
 Composite entries (`type: composite`) do not carry `lifecycle:`. The
 composite's lifecycle is implicit in its `protocol:` version and the

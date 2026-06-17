@@ -47,7 +47,6 @@ categories*. The entry is "many things" by design.
 | Entry | Polysemy |
 |:---|:---|
 | `spdx:rsa` | RSAES-OAEP (`asymmetric/encryption`) + RSASSA-PSS / RSASSA-PKCS1 (`asymmetric/signature/stateless`) |
-| `spdx:gost` | GOST-28147 (`symmetric/block-cipher`) + GOSTR3410 (`asymmetric/signature/stateless`) + GOSTR3411 (`hash/cryptographic`) |
 | `spdx:ubi` | Threefish UBI mode (`symmetric/block-cipher/mode`) + Skein hash-construction primitive (`hash/cryptographic`) |
 
 We *know* what these entries are. We *know* their canonical mappings. We
