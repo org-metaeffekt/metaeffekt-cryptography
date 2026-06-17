@@ -1,7 +1,7 @@
 # Inventory of Implementations, Libraries and Runtimes
 
 Curated catalogue of reference implementations, production-quality libraries, test-vector
-repositories, and analysis tools tracked in `ae-cryptography-inventory.xlsx`.
+repositories, and analysis tools tracked in `ae-cryptography-asset-inventory.xlsx`.
 Entries are grouped by role; each versioned row in the spreadsheet corresponds to one entry here.
 
 ---
