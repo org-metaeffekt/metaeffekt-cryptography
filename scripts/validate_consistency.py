@@ -1046,6 +1046,37 @@ MARKDOWN_ONLY_OID_ALLOWLIST = {
 CATALOGUE_OID_RE = re.compile(r"\b\d+(?:\.\d+){3,}\b")
 
 
+# SPDX identifiers that publish an `oid:` field upstream, mapped to that OID.
+# Check 16 reconciles each against the canonical family our spdx: alias points
+# at (via preferredPattern): the SPDX-declared OID must equal that family's
+# registry OID. This is the OID-keyed guard that would have caught the historical
+# spdx:gost mis-mapping — the upstream SPDX entry's id is gostr3412-2015 (Magma,
+# OID 1.2.643.7.1.1.5.1), but the alias pointed at GOST-28147 (OID 1.2.643.2.2.21).
+# Matching on the OID (which both sides publish) rather than the name/filename
+# makes the contradiction unmissable. Captured from upstream during registry
+# resync; extend as more OID-bearing SPDX identifiers are tracked.
+SPDX_ENTRY_OIDS = {
+    "gostr3412-2015": "1.2.643.7.1.1.5.1",  # Magma (GOST R 34.12-2015; RFC 8891)
+}
+
+
+def preferred_pattern_targets(pattern: str) -> list[str]:
+    """Extract the canonical family ids named in a preferredPattern string.
+
+    Splits on ' or ' and trims each candidate to its leading family token,
+    cutting at the first '[' (parameter notation) or whitespace while preserving
+    internal '-' (e.g. "GOST-28147[-{mode}]" -> "GOST-28147", "Magma" -> "Magma").
+    """
+    if not pattern:
+        return []
+    targets = []
+    for candidate in re.split(r"\s+or\s+", pattern):
+        token = re.split(r"[\[\s]", candidate.strip(), maxsplit=1)[0]
+        if token:
+            targets.append(token)
+    return targets
+
+
 def check_markdown_only_oids(families: list[dict], base: Path) -> bool:
     """Check 15: every OID in cryptographic-algorithms.md must be backed by the
     YAML registry (collect_oids) or be on MARKDOWN_ONLY_OID_ALLOWLIST.
@@ -1079,6 +1110,51 @@ def check_markdown_only_oids(families: list[dict], base: Path) -> bool:
     elif ok:
         print(f"  OK    no un-backed catalogue OIDs (allowlist: {len(MARKDOWN_ONLY_OID_ALLOWLIST)})")
     return ok
+
+
+def check_spdx_oid_consistency(families: list[dict]) -> bool:
+    """Check 16: every SPDX identifier that publishes an OID upstream
+    (SPDX_ENTRY_OIDS) must map — through its spdx: alias's preferredPattern — to
+    a canonical family whose registry OID equals the SPDX-declared OID.
+
+    OID-keyed reconciliation, independent of name/filename. Guards against alias
+    mis-mappings: the historical spdx:gost pointed at GOST-28147 (OID
+    1.2.643.2.2.21), yet the SPDX entry's id/OID belong to Magma
+    (1.2.643.7.1.1.5.1) — this check fails the moment an alias's OID and its
+    preferredPattern target disagree.
+    """
+    by_id = {f.get("id"): f for f in families if f.get("id")}
+    family_oid = {fid: f["oid"] for fid, f in by_id.items() if f.get("oid")}
+
+    failures = []
+    checked = 0
+    for spdx_id, expected_oid in sorted(SPDX_ENTRY_OIDS.items()):
+        alias = by_id.get(f"spdx:{spdx_id}")
+        if alias is None:
+            failures.append(f"{spdx_id}: no 'spdx:{spdx_id}' alias entry in the registry")
+            continue
+        targets = preferred_pattern_targets(alias.get("preferredPattern"))
+        target_oids = {family_oid[t] for t in targets if t in family_oid}
+        if not target_oids:
+            failures.append(
+                f"{spdx_id}: preferredPattern targets {targets} name no OID-bearing "
+                f"canonical family — cannot reconcile SPDX OID {expected_oid}")
+            continue
+        if expected_oid not in target_oids:
+            failures.append(
+                f"{spdx_id}: SPDX-declared OID {expected_oid} does not match the OID(s) of its "
+                f"preferredPattern target(s) {targets} -> {sorted(target_oids)}")
+            continue
+        checked += 1
+
+    if failures:
+        print(f"  FAIL  {len(failures)} SPDX id/OID reconciliation issue(s):")
+        for msg in failures:
+            print(f"          {msg}")
+        return False
+    print(f"  OK    {checked}/{len(SPDX_ENTRY_OIDS)} OID-bearing SPDX identifier(s) "
+          f"reconcile with their mapped family OID")
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -1131,6 +1207,8 @@ def main():
                                                        lambda: check_lifecycle_vocabulary(families)),
         ("15. Catalogue OIDs YAML-backed or allowlisted",
                                                        lambda: check_markdown_only_oids(families, base)),
+        ("16. SPDX id/OID reconciliation (alias -> family OID)",
+                                                       lambda: check_spdx_oid_consistency(families)),
     ]
 
     for title, fn in checks:

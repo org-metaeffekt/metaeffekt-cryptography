@@ -53,7 +53,7 @@ run_step() {
   echo
 }
 
-run_step "Consistency validator (15 checks)" \
+run_step "Consistency validator (16 checks)" \
   python3 scripts/validate_consistency.py
 
 run_step "Autogen tables up to date" \

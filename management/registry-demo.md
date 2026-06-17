@@ -323,7 +323,7 @@ for e in yaml.safe_load(open('ae-pattern-validator/src/main/resources/registry/c
 
 ## 7. Consistency Validation
 
-### 7.1 Run All 15 Checks
+### 7.1 Run All 16 Checks
 
 ```bash
 python3 scripts/validate_consistency.py
@@ -403,5 +403,5 @@ python3 scripts/validate_consistency.py
 python3 scripts/generate_status_tables_from_yaml.py --check
 ```
 
-Expected: 4 OK + 1 ERROR (MD5 broken); all 15 consistency checks pass;
+Expected: 4 OK + 1 ERROR (MD5 broken); all 16 consistency checks pass;
 autogen sections in sync.
