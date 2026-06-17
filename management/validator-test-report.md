@@ -21,14 +21,14 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | Test class | Tests | Scope |
 |------------|------:|-------|
 | `InstanceValidationSymmetricTest` | 87 | All 77 symmetric families (incl. 2TDEA, RC4-HMAC-EXP) |
-| `InstanceValidationHashMacTest` | 57 | All 40 hash + 10 MAC families (incl. HMAC-MD5, GMAC) |
+| `InstanceValidationHashMacTest` | 70 | All 40 hash + 10 MAC families (incl. HMAC-MD5, GMAC, compact no-dash SHA/SHA3/HMACSHA alias forms) |
 | `InstanceValidationAsymmetricTest` | 44 | All 37 asymmetric families (incl. DLIES, MLS, SRTP) |
 | `InstanceValidationPqcTest` | 51 | All 40 PQC families (incl. ALTEQ) |
-| `InstanceValidationKdfTest` | 25 | All 25 KDF families (incl. CatKDF, KeyCombine) |
+| `InstanceValidationKdfTest` | 27 | All 27 KDF families (incl. CatKDF, KeyCombine, SSL30-PRF, TLS10-PRF) |
 | `InstanceValidationRngTest` | 31 | All 25 RNG families (incl. OS entropy APIs) |
 | `TemplateValidationTest` | 33 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
-| `CycloneDxRegistryCoverageTest` | 215 | Full CycloneDX cryptography-defs.json coverage (as of 2026-02-24) + all 34 cdx families + alternative pattern variants |
-| `SpdxCoverageTest` | 169 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
+| `CycloneDxRegistryCoverageTest` | 217 | Full CycloneDX cryptography-defs.json coverage (as of 2026-02-24) + all 34 cdx families + alternative pattern variants |
+| `SpdxCoverageTest` | 170 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
 | `CertificateAnalyserTest` | 5 | X.509 certificate analysis (RSA-2048, EC-P256) |
 | `CmsAnalyserTest` | 7 | CMS/PKCS#7 SignedData + EnvelopedData analysis |
 | `CBomAnalyserTest` | 8 | CycloneDX CBOM validation (6 components, compliance check) |
@@ -36,7 +36,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `MainTest` | 26 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
 | `AlgorithmRegistryTest` | 15 | Registry loading, duplicate detection, OID index, cross-validation, coverage |
 | `CompositeValidationTest` | 11 | Composite entry loading, TLS/SSH/X.509 component resolution, authority-aware validation |
-| **Total** | **788** | |
+| **Total** | **806** | |
 
 ---
 
@@ -78,7 +78,7 @@ In addition, `cdx:` and `spdx:` naming-alternative entries carry `patternStatus:
 
 ---
 
-## SPDX Coverage (159 tests)
+## SPDX Coverage (170 tests)
 
 Tests validating all 127 algorithm identifiers from the SPDX cryptographic algorithm
 list (https://github.com/spdx/cryptographic-algorithm-list). All identifiers are fully
@@ -86,26 +86,27 @@ matched — zero unmatched. Split into two test sets.
 
 | Test set | Count | What is validated |
 |----------|:-----:|-------------------|
-| `directMatches` | 124 | SPDX identifiers matched to a family: canonical (89), via alias (8), via `spdx:` deprecated family (27) |
-| `compoundMatches` | 35 | SPDX identifiers matched via compound patterns (SHA-256, SNOW-3G, ChaCha20-Poly1305, etc.) |
+| `directMatches` | 137 | SPDX identifiers matched to a family: canonical (90), via alias (8), via `cdx:` family (1), via `spdx:` family (38) |
+| `compoundMatches` | 33 | SPDX identifiers matched via compound patterns (SHA-256, SNOW-3G, ChaCha20-Poly1305, Magma, etc.) |
 
 ### SPDX Resolution Breakdown
 
 | Mechanism | Count | Examples |
 |-----------|:-----:|---------|
-| Direct canonical match | 89 | AES, MD5, ECDH, PBKDF2, Fortuna |
+| Direct canonical match | 90 | AES, MD5, ECDH, PBKDF2, Fortuna |
 | Alias on canonical family | 8 | rijndael → AES, desede/tdes → 3DES, sms4 → SM4, chacha → ChaCha20, diffiehellman/dhe → FFDH, kazumi → KASUMI |
-| Deprecated `spdx:` family | 24 | spdx:shs, spdx:rsa, spdx:keccak, spdx:cast, spdx:gostr3412-2015, spdx:md160, spdx:tnepres, spdx:pkcs12 |
+| `cdx:` family (via SPDX naming) | 1 | ecmqv → cdx:ECMQV |
+| Deprecated `spdx:` family | 34 | spdx:shs, spdx:rsa, spdx:keccak, spdx:cast, spdx:gostr3412-2015, spdx:md160, spdx:tnepres, spdx:pkcs12 |
 | New `spdx:` family (no canonical) | 4 | spdx:dcc, spdx:ubi, spdx:uffizi, spdx:uxn |
-| Compound pattern match | 35 | SHA-256, SNOW-3G, GOSTR3410, ChaCha20-Poly1305 |
+| Compound pattern match | 33 | SHA-256, SNOW-3G, GOSTR3410, ChaCha20-Poly1305, Magma |
 
 ---
 
-## Appendix A: all Instance Patterns tested (276)
+## Appendix A: all Instance Patterns tested (294)
 
 Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 
-### Symmetric Ciphers (91 patterns)
+### Symmetric Ciphers (92 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -159,6 +160,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `Khazad` | `Khazad` |
 | `LOKI91` | `LOKI91` |
 | `Lucifer` | `Lucifer` |
+| `Magma` | `Magma` |
 | `MILENAGE` | `MILENAGE` |
 | `MISTY1` | `MISTY1` |
 | `MULTI2` | `MULTI2` |
@@ -201,7 +203,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `ZipCrypt` | `ZipCrypt` |
 | `f8` | `f8` |
 
-### Hash Functions and Checksums (35 patterns)
+### Hash Functions and Checksums (44 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -228,8 +230,17 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `RIPEMD-160` | `RIPEMD` |
 | `SHA-1` | `SHA` |
 | `SHA-224` | `SHA` |
+| `SHA1` | `SHA1` |
+| `SHA224` | `SHA224` |
+| `SHA256` | `SHA256` |
+| `SHA384` | `SHA384` |
+| `SHA512` | `SHA512` |
 | `SHA3-224` | `SHA3` |
 | `SHA3-256` | `SHA3` |
+| `SHA3224` | `SHA3224` |
+| `SHA3256` | `SHA3256` |
+| `SHA3384` | `SHA3384` |
+| `SHA3512` | `SHA3512` |
 | `SHAKE128-256` | `SHAKE128` |
 | `SHAKE256-256` | `SHAKE256` |
 | `SM3` | `SM3` |
@@ -241,7 +252,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `cSHAKE128-256` | `cSHAKE128` |
 | `cSHAKE256-256` | `cSHAKE256` |
 
-### Message Authentication Codes (12 patterns)
+### Message Authentication Codes (16 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -252,6 +263,10 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `HMAC-SHA-224` | `HMAC` |
 | `HMAC-MD5` | `HMAC` |
 | `HMAC-SHA-256` | `HMAC` |
+| `HMACSHA1` | `HMACSHA1` |
+| `HMACSHA256` | `HMACSHA256` |
+| `HMACSHA384` | `HMACSHA384` |
+| `HMACSHA512` | `HMACSHA512` |
 | `KMAC128-256` | `KMAC128` |
 | `KMAC256-256` | `KMAC256` |
 | `Poly1305` | `Poly1305` |
@@ -354,7 +369,7 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `ntrulpr761` | `ntrulpr761` |
 | `sntrup761` | `sntrup761` |
 
-### Key Derivation and Password Hashing (25 patterns)
+### Key Derivation and Password Hashing (27 patterns)
 
 | Pattern | Family |
 |---------|--------|
@@ -378,6 +393,8 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `SP800-108-CounterKDF-HMAC` | `SP800-108` |
 | `SP800-56C-OneStep-SHA-256` | `SP800-56C` |
 | `SSH-KDF-SHA-256` | `SSH-KDF` |
+| `SSL30-PRF` | `SSL30-PRF` |
+| `TLS10-PRF` | `TLS10-PRF` |
 | `TLS12-PRF-SHA-256` | `TLS12-PRF` |
 | `TLS13-HKDF-SHA-256` | `TLS13-HKDF` |
 | `bcrypt-12` | `bcrypt` |
@@ -412,13 +429,15 @@ Concrete algorithm strings validated in `INSTANCE` mode, organized by taxonomy.
 | `Xoshiro` | `Xoshiro` |
 | `Yarrow-AES` | `Yarrow` |
 
-### CycloneDX-specific Families (4 patterns)
+### CycloneDX-specific Families (6 patterns)
 
 | Pattern | Family |
 |---------|--------|
 | `ECDHE-P-256` | `cdx:ECDHE` |
+| `Ed25519ctx` | `cdx:Ed25519ctx` |
 | `Ed25519ph` | `cdx:Ed25519ph` |
 | `Ed448ctx` | `cdx:Ed448ctx` |
+| `Ed448ph` | `cdx:Ed448ph` |
 | `FFDHE-ffdhe4096` | `cdx:FFDHE` |
 
 ## Appendix B: all Template Patterns tested (149)
