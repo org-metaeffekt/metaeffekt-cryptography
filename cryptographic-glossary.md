@@ -46,6 +46,9 @@ A length-preserving encryption construction designed by Google (2018) for storag
 **Agility, Cryptographic**
 The design property of a system that allows its cryptographic algorithms to be swapped out without redesigning the system. Important for migrating away from algorithms that are broken or deprecated.
 
+**AH — Authentication Header**
+One of the two IPsec security protocols (RFC 4302). AH provides integrity and authentication for IP packets but no confidentiality; **ESP**, which can additionally encrypt, has largely superseded it in practice.
+
 **AKA — Authentication and Key Agreement**
 The mutual authentication protocol used in 3GPP mobile networks (3G/4G/5G) between the SIM/USIM and the network. The authentication functions are typically implemented using MILENAGE (AES-based) or TUAK (Keccak-based).
 
@@ -210,6 +213,12 @@ An IETF standard (draft-ietf-lamps-pq-composite-sigs-15, LAMPS WG, February 2026
 **CRC — Cyclic Redundancy Check**
 A non-cryptographic error-detecting code used for data integrity in storage and transmission. Not collision-resistant; unsuitable for security purposes. Variants: CRC-16, CRC-32.
 
+**CRIME — Compression Ratio Info-leak Made Easy**
+A 2012 attack that exploits TLS-level compression to recover secrets such as session cookies by observing how the compressed size of a request changes with attacker-influenced content. The reason TLS-level compression is disabled in modern deployments.
+
+**CRNG — Cryptographic Random Number Generator**
+The Linux kernel's term for its ChaCha20-based generator instances: a base CRNG is seeded from the kernel entropy pool and per-CPU CRNGs are reseeded from it. Functionally a CSPRNG.
+
 **CRQC — Cryptographically Relevant Quantum Computer**
 A quantum computer powerful enough to run Shor's algorithm against deployed public-key cryptographic parameters (e.g., factor 2048-bit RSA, compute discrete logarithms on P-256). No CRQC exists as of 2026. The "harvest now, decrypt later" threat assumes adversaries collect ciphertext today for future decryption once a CRQC becomes available. NIST IR 8547 uses this term to frame the PQC migration urgency.
 
@@ -242,6 +251,9 @@ A joint US-Canadian program (NIST and CCCS) that validates complete cryptographi
 
 **CNSS — Committee on National Security Systems**
 A US inter-agency body that issues policy directives (CNSSP) governing cryptography for National Security Systems. CNSSP-15 Annex B defined the original CNSA 1.0 algorithm suite; superseded by NSA Cybersecurity Advisory PP-22-1338 (CNSA 2.0).
+
+**CNSSP — Committee on National Security Systems Policy**
+A numbered policy directive issued by the CNSS (e.g. CNSSP-11 on COTS product acquisition, CNSSP-15 on the algorithm suite for National Security Systems). See **CNSS**.
 
 **CMAC — Cipher-Based Message Authentication Code**
 A MAC algorithm using a block cipher (typically AES) as its core. Defined in NIST SP 800-38B. An alternative to HMAC when AES hardware acceleration is available.
@@ -440,6 +452,9 @@ A measure of unpredictability or randomness. High-entropy data is difficult to g
 **Entropy Source**
 A hardware or software component that collects unpredictable data (thermal noise, interrupt timing, disk seek times, etc.) to seed a random number generator.
 
+**ESP — Encapsulating Security Payload**
+The core IPsec protocol (RFC 4303) that encrypts and authenticates IP packet payloads, providing confidentiality plus integrity. It carries the transforms (AES-GCM, AES-CBC, ChaCha20-Poly1305) negotiated by **IKEv2**. Compare **AH**, which authenticates but does not encrypt.
+
 **EST — Enrollment over Secure Transport**
 A simple HTTPS-based protocol (RFC 7030) for X.509 certificate enrollment and re-enrollment. Designed as a modern, lightweight replacement for SCEP.
 
@@ -473,6 +488,9 @@ NIST-approved format-preserving encryption modes (SP 800-38G and SP 800-38G Rev 
 
 **FFDH — Finite Field Diffie-Hellman**
 Standard Diffie-Hellman key exchange using named finite-field groups (RFC 7919). Minimum recommended group: ffdhe2048 (2048-bit). Used when ECDH is not available (e.g. some legacy FIPS-constrained deployments).
+
+**FFC — Finite Field Cryptography**
+NIST's umbrella term for public-key schemes whose security rests on the discrete-logarithm problem in a finite field — for example DSA, Diffie-Hellman, and MQV over MODP/ffdhe groups. Contrast **ECC** (elliptic-curve) and **IFC** (integer-factorisation).
 
 **FIPS — Federal Information Processing Standards**
 US government standards, published by NIST, defining requirements for cryptographic algorithms and security modules. Key publications: FIPS 140-3 (crypto module validation), FIPS 197 (AES), FIPS 198-1 (HMAC), FIPS 202 (SHA-3), FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA).
@@ -541,6 +559,9 @@ The polynomial-hash function used inside GCM to compute the authentication tag. 
 **GOST 28147-89 / GOST R 34.12**
 Russian national block cipher standards. **GOST 28147-89** (1989; RFC 5830) is the legacy 64-bit block cipher with implementation-defined S-boxes. **GOST R 34.12-2015** supersedes it with two ciphers: **Magma** (RFC 8891 — the 64-bit cipher with fixed S-boxes; "Magma" is the new name for what is essentially GOST 28147-89 with a chosen S-box set) and **Kuznyechik** / **Grasshopper** (RFC 7801 — a new 128-bit block cipher). Mandatory for Russian government and financial systems; rarely used elsewhere.
 
+**Grasshopper**
+See **Kuznyechik**. "Grasshopper" is the English translation (used in IETF RFC 7801) of the Russian name Кузнечик; it is the 128-bit block cipher of GOST R 34.12-2015 and the identifier the registry uses for that cipher.
+
 **Grain-128AEAD**
 A lightweight stream cipher with built-in authentication, standardised in ISO/IEC 29192-3. Designed for constrained environments (IoT, embedded, RFID) where AES-based constructions carry too much overhead. Uses a 128-bit key and 96-bit nonce. The authenticated variant (Grain-128AEAD) was a finalist in the NIST Lightweight Cryptography competition. In CycloneDX: `Grain-128-*`.
 
@@ -602,6 +623,9 @@ A tamper-resistant physical device that safeguards cryptographic keys, performs 
 **HSS — Hierarchical Signature Scheme**
 A multi-level extension of LMS (RFC 8554, NIST SP 800-208). An HSS key pair consists of L levels of LMS trees, where each tree's root public key is signed by the OTS key of the level above. The total signing capacity is the product of the capacities at each level: 2^(h₁ + h₂ + … + hₗ). HSS allows very large signing capacities while keeping tree heights manageable — for example, two levels of h=10 yield 2^20 signatures. The private key state must be managed by a FIPS 140-2/3 Level 3+ hardware module (SP 800-208 §5.3). Used for code and firmware signing where long-lived root keys are required.
 
+**Heartbleed**
+A 2014 buffer-over-read vulnerability (CVE-2014-0160) in OpenSSL's implementation of the TLS Heartbeat extension that let an attacker read adjacent server memory, potentially leaking private keys and session data. Not an algorithm weakness but an implementation bug — the reason the Heartbeat extension is often disabled.
+
 **Harvest Now, Decrypt Later (HNDL) — Retrospective Decryption**
 A threat model in which an attacker intercepts and stores encrypted ciphertext today, intending to decrypt it once a sufficiently powerful quantum computer becomes available. Because all RSA, ECDH, and DH-based key establishment can be broken by Shor's algorithm on a quantum computer, any confidential data encrypted with those schemes and captured now is at risk of future decryption. HNDL is most dangerous for long-lived secrets (national security data, health records, intellectual property) that must remain confidential for 10+ years. It is the primary driver of urgency in PQC migration, even before large quantum computers exist. Mitigation: migrate key establishment to ML-KEM (or a classical/PQC hybrid); NIST and CNSA 2.0 timelines reflect this urgency.
 
@@ -653,6 +677,9 @@ The family of public-key algorithms whose security depends on the difficulty of 
 
 **IKE — Internet Key Exchange**
 The key agreement protocol used to set up IPsec security associations. IKEv2 is the current version.
+
+**IKEv2 — Internet Key Exchange version 2**
+The current version of IKE (RFC 7296), used to negotiate and establish IPsec security associations and the keys for **ESP**/**AH**. IKEv1 is superseded and disallowed for new deployments. See **IKE**.
 
 **IND-CCA2 — Indistinguishability under Adaptive Chosen-Ciphertext Attack**
 The standard security notion for public-key encryption schemes and KEMs. An encryption scheme is IND-CCA2-secure if an adversary who can request decryptions of any ciphertext (except the challenge ciphertext) cannot distinguish encryptions of two messages of their choice. This is the strongest standard security notion for encryption and KEMs. ML-KEM, Classic McEliece, and HQC achieve IND-CCA2 security via the **FO-transform**. The weaker notion **IND-CPA** (indistinguishability under chosen-plaintext attack — no decryption oracle access) is achieved by the underlying lattice schemes before applying the FO-transform.
@@ -774,7 +801,7 @@ A timing side-channel vulnerability discovered in several CRYSTALS-Kyber / ML-KE
 See **ML-KEM**. Kyber is the earlier name of the algorithm that became ML-KEM when standardised as FIPS 203.
 
 **Kuznyechik**
-See **Grasshopper**. Russian "Кузнечик" (grasshopper) is the native name; **Grasshopper** is the English translation used in IETF RFC 7801. The 128-bit Russian block cipher standardised in GOST R 34.12-2015, companion to Magma.
+The 128-bit Russian block cipher of GOST R 34.12-2015 (RFC 7801), companion to the 64-bit **Magma** in the same standard. Russian "Кузнечик" (grasshopper); **Grasshopper** is the English name used in IETF RFC 7801 and is the identifier the registry uses for it. 256-bit key, substitution-permutation network. Mandatory in Russian government and financial systems; rarely used elsewhere.
 
 ---
 
@@ -815,6 +842,12 @@ A computational problem where the task is to distinguish noisy linear equations 
 
 **LWR — Learning With Rounding**
 A lattice-based computational problem related to LWE, where noise is introduced by rounding rather than explicit error addition. Used in Saber (NIST Round 3 finalist, not selected). Considered slightly more efficient than LWE but with less mature security analysis.
+
+**Logjam**
+A 2015 attack that downgrades a TLS Diffie-Hellman handshake to export-grade 512-bit groups, and shows that precomputation against widely-shared 1024-bit MODP groups is feasible for well-resourced adversaries. The principal reason finite-field DH groups below 2048 bits are disallowed.
+
+**Lucky Thirteen**
+A 2013 timing side-channel attack against the MAC-then-encrypt CBC construction in TLS, recovering plaintext from small differences in how long padding validation takes. Mitigated by constant-time processing, or avoided entirely by using AEAD ciphers.
 
 **LUC**
 A public-key cryptosystem based on Lucas sequences, proposed as an alternative to RSA. Uses properties of Lucas functions rather than modular exponentiation. Historically significant but not widely deployed.
@@ -1054,6 +1087,9 @@ A series of standards originally published by RSA Laboratories. Key documents: P
 **PKI — Public Key Infrastructure**
 The ecosystem of standards, software, and organisations for issuing, verifying, and revoking digital certificates.
 
+**PKINIT — Public Key Cryptography for Initial Authentication in Kerberos**
+A Kerberos extension (RFC 4556) that lets a client authenticate to the KDC using public-key cryptography — a certificate together with Diffie-Hellman key agreement or RSA key transport — instead of a password-derived key.
+
 **PKIX — Public Key Infrastructure using X.509**
 The IETF working group and standard framework (RFC 5280) for certificate-based PKI. Defines the X.509v3 certificate profile, CRL format, and certificate path validation rules used in TLS, S/MIME, and code signing.
 
@@ -1062,6 +1098,9 @@ A message or data in its original, readable form before encryption.
 
 **Poly1305**
 A one-time message authentication code designed by Daniel Bernstein. Used as the authentication component in ChaCha20-Poly1305.
+
+**POODLE — Padding Oracle On Downgraded Legacy Encryption**
+A 2014 padding-oracle attack against CBC mode in SSL 3.0 that recovers plaintext after forcing a protocol downgrade. A principal reason SSL 3.0 is disallowed.
 
 **PMU — Performance Monitoring Unit**
 A CPU subsystem that provides hardware counters for events such as cache misses, branch mispredictions, and instruction counts. PMU measurements can be used to detect timing side-channel vulnerabilities in cryptographic implementations (e.g., the KyberSlash analysis used PMU tooling to demonstrate cache-timing leaks).
@@ -1140,6 +1179,9 @@ A 128-bit stream cipher (Boesgaard et al., 2003) selected to the eSTREAM softwar
 **Rabin**
 A public-key cryptosystem where encryption security is provably equivalent to integer factorisation. Encryption squares the message modulo n, yielding four possible decryptions. Historically significant but not used in modern protocols.
 
+**Rainbow**
+A multivariate-quadratic post-quantum signature scheme and NIST Round 3 finalist, broken by a practical key-recovery attack (Beullens) in 2022 and not standardised. Of historical interest only.
+
 **RC2 / RC4 / RC5 / RC6**
 A family of ciphers by Ron Rivest. RC4 (a stream cipher) is completely broken and disallowed. RC2 is deprecated. RC5 and RC6 are block ciphers not widely standardised for modern use.
 
@@ -1166,6 +1208,9 @@ A family of cryptographic hash functions. RIPEMD-160 (160-bit output) is the mos
 
 **ROBOT — Return Of Bleichenbacher's Oracle Threat**
 A 2017 attack (Böck, Somorovsky, Young) demonstrating that the Bleichenbacher 1998 chosen-ciphertext attack against RSA-PKCS#1 v1.5 encryption was still exploitable in many TLS implementations 19 years after the original disclosure. Affected major vendors including Cisco, Citrix, F5, and Bouncy Castle. Mitigated by constant-time decryption that does not signal padding failures. The principal reason RSA key transport ciphersuites are deprecated; TLS 1.3 removes them entirely.
+
+**RMF — Risk Management Framework**
+The NIST framework (SP 800-37) for authorising and continuously monitoring the security of US federal information systems; cryptographic protection is tracked through its SC-12 control.
 
 **Ristretto255 / Decaf448**
 Techniques for constructing prime-order groups from the Curve25519 and Curve448 elliptic curves, avoiding cofactor-related implementation pitfalls. Used in OPAQUE and SPAKE2+.
@@ -1194,6 +1239,12 @@ A post-quantum digital signature scheme (NIST Round 2 additional signatures) bas
 
 **Safe-Prime Group**
 A Diffie-Hellman prime group where p is a safe prime (p = 2q + 1, where q is also prime). The large prime-order subgroup of size q ensures that an attacker cannot exploit small subgroups to recover the private key. NIST SP 800-56A Rev.3 and RFC 7919 define named safe-prime groups (ffdhe2048, ffdhe3072, ffdhe4096, ffdhe6144, ffdhe8192) approved for TLS key agreement. Custom primes require full validation per SP 800-56A Appendix D.
+
+**Saber**
+A module-lattice key-encapsulation mechanism based on the Learning With Rounding (LWR) problem; a NIST PQC Round 3 finalist that was not selected for standardisation. See **LWR**, **KEM**.
+
+**Salsa20**
+A stream cipher designed by Daniel Bernstein and a winner of the eSTREAM software portfolio; the direct predecessor of **ChaCha20**, which is the preferred modern variant.
 
 **Salt**
 A random value mixed into a password (or other input) before hashing to ensure that two identical passwords produce different hashes, preventing precomputed dictionary (rainbow table) attacks. The salt does not need to be secret — only the password does. Minimum 128 bits (16 bytes); 32 bytes recommended.
@@ -1306,6 +1357,12 @@ An open standard (ISO/IEC 5962) for describing software bill of materials, inclu
 **SPHINCS+ / SPHINCS-Plus**
 The predecessor to SLH-DSA, submitted to the NIST PQC process. Standardised as FIPS 205 (SLH-DSA) in August 2024.
 
+**Streebog**
+The common name for the Russian GOST R 34.11-2012 hash function (RFC 6986), defined in 256-bit and 512-bit output sizes. The companion hash to the **Magma** and **Kuznyechik** block ciphers.
+
+**Suite B**
+The NSA's pre-CNSA set of approved algorithms for US national-security use (P-256/P-384 ECDSA and ECDH, AES, SHA-2). Superseded by the CNSA 1.0 and CNSA 2.0 suites.
+
 **SQI / SQIsign**
 A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the hardness of finding isogenies between supersingular elliptic curves. Produces the smallest signatures of all PQC candidates but is significantly slower to sign and verify. The acronym **SQI** ("Short Quaternion and Isogeny") refers to the underlying construction; SQIsign is the algorithm name. Distinct from SIDH/SIKE: SQIsign uses a different auxiliary structure and is not affected by the 2022 Castryck-Decru attack.
 
@@ -1372,6 +1429,9 @@ A tamper-resistant hardware security chip providing key storage, random number g
 
 **TPM RNG**
 The hardware random number generator inside a TPM, accessed via the `TPM2_GetRandom` command. Operates within the TPM's security boundary, providing an entropy source independent of the main CPU.
+
+**TCG — Trusted Computing Group**
+The industry consortium that publishes the Trusted Platform Module (TPM) specifications and related trusted-computing standards.
 
 **TRNG — True Random Number Generator**
 A random number generator drawing from genuine physical entropy sources (thermal noise, quantum shot noise, metastable circuits, radioactive decay). Non-deterministic — the same device will never produce the same sequence twice. Used to seed DRBGs.
@@ -1497,6 +1557,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | 3GPP | 3rd Generation Partnership Project |
 | AEAD | Authenticated Encryption with Associated Data |
 | AES | Advanced Encryption Standard |
+| AH | Authentication Header (IPsec) |
 | AIS | Anforderungen an Implementierungen mit Sicherheitszertifikat (BSI technical guideline) |
 | AKA | Authentication and Key Agreement (3GPP) |
 | ANSI | American National Standards Institute |
@@ -1525,8 +1586,11 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | CNG | Cryptography Next Generation |
 | CNSA | Commercial National Security Algorithm Suite |
 | CNSS | Committee on National Security Systems |
+| CNSSP | Committee on National Security Systems Policy |
 | COSE | Concise Object Signing and Encryption |
 | CRC | Cyclic Redundancy Check |
+| CRIME | Compression Ratio Info-leak Made Easy (TLS attack) |
+| CRNG | Cryptographic Random Number Generator (Linux kernel) |
 | CSOR | Computer Security Object Register (NIST) |
 | CSRC | Computer Security Resource Center (NIST) |
 | cSHAKE | Customisable SHAKE |
@@ -1556,11 +1620,13 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | EdDSA | Edwards-Curve Digital Signature Algorithm |
 | EFS | Encrypting File System |
 | ENISA | European Union Agency for Cybersecurity |
+| ESP | Encapsulating Security Payload (IPsec) |
 | EST | Enrollment over Secure Transport |
 | ETM | Encrypt-then-MAC |
 | ETSI | European Telecommunications Standards Institute |
 | EUF-CMA | Existential Unforgeability under Chosen-Message Attack |
 | FF1 / FF3-1 | Format-Preserving Encryption Modes (NIST SP 800-38G) |
+| FFC | Finite Field Cryptography |
 | FFDH | Finite Field Diffie-Hellman |
 | FIPS | Federal Information Processing Standards |
 | FISMA | Federal Information Security Modernization Act |
@@ -1589,6 +1655,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | IETF | Internet Engineering Task Force |
 | IFC | Integer Factorisation Cryptography |
 | IKE | Internet Key Exchange |
+| IKEv2 | Internet Key Exchange version 2 |
 | IND-CCA2 | Indistinguishability under Adaptive Chosen-Ciphertext Attack |
 | IND-CPA | Indistinguishability under Chosen-Plaintext Attack |
 | IPsec | Internet Protocol Security |
@@ -1663,6 +1730,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | PHC | Password Hashing Competition |
 | PKCS | Public-Key Cryptography Standards |
 | PKI | Public Key Infrastructure |
+| PKINIT | Public Key Cryptography for Initial Authentication in Kerberos |
 | PKIX | Public Key Infrastructure using X.509 |
 | PMU | Performance Monitoring Unit |
 | POODLE | Padding Oracle On Downgraded Legacy Encryption (TLS attack) |
@@ -1679,6 +1747,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | RBG | Random Bit Generator |
 | RFC | Request for Comments |
 | RIPEMD | RACE Integrity Primitives Evaluation Message Digest |
+| RMF | Risk Management Framework (NIST SP 800-37) |
 | ROBOT | Return Of Bleichenbacher's Oracle Threat |
 | RSA | Rivest-Shamir-Adleman |
 | S/MIME | Secure/Multipurpose Internet Mail Extensions |
@@ -1705,6 +1774,7 @@ A cryptographic protocol where one party proves knowledge of a secret without re
 | SSH | Secure Shell |
 | SSL | Secure Sockets Layer |
 | SUF-CMA | Strong Unforgeability under Chosen-Message Attack |
+| TCG | Trusted Computing Group |
 | TDEA | Triple Data Encryption Algorithm |
 | TEA | Tiny Encryption Algorithm |
 | TLS | Transport Layer Security |
