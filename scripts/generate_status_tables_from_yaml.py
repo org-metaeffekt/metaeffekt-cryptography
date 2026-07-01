@@ -449,17 +449,10 @@ def render_tls13_cipher_suites_simple(entries: list) -> str:
 
 # ── Registry category distribution ──────────────────────────────────────────
 
-ALGORITHM_YAML_FILES = [
-    "cr-symmetric-ciphers.yaml",
-    "cr-hash-functions.yaml",
-    "cr-macs.yaml",
-    "cr-asymmetric.yaml",
-    "cr-pqc.yaml",
-    "cr-kdfs.yaml",
-    "cr-rngs.yaml",
-    "cr-cdx.yaml",
-    "cr-spdx.yaml",
-]
+# Single source of truth for registry-file discovery: glob every cr-*.yaml.
+# The category/lifecycle loops below filter to `type == "algorithm"`, so composite
+# files contribute nothing; a newly added registry file is picked up automatically.
+REGISTRY_YAML_FILES = sorted(p.name for p in REGISTRY_DIR.glob("cr-*.yaml"))
 
 
 def render_category_distribution() -> str:
@@ -473,7 +466,7 @@ def render_category_distribution() -> str:
     counts: Counter = Counter()
     total_algorithms = 0
     unannotated = 0
-    for fname in ALGORITHM_YAML_FILES:
+    for fname in REGISTRY_YAML_FILES:
         for entry in load_entries(REGISTRY_DIR / fname):
             if entry.get("type") != "algorithm":
                 continue
@@ -541,7 +534,7 @@ def render_lifecycle_distribution() -> str:
     counts: Counter = Counter()
     total_algorithms = 0
     unannotated = 0
-    for fname in ALGORITHM_YAML_FILES:
+    for fname in REGISTRY_YAML_FILES:
         for entry in load_entries(REGISTRY_DIR / fname):
             if entry.get("type") != "algorithm":
                 continue

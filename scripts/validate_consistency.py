@@ -1157,6 +1157,104 @@ def check_spdx_oid_consistency(families: list[dict]) -> bool:
     return True
 
 
+TCG_REGISTRIES = {"tpm-alg-id", "tpm-ecc-curve"}
+TCG_VALUE_RE = re.compile(r"^0x[0-9A-Fa-f]{4}$")
+TCG_POSTURE_STATUSES = {"deprecated", "approved"}  # Legacy -> deprecated, Standard -> approved
+
+
+def check_tcg_integrity(families: list[dict]) -> bool:
+    """Check 17: TCG Algorithm Registry (`tcg:`) overlay + `authorities.tcg` integrity.
+
+    Guards the two-layer TCG model against drift:
+      - overlay carries identity only: `registry` in {tpm-alg-id, tpm-ecc-curve},
+        `identifier` matching the registry (TPM_ALG_* / TPM_ECC_*), `value` a
+        16-bit hex (0xXXXX); `classification` must NOT reappear in the overlay
+        (it was moved to authorities.tcg).
+      - each (registry, identifier) and (registry, value) is unique — catches
+        copy-paste duplicates and clashing assignments.
+      - `authorities.tcg.status` is a valid TCG posture (deprecated | approved)
+        with a `source`; no posture without a co-located identity overlay.
+    """
+    errors: list[str] = []
+    overlays: list[tuple[str, dict]] = []
+    postures: list[tuple[str, dict]] = []
+
+    def visit(node: dict, loc: str):
+        if not isinstance(node, dict):
+            return
+        if isinstance(node.get("tcg"), dict):
+            overlays.append((loc, node["tcg"]))
+        auths = node.get("authorities") or {}
+        if isinstance(auths, dict) and isinstance(auths.get("tcg"), dict):
+            postures.append((loc, auths["tcg"]))
+
+    for fam in families:
+        fid = fam.get("id") or fam.get("family")
+        visit(fam, fid)
+        for ip in fam.get("implicitParameters") or []:
+            visit(ip, f"{fid}/implicit:{ip.get('name')}")
+        for param in fam.get("parameters") or []:
+            for val in param.get("values") or []:
+                if isinstance(val, dict):
+                    visit(val, f"{fid}/{param.get('name')}={val.get('value')}")
+
+    seen_ident: dict[tuple, str] = {}
+    seen_value: dict[tuple, str] = {}
+    for loc, tcg in overlays:
+        reg, ident, val = tcg.get("registry"), tcg.get("identifier"), tcg.get("value")
+        if reg not in TCG_REGISTRIES:
+            errors.append(f"{loc}: tcg.registry {reg!r} not in {sorted(TCG_REGISTRIES)}")
+        if not ident:
+            errors.append(f"{loc}: tcg.identifier missing")
+        else:
+            if reg == "tpm-alg-id" and not ident.startswith("TPM_ALG_"):
+                errors.append(f"{loc}: identifier {ident!r} must start with TPM_ALG_ for registry tpm-alg-id")
+            if reg == "tpm-ecc-curve" and not ident.startswith("TPM_ECC_"):
+                errors.append(f"{loc}: identifier {ident!r} must start with TPM_ECC_ for registry tpm-ecc-curve")
+        if not val or not TCG_VALUE_RE.match(str(val)):
+            errors.append(f"{loc}: tcg.value {val!r} is not a 16-bit hex identifier (0xXXXX)")
+        if "classification" in tcg:
+            errors.append(f"{loc}: tcg.classification must live in authorities.tcg, not the identity overlay")
+        if ident is not None:
+            k = (reg, ident)
+            if k in seen_ident:
+                errors.append(f"duplicate tcg identifier {ident!r} ({reg}) at {loc} and {seen_ident[k]}")
+            else:
+                seen_ident[k] = loc
+        if val is not None and TCG_VALUE_RE.match(str(val)):
+            vk = (reg, str(val))
+            if vk in seen_value:
+                errors.append(f"duplicate tcg value {val!r} ({reg}) at {loc} and {seen_value[vk]}")
+            else:
+                seen_value[vk] = loc
+
+    overlay_locs = {loc for loc, _ in overlays}
+    for loc, tcgauth in postures:
+        st = tcgauth.get("status")
+        if st not in TCG_POSTURE_STATUSES:
+            errors.append(f"{loc}: authorities.tcg.status {st!r} not a valid TCG posture "
+                          f"{sorted(TCG_POSTURE_STATUSES)} (Legacy->deprecated, Standard->approved)")
+        if not tcgauth.get("source"):
+            errors.append(f"{loc}: authorities.tcg missing `source` (classification provenance)")
+        if loc not in overlay_locs:
+            errors.append(f"{loc}: authorities.tcg posture without a co-located tcg identity overlay")
+
+    if errors:
+        print(f"  FAIL  {len(errors)} TCG integrity problem(s):")
+        for e in errors[:25]:
+            print(f"          {e}")
+        if len(errors) > 25:
+            print(f"          ... and {len(errors) - 25} more")
+        return False
+
+    depr = sum(1 for _, a in postures if a.get("status") == "deprecated")
+    appr = sum(1 for _, a in postures if a.get("status") == "approved")
+    print(f"  OK    {len(overlays)} tcg identifiers ({len(seen_value)} unique values across "
+          f"{len(TCG_REGISTRIES)} registries); {len(postures)} authority postures "
+          f"({appr} approved, {depr} deprecated) — all valid")
+    return True
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -1209,6 +1307,8 @@ def main():
                                                        lambda: check_markdown_only_oids(families, base)),
         ("16. SPDX id/OID reconciliation (alias -> family OID)",
                                                        lambda: check_spdx_oid_consistency(families)),
+        ("17. TCG registry overlay + authority integrity",
+                                                       lambda: check_tcg_integrity(families)),
     ]
 
     for title, fn in checks:

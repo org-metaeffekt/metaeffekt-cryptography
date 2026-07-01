@@ -1433,6 +1433,9 @@ The hardware random number generator inside a TPM, accessed via the `TPM2_GetRan
 **TCG — Trusted Computing Group**
 The industry consortium that publishes the Trusted Platform Module (TPM) specifications and related trusted-computing standards.
 
+**TCG Algorithm Registry**
+The Trusted Computing Group's registry of algorithm identifiers (`TPM_ALG_ID` values, 0x0000–0x7FFF) referenced across TPM 2.0 and other TCG specifications, so that each algorithm can be named unambiguously. Every algorithm gets a stable 16-bit identifier (e.g. `TPM_ALG_RSA` = 0x0001, `TPM_ALG_AES` = 0x0006, `TPM_ALG_SHA256` = 0x000B) together with a type code, a defining-standard reference, and one of three lifecycle classifications: **Assigned** (identifier reserved; presence implies no TCG endorsement), **TCG Standard** (mandatory in one or more TCG specifications), and **TCG Legacy** (retained for compatibility only; migration recommended). A companion `TPM_ECC_CURVE` registry assigns curve identifiers (e.g. NIST P-256 = 0x0003, Curve25519 = 0x0040). As of Family "2.0" Level 00 Rev 1.35 (18 February 2025), 3DES (`TPM_ALG_TDES`) and SHA-1 (`TPM_ALG_SHA1`) are classified TCG Legacy.
+
 **TRNG — True Random Number Generator**
 A random number generator drawing from genuine physical entropy sources (thermal noise, quantum shot noise, metastable circuits, radioactive decay). Non-deterministic — the same device will never produce the same sequence twice. Used to seed DRBGs.
 
