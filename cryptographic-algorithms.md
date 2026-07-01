@@ -75,6 +75,15 @@ Cryptographic Algorithms
 │   ├── Finite Field  (FFDH)
 │   └── Password-authenticated  (SPAKE2, SPAKE2+, OPAQUE-3DH, J-PAKE, SRP)
 │
+├── Named Curves and Groups
+│   ├── Weierstrass (prime field)  (P-192…P-521, W-25519/W-448, Brainpool, secp256k1, SM2, GOST)
+│   ├── Binary (deprecated)  (Koblitz K-233…K-571, pseudorandom B-233…B-571)
+│   ├── Montgomery  (Curve25519, Curve448)
+│   ├── Twisted Edwards  (Edwards25519/Edwards448, E448, GOST twisted-Edwards)
+│   ├── Pairing-friendly  (BN-P256, BN-P638, BLS12-381)
+│   ├── Prime-order Groups  (ristretto255, decaf448)
+│   └── Finite-field Groups  (FFDHE 2048–8192)
+│
 ├── Key Derivation Functions (KDF)
 │   ├── General-purpose  (HKDF, SP800-108, SP800-56C, ANSI X9.42/X9.63)
 │   ├── Password-based  (PBKDF2, bcrypt, scrypt, Argon2, yescrypt)
@@ -354,6 +363,12 @@ Cryptographic Algorithms
 
 ## 10. Elliptic Curves and named Groups
 
+> Named curves and groups as first-class catalogue entries, grouped by structural family
+> (mirrors the `curve/*` taxonomy sub-branches and SP 800-186 §2). The registry’s exhaustive,
+> machine-readable list is [`cr-ecc-curves.yaml`](ae-pattern-validator/src/main/resources/registry/cr-ecc-curves.yaml).
+
+### 10.1 Weierstrass Curves (prime field)
+
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
 | `p-192` | P-192 · secp192r1 · prime192v1 | Elliptic curve (legacy, disallowed) | `1.2.840.10045.3.1.1` | `ECDH-P-192` / `ECDSA-P-192-*` | SP 800-131A Rev 2 (disallowed for new use after 2013; legacy verification only) |
@@ -361,29 +376,13 @@ Cryptographic Algorithms
 | `p-256` | P-256 · secp256r1 · prime256v1 | Elliptic curve | `1.2.840.10045.3.1.7` | `ECDH-P-256` / `ECDSA-P-256-*` | FIPS 186-5; SP 800-186 |
 | `p-384` | P-384 · secp384r1 | Elliptic curve | `1.3.132.0.34` | `ECDH-P-384` / `ECDSA-P-384-*` | FIPS 186-5; SP 800-186 |
 | `p-521` | P-521 · secp521r1 | Elliptic curve | `1.3.132.0.35` | `ECDH-P-521` / `ECDSA-P-521-*` | FIPS 186-5; SP 800-186 |
-| `curve25519` | Curve25519 (Montgomery) | Elliptic curve | `1.3.101.110` | `ECDH-Curve25519` | RFC 7748; SP 800-186 |
-| `curve448` | Curve448 · Curve448-Goldilocks (Montgomery) | Elliptic curve | `1.3.101.111` | `ECDH-Curve448` | RFC 7748; SP 800-186 |
-| `ed25519-curve` | Ed25519 (Edwards) | Elliptic curve (signature) | `1.3.101.112` | `Ed25519` | RFC 8032 |
-| `ed448-curve` | Ed448 (Edwards) | Elliptic curve (signature) | `1.3.101.113` | `Ed448` | RFC 8032 |
 | `secp256k1` | secp256k1 (Bitcoin curve) | Elliptic curve | `1.3.132.0.10` | `ECDSA-secp256k1-*` | SEC 2; not NIST-approved |
 | `brainpoolp256r1` | brainpoolP256r1 | Elliptic curve | `1.3.36.3.3.2.8.1.1.7` | `ECDH-brainpoolP256r1` | RFC 5639; BSI TR-02102-1 |
 | `brainpoolp384r1` | brainpoolP384r1 | Elliptic curve | `1.3.36.3.3.2.8.1.1.11` | `ECDH-brainpoolP384r1` | RFC 5639; BSI TR-02102-1 |
 | `brainpoolp512r1` | brainpoolP512r1 | Elliptic curve | `1.3.36.3.3.2.8.1.1.13` | `ECDH-brainpoolP512r1` | RFC 5639; BSI TR-02102-1 |
 | `sm2-curve` | SM2 curve | Elliptic curve | `1.2.156.10197.1.301` | `SM2-*` | GM/T 0003-2012 |
-| `bls12-381` | BLS12-381 | Pairing-friendly elliptic curve | — | `BLS-BLS12-381` | IETF draft-irtf-cfrg-bls-signature |
-| `ristretto255` | ristretto255 (Curve25519, cofactor-1 abstraction) | Elliptic curve group | — | — | draft-irtf-cfrg-ristretto255-decaf448 |
-| `decaf448` | decaf448 (Curve448, cofactor-1 abstraction) | Elliptic curve group | — | — | draft-irtf-cfrg-ristretto255-decaf448 |
 | `w-25519` | W-25519 · Weierstrass form of Curve25519 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for ECDSA/EdDSA directly) |
 | `w-448` | W-448 · Weierstrass form of Curve448 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for ECDSA/EdDSA directly) |
-| `e448` | E448 · untwisted Edwards, isogenous to Edwards448 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for EdDSA directly) |
-| `k-233` | K-233 · Koblitz, GF(2^233) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
-| `k-283` | K-283 · Koblitz, GF(2^283) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
-| `k-409` | K-409 · Koblitz, GF(2^409) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
-| `k-571` | K-571 · Koblitz, GF(2^571) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
-| `b-233` | B-233 · pseudorandom binary, GF(2^233) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
-| `b-283` | B-283 · pseudorandom binary, GF(2^283) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
-| `b-409` | B-409 · pseudorandom binary, GF(2^409) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
-| `b-571` | B-571 · pseudorandom binary, GF(2^571) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
 | `brainpoolp160r1` | brainpoolP160r1 | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
 | `brainpoolp192r1` | brainpoolP192r1 | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
 | `brainpoolp224r1` | brainpoolP224r1 | Elliptic curve (112-bit) | — | — | RFC 5639 |
@@ -395,20 +394,66 @@ Cryptographic Algorithms
 | `brainpoolp320t1` | brainpoolP320t1 · twisted | Elliptic curve | — | — | RFC 5639 |
 | `brainpoolp384t1` | brainpoolP384t1 · twisted | Elliptic curve | — | — | RFC 5639 |
 | `brainpoolp512t1` | brainpoolP512t1 · twisted | Elliptic curve | — | — | RFC 5639 |
-| `bn-p256` | BN-P256 · Barreto-Naehrig, pairing | Pairing-friendly elliptic curve | — | — | TCG Algorithm Registry (ECDAA) |
-| `bn-p638` | BN-P638 · Barreto-Naehrig, pairing | Pairing-friendly elliptic curve | — | — | TCG Algorithm Registry (ECDAA) |
 | `gost-2001-cryptopro-a` | id-GostR3410-2001-CryptoPro-A-ParamSet | GOST elliptic curve (256-bit param set) | — | — | RFC 4357; RFC 9215 |
 | `gost-2001-cryptopro-b` | id-GostR3410-2001-CryptoPro-B-ParamSet | GOST elliptic curve (256-bit param set) | — | — | RFC 4357; RFC 9215 |
 | `gost-2001-cryptopro-c` | id-GostR3410-2001-CryptoPro-C-ParamSet | GOST elliptic curve (256-bit param set) | — | — | RFC 4357; RFC 9215 |
 | `gost-2001-cryptopro-xcha` | id-GostR3410-2001-CryptoPro-XchA-ParamSet | GOST elliptic curve (256-bit, key-exchange set) | — | — | RFC 4357 |
 | `gost-2001-cryptopro-xchb` | id-GostR3410-2001-CryptoPro-XchB-ParamSet | GOST elliptic curve (256-bit, key-exchange set) | — | — | RFC 4357 |
-| `gost-2012-256-a` | id-tc26-gost-3410-2012-256-paramSetA · twisted Edwards | GOST elliptic curve (256-bit param set) | — | — | RFC 7836; RFC 9215 |
 | `gost-2012-256-b` | id-tc26-gost-3410-2012-256-paramSetB | GOST elliptic curve (256-bit param set) | — | — | RFC 9215 |
 | `gost-2012-256-c` | id-tc26-gost-3410-2012-256-paramSetC | GOST elliptic curve (256-bit param set) | — | — | RFC 9215 |
 | `gost-2012-256-d` | id-tc26-gost-3410-2012-256-paramSetD | GOST elliptic curve (256-bit param set) | — | — | RFC 9215 |
 | `gost-2012-512-a` | id-tc26-gost-3410-2012-512-paramSetA | GOST elliptic curve (512-bit param set) | — | — | RFC 7836; RFC 9215 |
 | `gost-2012-512-b` | id-tc26-gost-3410-2012-512-paramSetB | GOST elliptic curve (512-bit param set) | — | — | RFC 7836; RFC 9215 |
+
+### 10.2 Binary Curves (deprecated in SP 800-186)
+
+| Id | Name | Crypto Class | OID | Pattern | References |
+|:---|:---|:---|:---|:---|:---|
+| `k-233` | K-233 · Koblitz, GF(2^233) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
+| `k-283` | K-283 · Koblitz, GF(2^283) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
+| `k-409` | K-409 · Koblitz, GF(2^409) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
+| `k-571` | K-571 · Koblitz, GF(2^571) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
+| `b-233` | B-233 · pseudorandom binary, GF(2^233) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
+| `b-283` | B-283 · pseudorandom binary, GF(2^283) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
+| `b-409` | B-409 · pseudorandom binary, GF(2^409) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
+| `b-571` | B-571 · pseudorandom binary, GF(2^571) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
+
+### 10.3 Montgomery Curves
+
+| Id | Name | Crypto Class | OID | Pattern | References |
+|:---|:---|:---|:---|:---|:---|
+| `curve25519` | Curve25519 (Montgomery) | Elliptic curve | `1.3.101.110` | `ECDH-Curve25519` | RFC 7748; SP 800-186 |
+| `curve448` | Curve448 · Curve448-Goldilocks (Montgomery) | Elliptic curve | `1.3.101.111` | `ECDH-Curve448` | RFC 7748; SP 800-186 |
+
+### 10.4 Twisted Edwards Curves
+
+| Id | Name | Crypto Class | OID | Pattern | References |
+|:---|:---|:---|:---|:---|:---|
+| `ed25519-curve` | Ed25519 (Edwards) | Elliptic curve (signature) | `1.3.101.112` | `Ed25519` | RFC 8032 |
+| `ed448-curve` | Ed448 (Edwards) | Elliptic curve (signature) | `1.3.101.113` | `Ed448` | RFC 8032 |
+| `e448` | E448 · untwisted Edwards, isogenous to Edwards448 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for EdDSA directly) |
+| `gost-2012-256-a` | id-tc26-gost-3410-2012-256-paramSetA · twisted Edwards | GOST elliptic curve (256-bit param set) | — | — | RFC 7836; RFC 9215 |
 | `gost-2012-512-c` | id-tc26-gost-3410-2012-512-paramSetC · twisted Edwards | GOST elliptic curve (512-bit param set) | — | — | RFC 7836; RFC 9215 |
+
+### 10.5 Pairing-friendly Curves
+
+| Id | Name | Crypto Class | OID | Pattern | References |
+|:---|:---|:---|:---|:---|:---|
+| `bls12-381` | BLS12-381 | Pairing-friendly elliptic curve | — | `BLS-BLS12-381` | IETF draft-irtf-cfrg-bls-signature |
+| `bn-p256` | BN-P256 · Barreto-Naehrig, pairing | Pairing-friendly elliptic curve | — | — | TCG Algorithm Registry (ECDAA) |
+| `bn-p638` | BN-P638 · Barreto-Naehrig, pairing | Pairing-friendly elliptic curve | — | — | TCG Algorithm Registry (ECDAA) |
+
+### 10.6 Prime-order Group Abstractions
+
+| Id | Name | Crypto Class | OID | Pattern | References |
+|:---|:---|:---|:---|:---|:---|
+| `ristretto255` | ristretto255 (Curve25519, cofactor-1 abstraction) | Elliptic curve group | — | — | draft-irtf-cfrg-ristretto255-decaf448 |
+| `decaf448` | decaf448 (Curve448, cofactor-1 abstraction) | Elliptic curve group | — | — | draft-irtf-cfrg-ristretto255-decaf448 |
+
+### 10.7 Finite-field Groups (FFDHE)
+
+| Id | Name | Crypto Class | OID | Pattern | References |
+|:---|:---|:---|:---|:---|:---|
 | `ffdhe2048` | ffdhe2048 (RFC 7919 DH group) | Finite-field group | — | `FFDH-ffdhe2048` | RFC 7919; SP 800-56A |
 | `ffdhe3072` | ffdhe3072 | Finite-field group | — | `FFDH-ffdhe3072` | RFC 7919 |
 | `ffdhe4096` | ffdhe4096 | Finite-field group | — | `FFDH-ffdhe4096` | RFC 7919 |
@@ -416,7 +461,6 @@ Cryptographic Algorithms
 | `ffdhe8192` | ffdhe8192 | Finite-field group | — | `FFDH-ffdhe8192` | RFC 7919 |
 
 ---
-
 ## 11. Key Derivation Functions
 
 | Id | Name | Crypto Class | OID | Pattern | References |

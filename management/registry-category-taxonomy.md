@@ -107,7 +107,14 @@ asymmetric/
 
 hpke                                 # §6  HPKE ciphersuites (DHKEM-* families)
 
-curve                                # §10 named elliptic curves and groups (P-256, X25519, ristretto255, BLS12-381, ...)
+curve/                               # §10 named elliptic curves and groups — structural families per SP 800-186 §2
+  weierstrass                        #     prime Weierstrass: P-192…P-521, W-25519/W-448, Brainpool, secp256k1, SM2, GOST-Weierstrass sets
+  binary                             #     binary curves (Koblitz K-*, pseudorandom B-*); deprecated in SP 800-186
+  montgomery                         #     Curve25519, Curve448
+  edwards                            #     Edwards25519/448, E448, GOST twisted-Edwards sets
+  pairing                            #     pairing-friendly curves: BN-P256/638, BLS12-381
+  group                              #     prime-order group abstractions: ristretto255, decaf448
+                                     #     (bare `curve` remains a valid fallback for curves not fitting a sub-family)
 
 kdf                                  # §11 HKDF, SP 800-108, SP 800-56C, ANSI X9.42/X9.63, TLS/IKEv2/SSH PRFs, MGF1, CatKDF, KeyCombine
 kdf/password                         # §12 PBKDF1/2, Argon2, scrypt, bcrypt, yescrypt, MSCash
@@ -147,7 +154,8 @@ deeper path".
 | Digital Signatures, stateless | `category = asymmetric/signature/stateless` |
 | Digital Signatures, stateful | `category = asymmetric/signature/stateful` |
 | Key agreement | `category = asymmetric/key-agreement` |
-| Named curves and groups | `category = curve` |
+| Named curves and groups (all) | `category STARTSWITH curve` |
+| Binary / pairing / group curves | `category = curve/binary` \| `curve/pairing` \| `curve/group` |
 | KDFs (excluding password) | `category = kdf` |
 | Password hashing | `category = kdf/password` |
 | Password-based encryption | `category = kdf/pbe` |
@@ -213,7 +221,7 @@ companion spec and are not derivable from `category` alone.
   category: "asymmetric/key-agreement"
 
 - id: "P-256"
-  category: "curve"
+  category: "curve/weierstrass"
 
 - id: "HKDF"
   category: "kdf"

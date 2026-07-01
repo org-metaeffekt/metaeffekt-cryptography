@@ -845,8 +845,14 @@ CATEGORY_VOCABULARY = {
     "asymmetric/key-agreement",
     # hpke
     "hpke",
-    # curve
+    # curve (§10) — structural sub-branches per SP 800-186 §2; bare `curve` kept as fallback
     "curve",
+    "curve/weierstrass",
+    "curve/binary",
+    "curve/montgomery",
+    "curve/edwards",
+    "curve/pairing",
+    "curve/group",
     # kdf/
     "kdf",
     "kdf/password",
