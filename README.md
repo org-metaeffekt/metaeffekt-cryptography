@@ -108,9 +108,11 @@ that adjustments can be applied accordingly.
 
 ## Inventory of Implementations
 
-- **[inventory/README.md](inventory/README.md)** — Curated list of reference implementations, production-quality libraries, test-vector repositories, and analysis tools. Covers NIST-standardised PQC algorithms (FIPS 203/204/205, FIPS 206 IPD, HQC), Round 2 additional signature candidates, ecosystem libraries, Ascon lightweight crypto (NIST SP 800-232), Chinese national standards (SM9 via GmSSL), password-authenticated key exchange (SPAKE2/SPAKE2+, OPAQUE), and 3GPP authentication algorithms (MILENAGE, TUAK, A5/x). Includes source-download archive URLs for each entry.
+- **[inventory/README.md](inventory/README.md)** — Explains the inventory directory: the purpose, scope, version-coverage scheme, and column schema of the two spreadsheets below. The spreadsheets are the source of truth; the README describes them rather than duplicating their per-entry contents.
 
-- **[inventory/ae-cryptography-asset-inventory.xlsx](inventory/ae-cryptography-asset-inventory.xlsx)** — Structured inventory of cryptographic libraries and implementations in spreadsheet form (90 entries). Each row records the library identifier, version, repository URL, source-download archive URL, description, version status, repository licence (SPDX expression), CycloneDX algorithm patterns supported, and patent references. Intended as a machine-readable companion to the narrative documents above.
+- **[inventory/ae-cryptography-asset-inventory.xlsx](inventory/ae-cryptography-asset-inventory.xlsx)** — Asset inventory: the runtimes and libraries that implement cryptographic functions, each annotated with the algorithm patterns it supports (the join key to the algorithm catalogue). Tracks the last two maintained major versions per library. Covers PQC reference implementations and frameworks, production libraries and runtimes, Ascon lightweight crypto, Chinese SM-series (GmSSL), PAKE (SPAKE2/SPAKE2+, OPAQUE), 3GPP/telecom algorithms, and classical/historical reference implementations.
+
+- **[inventory/ae-cryptography-bom-inventory.xlsx](inventory/ae-cryptography-bom-inventory.xlsx)** — Vulnerability-monitoring BOM: the same software expressed as components with CPE/PURL identifiers for matching against vulnerability feeds. Tracks the latest `major.minor` line (`.0` plus latest patch) per component.
 
 ## Pattern Validator
 

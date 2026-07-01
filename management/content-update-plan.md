@@ -185,6 +185,24 @@ Phase 9 (Style Conventions)           ── independent; applies to all markdow
 > [!NOTE]
 > The inventory maps algorithms to real-world implementations (libraries, tools, hardware). This phase ensures every algorithm family has at least one known implementation reference and that the inventory data (versions, URLs, licences) remains current.
 
+> [!NOTE]
+> **Two inventories.** The repository maintains two complementary spreadsheets in `inventory/`, both keyed by runtime/library but scoped and versioned differently:
+>
+> | Inventory | File | Scope | Version coverage |
+> |:---|:---|:---|:---|
+> | **Asset inventory** | `ae-cryptography-asset-inventory.xlsx` (mirrored by `inventory/README.md`) | Runtimes and libraries that implement cryptographic libraries or functions | The **last two major versions**; for **each** major, the **latest available minor.patch** release (up to two version rows per library — newest release of the current major and of the preceding major). The preceding-major row is added **only while that major is still maintained** — EOL / superseded major lines are not tracked. Libraries that have only ever had one major line get a single row. |
+> | **BOM inventory** | `ae-cryptography-bom-inventory.xlsx` | The same runtimes and libraries, scoped for vulnerability monitoring (CPE/PURL mapping) | Only the **latest major.minor** line; within it the **`.0`** release **and** the **latest available patch** (e.g. for a current `4.1.x` line: `4.1.0` and `4.1.<latest>`) |
+>
+> BOM curation rules also apply: drop variants whose fixes have been upstreamed, exclude reference implementations (not production-deployed; NVD will not distinguish them), and do not track superseded major lines.
+
+> [!NOTE]
+> **Column schemas differ and must be preserved.** Each inventory has its own column set and formatting. Updates must keep the existing columns (order and headers) intact and fill the cells for every applicable column of a new or revised row — do not drop, reorder, or leave schema columns unpopulated where a value applies.
+>
+> - **Asset inventory** (`ae-cryptography-asset-inventory.xlsx`, 12 columns): `Id` · `Covered in CryptoBOM Dashboard` · `Repository License` · `Version` · `URL` · `Source Archive - URL` · `Description` · `Version Status` · `Status` · `Patterns` · `Comments` · `Patent References`.
+> - **BOM inventory** (`ae-cryptography-bom-inventory.xlsx`, component sheet, 10 columns): `Id` · `Component` · `Version` · `AID-CryptoBOM` · `Type` · `Inapplicable CPE URIs` · `Additional CPE URIs` · `Inapplicable PURLs` · `Proposed CPE` · `Proposed Inapplicable CPE URIs`.
+>
+> `Id` convention is `name-version` (or `name` when unversioned). The asset inventory's `Patterns` column carries the registry algorithm patterns (the join key to the YAML families for 5.1 coverage); its `Covered in CryptoBOM Dashboard` flag cross-links to the BOM inventory.
+
 ### 5.1 Implementation Coverage
 
 > [!NOTE]
@@ -197,11 +215,12 @@ Phase 9 (Style Conventions)           ── independent; applies to all markdow
 ### 5.2 README and XLSX Sync
 
 > [!NOTE]
-> The inventory README and the XLSX spreadsheet are dual representations of the same data. Ensure they agree — preventing users from seeing different information depending on which file they consult.
+> `inventory/README.md` and the asset-inventory XLSX (`ae-cryptography-asset-inventory.xlsx`) are dual representations of the same data. Ensure they agree — preventing users from seeing different information depending on which file they consult. The BOM XLSX (`ae-cryptography-bom-inventory.xlsx`) is a separate, vulnerability-monitoring view derived from the same library set under the version rules above.
 
-- [ ] Verify `inventory/README.md` matches the XLSX
-- [ ] Update XLSX to reflect any new entries or coverage added to the README (requires explicit instruction; provide reminde)
-- [ ] Update stale entries in both README and XLSX
+- [ ] Verify `inventory/README.md` matches the asset-inventory XLSX
+- [ ] Verify the BOM XLSX reflects the asset inventory under the BOM version/curation rules (latest major.minor: `.0` + latest patch)
+- [ ] Update XLSX files to reflect any new entries or coverage added to the README (requires explicit instruction; provide reminder)
+- [ ] Update stale entries in `inventory/README.md` and both XLSX files
 
 ---
 
