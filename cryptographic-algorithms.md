@@ -373,6 +373,42 @@ Cryptographic Algorithms
 | `bls12-381` | BLS12-381 | Pairing-friendly elliptic curve | — | `BLS-BLS12-381` | IETF draft-irtf-cfrg-bls-signature |
 | `ristretto255` | ristretto255 (Curve25519, cofactor-1 abstraction) | Elliptic curve group | — | — | draft-irtf-cfrg-ristretto255-decaf448 |
 | `decaf448` | decaf448 (Curve448, cofactor-1 abstraction) | Elliptic curve group | — | — | draft-irtf-cfrg-ristretto255-decaf448 |
+| `w-25519` | W-25519 · Weierstrass form of Curve25519 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for ECDSA/EdDSA directly) |
+| `w-448` | W-448 · Weierstrass form of Curve448 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for ECDSA/EdDSA directly) |
+| `e448` | E448 · untwisted Edwards, isogenous to Edwards448 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for EdDSA directly) |
+| `k-233` | K-233 · Koblitz, GF(2^233) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
+| `k-283` | K-283 · Koblitz, GF(2^283) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
+| `k-409` | K-409 · Koblitz, GF(2^409) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
+| `k-571` | K-571 · Koblitz, GF(2^571) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
+| `b-233` | B-233 · pseudorandom binary, GF(2^233) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
+| `b-283` | B-283 · pseudorandom binary, GF(2^283) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
+| `b-409` | B-409 · pseudorandom binary, GF(2^409) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
+| `b-571` | B-571 · pseudorandom binary, GF(2^571) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
+| `brainpoolp160r1` | brainpoolP160r1 | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
+| `brainpoolp192r1` | brainpoolP192r1 | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
+| `brainpoolp224r1` | brainpoolP224r1 | Elliptic curve (112-bit) | — | — | RFC 5639 |
+| `brainpoolp320r1` | brainpoolP320r1 | Elliptic curve | — | — | RFC 5639 |
+| `brainpoolp160t1` | brainpoolP160t1 · twisted | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
+| `brainpoolp192t1` | brainpoolP192t1 · twisted | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
+| `brainpoolp224t1` | brainpoolP224t1 · twisted | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
+| `brainpoolp256t1` | brainpoolP256t1 · twisted | Elliptic curve | — | — | RFC 5639 |
+| `brainpoolp320t1` | brainpoolP320t1 · twisted | Elliptic curve | — | — | RFC 5639 |
+| `brainpoolp384t1` | brainpoolP384t1 · twisted | Elliptic curve | — | — | RFC 5639 |
+| `brainpoolp512t1` | brainpoolP512t1 · twisted | Elliptic curve | — | — | RFC 5639 |
+| `bn-p256` | BN-P256 · Barreto-Naehrig, pairing | Pairing-friendly elliptic curve | — | — | TCG Algorithm Registry (ECDAA) |
+| `bn-p638` | BN-P638 · Barreto-Naehrig, pairing | Pairing-friendly elliptic curve | — | — | TCG Algorithm Registry (ECDAA) |
+| `gost-2001-cryptopro-a` | id-GostR3410-2001-CryptoPro-A-ParamSet | GOST elliptic curve (256-bit param set) | — | — | RFC 4357; RFC 9215 |
+| `gost-2001-cryptopro-b` | id-GostR3410-2001-CryptoPro-B-ParamSet | GOST elliptic curve (256-bit param set) | — | — | RFC 4357; RFC 9215 |
+| `gost-2001-cryptopro-c` | id-GostR3410-2001-CryptoPro-C-ParamSet | GOST elliptic curve (256-bit param set) | — | — | RFC 4357; RFC 9215 |
+| `gost-2001-cryptopro-xcha` | id-GostR3410-2001-CryptoPro-XchA-ParamSet | GOST elliptic curve (256-bit, key-exchange set) | — | — | RFC 4357 |
+| `gost-2001-cryptopro-xchb` | id-GostR3410-2001-CryptoPro-XchB-ParamSet | GOST elliptic curve (256-bit, key-exchange set) | — | — | RFC 4357 |
+| `gost-2012-256-a` | id-tc26-gost-3410-2012-256-paramSetA · twisted Edwards | GOST elliptic curve (256-bit param set) | — | — | RFC 7836; RFC 9215 |
+| `gost-2012-256-b` | id-tc26-gost-3410-2012-256-paramSetB | GOST elliptic curve (256-bit param set) | — | — | RFC 9215 |
+| `gost-2012-256-c` | id-tc26-gost-3410-2012-256-paramSetC | GOST elliptic curve (256-bit param set) | — | — | RFC 9215 |
+| `gost-2012-256-d` | id-tc26-gost-3410-2012-256-paramSetD | GOST elliptic curve (256-bit param set) | — | — | RFC 9215 |
+| `gost-2012-512-a` | id-tc26-gost-3410-2012-512-paramSetA | GOST elliptic curve (512-bit param set) | — | — | RFC 7836; RFC 9215 |
+| `gost-2012-512-b` | id-tc26-gost-3410-2012-512-paramSetB | GOST elliptic curve (512-bit param set) | — | — | RFC 7836; RFC 9215 |
+| `gost-2012-512-c` | id-tc26-gost-3410-2012-512-paramSetC · twisted Edwards | GOST elliptic curve (512-bit param set) | — | — | RFC 7836; RFC 9215 |
 | `ffdhe2048` | ffdhe2048 (RFC 7919 DH group) | Finite-field group | — | `FFDH-ffdhe2048` | RFC 7919; SP 800-56A |
 | `ffdhe3072` | ffdhe3072 | Finite-field group | — | `FFDH-ffdhe3072` | RFC 7919 |
 | `ffdhe4096` | ffdhe4096 | Finite-field group | — | `FFDH-ffdhe4096` | RFC 7919 |
@@ -777,7 +813,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Digital Signatures, stateless (incl. SM9, GOSTR3410) | 14 |
 | Digital Signatures, stateful | 4 |
 | Key agreement algorithms (incl. SPAKE2+, OPAQUE-3DH, MLS, SRTP) | 12 |
-| Named elliptic curves and groups | 20 |
+| Named elliptic curves and groups | 56 |
 | Key derivation functions (incl. CatKDF, KeyCombine) | 13 |
 | Password hashing (incl. Windows) | 10 |
 | Password-based encryption frameworks | 3 |
@@ -790,7 +826,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Non-cryptographic PRNGs (incl. Xoroshiro) | 7 |
 | Padding / encoding schemes | 5 |
 | Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
-| **Total** | **~426** |
+| **Total** | **~462** |
 
 ### Post-quantum Algorithm Counts by Lifecycle
 
