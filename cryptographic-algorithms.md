@@ -40,7 +40,8 @@ Cryptographic Algorithms
 │   ├── BLAKE Family  (BLAKE2b, BLAKE2s, BLAKE3)
 │   ├── Lightweight / Ascon  (Ascon-Hash256, Ascon-XOF128, Ascon-CXOF128)
 │   ├── National / regional  (SM3, GOSTR3411-2012)
-│   └── Legacy / deprecated  (SHA-1, MD5, MD4)
+│   ├── Legacy / deprecated  (SHA-1, MD5, MD4)
+│   └── Non-cryptographic checksums  (CRC, Adler, Fletcher, FNV, SipHash)
 │
 ├── Message Authentication Codes (MAC)
 │   ├── HMAC  (HMAC-SHA-*)
@@ -55,6 +56,8 @@ Cryptographic Algorithms
 │   ├── Post-quantum (selected)  (HQC-128/192/256)
 │   └── Post-quantum (candidates)  (FrodoKEM, Classic McEliece, BIKE, NTRU, Saber, SIKE — broken)
 │
+├── Hybrid Public-Key Encryption (HPKE)  (DHKEM + KDF + AEAD ciphersuites)
+│
 ├── Digital Signatures (stateless)
 │   ├── Classical
 │   │   ├── RSA  (RSASSA-PSS, RSASSA-PKCS1)
@@ -64,11 +67,12 @@ Cryptographic Algorithms
 │   ├── Post-quantum (NIST-standardised)
 │   │   ├── Lattice  (ML-DSA-44/65/87, HashML-DSA, FN-DSA-512/1024)
 │   │   └── Hash-based stateless  (SLH-DSA, HashSLH-DSA)
-│   ├── Composite  (MLDSA44/65/87 + RSA/ECDSA/Ed25519/Ed448)
 │   └── Candidates  (MAYO, HAWK, CROSS, FAEST, SQIsign, …)
 │
 ├── Digital Signatures (stateful)
 │   └── Hash-based  (LMS, LMOTS, HSS, XMSS, XMSS^MT)
+│
+├── Composite and Hybrid Constructs  (Composite ML-DSA signatures; hybrid KEMs x25519kyber768, p256mlkem768)
 │
 ├── Key Agreement
 │   ├── Elliptic Curve  (ECDH, HPKE, MQV, BLS)
@@ -88,6 +92,8 @@ Cryptographic Algorithms
 │   ├── General-purpose  (HKDF, SP800-108, SP800-56C, ANSI X9.42/X9.63)
 │   ├── Password-based  (PBKDF2, bcrypt, scrypt, Argon2, yescrypt)
 │   └── Protocol-specific  (TLS PRF, IKEv2 PRF, SSH KDF)
+│
+├── Frameworks (PKCS / CMS / ASN.1)  (PKCS#1/7/8/12, CMS)
 │
 └── Random Number Generators
     ├── TRNG / Entropy Sources  (physical noise, OS APIs, hardware)

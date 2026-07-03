@@ -58,7 +58,7 @@ java -jar $JAR --authority nist "3DES-CBC"        # WARN (deprecated)
 java -jar $JAR --authority bsi  "3DES-CBC"        # ERROR (disallowed by TR-02102-1)
 ```
 
-Authority IDs: `nist | bsi | cnsa | iana | ietf | cabf`. Default is `nist`.
+Authority IDs: `nist | bsi | cnsa | iana | ietf | cabf | tcg`. Default is `nist`.
 
 ### 1.4 Detecting Broken / Withdrawn Algorithms
 
@@ -323,7 +323,7 @@ for e in yaml.safe_load(open('ae-pattern-validator/src/main/resources/registry/c
 
 ## 7. Consistency Validation
 
-### 7.1 Run All 17 Checks
+### 7.1 Run All 19 Checks
 
 ```bash
 python3 scripts/validate_consistency.py
@@ -403,5 +403,5 @@ python3 scripts/validate_consistency.py
 python3 scripts/generate_status_tables_from_yaml.py --check
 ```
 
-Expected: 4 OK + 1 ERROR (MD5 broken); all 17 consistency checks pass;
+Expected: 4 OK + 1 ERROR (MD5 broken); all 19 consistency checks pass;
 autogen sections in sync.

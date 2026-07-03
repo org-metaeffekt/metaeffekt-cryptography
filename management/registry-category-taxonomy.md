@@ -88,7 +88,6 @@ symmetric/
   block-cipher/mode                  # §3  generic block-cipher mode-of-operation
   block-cipher/mode/aead             # §3  AEAD modes (GCM, CCM, OCB, Ascon-AEAD128, ...)
   block-cipher/mode/fpe              # §3  format-preserving encryption modes (FF1, FF3-1)
-  block-cipher/mode/tweakable        # §3  tweakable-block-cipher modes (XTS, ...)
   stream-cipher                      # §2  ChaCha20, Salsa20, RC4, ZUC, SNOW, A5, EEA/EIA, ...
 
 hash/
@@ -114,7 +113,6 @@ curve/                               # §10 named elliptic curves and groups —
   edwards                            #     Edwards25519/448, E448, GOST twisted-Edwards sets
   pairing                            #     pairing-friendly curves: BN-P256/638, BLS12-381
   group                              #     prime-order group abstractions: ristretto255, decaf448
-                                     #     (bare `curve` remains a valid fallback for curves not fitting a sub-family)
 
 kdf                                  # §11 HKDF, SP 800-108, SP 800-56C, ANSI X9.42/X9.63, TLS/IKEv2/SSH PRFs, MGF1, CatKDF, KeyCombine
 kdf/password                         # §12 PBKDF1/2, Argon2, scrypt, bcrypt, yescrypt, MSCash
@@ -130,10 +128,20 @@ rng/
   hardware                           # §16 RDRAND, RDSEED, TPM_RNG
   non-crypto                         # §17 MT19937, PCG, LCG, Xoshiro/Xoroshiro, ISAAC, A5/1, A5/2
 
-padding                              # §18 OAEP, PKCS1, PSS, padding/encoding schemes
-
 composite                            # §19 composite-sig, x25519kyber768, p256mlkem768, Composite ML-DSA (LAMPS)
 ```
+
+### Parameter-level dimensions (not categories)
+
+The category axis classifies what an entry **is**. Some concepts are instead
+*dimensions an entry varies over* and are carried by the entry's `parameters:`
+structure, not by a category leaf:
+
+| Dimension | Where it lives | Note |
+|:---|:---|:---|
+| **Padding / encoding** (OAEP, PSS, PKCS1) | `padding` parameter of RSA; and baked into `RSAES-OAEP` / `RSASSA-PSS` identity | §18 documents them for reference; no `padding` category |
+| **Block-cipher mode** (incl. tweakable/XTS) | `mode` parameter value of AES/… | §3; no `mode/tweakable` category |
+| **Elliptic curve** (domain parameters) | `ellipticCurve` parameter value | *Exception:* curves are heavyweight, cross-referenced named objects (own OIDs, security levels, cited by ECDSA/ECDH/EdDSA/SM2/GOST), so they are **additionally** first-classed as `curve/*` entries — see §10. |
 
 ## Query Examples
 

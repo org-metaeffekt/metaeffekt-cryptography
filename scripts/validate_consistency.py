@@ -829,7 +829,6 @@ CATEGORY_VOCABULARY = {
     "symmetric/block-cipher/mode",
     "symmetric/block-cipher/mode/aead",
     "symmetric/block-cipher/mode/fpe",
-    "symmetric/block-cipher/mode/tweakable",
     "symmetric/stream-cipher",
     # hash/
     "hash/cryptographic",
@@ -845,8 +844,7 @@ CATEGORY_VOCABULARY = {
     "asymmetric/key-agreement",
     # hpke
     "hpke",
-    # curve (§10) — structural sub-branches per SP 800-186 §2; bare `curve` kept as fallback
-    "curve",
+    # curve (§10) — structural sub-branches per SP 800-186 §2 (no bare `curve`: every curve fits a sub-family)
     "curve/weierstrass",
     "curve/binary",
     "curve/montgomery",
@@ -866,8 +864,6 @@ CATEGORY_VOCABULARY = {
     "rng/os-entropy",
     "rng/hardware",
     "rng/non-crypto",
-    # padding
-    "padding",
     # composite
     "composite",
     # sentinel: identifier is genuinely polysemous and maps to multiple
@@ -1261,6 +1257,87 @@ def check_tcg_integrity(families: list[dict]) -> bool:
     return True
 
 
+def _doc_vocabulary(base: Path) -> set:
+    """Extract the controlled category vocabulary from registry-category-taxonomy.md:
+    the leaves of the Vocabulary tree plus the two documented sentinel values."""
+    doc = (base / "management" / "registry-category-taxonomy.md").read_text()
+    tree = re.search(r"## Vocabulary.*?```\n(.*?)```", doc, re.S).group(1)
+    leaves = set()
+    branch = ""
+    for line in tree.splitlines():
+        raw = line.split("#")[0].rstrip()
+        tok = raw.strip()
+        if not tok:
+            continue
+        if tok.endswith("/"):
+            branch = tok
+            continue
+        leaves.add((branch + tok) if (len(raw) - len(raw.lstrip())) > 0 else tok)
+    sentinels = set(re.findall(r'category:\s*"(unspecific|unknown)"', doc))
+    return leaves | sentinels
+
+
+def check_category_vocab_matches_doc(families: list[dict], base: Path) -> bool:
+    """Check 18: the validator's CATEGORY_VOCABULARY must equal the vocabulary defined
+    in registry-category-taxonomy.md (tree leaves + sentinels). Guards the two
+    hand-maintained copies against drift, and flags any unused vocabulary (INFO)."""
+    doc_vocab = _doc_vocabulary(base)
+    if doc_vocab != CATEGORY_VOCABULARY:
+        print("  FAIL  CATEGORY_VOCABULARY (validator) vs taxonomy-doc vocabulary mismatch:")
+        only_v = sorted(CATEGORY_VOCABULARY - doc_vocab)
+        only_d = sorted(doc_vocab - CATEGORY_VOCABULARY)
+        if only_v:
+            print(f"          in validator, not documented: {only_v}")
+        if only_d:
+            print(f"          documented, not in validator: {only_d}")
+        return False
+    used = {f.get("category") for f in families if f.get("category")}
+    unused = sorted(CATEGORY_VOCABULARY - used)
+    if unused:
+        print(f"  INFO  {len(unused)} vocabulary value(s) reserved but unused by any entry: {unused}")
+    print(f"  OK    CATEGORY_VOCABULARY ({len(CATEGORY_VOCABULARY)}) matches the taxonomy-doc vocabulary")
+    return True
+
+
+# category top-level -> keyword that must appear in the `## Taxonomy` ASCII tree
+ASCII_TREE_KEYWORDS = {
+    "symmetric": "Symmetric", "hash": "Hash", "mac": "MAC", "asymmetric": "asymmetric",
+    "hpke": "HPKE", "curve": "Curves", "kdf": "KDF", "framework": "Framework",
+    "rng": "Random Number", "composite": "Composite",
+}
+
+
+def check_ascii_taxonomy_coverage(families: list[dict], base: Path) -> bool:
+    """Check 19: every category top-level actually in use must be represented in the
+    `## Taxonomy` ASCII tree of cryptographic-algorithms.md — guards the hand-maintained
+    overview against silently dropping a whole category (as happened with framework/hpke/composite)."""
+    md = base / "cryptographic-algorithms.md"
+    if not md.exists():
+        print("  SKIP  cryptographic-algorithms.md not found")
+        return True
+    m = re.search(r"## Taxonomy.*?```(.*?)```", md.read_text(), re.S)
+    if not m:
+        print("  SKIP  no `## Taxonomy` tree found")
+        return True
+    tree = m.group(1).lower()
+    tops = {c.split("/")[0] for f in families for c in [f.get("category")]
+            if c and c not in ("unspecific", "unknown")}
+    missing = []
+    for t in sorted(tops):
+        kw = ASCII_TREE_KEYWORDS.get(t)
+        if kw is None:
+            missing.append(f"{t} (no keyword mapping — add to ASCII_TREE_KEYWORDS + the tree)")
+        elif kw.lower() not in tree:
+            missing.append(f"{t} (expected '{kw}' in the tree)")
+    if missing:
+        print("  FAIL  category top-levels not represented in the `## Taxonomy` ASCII tree:")
+        for m2 in missing:
+            print(f"          {m2}")
+        return False
+    print(f"  OK    all {len(tops)} category top-levels represented in the `## Taxonomy` ASCII tree")
+    return True
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -1315,6 +1392,10 @@ def main():
                                                        lambda: check_spdx_oid_consistency(families)),
         ("17. TCG registry overlay + authority integrity",
                                                        lambda: check_tcg_integrity(families)),
+        ("18. Category vocabulary: validator vs taxonomy doc",
+                                                       lambda: check_category_vocab_matches_doc(families, base)),
+        ("19. Category top-levels represented in the ## Taxonomy tree",
+                                                       lambda: check_ascii_taxonomy_coverage(families, base)),
     ]
 
     for title, fn in checks:
