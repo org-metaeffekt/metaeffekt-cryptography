@@ -585,4 +585,33 @@ NIST IR 8547 defines federal Deadlines for migrating away from classical asymmet
 
 ---
 
-*Last updated: 2026-04-06 (split from cryptographic-algorithm-status.md §14–§21; sections renumbered §1–§8). Consult current BSI TR-02102, NSA CNSA advisory, and NIST SP 800-57 Part 3 for any post-publication amendments.*
+## 9. SPDM (DMTF DSP0274 v1.3.0)
+
+> **Source:** DMTF DSP0274, *Security Protocol and Data Model (SPDM) Specification*, v1.3.0 (2023-06-28; supersedes 1.2.1). Machine-readable registry: [`cr-spdm.yaml`](ae-pattern-validator/src/main/resources/registry/cr-spdm.yaml) (generated). SPDM is DMTF's hardware attestation/authentication protocol (PCIe/CXL/USB device identity, firmware measurement, secure sessions). It negotiates one algorithm per class in the NEGOTIATE_ALGORITHMS/ALGORITHMS exchange (§10.4). Unlike IETF protocols, SPDM does not rank algorithms — all listed values are optional/negotiable; the NIST column reflects the underlying algorithm's posture. SPDM reuses the TCG Algorithm Registry `TPM_ALG_*` identifiers for its asymmetric and hash algorithms.
+
+### 9.1 Negotiable Algorithm Registries (§10.4)
+
+| Class (SPDM field) | Algorithms | NIST posture |
+|:---|:---|:---|
+| Asymmetric signature (`BaseAsymAlgo` / `ReqBaseAsymAlg`) | RSASSA-PKCS1 & RSASSA-PSS at 2048/3072/4096; ECDSA P-256/384/521; SM2; Ed25519; Ed448 | PKCS#1 v1.5 ❌ deprecated (FIPS 186-5 removed for new signing); PSS / ECDSA / EdDSA ✅ approved; SM2 — not in NIST FIPS |
+| Base hash (`BaseHashAlgo`, also `MeasurementHashAlgo`) | SHA-256/384/512, SHA3-256/384/512, SM3-256 | SHA-2 / SHA-3 ✅ approved; SM3 — not in NIST FIPS |
+| DHE named group (`DHE`) | ffdhe2048/3072/4096; secp256r1/384r1/521r1; SM2_P256 | FFDHE (≥3072 preferred) / ECDHE P-256/384/521 ✅ approved; SM2_P256 — not in NIST FIPS |
+| AEAD (`AEAD`) | AES-128-GCM, AES-256-GCM, ChaCha20-Poly1305, SM4-GCM | AES-GCM ✅ approved; ChaCha20-Poly1305 (RFC 8439, not FIPS); SM4-GCM — not in NIST FIPS |
+| Key schedule (`KeySchedule`) | SPDM Key Schedule (HKDF-based, §12) | HKDF ✅ approved (SP 800-56C Rev 2) |
+
+### 9.2 SPDM Certificate OIDs (§10.8.2)
+
+Base arc `id-DMTF-spdm` = `1.3.6.1.4.1.412.274`.
+
+| OID | Name | Purpose |
+|:---|:---|:---|
+| `1.3.6.1.4.1.412.274.1` | `id-DMTF-device-info` | `otherName` carrying manufacturer / product / serial number |
+| `1.3.6.1.4.1.412.274.2` | `id-DMTF-hardware-identity` | Marks the hardware-identity certificate in a chain |
+| `1.3.6.1.4.1.412.274.3` | SPDM Responder Authentication | Extended Key Usage: leaf usable for Responder authentication |
+| `1.3.6.1.4.1.412.274.4` | SPDM Requester Authentication | Extended Key Usage: leaf usable for Requester authentication |
+| `1.3.6.1.4.1.412.274.5` | `id-DMTF-mutable-certificate` | Marks a mutable certificate |
+| `1.3.6.1.4.1.412.274.6` | `id-DMTF-spdm-extension` | Non-critical container for SPDM OIDs (RFC 5280 extension) |
+
+---
+
+*Last updated: 2026-04-06 (split from cryptographic-algorithm-status.md §14–§21; sections renumbered §1–§8; §9 SPDM added 2026-07-03). Consult current BSI TR-02102, NSA CNSA advisory, and NIST SP 800-57 Part 3 for any post-publication amendments.*

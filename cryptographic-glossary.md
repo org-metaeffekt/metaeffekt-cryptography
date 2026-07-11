@@ -1351,6 +1351,9 @@ NIST guidance (Kerry McKay & David Cooper, August 2019) for US federal departmen
 **SPAKE2 / SPAKE2+**
 A simple, efficient Password-Authenticated Key Exchange protocol. Provides mutual authentication; SPAKE2+ additionally provides augmented (server-not-equal-to-client) properties.
 
+**SPDM — Security Protocol and Data Model**
+A DMTF attestation and authentication protocol (specification DSP0274) used to authenticate hardware devices, retrieve firmware/configuration measurements, and establish secure sessions (widely used for PCIe/CXL/USB device identity and platform attestation). Like TLS, SPDM negotiates a crypto suite via its NEGOTIATE_ALGORITHMS/ALGORITHMS exchange (DSP0274 §10.4), selecting a base asymmetric signature algorithm, a base hash, a DHE named group, an AEAD cipher, and a key schedule. SPDM names its asymmetric/hash algorithms with the TCG Algorithm Registry `TPM_ALG_*` identifiers. SPDM v1.3.0 (2023) supersedes 1.2.1.
+
 **SPDX — Software Package Data Exchange**
 An open standard (ISO/IEC 5962) for describing software bill of materials, including license expressions and security metadata.
 

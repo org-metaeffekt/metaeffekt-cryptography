@@ -1,6 +1,6 @@
 # TLS Cipher Suite and Group Analysis
 
-> **Source of truth:** [`ae-pattern-validator/.../registry/cr-tls.yaml`](ae-pattern-validator/src/main/resources/registry/cr-tls.yaml) — every cipher suite, supported group, and signature scheme entry carries an `iana:` block (with `recommended:` flag), an optional `nist:` block (SP 800-52 Rev 2 status + section reference), and an optional `bsi:` block (TR-02102-2 v2026-01 status + `useUpTo:` year + table reference). Regenerate with `python3 scripts/generate_iana_composites.py`. The Python file holds the BSI/NIST overlay tables — update them when the upstream documents are revised.
+> **Source of truth:** [`ae-pattern-validator/.../registry/cr-tls.yaml`](ae-pattern-validator/src/main/resources/registry/cr-tls.yaml) — every cipher suite, supported group, and signature scheme entry carries an `iana:` block (with `recommended:` flag), an optional `nist:` block (SP 800-52 Rev 2 status + section reference), and an optional `bsi:` block (TR-02102-2 v2026-01 status + `useUpTo:` year + table reference). Regenerate with `python3 scripts/generate_protocol_composites.py`. The Python file holds the BSI/NIST overlay tables — update them when the upstream documents are revised.
 >
 > §1–§11 below are the human-readable view of the IANA portion (cipher suites, supported groups, signature schemes). §12 and §13 are the human-readable view of the BSI and NIST overlays. §14 is the side-by-side authority comparison.
 >

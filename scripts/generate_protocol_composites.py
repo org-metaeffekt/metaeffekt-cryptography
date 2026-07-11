@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Generate cr-tls.yaml from IANA TLS parameter registries.
+Generate the protocol composite registries (cr-tls, cr-ssh, cr-ipsec, cr-kerberos,
+cr-dnssec, cr-spdm) from IANA / IETF-RFC / DMTF sources, with NIST/BSI overlays.
 
 Fetches (or reads from local cache) IANA CSVs for:
   - Cipher Suites (tls-parameters-4.csv)
@@ -11,7 +12,7 @@ Decomposes each entry into component algorithm patterns and writes
 a v2 registry YAML file for use by ae-pattern-validator.
 
 Usage:
-    python generate_iana_composites.py [--check] [--cache-dir DIR]
+    python generate_protocol_composites.py [--check] [--cache-dir DIR]
 
 Options:
     --check       Compare generated output with existing cr-tls.yaml;
@@ -38,6 +39,7 @@ SSH_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resourc
 IPSEC_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-ipsec.yaml"
 KERBEROS_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-kerberos.yaml"
 DNSSEC_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-dnssec.yaml"
+SPDM_OUTPUT_PATH = REPO_ROOT / "ae-pattern-validator" / "src" / "main" / "resources" / "registry" / "cr-spdm.yaml"
 DEFAULT_CACHE_DIR = SCRIPT_DIR / ".iana-cache"
 
 # ── IANA CSV URLs ──────────────────────────────────────────────────────────────
@@ -1546,9 +1548,9 @@ def generate_yaml(entries: list[dict]) -> str:
     parts.append("#   - BSI   TR-02102-2 v2026-01 (Jan 2026) — recommendations with `useUpTo` deadlines")
     parts.append("#")
     parts.append("# Do not edit manually; regenerate with:")
-    parts.append("#   python scripts/generate_iana_composites.py")
+    parts.append("#   python scripts/generate_protocol_composites.py")
     parts.append("#")
-    parts.append("# Authority overlay tables live in scripts/generate_iana_composites.py")
+    parts.append("# Authority overlay tables live in scripts/generate_protocol_composites.py")
     parts.append("# (BSI_TLS_CIPHER_SUITES, BSI_TLS_GROUPS, BSI_TLS_SIGS, NIST_TLS_CIPHER_SUITES).")
     parts.append("# Update those tables when the upstream documents are revised.")
     parts.append("#")
@@ -1902,9 +1904,9 @@ def generate_ssh_yaml(entries: list[dict]) -> str:
     parts.append("#   - BSI   TR-02102-4 v2026-01 — recommendations and migration deadlines")
     parts.append("#")
     parts.append("# Do not edit manually; regenerate with:")
-    parts.append("#   python scripts/generate_iana_composites.py")
+    parts.append("#   python scripts/generate_protocol_composites.py")
     parts.append("#")
-    parts.append("# Authority overlay tables live in scripts/generate_iana_composites.py")
+    parts.append("# Authority overlay tables live in scripts/generate_protocol_composites.py")
     parts.append("# (BSI_SSH, NIST_SSH, IETF_SSH). Update those tables when the upstream")
     parts.append("# documents are revised.")
     parts.append("#")
@@ -2054,8 +2056,9 @@ def _build_overlay_entry(name: str, spec: dict, protocol_label: str) -> dict:
         entry["nist"] = {
             "source": _nist_doc_for(protocol_label),
             "status": status,
-            "note": note,
         }
+        if note:
+            entry["nist"]["note"] = note
     bsi = spec.get("bsi")
     if bsi:
         status, use_up_to, section = bsi
@@ -2077,6 +2080,7 @@ def _nist_doc_for(protocol_label: str) -> str:
     return {
         "Kerberos": _NIST_KERB_DOC,
         "DNSSEC":   _NIST_DNS_DOC,
+        "SPDM":     _NIST_SPDM_DOC,
     }.get(protocol_label, "")
 
 
@@ -2084,6 +2088,7 @@ def _bsi_doc_for(protocol_label: str) -> str:
     return {
         "Kerberos": _BSI_KERB_DOC,
         "DNSSEC":   _BSI_DNS_DOC,
+        "SPDM":     _BSI_SPDM_DOC,
     }.get(protocol_label, "")
 
 
@@ -2160,9 +2165,9 @@ def generate_kerberos_yaml(entries: list[dict]) -> str:
         "#   - BSI   TR-02102-1 v2026-01",
         "#",
         "# Do not edit manually; regenerate with:",
-        "#   python scripts/generate_iana_composites.py",
+        "#   python scripts/generate_protocol_composites.py",
         "#",
-        "# Authority overlay table lives in scripts/generate_iana_composites.py",
+        "# Authority overlay table lives in scripts/generate_protocol_composites.py",
         "# (KERBEROS_ENTRIES). Update that table when the upstream documents are revised.",
         "#",
         "# Part of the ae-pattern-validator validation registry.",
@@ -2188,9 +2193,9 @@ def generate_dnssec_yaml(entries: list[dict]) -> str:
         "#   - BSI   TR-02102-1 v2026-01",
         "#",
         "# Do not edit manually; regenerate with:",
-        "#   python scripts/generate_iana_composites.py",
+        "#   python scripts/generate_protocol_composites.py",
         "#",
-        "# Authority overlay table lives in scripts/generate_iana_composites.py",
+        "# Authority overlay table lives in scripts/generate_protocol_composites.py",
         "# (DNSSEC_ENTRIES). Update that table when the upstream documents are revised.",
         "#",
         "# Part of the ae-pattern-validator validation registry.",
@@ -2217,9 +2222,9 @@ def generate_ipsec_yaml(entries: list[dict]) -> str:
     parts.append("#   - BSI   TR-02102-3 v2026-01 — recommendations and migration deadlines")
     parts.append("#")
     parts.append("# Do not edit manually; regenerate with:")
-    parts.append("#   python scripts/generate_iana_composites.py")
+    parts.append("#   python scripts/generate_protocol_composites.py")
     parts.append("#")
-    parts.append("# Authority overlay tables live in scripts/generate_iana_composites.py")
+    parts.append("# Authority overlay tables live in scripts/generate_protocol_composites.py")
     parts.append("# (IPSEC_ENTRIES). Update that table when the upstream documents are revised.")
     parts.append("#")
     parts.append("# Part of the ae-pattern-validator validation registry.")
@@ -2234,8 +2239,198 @@ def generate_ipsec_yaml(entries: list[dict]) -> str:
     return "\n".join(parts) + "\n"
 
 
+# ── SPDM (DMTF DSP0274) ─────────────────────────────────────────────────────
+# SPDM negotiates a crypto suite via NEGOTIATE_ALGORITHMS/ALGORITHMS (DSP0274
+# §10.4). Each SPDM-enumerated algorithm is one composite entry. SPDM is DMTF-
+# defined and does not rank algorithms, so entries carry no `ietf:` level; the
+# `nist:` and `bsi:` overlays record the underlying algorithm's posture in the
+# SPDM usage context (signature vs key agreement), mirroring the canonical
+# value-level assessments in cr-asymmetric.yaml and the other protocol files.
+# NOTE the context split: ECDSA P-256/P-521 are `nist: disallowed` for signature
+# generation (spdmAsym) but `nist: recommended` for key agreement (spdmDhe).
+# Chinese national algorithms (SM2/SM3/SM4) are addressed by neither NIST nor BSI
+# and carry no overlay. EdDSA and ChaCha20-Poly1305 are not in BSI TR-02102-1.
+_NIST_SPDM_DOC = "FIPS 186-5; SP 800-131A Rev 2"
+_BSI_SPDM_DOC = "TR-02102-1 v2026-01"
+
+SPDM_ENTRIES = {
+    # BaseAsymAlgo (verification) / ReqBaseAsymAlg (generation) — DSP0274 §10.4.
+    # Signature context: mirrors canonical RSASSA-PKCS1 (deprecated), RSASSA-PSS
+    # (recommended), and ECDSA value-level nist statuses (P-256/P-521 disallowed,
+    # P-384 transitional 2035). BSI disallows PKCS#1 v1.5 (§1.5) and RSA <3000-bit.
+    "spdm:RSASSA_2048": {"subType": "spdmAsym", "components": ["RSASSA-PKCS1-2048"],
+        "description": "RSASSA-PKCS#1 v1.5 with RSA-2048 (SigLen 256)",
+        "nist": ("deprecated", "PKCS#1 v1.5 signatures removed from FIPS 186-5 for new signing; RSA-2048 = 112-bit"),
+        "bsi": ("disallowed", None, "§1.5 (PKCS#1 v1.5) / §5.3.1 (RSA <3000-bit)"),
+        "remarks": ["DSP0274 §10.4 BaseAsymAlgo/ReqBaseAsymAlg Byte 0 Bit 0"]},
+    "spdm:RSAPSS_2048": {"subType": "spdmAsym", "components": ["RSASSA-PSS-2048"],
+        "description": "RSASSA-PSS with RSA-2048 (SigLen 256)",
+        "nist": ("approved", "RSA-2048 = 112-bit legacy strength"),
+        "bsi": ("disallowed", None, "§5.3.1 (below BSI >=3000-bit RSA minimum)"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 1"]},
+    "spdm:RSASSA_3072": {"subType": "spdmAsym", "components": ["RSASSA-PKCS1-3072"],
+        "description": "RSASSA-PKCS#1 v1.5 with RSA-3072 (SigLen 384)",
+        "nist": ("deprecated", "PKCS#1 v1.5 signatures removed from FIPS 186-5 for new signing"),
+        "bsi": ("disallowed", None, "§1.5 (PKCS#1 v1.5)"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 2"]},
+    "spdm:RSAPSS_3072": {"subType": "spdmAsym", "components": ["RSASSA-PSS-3072"],
+        "description": "RSASSA-PSS with RSA-3072 (SigLen 384)",
+        "nist": ("recommended", None),
+        "bsi": ("recommended", None, "§5.3.1"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 3"]},
+    "spdm:ECDSA_ECC_NIST_P256": {"subType": "spdmAsym", "components": ["ECDSA-P-256"],
+        "description": "ECDSA over NIST P-256 (SigLen 64)",
+        "nist": ("disallowed", "signature use: CNSA 2.0 mandates P-384; per canonical ECDSA P-256 value"),
+        "bsi": ("recommended", None, "§5.3.3"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 4"]},
+    "spdm:RSASSA_4096": {"subType": "spdmAsym", "components": ["RSASSA-PKCS1-4096"],
+        "description": "RSASSA-PKCS#1 v1.5 with RSA-4096 (SigLen 512)",
+        "nist": ("deprecated", "PKCS#1 v1.5 signatures removed from FIPS 186-5 for new signing"),
+        "bsi": ("disallowed", None, "§1.5 (PKCS#1 v1.5)"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 5"]},
+    "spdm:RSAPSS_4096": {"subType": "spdmAsym", "components": ["RSASSA-PSS-4096"],
+        "description": "RSASSA-PSS with RSA-4096 (SigLen 512)",
+        "nist": ("recommended", None),
+        "bsi": ("recommended", None, "§5.3.1"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 6"]},
+    "spdm:ECDSA_ECC_NIST_P384": {"subType": "spdmAsym", "components": ["ECDSA-P-384"],
+        "description": "ECDSA over NIST P-384 (SigLen 96)",
+        "nist": ("transitional", "until 2035 (CNSA 2.0 transitional); per canonical ECDSA P-384 value"),
+        "bsi": ("recommended", None, "§5.3.3"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 7"]},
+    "spdm:ECDSA_ECC_NIST_P521": {"subType": "spdmAsym", "components": ["ECDSA-P-521"],
+        "description": "ECDSA over NIST P-521 (SigLen 132)",
+        "nist": ("disallowed", "signature use: CNSA 2.0 mandates P-384; per canonical ECDSA P-521 value"),
+        "bsi": ("recommended", None, "§5.3.3"),
+        "remarks": ["DSP0274 §10.4 Byte 1 Bit 0"]},
+    "spdm:SM2_ECC_SM2_P256": {"subType": "spdmAsym", "components": ["SM2"],
+        "description": "SM2 signature over SM2_P256 (SigLen 64)",
+        "remarks": ["DSP0274 §10.4 Byte 1 Bit 1", "Chinese national standard GB/T 32918; not addressed by NIST or BSI"]},
+    "spdm:EdDSA_ed25519": {"subType": "spdmAsym", "components": ["Ed25519"],
+        "description": "EdDSA Ed25519 (SigLen 64)",
+        "nist": ("recommended", "FIPS 186-5"),
+        "remarks": ["DSP0274 §10.4 Byte 1 Bit 2", "EdDSA not addressed in BSI TR-02102-1"]},
+    "spdm:EdDSA_ed448": {"subType": "spdmAsym", "components": ["Ed448"],
+        "description": "EdDSA Ed448 (SigLen 114)",
+        "nist": ("recommended", "FIPS 186-5"),
+        "remarks": ["DSP0274 §10.4 Byte 1 Bit 3", "EdDSA not addressed in BSI TR-02102-1"]},
+    # BaseHashAlgo — DSP0274 §10.4 (same set also serves MeasurementHashAlgo).
+    # SHA-2 / SHA-3 recommended by both NIST and BSI (TR-02102-1 Table 4.1).
+    "spdm:SHA_256": {"subType": "spdmHash", "components": ["SHA-256"],
+        "description": "SHA-256", "nist": ("recommended", None), "bsi": ("recommended", None, "Table 4.1"),
+        "remarks": ["DSP0274 §10.4 BaseHashAlgo Byte 0 Bit 0; also MeasurementHashAlgo"]},
+    "spdm:SHA_384": {"subType": "spdmHash", "components": ["SHA-384"],
+        "description": "SHA-384", "nist": ("recommended", None), "bsi": ("recommended", None, "Table 4.1"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 1"]},
+    "spdm:SHA_512": {"subType": "spdmHash", "components": ["SHA-512"],
+        "description": "SHA-512", "nist": ("recommended", None), "bsi": ("recommended", None, "Table 4.1"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 2"]},
+    "spdm:SHA3_256": {"subType": "spdmHash", "components": ["SHA3-256"],
+        "description": "SHA3-256", "nist": ("recommended", None), "bsi": ("recommended", None, "Table 4.1"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 3"]},
+    "spdm:SHA3_384": {"subType": "spdmHash", "components": ["SHA3-384"],
+        "description": "SHA3-384", "nist": ("recommended", None), "bsi": ("recommended", None, "Table 4.1"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 4"]},
+    "spdm:SHA3_512": {"subType": "spdmHash", "components": ["SHA3-512"],
+        "description": "SHA3-512", "nist": ("recommended", None), "bsi": ("recommended", None, "Table 4.1"),
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 5"]},
+    "spdm:SM3_256": {"subType": "spdmHash", "components": ["SM3"],
+        "description": "SM3-256",
+        "remarks": ["DSP0274 §10.4 Byte 0 Bit 6", "Chinese national standard GB/T 32905; not addressed by NIST or BSI"]},
+    # DHE named groups — DSP0274 §10.4 Table 17. KEY-AGREEMENT context: ECDH
+    # P-256/384/521 are recommended by both NIST (§5) and BSI (§2.3.6) — unlike
+    # the signature context above where P-256/P-521 are nist-disallowed.
+    "spdm:ffdhe2048": {"subType": "spdmDhe", "components": ["FFDH-ffdhe2048"],
+        "description": "FFDHE 2048 (public value D = 256)",
+        "nist": ("approved", "112-bit; >=3072 preferred"),
+        "bsi": ("approved", None, "§2.3.5"),
+        "remarks": ["DSP0274 §10.4 DHE Byte 0 Bit 0"]},
+    "spdm:ffdhe3072": {"subType": "spdmDhe", "components": ["FFDH-ffdhe3072"],
+        "description": "FFDHE 3072 (public value D = 384)",
+        "nist": ("approved", None), "bsi": ("approved", None, "§2.3.5"),
+        "remarks": ["DSP0274 §10.4 DHE Byte 0 Bit 1"]},
+    "spdm:ffdhe4096": {"subType": "spdmDhe", "components": ["FFDH-ffdhe4096"],
+        "description": "FFDHE 4096 (public value D = 512)",
+        "nist": ("approved", None), "bsi": ("approved", None, "§2.3.5"),
+        "remarks": ["DSP0274 §10.4 DHE Byte 0 Bit 2"]},
+    "spdm:secp256r1": {"subType": "spdmDhe", "components": ["ECDH-P-256"],
+        "description": "ECDHE secp256r1 / NIST P-256 (D = 64, C = 32)",
+        "nist": ("recommended", None), "bsi": ("recommended", None, "§2.3.6"),
+        "remarks": ["DSP0274 §10.4 DHE Byte 0 Bit 3"]},
+    "spdm:secp384r1": {"subType": "spdmDhe", "components": ["ECDH-P-384"],
+        "description": "ECDHE secp384r1 / NIST P-384 (D = 96, C = 48)",
+        "nist": ("recommended", None), "bsi": ("recommended", None, "§2.3.6"),
+        "remarks": ["DSP0274 §10.4 DHE Byte 0 Bit 4"]},
+    "spdm:secp521r1": {"subType": "spdmDhe", "components": ["ECDH-P-521"],
+        "description": "ECDHE secp521r1 / NIST P-521 (D = 132, C = 66)",
+        "nist": ("recommended", None), "bsi": ("recommended", None, "§2.3.6"),
+        "remarks": ["DSP0274 §10.4 DHE Byte 0 Bit 5"]},
+    "spdm:SM2_P256_dhe": {"subType": "spdmDhe", "components": ["SM2"],
+        "description": "SM2 key exchange over SM2_P256 (D = 64, C = 32)",
+        "remarks": ["DSP0274 §10.4 DHE Byte 0 Bit 6", "GB/T 32918 Part 3/5; not addressed by NIST or BSI"]},
+    # AEAD — DSP0274 §10.4 Table 18. AES-GCM recommended by both; ChaCha20-Poly1305
+    # NIST-approved (RFC 8439) but not in BSI TR-02102-1.
+    "spdm:AES_128_GCM": {"subType": "spdmAead", "components": ["AES-128-GCM"],
+        "description": "AES-128-GCM (128-bit key, 96-bit IV)",
+        "nist": ("recommended", None), "bsi": ("recommended", None, "Table 3.2"),
+        "remarks": ["DSP0274 §10.4 AEAD Byte 0 Bit 0"]},
+    "spdm:AES_256_GCM": {"subType": "spdmAead", "components": ["AES-256-GCM"],
+        "description": "AES-256-GCM (256-bit key, 96-bit IV)",
+        "nist": ("recommended", None), "bsi": ("recommended", None, "Table 3.2"),
+        "remarks": ["DSP0274 §10.4 AEAD Byte 0 Bit 1"]},
+    "spdm:CHACHA20_POLY1305": {"subType": "spdmAead", "components": ["ChaCha20-Poly1305"],
+        "description": "ChaCha20-Poly1305 (256-bit key, 96-bit IV, 128-bit tag)",
+        "nist": ("approved", "RFC 8439; not a FIPS-approved cipher"),
+        "remarks": ["DSP0274 §10.4 AEAD Byte 0 Bit 2", "Not in BSI TR-02102-1 (no dedicated stream ciphers recommended)"]},
+    "spdm:AEAD_SM4_GCM": {"subType": "spdmAead", "components": ["SM4-GCM"],
+        "description": "SM4-GCM (128-bit key, 96-bit IV)",
+        "remarks": ["DSP0274 §10.4 AEAD Byte 0 Bit 3", "GB/T 32907; not addressed by NIST or BSI"]},
+    # KeySchedule — DSP0274 §10.4 Table 20 / §12
+    "spdm:KeySchedule": {"subType": "spdmKeySchedule", "components": ["HKDF"],
+        "description": "SPDM Key Schedule (HKDF-based key derivation, DSP0274 §12)",
+        "nist": ("approved", "HKDF per SP 800-56C Rev 2"),
+        "bsi": ("recommended", None, "Table B.1"),
+        "remarks": ["DSP0274 §10.4 KeySchedule Byte 0 Bit 0"]},
+}
+
+
+def generate_spdm_entries() -> list[dict]:
+    return [_build_overlay_entry(name, spec, "SPDM")
+            for name, spec in SPDM_ENTRIES.items()]
+
+
+def generate_spdm_yaml(entries: list[dict]) -> str:
+    parts = [
+        "# SPDM (DMTF DSP0274) protocol composites: NEGOTIATE_ALGORITHMS algorithm registries",
+        "#",
+        "# Auto-generated from hardcoded lookup tables with NIST overlays.",
+        "# Source of truth: DMTF DSP0274 Security Protocol and Data Model (SPDM) v1.3.0 §10.4",
+        "#   (BaseAsymAlgo/ReqBaseAsymAlg, BaseHashAlgo, DHE, AEAD, KeySchedule).",
+        "#   NIST (FIPS 186-5 / SP 800-131A Rev 2) and BSI (TR-02102-1 v2026-01) postures",
+        "#   mirror the canonical value-level assessments in the usage context (signature vs",
+        "#   key agreement). SPDM is DMTF-defined and does not rank algorithms, so entries",
+        "#   carry no ietf: level. SM2/SM3/SM4 (addressed by neither NIST nor BSI), EdDSA and",
+        "#   ChaCha20-Poly1305 (not in BSI TR-02102-1) carry reduced overlays accordingly.",
+        "#",
+        "# Do not edit manually; regenerate with:",
+        "#   python scripts/generate_protocol_composites.py",
+        "#",
+        "# Authority overlay table lives in scripts/generate_protocol_composites.py",
+        "# (SPDM_ENTRIES). Update that table when DSP0274 is revised.",
+        "#",
+        "# Part of the ae-pattern-validator validation registry.",
+        'version: "2.0"',
+        "",
+        "entries:",
+    ]
+    for entry in entries:
+        parts.append("")
+        parts.append(_format_overlay_entry(entry, "SPDM"))
+    return "\n".join(parts) + "\n"
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Generate cr-tls.yaml, cr-ssh.yaml, and cr-ipsec.yaml from IANA registries with NIST/BSI overlays")
+    parser = argparse.ArgumentParser(description="Generate the protocol composite registries (TLS/SSH/IPsec/Kerberos/DNSSEC/SPDM) with NIST/BSI overlays")
     parser.add_argument("--check", action="store_true",
                         help="Compare generated output with existing file; exit non-zero on differences")
     parser.add_argument("--cache-dir", type=Path, default=DEFAULT_CACHE_DIR,
@@ -2300,6 +2495,10 @@ def main():
     dnssec_yaml_text = generate_dnssec_yaml(dnssec_entries)
     print(f"  Generated: {len(dnssec_entries)} entries")
 
+    spdm_entries = generate_spdm_entries()
+    spdm_yaml_text = generate_spdm_yaml(spdm_entries)
+    print(f"  Generated: {len(spdm_entries)} SPDM entries")
+
     print(f"\n=== Summary ===")
     print(f"  TLS cipher suites:    {len(cs_entries)}")
     print(f"  TLS supported groups: {len(sg_entries)}")
@@ -2310,6 +2509,7 @@ def main():
     print(f"  IPsec entries:        {len(ipsec_entries)}")
     print(f"  Kerberos entries:     {len(kerberos_entries)}")
     print(f"  DNSSEC entries:       {len(dnssec_entries)}")
+    print(f"  SPDM entries:         {len(spdm_entries)}")
 
     if args.check:
         check_ok = True
@@ -2319,6 +2519,7 @@ def main():
             (IPSEC_OUTPUT_PATH, ipsec_yaml_text, "cr-ipsec.yaml"),
             (KERBEROS_OUTPUT_PATH, kerberos_yaml_text, "cr-kerberos.yaml"),
             (DNSSEC_OUTPUT_PATH, dnssec_yaml_text, "cr-dnssec.yaml"),
+            (SPDM_OUTPUT_PATH, spdm_yaml_text, "cr-spdm.yaml"),
         ]:
             if not path.exists():
                 print(f"\nERROR: {path} does not exist for comparison", file=sys.stderr)
@@ -2344,6 +2545,8 @@ def main():
         print(f"  Written to {KERBEROS_OUTPUT_PATH}")
         DNSSEC_OUTPUT_PATH.write_text(dnssec_yaml_text, encoding="utf-8")
         print(f"  Written to {DNSSEC_OUTPUT_PATH}")
+        SPDM_OUTPUT_PATH.write_text(spdm_yaml_text, encoding="utf-8")
+        print(f"  Written to {SPDM_OUTPUT_PATH}")
 
 
 if __name__ == "__main__":
