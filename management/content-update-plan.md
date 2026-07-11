@@ -444,6 +444,87 @@ Conclusion: scope boundaries are clean. No compactness work outstanding.
 - [ ] ~~CI hook (GitHub Actions)~~ — **not viable**: the validator submodule is not part of the external repository (see implemented `scripts/check.sh` above). Run `scripts/check.sh` locally instead.
 - [ ] Optional local git hook (`core.hooksPath`) wrapping `scripts/check.sh` — deferred per maintainer preference for on-demand checking over commit/push-time enforcement (decision 2026-06-11).
 
+### 8.5 Data Model Evolution: Three-Layer Model (Concept)
+
+> [!NOTE]
+> **Status: concept captured for later; not scheduled.** Recorded 2026-07-11 from a design discussion. Deferred pending further exploration before any commitment. The grammar and canonical pattern model are **not** in question here — this concerns only *how facts and relationships about algorithms are organised*.
+
+**Framing — three conceptual concerns, two mechanisms.** The registry currently conflates several distinct kinds of knowledge on the same YAML nodes. Separating them yields three conceptual layers:
+
+1. **Identification** — *what is this and what is it called?* The grammar + canonical pattern tree (the valid subjects), plus identity resolution: aliases/synonyms and cross-registry identifiers (`oid`, TCG `TPM_ECC_*` id, IANA number) all resolving to one canonical subject. This is the **subject vocabulary** everything else references.
+2. **Assertions (attributes)** — *what is true / said about this one thing?* `subject → literal`: authority status × context, references, provenance.
+3. **Relationships (edges)** — *how does this thing relate to other things?* `subject → subject`: `based-on`, `supersedes`, `equivalent-to`, … (see [§8.5.1](#851-relationship-graph-layer-3)).
+
+Layers 2 and 3 share **one substrate** — pattern-keyed triples with referential integrity, provenance (`source`/`asOf`), context, and the "derive all views" principle. They differ only in whether the object is a **literal** (2) or **another subject** (3) — exactly the RDF/OWL *datatype-property* vs *object-property* distinction. So the design is **3 concerns to reason about, 2 stores to build**: the identity foundation (1), and the triple layer hosting both attribute-assertions (2) and relationship-edges (3). Naming three keeps the thinking clear; collapsing 2+3 into one mechanism keeps the implementation honest.
+
+**Diagnosis (why separate at all).** Today assertions are *attached directly to structure at any level*, so no fact has a single canonical home and the same fact is restated in multiple places and drifts; and inter-entry relationships (Layer 3) have no structured home at all (only composite `components:`), so they live as prose. Evidence accumulated across ingestion sessions:
+
+- **Restated assessments contradict.** SPDM composites were hand-authored with a NIST status (`ECDSA-P-384 → approved`) that contradicted the canonical value-level assessment (`transitional`, until 2035). Every protocol composite (TLS/SSH/IPsec/Kerberos/DNSSEC/SPDM) re-states authority assessments of algorithms already assessed on the canonical entries.
+- **Context collisions force duplication.** `ECDSA-P-256` is `nist: disallowed` for *signatures* but `nist: recommended` for *key agreement*; the current model can only express this by duplicating the curve across usage contexts (per composite).
+- **Taxonomy and counts live in N places.** The category vocabulary lived in three hand-maintained trees (validator set, doc tree, ASCII tree — now guarded by checks 18/19); entry counts live in ~five (guarded by check 12). The consistency checks are largely a **band-aid for missing referential integrity**.
+- **Relationships are prose-only.** Family-level semantic edges — "ML-KEM based on Kyber", "AES supersedes 3DES", "Edwards25519 birationally equivalent to Curve25519" — appear across the markdown as free text (mined counts: "based on" ×45, "superseded" ×32, "truncated" ×27, "variant of" ×16, "derived from" ×16, "equivalent to" ×8, …) but are not navigable or queryable. The only structured inter-entry relationship in the registry is composite `components:`.
+
+**Proposed reorganisation.** Keep the grammar + pattern tree as the identity layer. Lift the *assertional* fields into a first-class **assertion layer** — statements that *reference* a canonical pattern rather than being embedded in it:
+
+```
+(subject:  <canonical pattern or pattern-glob>,   e.g. "ECDSA-P-384-*"
+ predicate: authority-status | identifier | reference,
+ object:   <value>,                               e.g. "transitional"
+ context:  <usage>,                               e.g. "signature" (vs "key-agreement")
+ source:   <document>,                            e.g. "SP 800-131A Rev 2"
+ asOf:     <date>)
+```
+
+Everything else — protocol composites, status tables, the §10 catalogue, distribution tables, dashboards — becomes a **derived projection** over (pattern tree + assertions). Structure = schema for subjects; assertions = the data; markdown / composite-YAML / CBOM = queries.
+
+**The identity / assessment line.** `oid` and the `tcg` *identity* overlay (`registry`/`identifier`/`value`) are structural ("what this thing is") and stay on the pattern tree. `authorities.*.status` and the `tcg` *authority* posture are assertional ("what an authority says about it") and move to the assertion layer. Precedent already exists: the TCG ingestion split exactly this way (`tcg:` identity overlay vs `authorities.tcg` posture) — evidence the distinction is real and the model is half there.
+
+**Benefits (each maps to a pain we actually hit):**
+
+- Single canonical home per fact → the SPDM-parity class of contradiction becomes *structurally impossible*; composites carry no overlays, they *inherit* via `(component-pattern, context)`.
+- `context` as a first-class dimension → signature-vs-key-agreement is two assertions, not two duplicated entries.
+- Provenance (`source` + `asOf`) is structural → the anti-confabulation discipline and "re-verify when the upstream doc revises" become queryable reports, not memory.
+- Referential integrity by construction → checks 12/18/19 and much of the count/taxonomy-drift surface collapse into "does every subject parse against the grammar" + "is every referenced authority/source known".
+- **Identification becomes independently verifiable.** Separating the layers lets the prefix-parameter-sequence parse be validated on its own, decoupled from the assessments layered on top.
+- **Assertions can use the pattern approach themselves.** A subject may be a **pattern-glob / placeholder expression** (e.g. `ECDSA-P-384-*`, `AES-256-*`), so a single recommendation applies across a family — and **general rules** (e.g. "RSA < 3000-bit → BSI disallowed", "PKCS#1 v1.5 signatures → deprecated") become expressible as parametric assertions rather than enumerated per-instance copies.
+
+**Costs / non-goals.** Not a graph-database product, not abandoning human-readable YAML authoring, not touching the grammar or canonical naming. Trade-off: a normalised assertion store is less browseable than per-taxonomy YAML and needs authoring/query tooling.
+
+**Migration path (incremental, not big-bang).** Extract the assertional fields (`authorities`/`nist`/`bsi`/`ietf`, `references`, per-composite overlays) into a pattern-keyed assertion layer with `context` + `source`; keep the current embedded YAML as a **generated view** of that layer during transition (so the Java validator and tests are unchanged on day one); then flip protocol composites and status tables to derive from assertions. Proof-of-concept scope: one protocol (SPDM is the natural candidate — its overlays are already the clearest duplication).
+
+#### 8.5.1 Relationship Graph (Layer 3)
+
+> [!NOTE]
+> A typed directed graph of **family-level** semantic edges between entries — the same triple substrate as the assertion layer, but with an **entry-valued object** (`subject → subject`). Distinct from aliases (Layer 1: "same thing, different name") and from composite `components:` (instance-level "uses"); this captures the family-level relationships that today have no structured home.
+
+**Proposed predicate vocabulary** (small and typed — deliberately *no* free-form "relates-to", which would turn a useful graph into noise):
+
+| Predicate | Meaning | Examples in the data | Kind |
+|:---|:---|:---|:---|
+| `uses` / `built-on` | X operationally depends on Y | HMAC → hash; ECDSA → curve; HKDF → HMAC; Ed25519 → Curve25519 | structural |
+| `based-on` / `derived-from` | X's design descends from Y | SHAKE/SHA-3 ← Keccak; XChaCha20 ← ChaCha20 ← Salsa20; Argon2i/d/id ← Argon2 | structural |
+| `truncation-of` | X is a truncated Y | SHA-224 ← SHA-256; SHA-512/256 ← SHA-512 | structural |
+| `equivalent-to` (symmetric) | same math object, different form | W-25519 ≡ Curve25519 ≡ Edwards25519; ristretto255 built-on Curve25519 | structural |
+| `supersedes` / `superseded-by` (inverse pair) | migration direction | AES ⇒ 3DES/DES; SHA-256 ⇒ SHA-1; ML-KEM ⇒ RSA/ECDH (PQC) | **sourced** (which authority mandates the migration) |
+| `standardized-from` / `formerly` | naming provenance | ML-KEM ← Kyber; ML-DSA ← Dilithium; SLH-DSA ← SPHINCS+; FN-DSA ← Falcon | structural |
+
+**Design decisions this layer needs:**
+
+- **Family-level granularity** — edges attach to the family entry (`ML-KEM based-on Kyber`), not per parameter instance.
+- **Declare canonical direction; derive inverses** — store `supersedes`, derive `superseded-by`; `equivalent-to` is symmetric.
+- **Structural vs sourced** — `truncation-of` / `equivalent-to` are objective facts; `supersedes` (migration) carries a `source` (same identity/assessment line as Layer 2).
+- **No overlap with existing mechanisms** — `components:` already covers instance-level "uses" for composites; aliases cover name-synonyms.
+
+**Value:** navigable queries ("what supersedes SHA-1?", "all Curve25519 representations", "what is ML-KEM based on?"); **PQC migration paths become queryable**; the "based on"/"superseded" prose scattered across markdown gets a single source and can be *generated*; can drive the dependency diagrams; enables consistency rules (if X supersedes Y, Y's lifecycle should be lower). **Caution:** keep the vocabulary tight — only encode edges with real value (migration, equivalence, standardization provenance, key construction).
+
+#### 8.5.2 Open Questions
+
+- [ ] **The further aspect to explore first** (flagged by maintainer 2026-07-11, before committing to this direction) — *to be elaborated*.
+- [ ] Where exactly to draw the identity/assessment line for borderline fields (`lifecycle` — arguably a standardisation-*fact* with provenance, so possibly assertional; `category` — structural).
+- [ ] Glob/placeholder semantics for assertion subjects: precedence and conflict resolution when a specific-pattern assertion and a family-glob assertion both match (most-specific-wins, like longest-prefix matching?).
+- [ ] Authoring ergonomics: how maintainers write/review assertions and relationship edges without losing the diff-friendliness of the current per-file YAML.
+- [ ] Relationship-layer scope guard: which edge types earn their keep vs. add noise; whether `uses` (Layer 3, family-level) is worth encoding given `components:` already covers instance-level composition.
+
 ---
 
 ## Phase 9: Style Conventions
