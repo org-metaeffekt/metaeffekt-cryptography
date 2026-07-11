@@ -121,6 +121,32 @@ emergency response.
 
 ---
 
+## Compliance Controls (NIST SP 800-53 Rev 5)
+
+NIST SP 800-53 Rev 5 (*Security and Privacy Controls for Information Systems and Organizations*,
+September 2020) is the control catalogue underpinning the US federal Risk Management Framework
+(RMF). It is the layer that *demands* cryptography without specifying algorithms: its controls
+mandate cryptographic protection and key management, then **delegate algorithm selection** to
+FIPS-validated or NSA-approved cryptography and the SP 800-52 / 800-56 / 800-57 / 800-63 family.
+It is therefore a compliance driver, not a source of algorithm data — the crypto-relevant
+controls are what a cryptographic inventory provides evidence for.
+
+| Control | Crypto-relevant mandate | Delegates algorithm choice to |
+|:---|:---|:---|
+| **SC-13** Cryptographic Protection | Determine the organization's cryptographic uses and implement the required *types* of cryptography for each | FIPS-validated / NSA-approved cryptography (FIPS 140-3) |
+| **SC-12** Cryptographic Key Establishment and Management | Establish and manage keys across their lifecycle (generation, distribution, storage, access, destruction); symmetric and asymmetric keys via FIPS-validated or NSA-approved technology | SP 800-56A/B/C, SP 800-57 Pt 1–3, FIPS 140-3 |
+| **SC-8** Transmission Confidentiality and Integrity | Protect the confidentiality and/or integrity of transmitted information | Protocol layer (e.g. TLS via SP 800-52); protected distribution systems |
+| **SC-28** Protection of Information at Rest | Protect the confidentiality and/or integrity of organization-defined information at rest | Cryptography per SC-13 |
+| **SC-17** Public Key Infrastructure Certificates | Issue/obtain PKI certificates under a certificate policy; trust only approved trust anchors | SP 800-32, SP 800-57, SP 800-63-3 |
+| **IA-7** Cryptographic Module Authentication | Authenticate to cryptographic modules per applicable standards | FIPS 140-3 |
+
+The practical consequence: satisfying SC-13 and SC-12 in an audit requires demonstrating *which*
+FIPS-validated algorithms are deployed and how their keys are managed — precisely the
+algorithm-level, machine-readable evidence a CBOM (aligned to the algorithm catalogue in this
+repository) is designed to supply.
+
+---
+
 ## The Scale of the Problem
 
 The challenge is not just the breadth of cryptographic usage — it is the depth of the taxonomy

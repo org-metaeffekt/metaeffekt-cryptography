@@ -585,9 +585,9 @@ NIST IR 8547 defines federal Deadlines for migrating away from classical asymmet
 
 ---
 
-## 9. SPDM (DMTF DSP0274 v1.3.0)
+## 9. SPDM (DMTF DSP0274 v1.4.0)
 
-> **Source:** DMTF DSP0274, *Security Protocol and Data Model (SPDM) Specification*, v1.3.0 (2023-06-28; supersedes 1.2.1). Machine-readable registry: [`cr-spdm.yaml`](ae-pattern-validator/src/main/resources/registry/cr-spdm.yaml) (generated). SPDM is DMTF's hardware attestation/authentication protocol (PCIe/CXL/USB device identity, firmware measurement, secure sessions). It negotiates one algorithm per class in the NEGOTIATE_ALGORITHMS/ALGORITHMS exchange (§10.4). Unlike IETF protocols, SPDM does not rank algorithms — all listed values are optional/negotiable; the NIST column reflects the underlying algorithm's posture. SPDM reuses the TCG Algorithm Registry `TPM_ALG_*` identifiers for its asymmetric and hash algorithms.
+> **Source:** DMTF DSP0274, *Security Protocol and Data Model (SPDM) Specification*, v1.4.0 (2025-05-15; supersedes 1.3.0). Machine-readable registry: [`cr-spdm.yaml`](ae-pattern-validator/src/main/resources/registry/cr-spdm.yaml) (generated). SPDM is DMTF's hardware attestation/authentication protocol (PCIe/CXL/USB device identity, firmware measurement, secure sessions). It negotiates one algorithm per class in the NEGOTIATE_ALGORITHMS/ALGORITHMS exchange (§10.4). Unlike IETF protocols, SPDM does not rank algorithms — all listed values are optional/negotiable; the NIST column reflects the underlying algorithm's posture. SPDM reuses the TCG Algorithm Registry `TPM_ALG_*` identifiers for its classical asymmetric and hash algorithms. **v1.4.0 adds post-quantum algorithms** (PQC signatures and KEM; PQC/traditional hybrids are planned for v1.5).
 
 ### 9.1 Negotiable Algorithm Registries (§10.4)
 
@@ -598,6 +598,8 @@ NIST IR 8547 defines federal Deadlines for migrating away from classical asymmet
 | DHE named group (`DHE`) | ffdhe2048/3072/4096; secp256r1/384r1/521r1; SM2_P256 | FFDHE (≥3072 preferred) / ECDHE P-256/384/521 ✅ approved; SM2_P256 — not in NIST FIPS |
 | AEAD (`AEAD`) | AES-128-GCM, AES-256-GCM, ChaCha20-Poly1305, SM4-GCM | AES-GCM ✅ approved; ChaCha20-Poly1305 (RFC 8439, not FIPS); SM4-GCM — not in NIST FIPS |
 | Key schedule (`KeySchedule`) | SPDM Key Schedule (HKDF-based, §12) | HKDF ✅ approved (SP 800-56C Rev 2) |
+| **PQC signature** (`ReqPqcAsymAlg`, v1.4.0) | ML-DSA-44/65/87 (FIPS 204); SLH-DSA SHA2/SHAKE × 128/192/256 × s/f (FIPS 205) | ✅ recommended (NIST FIPS 204/205; BSI TR-02102-1 §5.3.4) |
+| **PQC KEM** (`KEMAlg`, v1.4.0) | ML-KEM-512/768/1024 (FIPS 203) | ✅ recommended (NIST FIPS 203; BSI TR-02102-1 §2.4.3) |
 
 ### 9.2 SPDM Certificate OIDs (§10.8.2)
 
