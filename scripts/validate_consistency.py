@@ -1159,7 +1159,34 @@ def check_spdx_oid_consistency(families: list[dict]) -> bool:
     return True
 
 
-TCG_REGISTRIES = {"tpm-alg-id", "tpm-ecc-curve"}
+# `tcg.mnemonicId` prefix -> derived section. The section is NOT stored on the overlay: it is
+# derived from the primary (TCG_) mnemonic prefix, a spec invariant of the TCG Algorithm
+# Registry v2.0 (2025-07-28), where each constant-definition table owns a distinct prefix. The
+# `algorithm` (TCG_ALG_ID) and `ecc-curve` (TCG_ECC_CURVE) tables also carry the legacy TPM_
+# names (recorded as `legacyMnemonicId`, still used by the TPM 2.0 Library Spec and SPDM
+# DSP0274); the PQC parameter-set tables are TCG-native only.
+TCG_PREFIX_SECTION = {
+    "TCG_ALG_": "algorithm",
+    "TCG_ECC_": "ecc-curve",
+    "TCG_MLKEM_": "mlkem-parameter-set",
+    "TCG_MLDSA_": "mldsa-parameter-set",
+    "TCG_SLHDSA_": "slhdsa-parameter-set",
+}
+# parameter-set sections: the same identifier is legitimately referenced by multiple
+# algorithms (e.g. TCG_MLDSA_44 on both ML-DSA and HashML-DSA), so identifiers/values are
+# checked for consistency, not uniqueness.
+TCG_SHARED_SECTIONS = {"mlkem-parameter-set", "mldsa-parameter-set", "slhdsa-parameter-set"}
+
+
+def _tcg_section(mnemonic_id: str) -> str | None:
+    """Derive the TCG registry section from a primary (TCG_) mnemonic prefix, or None if the
+    prefix is not recognized."""
+    if not mnemonic_id:
+        return None
+    for pfx, sec in TCG_PREFIX_SECTION.items():
+        if mnemonic_id.startswith(pfx):
+            return sec
+    return None
 TCG_VALUE_RE = re.compile(r"^0x[0-9A-Fa-f]{4}$")
 TCG_POSTURE_STATUSES = {"deprecated", "approved"}  # Legacy -> deprecated, Standard -> approved
 
@@ -1168,12 +1195,12 @@ def check_tcg_integrity(families: list[dict]) -> bool:
     """Check 17: TCG Algorithm Registry (`tcg:`) overlay + `authorities.tcg` integrity.
 
     Guards the two-layer TCG model against drift:
-      - overlay carries identity only: `registry` in {tpm-alg-id, tpm-ecc-curve},
-        `identifier` matching the registry (TPM_ALG_* / TPM_ECC_*), `value` a
-        16-bit hex (0xXXXX); `classification` must NOT reappear in the overlay
-        (it was moved to authorities.tcg).
-      - each (registry, identifier) and (registry, value) is unique — catches
-        copy-paste duplicates and clashing assignments.
+      - overlay carries identity only: `mnemonicId` with a recognized TCG_ prefix
+        (the section is derived from it), `numericId` a 16-bit hex (0xXXXX); optional
+        `legacyMnemonicId` is the legacy TPM_ name of a TCG_ mnemonic;
+        `classification` must NOT appear (posture lives in authorities.tcg).
+      - identity sections: each (section, mnemonicId)/(section, numericId) unique;
+        parameter-set sections: shared mnemonicIds must map consistently.
       - `authorities.tcg.status` is a valid TCG posture (deprecated | approved)
         with a `source`; no posture without a co-located identity overlay.
     """
@@ -1200,35 +1227,50 @@ def check_tcg_integrity(families: list[dict]) -> bool:
                 if isinstance(val, dict):
                     visit(val, f"{fid}/{param.get('name')}={val.get('value')}")
 
-    seen_ident: dict[tuple, str] = {}
-    seen_value: dict[tuple, str] = {}
+    seen_ident: dict[tuple, tuple] = {}   # (reg, ident) -> (value, loc)
+    seen_value: dict[tuple, tuple] = {}   # (reg, value) -> (ident, loc)
     for loc, tcg in overlays:
-        reg, ident, val = tcg.get("registry"), tcg.get("identifier"), tcg.get("value")
-        if reg not in TCG_REGISTRIES:
-            errors.append(f"{loc}: tcg.registry {reg!r} not in {sorted(TCG_REGISTRIES)}")
+        ident, val = tcg.get("mnemonicId"), tcg.get("numericId")
+        reg = _tcg_section(ident)
         if not ident:
-            errors.append(f"{loc}: tcg.identifier missing")
-        else:
-            if reg == "tpm-alg-id" and not ident.startswith("TPM_ALG_"):
-                errors.append(f"{loc}: identifier {ident!r} must start with TPM_ALG_ for registry tpm-alg-id")
-            if reg == "tpm-ecc-curve" and not ident.startswith("TPM_ECC_"):
-                errors.append(f"{loc}: identifier {ident!r} must start with TPM_ECC_ for registry tpm-ecc-curve")
+            errors.append(f"{loc}: tcg.mnemonicId missing")
+        elif reg is None:
+            errors.append(f"{loc}: mnemonicId {ident!r} has no recognized TCG_ prefix "
+                          f"(one of {sorted(TCG_PREFIX_SECTION)})")
+        alias = tcg.get("legacyMnemonicId")
+        if alias and ident and ident.startswith("TCG_"):
+            exp = ident.replace("TCG_ALG_", "TPM_ALG_").replace("TCG_ECC_", "TPM_ECC_")
+            if alias != exp:
+                errors.append(f"{loc}: legacyMnemonicId {alias!r} should be the legacy TPM_ form {exp!r}")
         if not val or not TCG_VALUE_RE.match(str(val)):
-            errors.append(f"{loc}: tcg.value {val!r} is not a 16-bit hex identifier (0xXXXX)")
+            errors.append(f"{loc}: tcg.numericId {val!r} is not a 16-bit hex value (0xXXXX)")
         if "classification" in tcg:
             errors.append(f"{loc}: tcg.classification must live in authorities.tcg, not the identity overlay")
+        shared = reg in TCG_SHARED_SECTIONS
         if ident is not None:
             k = (reg, ident)
             if k in seen_ident:
-                errors.append(f"duplicate tcg identifier {ident!r} ({reg}) at {loc} and {seen_ident[k]}")
+                prev_val, prev_loc = seen_ident[k]
+                if shared:
+                    if prev_val != val:
+                        errors.append(f"inconsistent numericId for shared mnemonicId {ident!r} ({reg}): "
+                                      f"{val!r} at {loc} vs {prev_val!r} at {prev_loc}")
+                else:
+                    errors.append(f"duplicate tcg mnemonicId {ident!r} ({reg}) at {loc} and {prev_loc}")
             else:
-                seen_ident[k] = loc
+                seen_ident[k] = (val, loc)
         if val is not None and TCG_VALUE_RE.match(str(val)):
             vk = (reg, str(val))
             if vk in seen_value:
-                errors.append(f"duplicate tcg value {val!r} ({reg}) at {loc} and {seen_value[vk]}")
+                prev_ident, prev_loc = seen_value[vk]
+                if shared:
+                    if prev_ident != ident:
+                        errors.append(f"inconsistent mnemonicId for shared numericId {val!r} ({reg}): "
+                                      f"{ident!r} at {loc} vs {prev_ident!r} at {prev_loc}")
+                else:
+                    errors.append(f"duplicate tcg numericId {val!r} ({reg}) at {loc} and {prev_loc}")
             else:
-                seen_value[vk] = loc
+                seen_value[vk] = (ident, loc)
 
     overlay_locs = {loc for loc, _ in overlays}
     for loc, tcgauth in postures:
@@ -1252,7 +1294,7 @@ def check_tcg_integrity(families: list[dict]) -> bool:
     depr = sum(1 for _, a in postures if a.get("status") == "deprecated")
     appr = sum(1 for _, a in postures if a.get("status") == "approved")
     print(f"  OK    {len(overlays)} tcg identifiers ({len(seen_value)} unique values across "
-          f"{len(TCG_REGISTRIES)} registries); {len(postures)} authority postures "
+          f"{len(set(TCG_PREFIX_SECTION.values()))} sections); {len(postures)} authority postures "
           f"({appr} approved, {depr} deprecated) — all valid")
     return True
 
