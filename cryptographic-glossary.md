@@ -22,6 +22,9 @@ The international standards body responsible for mobile telecommunications proto
 **ACVP — Automated Cryptographic Validation Protocol**
 A NIST testing service that automatically checks whether a cryptographic software implementation produces the correct outputs for a given set of inputs. Think of it as a standardised exam for crypto code.
 
+**Additional Digital Signature Schemes (NIST PQC On-Ramp)**
+A parallel NIST standardisation track, opened in 2022, soliciting *additional* post-quantum digital signature schemes to complement the first-round selections (ML-DSA, SLH-DSA, FN-DSA) — the aim being to diversify the security foundations beyond structured lattices and to obtain schemes with smaller signatures or faster verification. Round 1 (2023) accepted 40 submissions; the first-round status report (**NIST IR 8528**, 2024) advanced 14 to Round 2. On **14 May 2026**, **NIST IR 8610** advanced **nine** candidates to **Round 3**: **FAEST, HAWK, MAYO, MQOM, QR-UOV, SDitH, SNOVA, SQIsign,** and **UOV**. Round 3 evaluation is expected to run ~2 years, with the 7th NIST PQC Standardization Conference planned for 2027. None of these are standardised yet, so none carries a registry identifier or OID; several have individual glossary entries. See **NIST IR**.
+
 **Additional Input**
 An optional extra piece of data you can feed into a random number generator at every "generate" call. It does not count as formal entropy but mixes extra unpredictable data into the generator's internal state, giving some protection if the state has been partially compromised.
 
@@ -223,7 +226,7 @@ The Linux kernel's term for its ChaCha20-based generator instances: a base CRNG 
 A quantum computer powerful enough to run Shor's algorithm against deployed public-key cryptographic parameters (e.g., factor 2048-bit RSA, compute discrete logarithms on P-256). No CRQC exists as of 2026. The "harvest now, decrypt later" threat assumes adversaries collect ciphertext today for future decryption once a CRQC becomes available. NIST IR 8547 uses this term to frame the PQC migration urgency.
 
 **CROSS — Codes and Restricted Objects Signature Scheme**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on code equivalence problems. CROSS is one of the prioritised candidates alongside MAYO in the NIST additional signatures process.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; **did not advance to Round 3** — not among the nine selected in NIST IR 8610, May 2026) based on code equivalence problems.
 
 **ChaCha20**
 A stream cipher designed by Daniel Bernstein. Produces a keystream (pseudorandom bytes) that is XOR-ed with the plaintext. ChaCha20 is very fast on devices without hardware AES acceleration (mobile, IoT). Used in combination with Poly1305 authenticator.
@@ -475,7 +478,7 @@ The standard security notion for digital signature schemes. It states that an ad
 ## F
 
 **FAEST**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on symmetric-key primitives and a technique called MPC-in-the-Head with VOLE (Vector Oblivious Linear Evaluation). Its security depends only on the security of AES, rather than on hard mathematical problems.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; advanced to **Round 3** in May 2026, NIST IR 8610) based on symmetric-key primitives and a technique called MPC-in-the-Head with VOLE (Vector Oblivious Linear Evaluation). Its security depends only on the security of AES, rather than on hard mathematical problems.
 
 **Falcon / FN-DSA**
 See **FN-DSA**.
@@ -520,7 +523,7 @@ A CSPRNG (Cryptographically Secure Pseudorandom Number Generator) architecture d
 US legislation (P.L. 113-283, 2014) requiring federal agencies to implement information security programs. Drives FIPS 140 and SP 800-series compliance for all federal information systems.
 
 **Fiat-Shamir Transform**
-A generic technique for converting an interactive identification scheme (a "sigma protocol" or zero-knowledge proof) into a non-interactive digital signature scheme. The verifier's random challenge in the interactive protocol is replaced by the output of a cryptographic hash function applied to the message and the prover's commitment. The resulting signature scheme is secure in the random oracle model (ROM). Many PQC signature schemes use this approach: ML-DSA (Fiat-Shamir with aborts), FN-DSA (Falcon), and several NIST Round 2 additional signature candidates (SDitH, FAEST, CROSS, Mirath). Security in the stronger **QROM** (quantum-accessible random oracle model) requires additional care — see QROM.
+A generic technique for converting an interactive identification scheme (a "sigma protocol" or zero-knowledge proof) into a non-interactive digital signature scheme. The verifier's random challenge in the interactive protocol is replaced by the output of a cryptographic hash function applied to the message and the prover's commitment. The resulting signature scheme is secure in the random oracle model (ROM). Many PQC signature schemes use this approach: ML-DSA (Fiat-Shamir with aborts), FN-DSA (Falcon), and several NIST additional-signature on-ramp candidates (SDitH, FAEST, CROSS, Mirath). Security in the stronger **QROM** (quantum-accessible random oracle model) requires additional care — see QROM.
 
 **FO-Transform — Fujisaki-Okamoto Transform**
 A generic technique for converting an IND-CPA-secure public-key encryption scheme (or a passively secure KEM) into an IND-CCA2-secure KEM. The transform works by hashing the randomness used for encryption into the key material, so that any decryption that fails to reproduce the expected ciphertext is rejected. First introduced by Fujisaki and Okamoto (1999). All NIST-standardised lattice KEMs use a variant of the FO-transform: ML-KEM uses the Hofheinz-Hövelmanns-Kiltz (HHK) modular variant with tightly provable security. The FO-transform enables tight security proofs in both the ROM and the QROM, which is why all NIST PQC KEM finalists adopted it.
@@ -588,7 +591,7 @@ A pre-hash variant of SLH-DSA defined in FIPS 205 §10. Analogous to HashML-DSA:
 A variable-length cryptographic hash function supporting 128-256 bit output with 3-5 rounds. Considered broken; collisions found for all round variants.
 
 **HAWK**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the Lattice Isomorphism Problem — a different hard problem from the lattices used in ML-DSA and ML-KEM.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; advanced to **Round 3** in May 2026, NIST IR 8610) based on the Lattice Isomorphism Problem — a different hard problem from the lattices used in ML-DSA and ML-KEM.
 
 **HBS — Hash-Based Signature**
 Umbrella term for digital signature schemes whose security reduces solely to the security of an underlying hash function (no number-theoretic or lattice assumption). Stateful HBS schemes — LMS (RFC 8554), HSS, XMSS (RFC 8391), and XMSS^MT — use one-time signatures (LMOTS, WOTS+) inside a Merkle tree and require strict private-key state management (NIST SP 800-208). Stateless HBS — SLH-DSA (FIPS 205) — uses a hyper-tree of FORS few-time signatures so no state must be tracked. HBS is the most conservative PQC signature family because it inherits the long cryptanalytic track record of hash functions.
@@ -820,7 +823,7 @@ The simplest class of pseudorandom number generator, based on the formula Xₙ�
 A bit-shift register whose next-state bit is a linear (XOR) combination of selected current-state bits. LFSRs produce maximum-length sequences efficiently in hardware and underlie many stream ciphers (A5/1, E0, SNOW, ZUC) as well as the Mersenne Twister. A pure LFSR is not cryptographically secure — its output is linearly predictable from a small number of consecutive bits — so cryptographic constructions combine LFSRs with non-linear filters or feedback.
 
 **LESS — Linear Equivalence Signature Scheme**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the hardness of the Linear Code Equivalence problem.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; **did not advance to Round 3** — not among the nine selected in NIST IR 8610, May 2026) based on the hardness of the Linear Code Equivalence problem.
 
 **LIP — Lattice Isomorphism Problem**
 A mathematical problem where the task is to determine whether two lattices are isomorphic (equivalent up to rotation). The hardness of LIP is the security basis for the HAWK post-quantum signature scheme. It is a different hard problem from the Module-LWE and SIS problems used in ML-KEM and ML-DSA.
@@ -866,7 +869,7 @@ An elliptic curve of the form By² = x³ + Ax² + x. This form enables the Montg
 The Russian 64-bit block cipher standardised in **GOST R 34.12-2015** and **IETF RFC 8891** (2020). 32-round Feistel structure, 256-bit key. Magma fixes the S-box set that was previously left implementation-defined in **GOST 28147-89** (RFC 5830) — that ambiguity in the older standard caused interoperability problems and weakened security in some deployments. Different OID (`1.2.643.7.1.1.5.1`) from legacy GOST 28147-89 (`1.2.643.2.2.21`). Companion to **Kuznyechik** (Grasshopper) in the same standard. Mandatory in Russian government and financial systems; "Not in CNSA 2.0" and "Not addressed in BSI TR-02102-1".
 
 **MAYO**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on multivariate polynomial equations.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; advanced to **Round 3** in May 2026, NIST IR 8610) based on multivariate polynomial equations.
 
 **MD2 / MD4 — Message Digest 2 / 4**
 Predecessors of MD5. MD2 (Rivest, 1989) was designed for 8-bit machines and is cryptanalytically broken. MD4 (Rivest, 1990) is the structural ancestor of MD5, SHA-1, and the SHA-2 family; collisions can be produced by hand. Both are disallowed for all cryptographic uses.
@@ -902,10 +905,10 @@ A function used inside RSA-OAEP and RSA-PSS padding schemes to expand a seed int
 A conservative measure of how random a data source is. Defined as −log₂(probability of the most likely output). An entropy source with H_min ≥ 128 bits means even the most probable output has at most a 1-in-2¹²⁸ chance of occurring. Used in NIST SP 800-90B.
 
 **Mirath**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) resulting from the merger of the MIRA and MiRitH proposals, based on MinRank-in-the-Head.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; **did not advance to Round 3** — not among the nine selected in NIST IR 8610, May 2026) resulting from the merger of the MIRA and MiRitH proposals, based on MinRank-in-the-Head.
 
 **MitH — MPC-in-the-Head**
-A technique for constructing digital signature schemes by simulating a multi-party computation (MPC) protocol "in the head" of the signer. The signer runs a zero-knowledge proof protocol internally, committing to the views of virtual parties. Several NIST Round 2 additional signature candidates use this approach: FAEST, SDitH, MQOM, Mirath, PERK, and RYDE.
+A technique for constructing digital signature schemes by simulating a multi-party computation (MPC) protocol "in the head" of the signer. The signer runs a zero-knowledge proof protocol internally, committing to the views of virtual parties. Several NIST additional-signature on-ramp candidates use this approach: FAEST, SDitH, MQOM, Mirath, PERK, and RYDE.
 
 **ML-DSA — Module-Lattice-Based Digital Signature Algorithm**
 The NIST standard digital signature algorithm (FIPS 204, August 2024), formerly known as CRYSTALS-Dilithium. Based on the hardness of lattice problems believed to be secure against quantum computers. Three parameter sets: ML-DSA-44 (NIST Level 2), ML-DSA-65 (NIST Level 3), ML-DSA-87 (NIST Level 5).
@@ -926,7 +929,7 @@ A lattice defined over polynomial rings, used in the CRYSTALS family (ML-KEM, ML
 The mathematical hard problem underlying ML-KEM and ML-DSA. Module-LWE asks an adversary to distinguish noisy linear equations over polynomial modules from uniformly random samples. Believed to be hard even for quantum computers. The "module" structure provides a balance between the efficiency of Ring-LWE and the conservative security assumptions of plain LWE.
 
 **MQOM — MQ on my Mind**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the hardness of the Multivariate Quadratic (MQ) problem.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; advanced to **Round 3** in May 2026, NIST IR 8610) based on the hardness of the Multivariate Quadratic (MQ) problem.
 
 **MQV — Menezes-Qu-Vanstone**
 An authenticated key agreement protocol that provides implicit key authentication without separate signature exchange. Variants: ECMQV (elliptic curve), FFMQV (finite field). Referenced in SP 800-56A.
@@ -948,7 +951,7 @@ A 2000–2003 European research project (IST programme) that selected a portfoli
 The public-facing portal where NIST publishes cryptographic standards (FIPS), special publications (SP 800 series), and PQC submission packages. Algorithm submission materials and Known Answer Tests are distributed via CSRC.
 
 **NIST IR — NIST Internal/Interagency Report**
-A series of NIST publications providing technical analysis and status reports. NIST IR 8545 documents the status and evaluation criteria for the additional digital signature candidates in the NIST PQC process.
+A series of NIST publications providing technical analysis and status reports. In the PQC programme: **NIST IR 8545** (March 2025) is the fourth-round KEM status report that selected HQC; **NIST IR 8528** (2024) reported the first round of the additional digital-signature on-ramp (advancing 14 candidates to Round 2); and **NIST IR 8610** (14 May 2026) advanced nine signature candidates to Round 3. See **Additional Digital Signature Schemes**.
 
 **NIAP — National Information Assurance Partnership**
 The US government body overseeing Common Criteria evaluations for IT products under the CCEVS programme. Products providing cryptographic services for National Security Systems require NIAP or NSA validation in addition to FIPS 140.
@@ -1018,7 +1021,7 @@ A globally unique hierarchical identifier used in ASN.1 to unambiguously identif
 A protocol for remotely updating cryptographic keys on deployed radio or IoT devices without physical access. Uses key-wrapping (AES or 3DES) with CBC-MAC authentication. Referenced in SP 800-57 Part 3 §7.
 
 **OQS — Open Quantum Safe**
-An open-source project providing C libraries (liboqs) and integration wrappers (oqs-provider for OpenSSL) for post-quantum cryptographic algorithms. liboqs implements ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC, and experimental Round 2 candidates. When running against OpenSSL 3.5+, oqs-provider disables algorithms that OpenSSL now supports natively.
+An open-source project providing C libraries (liboqs) and integration wrappers (oqs-provider for OpenSSL) for post-quantum cryptographic algorithms. liboqs implements ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC, and experimental additional-signature on-ramp candidates. When running against OpenSSL 3.5+, oqs-provider disables algorithms that OpenSSL now supports natively.
 
 **OWASP — Open Web Application Security Project**
 A non-profit community producing freely available security guidance and tools. The OWASP Password Storage Cheat Sheet is the primary practical reference for password-hashing parameter recommendations.
@@ -1070,7 +1073,7 @@ The file extension and informal name for PKCS #12 archives (RFC 7292), which bun
 See **Forward Secrecy**.
 
 **PERK**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the Permuted Kernel Problem.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; **did not advance to Round 3** — not among the nine selected in NIST IR 8610, May 2026) based on the Permuted Kernel Problem.
 
 **Personalization String**
 An optional byte string supplied when instantiating a DRBG. It mixes application-specific data (e.g. hostname + process ID + timestamp) into the initial seed so that two DRBG instances started at the same time from the same entropy source will produce different output streams. Does not need to be secret.
@@ -1158,7 +1161,7 @@ A security proof model that models a cryptographic hash function as a random ora
 The computational hardness assumption underlying HQC. Given a parity-check matrix H with quasi-cyclic structure and a syndrome s, find a low-weight error vector e satisfying H·e = s. The quasi-cyclic structure yields compact public keys but does not give known attackers a meaningful advantage over decoding random codes — the best classical attack is information-set decoding (ISD). See also: ISD, BJMM.
 
 **QR-UOV**
-A post-quantum signature scheme based on Unbalanced Oil and Vinegar polynomials over a quotient ring structure.
+A post-quantum signature scheme (a NIST additional-signatures on-ramp candidate; advanced to **Round 3** in May 2026, NIST IR 8610) based on Unbalanced Oil and Vinegar polynomials over a quotient ring structure.
 
 **QUAD**
 A 2006 stream cipher (Berbain, Gilbert, Patarin) whose security is provably equivalent to the multivariate quadratic problem (MQ). Theoretically appealing as the first stream cipher with a security reduction to an asymmetric hard problem, but too slow for practical deployment. Of academic interest only.
@@ -1231,7 +1234,7 @@ RSA signing using PKCS#1 v1.5 padding. Deprecated for new signing; RSA-PSS (RSAS
 RSA signing using PSS (Probabilistic Signature Scheme) padding. The recommended RSA signature mode.
 
 **RYDE**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the Rank Syndrome Decoding problem.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; **did not advance to Round 3** — not among the nine selected in NIST IR 8610, May 2026) based on the Rank Syndrome Decoding problem.
 
 ---
 
@@ -1268,7 +1271,7 @@ A category of tools and processes that identify open-source and third-party comp
 A memory-hard password-hashing / key-derivation function (RFC 7914). Parameters: N (CPU/memory cost, must be a power of 2), r (block mix factor), p (parallelism). Memory usage is 128·N·r bytes. Resistant to GPU/ASIC attacks.
 
 **SDitH — Syndrome Decoding in the Head**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) using the MPC-in-the-Head paradigm applied to the Syndrome Decoding problem.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; advanced to **Round 3** in May 2026, NIST IR 8610) using the MPC-in-the-Head paradigm applied to the Syndrome Decoding problem.
 
 **Security Level / Security Strength**
 A number (in bits) summarising how hard it is to break a cryptographic primitive. A 128-bit security level means approximately 2¹²⁸ operations are required for the best known attack. NIST defines security levels 1–5 for PQC algorithms (Level 1 ≈ AES-128, Level 3 ≈ AES-192, Level 5 ≈ AES-256).
@@ -1298,7 +1301,7 @@ Block ciphers derived from the compression functions of SHA-1 and SHA-256 respec
 A 1996 block cipher (Daemen, Knudsen, Rijmen) that was a direct precursor to the AES winner Rijndael. Same designers; explored substitution-permutation network design choices that informed AES. Of historical interest only.
 
 **SIDH / SIKE — Supersingular Isogeny DH / Key Encapsulation**
-Pre-2022 isogeny-based PQC key exchange schemes. SIDH (Supersingular Isogeny Diffie-Hellman) was the underlying KE; SIKE was the IND-CCA2 KEM submitted to the NIST PQC process and reaching Round 4. **Catastrophically broken in July 2022** by Castryck and Decru: the attack recovers the SIKE private key from public keys in roughly an hour using auxiliary torsion points published in the SIDH protocol. SIKE was withdrawn from NIST consideration. The break was specific to SIDH/SIKE — the broader isogeny family is not affected, and SQIsign (which uses different auxiliary information) remains a Round 2 candidate.
+Pre-2022 isogeny-based PQC key exchange schemes. SIDH (Supersingular Isogeny Diffie-Hellman) was the underlying KE; SIKE was the IND-CCA2 KEM submitted to the NIST PQC process and reaching Round 4. **Catastrophically broken in July 2022** by Castryck and Decru: the attack recovers the SIKE private key from public keys in roughly an hour using auxiliary torsion points published in the SIDH protocol. SIKE was withdrawn from NIST consideration. The break was specific to SIDH/SIKE — the broader isogeny family is not affected, and SQIsign (which uses different auxiliary information) advanced to Round 3 of the NIST additional-signatures on-ramp (May 2026, NIST IR 8610).
 
 **SHAKE128 / SHAKE256**
 Extendable-Output Functions (XOFs) from the SHA-3 family. Unlike SHA-3 which produces a fixed-length output, SHAKE can produce any desired output length. SHAKE128 provides 128-bit security for outputs ≥ 32 bytes; SHAKE256 provides 256-bit security for outputs ≥ 64 bytes.
@@ -1340,7 +1343,7 @@ A word-oriented stream cipher used in 3GPP mobile networks (4G LTE) for confiden
 A next-generation stream cipher designed as a candidate replacement for SNOW 3G in 5G networks. Proposed by Ekdahl, Johansson, and others (2019). Targets 256-bit security with higher throughput on modern processors. Not yet standardised by 3GPP.
 
 **SNOVA**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on multivariate polynomial cryptography.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; advanced to **Round 3** in May 2026, NIST IR 8610) based on multivariate polynomial cryptography.
 
 **SP 800 — NIST Special Publication 800 Series**
 A series of NIST computer security publications providing guidance, recommendations, and technical details. Key documents: SP 800-52 Rev 2 (TLS), SP 800-53 Rev 5 (security/privacy controls), SP 800-57 (key management), SP 800-90A (DRBGs), SP 800-90B (entropy sources), SP 800-131A (algorithm transitions), SP 800-132 (PBKDF), SP 800-186 (elliptic curves), SP 800-208 (hash-based signatures), SP 800-227 (KEM usage), SP 800-232 (Ascon).
@@ -1370,7 +1373,7 @@ The common name for the Russian GOST R 34.11-2012 hash function (RFC 6986), defi
 The NSA's pre-CNSA set of approved algorithms for US national-security use (P-256/P-384 ECDSA and ECDH, AES, SHA-2). Superseded by the CNSA 1.0 and CNSA 2.0 suites.
 
 **SQI / SQIsign**
-A post-quantum digital signature scheme (NIST Round 2 additional signatures) based on the hardness of finding isogenies between supersingular elliptic curves. Produces the smallest signatures of all PQC candidates but is significantly slower to sign and verify. The acronym **SQI** ("Short Quaternion and Isogeny") refers to the underlying construction; SQIsign is the algorithm name. Distinct from SIDH/SIKE: SQIsign uses a different auxiliary structure and is not affected by the 2022 Castryck-Decru attack.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; advanced to **Round 3** in May 2026, NIST IR 8610) based on the hardness of finding isogenies between supersingular elliptic curves. Produces the smallest signatures of all PQC candidates but is significantly slower to sign and verify. The acronym **SQI** ("Short Quaternion and Isogeny") refers to the underlying construction; SQIsign is the algorithm name. Distinct from SIDH/SIKE: SQIsign uses a different auxiliary structure and is not affected by the 2022 Castryck-Decru attack.
 
 **SRTP — Secure Real-time Transport Protocol**
 A protocol (RFC 3711) providing confidentiality, authentication, and replay protection for RTP media streams (VoIP, video conferencing). Uses AES-CTR or AES-f8 for encryption and HMAC-SHA-1 for authentication. AES-GCM mode is also supported. Referenced in BSI TR-02102-1 §3.6.
@@ -1465,7 +1468,7 @@ A MAC with very high performance using universal hashing. Variants: UMAC-32, UMA
 The 3G mobile-network standard developed by 3GPP. Cryptographic algorithms include f8 (UEA1/UEA2 confidentiality) and f9 (UIA1/UIA2 integrity) based on KASUMI or SNOW 3G, plus the AKA mutual authentication using MILENAGE or TUAK on the USIM. Largely superseded by LTE (4G) and 5G but still present as a fallback in many networks.
 
 **UOV — Unbalanced Oil and Vinegar**
-A post-quantum digital signature scheme based on multivariate polynomial equations. The "oil" and "vinegar" variables have asymmetric roles, making the trapdoor structure computationally hard to reverse.
+A post-quantum digital signature scheme (a NIST additional-signatures on-ramp candidate; advanced to **Round 3** in May 2026, NIST IR 8610) based on multivariate polynomial equations. The "oil" and "vinegar" variables have asymmetric roles, making the trapdoor structure computationally hard to reverse.
 
 **USIM — Universal Subscriber Identity Module**
 The 3G/4G/5G evolution of the SIM card. Stores the long-term subscriber key Ki, the IMSI, and runs the AKA mutual-authentication protocol (typically MILENAGE or TUAK) with the home network. Tamper-resistant; private keys never leave the USIM.
