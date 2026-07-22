@@ -74,7 +74,15 @@ def collect_oids(families: list[dict]) -> set[str]:
 
 
 OID_RE = re.compile(r"^\d+(\.\d+)+$")
-VALID_STATUSES = {"mandatory", "recommended", "approved", "conditional", "transitional", "deprecated", "disallowed", "broken"}
+VALID_STATUSES = {"mandatory", "recommended", "not recommended", "approved", "conditional", "transitional", "deprecated", "disallowed", "broken"}
+
+# The IANA registry (table) a composite belongs to is derived from its subType (a 1:1
+# mapping), not stored on the entry — so `registries.iana` carries only value/references.
+IANA_REGISTRY_BY_SUBTYPE = {
+    "cipherSuite": "tls-cipher-suites",
+    "signatureScheme": "tls-signature-schemes",
+    "supportedGroup": "tls-supported-groups",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -273,7 +281,7 @@ def check_composite_schema(families: list[dict]) -> bool:
     entries that carry the composite-shape fields.
     """
     ok = True
-    valid_ietf_levels = {"MUST", "MUST-", "SHOULD", "SHOULD-NOT", "MAY", "MUST-NOT"}
+    valid_ietf_levels = {"must", "must-", "should", "should-not", "may", "must-not"}
 
     for fam in families:
         name = fam.get("family", fam.get("id", "<unknown>"))
@@ -296,8 +304,14 @@ def check_composite_schema(families: list[dict]) -> bool:
             print(f"  FAIL  {name} description: must be a string (got {type(desc).__name__})")
             ok = False
 
+        # iana identity moved under the `registries:` map (fall back to legacy top-level)
+        iana = (fam.get("registries") or {}).get("iana") or fam.get("iana") or {}
+        # the IANA registry (table) is derived from subType, not stored — so any
+        # iana-bearing entry must have a subType with a known IANA registry.
+        if iana and fam.get("subType") not in IANA_REGISTRY_BY_SUBTYPE:
+            print(f"  FAIL  {name}: iana registration but subType {fam.get('subType')!r} has no derivable IANA registry")
+            ok = False
         # iana.references[]: each entry must be a {ref[, note]} dict
-        iana = fam.get("iana") or {}
         refs = iana.get("references")
         if refs is not None:
             if not isinstance(refs, list):
@@ -317,9 +331,11 @@ def check_composite_schema(families: list[dict]) -> bool:
                         print(f"  FAIL  {name} iana.references[{i}]: unexpected key(s) {sorted(extra)}")
                         ok = False
 
-        # ietf and ietfIkev2: same shape — { source: str, level?: enum }
-        for block_name in ("ietf", "ietfIkev2"):
-            block = fam.get(block_name)
+        # ietf and ietf-ikev2: same shape — { level?: enum, source: str }. Migrated
+        # into the authorities map; fall back to legacy top-level blocks.
+        fam_auths = fam.get("authorities") or {}
+        for block_name, legacy_key in (("ietf", "ietf"), ("ietf-ikev2", "ietfIkev2")):
+            block = fam_auths.get(block_name) or fam.get(legacy_key)
             if block is None:
                 continue
             if not isinstance(block, dict):
@@ -334,18 +350,25 @@ def check_composite_schema(families: list[dict]) -> bool:
                 print(f"  FAIL  {name} {block_name}.level: '{level}' not in {sorted(valid_ietf_levels)}")
                 ok = False
 
-        # bsi.requires: list of strings when present
-        bsi = fam.get("bsi") or {}
+        # authorities.iana: the IANA "Recommended" posture — a boolean when present.
+        # (The IANA identity — registry/value/references — stays in the top-level iana block.)
+        # authorities.iana carries the IANA "Recommended" column as a status
+        # ("recommended" / "not recommended"; validity checked by check 5) plus a source.
+        # (The IANA identity — registry/value/references — stays in the top-level iana block.)
+        iana_auth = fam_auths.get("iana")
+        if iana_auth is not None and not iana_auth.get("source"):
+            print(f"  FAIL  {name} authorities.iana: missing `source`")
+            ok = False
+
+        # BSI posture migrated into the nested authorities map; fall back to the
+        # legacy top-level block for any not-yet-migrated entries.
+        bsi = (fam.get("authorities") or {}).get("bsi") or fam.get("bsi") or {}
+
+        # bsi.requires: a single precondition string when present
         requires = bsi.get("requires")
-        if requires is not None:
-            if not isinstance(requires, list):
-                print(f"  FAIL  {name} bsi.requires: must be a list")
-                ok = False
-            else:
-                for i, r in enumerate(requires):
-                    if not isinstance(r, str):
-                        print(f"  FAIL  {name} bsi.requires[{i}]: must be a string")
-                        ok = False
+        if requires is not None and not isinstance(requires, str):
+            print(f"  FAIL  {name} bsi.requires: must be a string (got {type(requires).__name__})")
+            ok = False
 
         # bsi.useUpTo: string ending in optional "+"
         useUpTo = bsi.get("useUpTo")
@@ -360,10 +383,11 @@ def check_composite_schema(families: list[dict]) -> bool:
     if ok:
         n_with_remarks = sum(1 for f in families if f.get("remarks"))
         n_with_refs = sum(1 for f in families
-                          if (f.get("iana") or {}).get("references"))
+                          if ((f.get("registries") or {}).get("iana") or f.get("iana") or {}).get("references"))
         n_with_requires = sum(1 for f in families
-                              if (f.get("bsi") or {}).get("requires"))
-        n_with_ikev2 = sum(1 for f in families if f.get("ietfIkev2"))
+                              if ((f.get("authorities") or {}).get("bsi") or f.get("bsi") or {}).get("requires"))
+        n_with_ikev2 = sum(1 for f in families
+                           if (f.get("authorities") or {}).get("ietf-ikev2") or f.get("ietfIkev2"))
         print(f"  OK    composite schema valid "
               f"(remarks: {n_with_remarks}, iana.references: {n_with_refs}, "
               f"bsi.requires: {n_with_requires}, ietfIkev2: {n_with_ikev2})")
@@ -1211,8 +1235,11 @@ def check_tcg_integrity(families: list[dict]) -> bool:
     def visit(node: dict, loc: str):
         if not isinstance(node, dict):
             return
-        if isinstance(node.get("tcg"), dict):
-            overlays.append((loc, node["tcg"]))
+        # tcg *identity* overlay moved under the `registries:` map (fall back to legacy top-level)
+        tcg_id = (node.get("registries") or {}).get("tcg") or node.get("tcg")
+        if isinstance(tcg_id, dict):
+            overlays.append((loc, tcg_id))
+        # tcg *posture* stays under authorities
         auths = node.get("authorities") or {}
         if isinstance(auths, dict) and isinstance(auths.get("tcg"), dict):
             postures.append((loc, auths["tcg"]))

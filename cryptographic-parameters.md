@@ -1669,7 +1669,7 @@ BSI defines minimum parameter requirements that differ from — and are in some 
 | ML-KEM | ML-KEM-768, ML-KEM-1024 | §2.4.3 | ML-KEM-512 **not recommended** (below Category 3); **hybrid use required** |
 | HQC | HQC-128, HQC-192, HQC-256 | §2.4.4 | **Hybrid use required** |
 | FrodoKEM | FrodoKEM-976, FrodoKEM-1344 | §2.4.1 | Conservative LWE; **hybrid use required** |
-| Classic McEliece | mceliece6688128, mceliece8192128 | §2.4.2 | Code-based; **hybrid use required**; ISO standardisation pending |
+| Classic McEliece | mceliece460896, mceliece6688128, mceliece8192128 (+ `…f` fast variants) | §2.4.2 | Code-based; **hybrid use required**; ISO standardisation pending |
 | ML-DSA | ML-DSA-44, ML-DSA-65, ML-DSA-87 | §5.3.4.2 | All parameter sets recommended |
 | SLH-DSA | All 12 parameter sets | §5.3.4.1 | Stateless; all recommended |
 | XMSS / XMSS^MT | Per SP 800-208 | §5.3.4.3 | Stateful; hardware state management required |

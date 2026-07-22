@@ -74,12 +74,12 @@ NIST_STATUS_DISPLAY = {
 }
 
 IETF_LEVEL_DISPLAY = {
-    "MUST":       "✅ MUST",
-    "MUST-":      "⚠ MUST-",
-    "SHOULD":     "✓ SHOULD",
-    "MAY":        "◯ MAY",
-    "SHOULD-NOT": "❌ SHOULD NOT",
-    "MUST-NOT":   "🚫 MUST NOT",
+    "must":       "✅ MUST",
+    "must-":      "⚠ MUST-",
+    "should":     "✓ SHOULD",
+    "may":        "◯ MAY",
+    "should-not": "❌ SHOULD NOT",
+    "must-not":   "🚫 MUST NOT",
 }
 
 
@@ -103,22 +103,38 @@ def _format_use_up_to(value: str) -> str:
     return s
 
 
+def composite_bsi(entry: dict) -> dict | None:
+    """Read a composite entry's BSI posture. BSI was migrated into the nested
+    `authorities:` map (per-authority migration); fall back to the legacy
+    top-level `bsi:` block for any not-yet-migrated entries."""
+    auth = (entry.get("authorities") or {}).get("bsi")
+    return auth if auth else entry.get("bsi")
+
+
 def render_bsi(entry: dict) -> str:
-    bsi = entry.get("bsi")
+    bsi = composite_bsi(entry)
     if not bsi:
         return "—"
     glyph = BSI_STATUS_DISPLAY.get(bsi["status"], bsi["status"])
     parts = [glyph]
     if "useUpTo" in bsi:
         parts.append(f"(use up to {_format_use_up_to(bsi['useUpTo'])})")
-    requires = bsi.get("requires") or []
+    requires = bsi.get("requires")
     if requires:
-        parts.append(f"— requires {'; '.join(requires)}")
+        parts.append(f"— requires {requires}")
     return " ".join(parts)
 
 
+def composite_nist(entry: dict) -> dict | None:
+    """Read a composite entry's NIST posture. NIST was migrated into the nested
+    `authorities:` map (per-authority migration); fall back to the legacy
+    top-level `nist:` block for any not-yet-migrated entries."""
+    auth = (entry.get("authorities") or {}).get("nist")
+    return auth if auth else entry.get("nist")
+
+
 def render_nist(entry: dict) -> str:
-    nist = entry.get("nist")
+    nist = composite_nist(entry)
     if not nist:
         return "—"
     glyph = NIST_STATUS_DISPLAY.get(nist["status"], nist["status"])
@@ -129,8 +145,11 @@ def render_ietf(entry: dict) -> str:
     """Render the IETF column. For IPsec entries with both an `ietf:` block (ESP
     data plane, RFC 8221) and an `ietfIkev2:` block (IKEv2 control plane,
     RFC 8247), render both levels side-by-side."""
-    ietf = entry.get("ietf")
-    ikev2 = entry.get("ietfIkev2")
+    # IETF postures migrated into the nested authorities map (`ietf`, `ietf-ikev2`);
+    # fall back to legacy top-level blocks for any not-yet-migrated entries.
+    auth = entry.get("authorities") or {}
+    ietf = auth.get("ietf") or entry.get("ietf")
+    ikev2 = auth.get("ietf-ikev2") or entry.get("ietfIkev2")
     if not ietf and not ikev2:
         return "—"
 
@@ -154,12 +173,12 @@ def short_ietf_source(source: str) -> str:
 
 
 def cite_bsi_source(entry: dict) -> str:
-    bsi = entry.get("bsi")
+    bsi = composite_bsi(entry)
     return bsi["source"] if bsi else ""
 
 
 def cite_nist_source(entry: dict) -> str:
-    nist = entry.get("nist")
+    nist = composite_nist(entry)
     return nist["source"] if nist else ""
 
 
@@ -168,7 +187,16 @@ def cite_nist_source(entry: dict) -> str:
 def load_entries(path: Path) -> list:
     with path.open() as f:
         data = yaml.safe_load(f)
-    return data.get("entries", [])
+    entries = data.get("entries", [])
+    # Registry-namespace identity (iana, tcg) moved under `registries:`; hoist it back
+    # onto the entry so downstream `e["iana"]`/`e["tcg"]` reads keep working.
+    for e in entries:
+        reg = e.get("registries")
+        if isinstance(reg, dict):
+            for k in ("iana", "tcg"):
+                if k in reg and k not in e:
+                    e[k] = reg[k]
+    return entries
 
 
 # ── Table builders ────────────────────────────────────────────────────────────
@@ -330,7 +358,7 @@ def render_tls_bsi_cipher_suite_group(entries: list, table_label: str,
     for e in entries:
         if e.get("subType") != "cipherSuite":
             continue
-        bsi = e.get("bsi")
+        bsi = composite_bsi(e)
         if not bsi:
             continue
         if table_label not in bsi.get("source", ""):
@@ -347,7 +375,7 @@ def render_tls_bsi_cipher_suite_group(entries: list, table_label: str,
     lines = [header, sep]
     for e in rows:
         spec = first_reference(e)
-        use = _format_use_up_to(e["bsi"].get("useUpTo", ""))
+        use = _format_use_up_to(composite_bsi(e).get("useUpTo", ""))
         if pfs_column:
             pfs = "✓" if has_pfs(e["id"]) else "✗"
             lines.append(f"| `{e['id']}` | `{e['iana']['value']}` | {spec} | {use} | {pfs} |")
@@ -364,7 +392,7 @@ def render_tls_bsi_groups_table(entries: list, table_label: str | None = None) -
     for e in entries:
         if e.get("subType") != "supportedGroup":
             continue
-        bsi = e.get("bsi")
+        bsi = composite_bsi(e)
         if not bsi:
             continue
         if table_label and table_label not in bsi.get("source", ""):
@@ -377,7 +405,7 @@ def render_tls_bsi_groups_table(entries: list, table_label: str | None = None) -
         name = entry_short_label(e)
         description = entry_description(e)
         spec = first_reference(e)
-        use = _format_use_up_to(e["bsi"].get("useUpTo", ""))
+        use = _format_use_up_to(composite_bsi(e).get("useUpTo", ""))
         lines.append(f"| `{name}` | {description} | {e['iana']['value']} | {spec} | {use} |")
     return "\n".join(lines)
 
@@ -391,7 +419,7 @@ def render_tls_bsi_sigs_table(entries: list, sigalg_cert: bool = False) -> str:
     for e in entries:
         if e.get("subType") != "signatureScheme":
             continue
-        bsi = e.get("bsi")
+        bsi = composite_bsi(e)
         if not bsi:
             continue
         is_cert = "Table 12" in bsi.get("source", "")
@@ -404,7 +432,7 @@ def render_tls_bsi_sigs_table(entries: list, sigalg_cert: bool = False) -> str:
     for e in rows:
         name = e["id"].replace("tls-sig:", "")
         spec = first_reference(e)
-        use = _format_use_up_to(e["bsi"].get("useUpTo", ""))
+        use = _format_use_up_to(composite_bsi(e).get("useUpTo", ""))
         lines.append(f"| `{name}` | `{e['iana']['value']}` | {spec} | {use} |")
     return "\n".join(lines)
 
@@ -415,7 +443,7 @@ def render_tls_nist_cipher_suites_section(entries: list, section: str) -> str:
     for e in entries:
         if e.get("subType") != "cipherSuite":
             continue
-        nist = e.get("nist")
+        nist = composite_nist(e)
         if not nist:
             continue
         if section not in nist.get("source", ""):
@@ -428,7 +456,7 @@ def render_tls_nist_cipher_suites_section(entries: list, section: str) -> str:
         spec = first_reference(e)
         # Available-in column comes from protocolVersions plus the “interop only” trailing note
         pv = " / ".join(f"TLS {v}" for v in e.get("protocolVersions", []))
-        if "interop only" in e["nist"].get("source", ""):
+        if "interop only" in composite_nist(e).get("source", ""):
             pv = "TLS 1.0 / 1.1 / 1.2 (interop only)"
         lines.append(f"| `{e['id']}` | `{e['iana']['value']}` | {spec} | {pv} |")
     return "\n".join(lines)

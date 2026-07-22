@@ -248,9 +248,9 @@ BSI_SSH = {
     "chacha20-poly1305@openssh.com":        {"bsi": ("recommended",  None,   "§5.1")},
     "aes256-gcm@openssh.com":               {"bsi": ("recommended",  None,   "§5.1")},
     "aes128-gcm@openssh.com":               {"bsi": ("recommended",  None,   "§5.1")},
-    "aes256-ctr":                           {"bsi": ("conditional",  None,   "§5.1"), "requires": ["encrypt-then-MAC (HMAC-ETM)"]},
-    "aes192-ctr":                           {"bsi": ("conditional",  None,   "§5.1"), "requires": ["encrypt-then-MAC (HMAC-ETM)"]},
-    "aes128-ctr":                           {"bsi": ("conditional",  None,   "§5.1"), "requires": ["encrypt-then-MAC (HMAC-ETM)"]},
+    "aes256-ctr":                           {"bsi": ("conditional",  None,   "§5.1"), "requires": "encrypt-then-MAC (HMAC-ETM)"},
+    "aes192-ctr":                           {"bsi": ("conditional",  None,   "§5.1"), "requires": "encrypt-then-MAC (HMAC-ETM)"},
+    "aes128-ctr":                           {"bsi": ("conditional",  None,   "§5.1"), "requires": "encrypt-then-MAC (HMAC-ETM)"},
     "aes256-cbc":                           {"bsi": ("deprecated",   None,   "§5.1")},
     "3des-cbc":                             {"bsi": ("disallowed",   None,   "§5.1")},
     "arcfour":                              {"bsi": ("disallowed",   None,   "RC4 — broken")},
@@ -260,8 +260,8 @@ BSI_SSH = {
     "hmac-sha2-256-etm@openssh.com":        {"bsi": ("recommended",  None,   "§6.1")},
     "hmac-sha2-512-etm@openssh.com":        {"bsi": ("recommended",  None,   "§6.1")},
     "umac-128-etm@openssh.com":             {"bsi": ("approved",     None,   "§6.1; OpenSSH extension")},
-    "hmac-sha2-256":                        {"bsi": ("conditional",  None,   "§6.1"), "requires": ["CTR-mode cipher"]},
-    "hmac-sha2-512":                        {"bsi": ("conditional",  None,   "§6.1"), "requires": ["CTR-mode cipher"]},
+    "hmac-sha2-256":                        {"bsi": ("conditional",  None,   "§6.1"), "requires": "CTR-mode cipher"},
+    "hmac-sha2-512":                        {"bsi": ("conditional",  None,   "§6.1"), "requires": "CTR-mode cipher"},
     "hmac-sha1":                            {"bsi": ("disallowed",   None,   "SHA-1 disallowed")},
     "hmac-sha1-96":                         {"bsi": ("disallowed",   None,   "SHA-1 disallowed")},
     "hmac-md5":                             {"bsi": ("disallowed",   None,   "MD5 broken")},
@@ -495,7 +495,7 @@ IPSEC_ENTRIES = {
         "ietfIkev2": ("MUST", "RFC 8247 §2.1"),
         "nist": ("conditional", "AES-128-CBC — pair with separate integrity"),
         "bsi":  ("conditional", None, "§3.3.1"),
-        "requires": ["separate integrity transform (HMAC-SHA-2 or AES-XCBC-MAC)"],
+        "requires": "separate integrity transform (HMAC-SHA-2 or AES-XCBC-MAC)",
         "remarks": ["no AEAD", "RFC 4106 (ESP) and RFC 5282 (IKE) define AEAD alternatives"],
     },
     "ipsec-esp:aes-256-cbc": {
@@ -504,7 +504,7 @@ IPSEC_ENTRIES = {
         "ietfIkev2": ("MUST", "RFC 8247 §2.1"),
         "nist": ("conditional", "AES-256-CBC — pair with separate integrity"),
         "bsi":  ("conditional", None, "§3.3.1"),
-        "requires": ["separate integrity transform (HMAC-SHA-2 or AES-XCBC-MAC)"],
+        "requires": "separate integrity transform (HMAC-SHA-2 or AES-XCBC-MAC)",
         "remarks": ["no AEAD", "RFC 4106 (ESP) and RFC 5282 (IKE) define AEAD alternatives"],
     },
     "ipsec-esp:3des-cbc": {
@@ -520,7 +520,7 @@ IPSEC_ENTRIES = {
         "ietf": ("MAY", "RFC 8221 §5"),
         "nist": ("approved", "AES-128-CTR — approved"),
         "bsi":  ("conditional", None, "§3.3.1"),
-        "requires": ["separate integrity transform"],
+        "requires": "separate integrity transform",
         "remarks": ["no AEAD"],
     },
     "ipsec-esp:aes-192-ctr": {
@@ -528,7 +528,7 @@ IPSEC_ENTRIES = {
         "ietf": ("MAY", "RFC 8221 §5"),
         "nist": ("approved", "AES-192-CTR — approved"),
         "bsi":  ("conditional", None, "§3.3.1"),
-        "requires": ["separate integrity transform"],
+        "requires": "separate integrity transform",
         "remarks": ["no AEAD"],
     },
     "ipsec-esp:aes-256-ctr": {
@@ -536,7 +536,7 @@ IPSEC_ENTRIES = {
         "ietf": ("MAY", "RFC 8221 §5"),
         "nist": ("approved", "AES-256-CTR — approved"),
         "bsi":  ("conditional", None, "§3.3.1"),
-        "requires": ["separate integrity transform"],
+        "requires": "separate integrity transform",
         "remarks": ["no AEAD"],
     },
     "ipsec-esp:des-cbc": {
@@ -1457,6 +1457,54 @@ def yaml_str(s: str) -> str:
     return f'"{s}"'
 
 
+def _inline_authority(fields: list) -> str:
+    """Render an ordered list of (key, value) pairs as an inline YAML mapping —
+    the registry convention for authority entries: `{ status: "x", source: "y" }`."""
+    return "{ " + ", ".join(f'{k}: {yaml_str(v)}' for k, v in fields) + " }"
+
+
+def emit_authorities(lines: list, entry: dict) -> None:
+    """Emit migrated authority postures (IANA, IETF, NIST, BSI) under the nested
+    `authorities:` map, each as a single-line inline mapping (the registry
+    convention), verdict-first (`recommended` for IANA, `level` for IETF, `status`
+    for NIST/BSI). The IKEv2 control-plane IETF verdict (RFC 8247) is a separate
+    `ietf-ikev2` key. The IANA *identity* (registry/value/references) stays in the
+    top-level `iana:` block; only its `recommended` posture moves here.
+    """
+    iana = entry.get("iana")
+    ietf = entry.get("ietf")
+    ietf_ikev2 = entry.get("ietfIkev2")
+    nist = entry.get("nist")
+    bsi = entry.get("bsi")
+    if not (iana or ietf or ietf_ikev2 or nist or bsi):
+        return
+    lines.append(f'    authorities:')
+    if iana is not None:
+        status = "recommended" if iana.get("recommended") else "not recommended"
+        lines.append(f'      iana: {{ status: "{status}", source: "RFC 8447 (IANA Recommended column)" }}')
+    for key, block in (("ietf", ietf), ("ietf-ikev2", ietf_ikev2)):
+        if block:
+            fields = []
+            if "level" in block:
+                fields.append(("level", block["level"].lower()))
+            fields.append(("source", block["source"]))
+            lines.append(f'      {key}: {_inline_authority(fields)}')
+    if nist:
+        fields = [("status", nist["status"]), ("source", nist["source"])]
+        if "note" in nist:
+            fields.append(("note", nist["note"]))
+        lines.append(f'      nist: {_inline_authority(fields)}')
+    if bsi:
+        fields = [("status", bsi["status"]), ("source", bsi["source"])]
+        if "useUpTo" in bsi:
+            fields.append(("useUpTo", bsi["useUpTo"]))
+        if bsi.get("requires"):
+            fields.append(("requires", bsi["requires"]))
+        if "note" in bsi:
+            fields.append(("note", bsi["note"]))
+        lines.append(f'      bsi: {_inline_authority(fields)}')
+
+
 def format_ref_inline(r: dict) -> str:
     """Format a single reference dict as an inline-flow YAML mapping.
 
@@ -1483,43 +1531,22 @@ def format_entry(entry: dict) -> str:
     pv_str = ", ".join(yaml_str(v) for v in pvs)
     lines.append(f'    protocolVersions: [{pv_str}]')
 
-    # iana block
+    # registries: external-registry identity overlays (here: IANA). The IANA identity
+    # (registry/value/references); its `recommended` posture lives in authorities.iana.
     iana = entry.get("iana", {})
-    lines.append(f'    iana:')
-    lines.append(f'      registry: {yaml_str(iana["registry"])}')
-    lines.append(f'      value: {yaml_str(iana["value"])}')
-    rec = iana.get("recommended", False)
-    lines.append(f'      recommended: {"true" if rec else "false"}')
+    lines.append(f'    registries:')
+    lines.append(f'      iana:')
+    # `registry` (which IANA table) is derivable from subType — not stored (see README)
+    lines.append(f'        value: {yaml_str(iana["value"])}')
     # references list — emit inline-flow per item for compactness
     references = iana.get("references", [])
     if references:
-        lines.append(f'      references:')
+        lines.append(f'        references:')
         for r in references:
-            lines.append(f'        - {format_ref_inline(r)}')
+            lines.append(f'          - {format_ref_inline(r)}')
 
-    # nist block (SP 800-52 Rev 2 overlay)
-    nist = entry.get("nist")
-    if nist:
-        lines.append(f'    nist:')
-        lines.append(f'      source: {yaml_str(nist["source"])}')
-        lines.append(f'      status: {yaml_str(nist["status"])}')
-        if "note" in nist:
-            lines.append(f'      note: {yaml_str(nist["note"])}')
-
-    # bsi block (TR-02102-2 v2026-01 overlay)
-    bsi = entry.get("bsi")
-    if bsi:
-        lines.append(f'    bsi:')
-        lines.append(f'      source: {yaml_str(bsi["source"])}')
-        lines.append(f'      status: {yaml_str(bsi["status"])}')
-        if "useUpTo" in bsi:
-            lines.append(f'      useUpTo: {yaml_str(bsi["useUpTo"])}')
-        if bsi.get("requires"):
-            lines.append(f'      requires:')
-            for req in bsi["requires"]:
-                lines.append(f'        - {yaml_str(req)}')
-        if "note" in bsi:
-            lines.append(f'      note: {yaml_str(bsi["note"])}')
+    # authority overlays (IETF / NIST / BSI) → nested authorities map
+    emit_authorities(lines, entry)
 
     # remarks (algorithm-intrinsic / editorial; not tied to a citation or authority)
     remarks = entry.get("remarks", [])
@@ -1626,7 +1653,6 @@ def process_cipher_suites(csv_text: str) -> tuple[list[dict], list[str]]:
             "subType": "cipherSuite",
             "protocolVersions": result["protocolVersions"],
             "iana": {
-                "registry": "tls-cipher-suites",
                 "value": value,
                 "recommended": recommended == "Y",
                 "references": parse_iana_references(row.get("Reference", "")),
@@ -1694,7 +1720,6 @@ def process_supported_groups(csv_text: str) -> tuple[list[dict], list[str]]:
             "subType": "supportedGroup",
             "protocolVersions": ["1.2", "1.3"],
             "iana": {
-                "registry": "tls-supported-groups",
                 "value": value,
                 "recommended": recommended == "Y",
                 "references": parse_iana_references(row.get("Reference", "")),
@@ -1743,7 +1768,6 @@ def process_signature_schemes(csv_text: str) -> tuple[list[dict], list[str]]:
             "subType": "signatureScheme",
             "protocolVersions": ["1.2", "1.3"],
             "iana": {
-                "registry": "tls-signature-schemes",
                 "value": value,
                 "recommended": recommended == "Y",
                 "references": parse_iana_references(row.get("Reference", "")),
@@ -1793,7 +1817,7 @@ def _attach_ssh_overlays(entry: dict) -> dict:
         if use_up_to:
             entry["bsi"]["useUpTo"] = use_up_to
         if bsi.get("requires"):
-            entry["bsi"]["requires"] = list(bsi["requires"])
+            entry["bsi"]["requires"] = bsi["requires"]
     remarks = REMARKS_SSH.get(name)
     if remarks:
         entry["remarks"] = list(remarks)
@@ -1845,37 +1869,8 @@ def format_ssh_entry(entry: dict) -> str:
     if entry.get("description"):
         lines.append(f'    description: {yaml_str(entry["description"])}')
 
-    # ietf block (RFC 9142 / 8332 / 8709 / 5656 / 4253 / 4344 / 5647 / 6668)
-    ietf = entry.get("ietf")
-    if ietf:
-        lines.append(f'    ietf:')
-        lines.append(f'      source: {yaml_str(ietf["source"])}')
-        if "level" in ietf:
-            lines.append(f'      level: {yaml_str(ietf["level"])}')
-
-    # nist block (SP 800-131A Rev 2 transition guidance)
-    nist = entry.get("nist")
-    if nist:
-        lines.append(f'    nist:')
-        lines.append(f'      source: {yaml_str(nist["source"])}')
-        lines.append(f'      status: {yaml_str(nist["status"])}')
-        if "note" in nist:
-            lines.append(f'      note: {yaml_str(nist["note"])}')
-
-    # bsi block (TR-02102-4 v2026-01)
-    bsi = entry.get("bsi")
-    if bsi:
-        lines.append(f'    bsi:')
-        lines.append(f'      source: {yaml_str(bsi["source"])}')
-        lines.append(f'      status: {yaml_str(bsi["status"])}')
-        if "useUpTo" in bsi:
-            lines.append(f'      useUpTo: {yaml_str(bsi["useUpTo"])}')
-        if bsi.get("requires"):
-            lines.append(f'      requires:')
-            for req in bsi["requires"]:
-                lines.append(f'        - {yaml_str(req)}')
-        if "note" in bsi:
-            lines.append(f'      note: {yaml_str(bsi["note"])}')
+    # authority overlays (IETF / NIST / BSI) → nested authorities map
+    emit_authorities(lines, entry)
 
     # remarks
     remarks = entry.get("remarks", [])
@@ -1963,7 +1958,7 @@ def generate_ipsec_entries() -> list[dict]:
             if use_up_to:
                 entry["bsi"]["useUpTo"] = use_up_to
             if spec.get("requires"):
-                entry["bsi"]["requires"] = list(spec["requires"])
+                entry["bsi"]["requires"] = spec["requires"]
         remarks = spec.get("remarks")
         if remarks:
             entry["remarks"] = list(remarks)
@@ -1981,42 +1976,10 @@ def format_ipsec_entry(entry: dict) -> str:
     if entry.get("description"):
         lines.append(f'    description: {yaml_str(entry["description"])}')
 
-    ietf = entry.get("ietf")
-    if ietf:
-        lines.append(f'    ietf:')
-        lines.append(f'      source: {yaml_str(ietf["source"])}')
-        if "level" in ietf:
-            lines.append(f'      level: {yaml_str(ietf["level"])}')
 
-    # ietfIkev2 — RFC 8247 IKEv2 control-plane requirement level (separate
-    # from RFC 8221 ESP/AH data-plane level above; the two RFCs disagree on
-    # requirement level for several transforms).
-    ietf_ikev2 = entry.get("ietfIkev2")
-    if ietf_ikev2:
-        lines.append(f'    ietfIkev2:')
-        lines.append(f'      source: {yaml_str(ietf_ikev2["source"])}')
-        if "level" in ietf_ikev2:
-            lines.append(f'      level: {yaml_str(ietf_ikev2["level"])}')
 
-    nist = entry.get("nist")
-    if nist:
-        lines.append(f'    nist:')
-        lines.append(f'      source: {yaml_str(nist["source"])}')
-        lines.append(f'      status: {yaml_str(nist["status"])}')
-        if "note" in nist:
-            lines.append(f'      note: {yaml_str(nist["note"])}')
+    emit_authorities(lines, entry)
 
-    bsi = entry.get("bsi")
-    if bsi:
-        lines.append(f'    bsi:')
-        lines.append(f'      source: {yaml_str(bsi["source"])}')
-        lines.append(f'      status: {yaml_str(bsi["status"])}')
-        if "useUpTo" in bsi:
-            lines.append(f'      useUpTo: {yaml_str(bsi["useUpTo"])}')
-        if bsi.get("requires"):
-            lines.append(f'      requires:')
-            for req in bsi["requires"]:
-                lines.append(f'        - {yaml_str(req)}')
 
     # remarks
     remarks = entry.get("remarks", [])
@@ -2069,7 +2032,7 @@ def _build_overlay_entry(name: str, spec: dict, protocol_label: str) -> dict:
         if use_up_to:
             entry["bsi"]["useUpTo"] = use_up_to
         if spec.get("requires"):
-            entry["bsi"]["requires"] = list(spec["requires"])
+            entry["bsi"]["requires"] = spec["requires"]
     remarks = spec.get("remarks")
     if remarks:
         entry["remarks"] = list(remarks)
@@ -2102,32 +2065,9 @@ def _format_overlay_entry(entry: dict, protocol: str) -> str:
     if entry.get("description"):
         lines.append(f'    description: {yaml_str(entry["description"])}')
 
-    ietf = entry.get("ietf")
-    if ietf:
-        lines.append(f'    ietf:')
-        lines.append(f'      source: {yaml_str(ietf["source"])}')
-        if "level" in ietf:
-            lines.append(f'      level: {yaml_str(ietf["level"])}')
 
-    nist = entry.get("nist")
-    if nist:
-        lines.append(f'    nist:')
-        lines.append(f'      source: {yaml_str(nist["source"])}')
-        lines.append(f'      status: {yaml_str(nist["status"])}')
-        if "note" in nist:
-            lines.append(f'      note: {yaml_str(nist["note"])}')
+    emit_authorities(lines, entry)
 
-    bsi = entry.get("bsi")
-    if bsi:
-        lines.append(f'    bsi:')
-        lines.append(f'      source: {yaml_str(bsi["source"])}')
-        lines.append(f'      status: {yaml_str(bsi["status"])}')
-        if "useUpTo" in bsi:
-            lines.append(f'      useUpTo: {yaml_str(bsi["useUpTo"])}')
-        if bsi.get("requires"):
-            lines.append(f'      requires:')
-            for req in bsi["requires"]:
-                lines.append(f'        - {yaml_str(req)}')
 
     remarks = entry.get("remarks", [])
     if remarks:

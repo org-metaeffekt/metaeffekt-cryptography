@@ -532,7 +532,7 @@ A generic technique for converting an IND-CPA-secure public-key encryption schem
 Encryption that produces ciphertext in the same format and length as the plaintext (e.g., a 16-digit credit card number encrypts to another 16-digit number). NIST-approved algorithms: AES-FF1 (SP 800-38G) and AES-FF3-1 (SP 800-38G Rev 1).
 
 **FrodoKEM**
-A conservative lattice-based key encapsulation mechanism based on the plain Learning With Errors (LWE) problem rather than the structured (ring or module) variants used by ML-KEM. FrodoKEM has larger keys and ciphertexts but its security relies on a simpler, more well-studied mathematical problem. Not selected for NIST standardisation; available in the Cloudflare CIRCL library.
+A conservative lattice-based key encapsulation mechanism based on the plain Learning With Errors (LWE) problem rather than the structured (ring or module) variants used by ML-KEM. FrodoKEM has larger keys and ciphertexts but its security relies on a simpler, more well-studied mathematical problem. Not selected for NIST standardisation (NIST judged ML-KEM more efficient), but **recommended by BSI TR-02102-1 §2.4.1** as the "more conservative choice" (unstructured lattice): FrodoKEM-976 and FrodoKEM-1344 are approved for long-term confidentiality in hybrid use (FrodoKEM-640 is not BSI-recommended). Currently being standardised at ISO; available in the Cloudflare CIRCL library and liboqs / OQS-OpenSSL.
 
 **Forward Secrecy (Perfect Forward Secrecy, PFS)**
 A property of a key-exchange protocol where the compromise of a long-term private key does not allow decryption of past recorded sessions. Achieved by generating a fresh, ephemeral key pair for each session (as in ECDHE in TLS 1.3) and discarding it immediately afterwards.
