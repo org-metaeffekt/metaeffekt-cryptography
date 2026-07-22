@@ -445,8 +445,8 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 10.3 OS-provided Entropy APIs
 
-| Pattern | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|
+| Pattern | NIST | Availability / Source | Notes |
+|:---|:---|:---|:---|
 | `getrandom()` | ✅ Recommended | Linux ≥ 3.17; SP 800-90B | Blocks only until initialization; same pool as /dev/urandom; preferred over /dev/urandom for new Linux code |
 | `/dev/urandom` | ✓ Approved | Linux / macOS / BSD | Never blocks after boot; identical to /dev/random on Linux ≥ 5.6; backed by ChaCha20-DRNG (Linux) or Fortuna (macOS) |
 | `/dev/random` | ⚠ Conditional | Linux ≤ 5.5 | **Blocking** on Linux < 5.6; identical to /dev/urandom on Linux ≥ 5.6; avoid blocking behaviour in daemons |
@@ -455,8 +455,8 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 ### 10.4 Hardware RNG Interfaces
 
-| Pattern | NIST | BSI | Sources | Notes |
-|:---|:---|:---|:---|:---|
+| Pattern | NIST | Availability / Source | Notes |
+|:---|:---|:---|:---|
 | `RDRAND` | ✓ Approved | — Not addressed in TR-02102-1 | CTR_DRBG on-die; **must not be the sole entropy source**; combine with OS entropy (XOR or HKDF); trust concerns about Intel microcode control |
 | `RDSEED` | ✓ Approved | — Not addressed in TR-02102-1 | Direct conditioned hardware entropy; suitable for **seeding** DRBGs; slower than RDRAND; may return failure (CF=0) — must retry |
 | `TPM_RNG-*` | ✓ Approved | TCG TPM 2.0; SP 800-90B | FIPS 140-3 validated TPMs; low throughput (10–50 KB/s); excellent trust boundary; provides independent entropy from CPU |
@@ -496,14 +496,14 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 #### Key Encapsulation
 
-| Algorithm | Security | NIST | BSI TR-02102-1 | Key sizes | Notes |
-|:---|:---|:---|:---|:---|:---|
-| `HQC-128` / `HQC-192` / `HQC-256` | 128 / 192 / 256 bit | ⚠ Conditional | ✅ Recommended (§2.4.4) | ek: 2241 / 4514 / 7237 B; dk: 2321 / 4602 / 7333 B (or 32 B compressed); ct: 4433 / 8978 / 14421 B; K: 32 B | **NIST selected March 2025** (Round 4) as fifth PQC standard (code-based backup KEM); FIPS draft + final expected ~2027; SP 800-227 (draft Jan 2025) covers KEM usage guidance; sizes from HQC spec v2025-08-22 |
-| `FrodoKEM-640` / `976` / `1344` | 128 / 192 / 256 bit | ❌ Not standardised | ✅ 976 / 1344 (§2.4.1) | pk: 9616 / 15632 / 21520 B; ct: 9720 / 15744 / 21632 B | Conservative plain-LWE basis (no ring/module structure); available in liboqs / OQS-OpenSSL. **BSI TR-02102-1 §2.4.1 recommends FrodoKEM-976 and FrodoKEM-1344 for hybrid use** — the "more conservative choice" vs ML-KEM (unstructured lattice); FrodoKEM-640 is *not* BSI-recommended; ISO standardisation ongoing |
-| `Classic McEliece` (all parameter sets) | 128–256 bit | ❌ Not standardised by NIST | ✅ Recommended (§2.4.2) | pk: 261 KB–1.36 MB; ct: 96–208 B | **Not selected Round 4 (NIST IR 8545)**: NIST skeptical of widespread adoption due to large public keys; mceliece460896/f fall short of claimed Category 3 (meet at least Category 2 per NIST); ISO/IEC 18033-2 concurrent standardisation effort ongoing — NIST may develop standard if ISO version gains wide use; ciphertext is smallest of all PQC KEMs; used in McTiny and post-quantum WireGuard. BSI recommends mceliece460896/6688128/8192128 (+f variants) |
-| `BIKE-L1` / `L3` / `L5` | 128 / 192 / 256 bit | ❌ Not standardised | — Not addressed | pk: ~1541 / ~3083 / ~6162 B; ct: ~1573 / ~3115 / ~6194 B | **Not selected Round 4 (NIST IR 8545)**: decisive concern is immature DFR analysis — a new weak-key class (gathering property) found in Round 4 causes DFR ≥ 2⁻¹¹⁷ at Level 1, defeating IND-CCA2 security; would require ~9% block-size increase (r: 12 323 → 13 477) and post-selection tweaks; 6–10× slower key generation and 5–7× slower decapsulation than HQC; smaller keys/ciphertext than HQC (~70%/~30%); available in liboqs |
-| `NTRU-HPS-2048-677` (Level 1) | 128 bit | ❌ Not standardised | — Not addressed | pk + ct: ~930 B | NTRU patents expired 2017; perfectly correct (no decryption failures); round 3 finalist not selected |
-| `LightSaber` / `Saber` / `FireSaber` | 128 / 192 / 256 bit | ❌ Not standardised | — Not addressed | pk: 672 / 992 / 1312 B; ct: 736 / 1088 / 1472 B | Module-LWR (power-of-two moduli); Round 3 finalist not selected in favour of ML-KEM |
+| Algorithm | Security | NIST | BSI TR-02102-1 | CNSA 2.0 | Key sizes | Notes |
+|:---|:---|:---|:---|:---|:---|:---|
+| `HQC-128` / `HQC-192` / `HQC-256` | 128 / 192 / 256 bit | ⚠ Conditional | ✅ Recommended (§2.4.4) | — Not in CNSA 2.0 | ek: 2241 / 4514 / 7237 B; dk: 2321 / 4602 / 7333 B (or 32 B compressed); ct: 4433 / 8978 / 14421 B; K: 32 B | **NIST selected March 2025** (Round 4) as fifth PQC standard (code-based backup KEM); FIPS draft + final expected ~2027; SP 800-227 (draft Jan 2025) covers KEM usage guidance; sizes from HQC spec v2025-08-22 |
+| `FrodoKEM-640` / `976` / `1344` | 128 / 192 / 256 bit | ❌ Not standardised | ✅ 976 / 1344 (§2.4.1) | — Not in CNSA 2.0 | pk: 9616 / 15632 / 21520 B; ct: 9720 / 15744 / 21632 B | Conservative plain-LWE basis (no ring/module structure); available in liboqs / OQS-OpenSSL. **BSI TR-02102-1 §2.4.1 recommends FrodoKEM-976 and FrodoKEM-1344 for hybrid use** — the "more conservative choice" vs ML-KEM (unstructured lattice); FrodoKEM-640 is *not* BSI-recommended; ISO standardisation ongoing |
+| `Classic McEliece` (all parameter sets) | 128–256 bit | ❌ Not standardised by NIST | ✅ Recommended (§2.4.2) | — Not in CNSA 2.0 | pk: 261 KB–1.36 MB; ct: 96–208 B | **Not selected Round 4 (NIST IR 8545)**: NIST skeptical of widespread adoption due to large public keys; mceliece460896/f fall short of claimed Category 3 (meet at least Category 2 per NIST); ISO/IEC 18033-2 concurrent standardisation effort ongoing — NIST may develop standard if ISO version gains wide use; ciphertext is smallest of all PQC KEMs; used in McTiny and post-quantum WireGuard. BSI recommends mceliece460896/6688128/8192128 (+f variants) |
+| `BIKE-L1` / `L3` / `L5` | 128 / 192 / 256 bit | ❌ Not standardised | — Not addressed | — Not in CNSA 2.0 | pk: ~1541 / ~3083 / ~6162 B; ct: ~1573 / ~3115 / ~6194 B | **Not selected Round 4 (NIST IR 8545)**: decisive concern is immature DFR analysis — a new weak-key class (gathering property) found in Round 4 causes DFR ≥ 2⁻¹¹⁷ at Level 1, defeating IND-CCA2 security; would require ~9% block-size increase (r: 12 323 → 13 477) and post-selection tweaks; 6–10× slower key generation and 5–7× slower decapsulation than HQC; smaller keys/ciphertext than HQC (~70%/~30%); available in liboqs |
+| `NTRU-HPS-2048-677` (Level 1) | 128 bit | ❌ Not standardised | — Not addressed | — Not in CNSA 2.0 | pk + ct: ~930 B | NTRU patents expired 2017; perfectly correct (no decryption failures); round 3 finalist not selected |
+| `LightSaber` / `Saber` / `FireSaber` | 128 / 192 / 256 bit | ❌ Not standardised | — Not addressed | — Not in CNSA 2.0 | pk: 672 / 992 / 1312 B; ct: 736 / 1088 / 1472 B | Module-LWR (power-of-two moduli); Round 3 finalist not selected in favour of ML-KEM |
 
 #### Broken Algorithms (do not use)
 

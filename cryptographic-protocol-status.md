@@ -395,7 +395,7 @@ The BSI defines explicit end-dates for the sole use of classical asymmetric mech
 | ML-KEM | §2.4.3 | ML-KEM-768 (Category 3), ML-KEM-1024 (Category 5) | NIST FIPS 203; ML-KEM-512 not recommended by BSI |
 | HQC | §2.4.4 | HQC-128, HQC-192, HQC-256 | Code-based; NIST Round 4 selected |
 | FrodoKEM | §2.4.1 | FrodoKEM-976, FrodoKEM-1344 | Conservative LWE (unstructured); not NIST-standardised |
-| Classic McEliece | §2.4.2 | mceliece6688128, mceliece8192128 | Code-based; ISO standardisation pending; very large public keys |
+| Classic McEliece | §2.4.2 | mceliece460896, mceliece6688128, mceliece8192128 (+ `…f` fast variants) | Code-based; ISO standardisation pending; very large public keys |
 
 **BSI-recommended hybridisation mechanisms** (TR-02102-1 §2.2):
 
