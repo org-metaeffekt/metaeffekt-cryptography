@@ -313,7 +313,7 @@ Cryptographic Algorithms
 | `slh-dsa-shake-256s` | SLH-DSA-SHAKE-256s | PQC signature — L5 small (SHAKE) | `2.16.840.1.101.3.4.3.30` | `SLH-DSA-SHAKE-256s` | FIPS 205 |
 | `slh-dsa-shake-256f` | SLH-DSA-SHAKE-256f | PQC signature — L5 fast (SHAKE) | `2.16.840.1.101.3.4.3.31` | `SLH-DSA-SHAKE-256f` | FIPS 205 |
 | `fn-dsa-512` | FN-DSA-512 · Falcon-512 | PQC signature (lattice/NTRU) — NIST Level 1 | `1.3.9999.3.6` (draft) | `FN-DSA-512` | FIPS 206 (IPD); final expected late 2026; not yet in CycloneDX registry |
-| `fn-dsa-1024` | FN-DSA-1024 · Falcon-1024 | PQC signature (lattice/NTRU) — NIST Level 5 | `1.3.9999.3.7` (draft) | `FN-DSA-1024` | FIPS 206 (IPD); final expected late 2026; not yet in CycloneDX registry |
+| `fn-dsa-1024` | FN-DSA-1024 · Falcon-1024 | PQC signature (lattice/NTRU) — NIST Level 5 | `1.3.9999.3.9` (draft) | `FN-DSA-1024` | FIPS 206 (IPD); final expected late 2026; not yet in CycloneDX registry |
 | `hash-ml-dsa-44` | HashML-DSA-44 (pre-hash, with SHA-512) | PQC signature (lattice) — NIST Level 2, pre-hash variant | `2.16.840.1.101.3.4.3.32` | `HashML-DSA-44[-{hashAlgorithm}]` | FIPS 204 §6; id-hash-ml-dsa-44-with-sha512; default hash: SHA-512 |
 | `hash-ml-dsa-65` | HashML-DSA-65 (pre-hash, with SHA-512) | PQC signature (lattice) — NIST Level 3, pre-hash variant | `2.16.840.1.101.3.4.3.33` | `HashML-DSA-65[-{hashAlgorithm}]` | FIPS 204 §6; id-hash-ml-dsa-65-with-sha512 |
 | `hash-ml-dsa-87` | HashML-DSA-87 (pre-hash, with SHA-512) | PQC signature (lattice) — NIST Level 5, pre-hash variant | `2.16.840.1.101.3.4.3.34` | `HashML-DSA-87[-{hashAlgorithm}]` | FIPS 204 §6; id-hash-ml-dsa-87-with-sha512 |

@@ -68,8 +68,11 @@ def collect_oids(families: list[dict]) -> set[str]:
                 oids.add(ip["oid"])
         for param in fam.get("parameters") or []:
             for val in param.get("values") or []:
-                if isinstance(val, dict) and val.get("oid"):
-                    oids.add(val["oid"])
+                if isinstance(val, dict):
+                    if val.get("oid"):
+                        oids.add(val["oid"])
+                    for o in val.get("oids") or []:
+                        oids.add(o)
     return oids
 
 
@@ -428,8 +431,11 @@ def check_oid_format(families: list[dict]) -> bool:
                 validate_oid(ip["oid"], f"implicitParam {ip.get('name')}")
         for param in fam.get("parameters") or []:
             for val_entry in param.get("values") or []:
-                if isinstance(val_entry, dict) and val_entry.get("oid"):
-                    validate_oid(val_entry["oid"], f"param {param.get('name')}.{val_entry.get('value')}")
+                if isinstance(val_entry, dict):
+                    if val_entry.get("oid"):
+                        validate_oid(val_entry["oid"], f"param {param.get('name')}.{val_entry.get('value')}")
+                    for o in val_entry.get("oids") or []:
+                        validate_oid(o, f"param {param.get('name')}.{val_entry.get('value')} oids[]")
 
     if ok:
         print(f"  OK    all OIDs match dotted-decimal format")
