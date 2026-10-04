@@ -1462,83 +1462,112 @@ def _value_oids(v: dict) -> list[str]:
 
 
 def check_curve_oid_duplication(families: list[dict]) -> bool:
-    """Check 20: curve OIDs carried on algorithm `ellipticCurve` values must equal the
-    OID of the first-class curve entry of the same name.
+    """Check 20: `ellipticCurve` parameters versus the curve registry.
 
-    Curve OIDs have their home on the `curve/*` entries (cr-ecc-curves.yaml). The EC
-    algorithm entries (ECDSA, ECDH, ...) still carry a copy of some of them on their
-    inline `ellipticCurve` values — a known, documented duplication that exists so
-    `--oid` keeps resolving those OIDs to the algorithm pattern until the validator
-    resolves curve-typed parameters against the curve registry (plan §8.4). This check
-    pins the two copies together so they cannot drift:
+    Curve OIDs have exactly one home: the `curve/*` entries (cr-ecc-curves.yaml). Every
+    algorithm `ellipticCurve` parameter must therefore be `type: "curve"` (resolved against
+    the curve registry by the validator) and may carry inline `values` only as local
+    extension names or posture overrides — never OIDs. Each inline name must resolve to a
+    curve entry, alias or umbrella value, or be an algorithm-local extension name whose OID
+    the entry carries on its own `oidMap` (e.g. ECDH `X25519`).
 
-      FAIL  value OID present on a curve entry (or umbrella value) of the same name
-            but with a different OID
-      INFO  value OID whose curve entry carries no OID at all (e.g. ECDH Curve25519
-            carries the RFC 8410 id-X25519 *algorithm* OID; the curve has no OID)
-      INFO  value names with an OID but no curve entry of that name (X25519, publicKey)
+      FAIL  curve-typed parameter without `curveCategories` (compatibility must be declared),
+            or with a value that is not a curve/* category, or a `curves` entry that is no curve
+      FAIL  curve-typed value carrying `oid`/`oids`
+      FAIL  inline name that neither resolves to a curve nor is an oidMap key of the entry
+      FAIL  inline override naming a curve outside the parameter's compatibility set
+      FAIL  `ellipticCurve` parameter still enumerated (not `type: curve`) outside the
+            allow-list of entries whose values are algorithm names rather than curves
+      FAIL  (legacy duplication guard) enumerated value OID differing from the curve entry
     """
-    curve_oids: dict[str, set[str]] = {}
+    enumerated_ok = {"EdDSA", "cdx:Ed"}   # values are Ed25519/Ed448 instances, not curve names
+
+    curve_names: dict[str, set[str]] = {}
+    curve_cat: dict[str, str] = {}      # lower-cased name -> curve/* category (redirects resolve to their target)
+    redirect: dict[str, str] = {}
     for fam in families:
         if not str(fam.get("category", "")).startswith("curve"):
             continue
+        if fam.get("patternStatus") == "deprecated" and fam.get("preferredPattern"):
+            redirect[fam["id"].lower()] = str(fam["preferredPattern"]).lower()
+        prefix0 = "-".join(fam.get("prefix") or [fam["id"]])
+        for n in [fam["id"]] + ["-".join(a) for a in fam.get("aliases") or []]:
+            curve_cat[n.lower()] = fam["category"]
+        for p0 in fam.get("parameters") or []:
+            for v in p0.get("values") or []:
+                if isinstance(v, dict):
+                    curve_cat[f"{prefix0}-{v['value']}".lower()] = fam["category"]
         entry_oids = set()
         if fam.get("oid"):
             entry_oids.add(fam["oid"])
         for v in (fam.get("oidMap") or {}).values():
             entry_oids.update(v if isinstance(v, list) else [v])
-        names = [fam["id"]] + ["-".join(a) for a in fam.get("aliases") or []]
         prefix = "-".join(fam.get("prefix") or [fam["id"]])
-        for n in names:
-            curve_oids.setdefault(n.lower(), set()).update(entry_oids)
-        # umbrella entries (P-{size}, K-{size}, B-{size}, W-{size}): one name per value
+        for n in [fam["id"]] + ["-".join(a) for a in fam.get("aliases") or []]:
+            curve_names.setdefault(n.lower(), set()).update(entry_oids)
         for p in fam.get("parameters") or []:
             for v in p.get("values") or []:
                 if isinstance(v, dict):
-                    curve_oids.setdefault(f"{prefix}-{v['value']}".lower(), set()).update(_value_oids(v))
+                    curve_names.setdefault(f"{prefix}-{v['value']}".lower(), set()).update(_value_oids(v))
 
-    mismatches, no_curve_oid, no_curve = [], [], []
-    checked = 0
+    failures, info = [], []
+    typed, inline_names = 0, 0
     for fam in families:
         if str(fam.get("category", "")).startswith("curve"):
             continue
+        oidmap_keys = {str(k).lower() for k in (fam.get("oidMap") or {})}
         for p in fam.get("parameters") or []:
             if p.get("name") != "ellipticCurve":
                 continue
-            for v in p.get("values") or []:
-                if not isinstance(v, dict):
-                    continue
-                oids = _value_oids(v)
-                if not oids:
-                    continue
-                name = str(v["value"])
-                key = name.lower()
-                if key not in curve_oids:
-                    no_curve.append(f"{fam['id']} {name} ({', '.join(oids)})")
-                    continue
-                checked += 1
-                expected = curve_oids[key]
-                if not expected:
-                    no_curve_oid.append(f"{fam['id']} {name} ({', '.join(oids)})")
-                elif not set(oids) <= expected:
-                    mismatches.append(f"{fam['id']} {name}: value {', '.join(oids)} vs curve entry {', '.join(sorted(expected))}")
+            values = [v for v in (p.get("values") or []) if isinstance(v, dict)]
+            if p.get("type") == "curve":
+                typed += 1
+                cats = p.get("curveCategories") or []
+                allowed = [str(c).lower() for c in (p.get("curves") or [])]
+                if not cats:
+                    failures.append(f"{fam['id']}: curve-typed ellipticCurve must declare curveCategories (algorithm/curve compatibility)")
+                for c in cats:
+                    if c not in CATEGORY_VOCABULARY or not str(c).startswith("curve/"):
+                        failures.append(f"{fam['id']}: curveCategories value '{c}' is not a curve/* category")
+                for a in allowed:
+                    if a not in curve_names:
+                        failures.append(f"{fam['id']}: curves allow-list entry '{a}' is not a registered curve")
+                for v in values:
+                    name = str(v["value"]); inline_names += 1
+                    key = name.lower()
+                    if _value_oids(v):
+                        failures.append(f"{fam['id']} {name}: curve-typed value must not carry an OID ({', '.join(_value_oids(v))})")
+                    if key not in curve_names and key not in oidmap_keys:
+                        failures.append(f"{fam['id']} {name}: inline name is neither a registered curve nor an oidMap key of the entry")
+                        continue
+                    if key not in curve_names:
+                        info.append(f"{fam['id']} {name}: algorithm-local extension name (OID on the entry's oidMap)")
+                        continue
+                    target = redirect.get(key, key)
+                    cat = curve_cat.get(target)
+                    if cats and cat not in cats:
+                        failures.append(f"{fam['id']} {name}: override names a {cat} curve outside curveCategories {cats}")
+                    if allowed and target not in allowed:
+                        failures.append(f"{fam['id']} {name}: override names a curve outside the closed curves list")
+            else:
+                if fam["id"] not in enumerated_ok:
+                    failures.append(f"{fam['id']}: ellipticCurve parameter is `type: {p.get('type')}` — must be `type: curve`")
+                for v in values:
+                    oids = _value_oids(v)
+                    expected = curve_names.get(str(v["value"]).lower())
+                    if oids and expected and not set(oids) <= expected:
+                        failures.append(f"{fam['id']} {v['value']}: value {', '.join(oids)} vs curve entry {', '.join(sorted(expected))}")
 
-    ok = not mismatches
-    if ok:
-        print(f"  OK    {checked} ellipticCurve value OID(s) agree with their curve entries")
+    if failures:
+        print(f"  FAIL  {len(failures)} ellipticCurve problem(s):")
+        for f in failures:
+            print(f"          {f}")
     else:
-        print(f"  FAIL  {len(mismatches)} ellipticCurve value OID(s) diverge from the curve entry of the same name:")
-        for m in mismatches:
-            print(f"          {m}")
-    if no_curve_oid:
-        print(f"  INFO  {len(no_curve_oid)} value OID(s) whose curve entry carries no OID (algorithm identifier, not a curve OID):")
-        for m in no_curve_oid:
-            print(f"          {m}")
-    if no_curve:
-        print(f"  INFO  {len(no_curve)} OID-bearing value(s) with no curve entry of that name (not a duplication):")
-        for m in no_curve:
-            print(f"          {m}")
-    return ok
+        print(f"  OK    {typed} curve-typed ellipticCurve parameter(s), {inline_names} inline name(s) all resolve; "
+              f"no curve OID outside the curve registry")
+    for m in info:
+        print(f"  INFO  {m}")
+    return not failures
 
 
 def main():
@@ -1595,7 +1624,7 @@ def main():
                                                        lambda: check_category_vocab_matches_doc(families, base)),
         ("19. Category top-levels represented in the ## Taxonomy tree",
                                                        lambda: check_ascii_taxonomy_coverage(families, base)),
-        ("20. ellipticCurve value OIDs vs curve entries",
+        ("20. ellipticCurve parameters vs curve registry",
                                                        lambda: check_curve_oid_duplication(families)),
     ]
 

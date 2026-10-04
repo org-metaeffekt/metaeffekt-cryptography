@@ -598,7 +598,7 @@ Parameters that select the algebraic structure for asymmetric operations.
 |:---|:---|
 | **Short**               | Named elliptic curve identifier                                                                                                                                                       |
 | **Description**         | Selects the specific elliptic curve domain parameters. Determines security level, performance, and interoperability.                                                                  |
-| **Type**                | curve identifier                                                                                                                                                                      |
+| **Type**                | curve identifier — a `type: curve` parameter in the registry, resolved against the first-class curve entries (`cr-ecc-curves.yaml`, 202 named curves incl. SECG/X9.62/X9.63/WTLS spellings) rather than an inline value list |
 | **Canonical values**    | `P-256` `P-384` `P-521` `secp256k1` `brainpoolP256r1` `brainpoolP384r1` `brainpoolP512r1` `Curve25519` `Curve448` `Ed25519` `Ed448` `BLS12-381` `SM2` `id-GostR3410-2001-CryptoPro-A` |
 | **Implementation note** | P-256 dominant in TLS. secp256k1 in Bitcoin. Curve25519/x25519 for modern DH. Ed25519 for EdDSA. P-256 = 128-bit security, P-384 = 192-bit.                                           |
 | **Used in**             | ECDSA, ECDH, ECIES, EdDSA, MQV, BLS, EC-ElGamal, SM2, ECMQV, J-PAKE, SPAKE2, OPAQUE                                                                                                   |

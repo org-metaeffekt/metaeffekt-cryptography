@@ -86,6 +86,32 @@ components:
 Each component resolves through the existing validator. No roles, no structured
 references — the order is implicit from the protocol's suite definition.
 
+### 7. Curve-typed Parameters (2026-10-04)
+
+**Decision:** the `ellipticCurve` parameter of EC algorithms is `type: "curve"` and is resolved
+against the first-class `curve/*` entries instead of an inline value list. Curve OIDs and
+curve postures live once, on the curve entry (or umbrella value); the EC algorithm entries
+carry no curve OIDs. Redirect spellings (`secp256r1`, `prime256v1`, `ansip384r1`) are
+deprecated curve entries with `preferredPattern`, so the canonical name wins and the
+validator reports `PREFER_CANONICAL_PATTERN`. Algorithm-local names that are not curves
+(ECDH `X25519`/`X448`) stay as inline values with their OIDs on the entry's `oidMap`.
+`ValidationResult` exposes `curve`/`curveOid` next to the algorithm `oid`; the CBOM generator
+writes the curve into CycloneDX 1.6 `algorithmProperties.curve`.
+
+**Compatibility and combination posture (same day, after review):** resolving names against
+the whole curve registry must not mean any algorithm composes with any curve. The parameter
+declares `curveCategories` (structural forms the algorithm is defined on) and optionally a
+closed `curves` list (SP 800-56A MQV); a resolvable but incompatible curve is the error
+`INCOMPATIBLE_CURVE`. Posture is two-layered: the curve entry holds what is intrinsic to the
+curve (security strength, SP 800-186 status), and the algorithm's inline values hold the
+combination-specific authority statements — CNSA 2.0 "P-384 only" for ECDSA/ECDH, BSI
+TR-02102-1 recommended curves per mechanism — overriding per authority.
+
+**Rationale:** the curve registry grew to 202 entries while each EC algorithm enumerated
+~17 curves, so `ECDSA-secp160r1-*` failed as an unknown value and 23 curve OIDs were duplicated
+across ECDSA/ECDH and the curve file. One home per identifier; intrinsic curve facts on the
+curve, combination facts on the algorithm's parameter.
+
 ## Status Vocabulary
 
 | Status | Meaning |

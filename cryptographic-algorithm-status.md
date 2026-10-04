@@ -304,7 +304,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | Pattern | Security | NIST | BSI | CNSA | TCG | Sources | Notes |
 |:---|:---|:---|:---|:---|:---|:---|:---|
 | `ECDSA-P-384-SHA-384` | 192 bit | 🔜 Until 2035 | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | FIPS 186-5; SP 800-57; BSI TR-02102-1 §3.4; CNSA 2.0 | CNSA 2.0 transitional; will be replaced by ML-DSA-87 |
-| `ECDSA-[P-256\|P-521]-[SHA-256\|SHA-384\|SHA-512]` | 128–260 bit | 🚫 Disallowed | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | FIPS 186-5; SP 800-57; BSI TR-02102-1 §3.4 | CNSA mandates P-384 only |
+| `ECDSA-[P-256\|P-521]-[SHA-256\|SHA-384\|SHA-512]` | 128–260 bit | 🔜 Until 2035 | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | FIPS 186-5; SP 800-57; BSI TR-02102-1 §3.4 | CNSA mandates P-384 only |
 | `ECDSA-P-384-[SHA-256\|SHA-512]` | 192 bit | 🔜 Until 2035 | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | FIPS 186-5; SP 800-57 | CNSA mandates SHA-384 with P-384 |
 | `ECDSA-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]-*` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | BSI TR-02102-1 §3.4 | BSI-preferred alternative; not in NIST FIPS or CNSA |
 | `EdDSA-[Ed25519\|Ed448]` | 128–224 bit | ✅ Recommended | — Not in TR-02102-1 | — Not in CNSA 2.0 | — | FIPS 186-5; RFC 8032 | Deterministic; immune to k-reuse; not in CNSA. EdDSA not in BSI TR-02102-1; BSI recommends ECDSA, ECKDSA/ECKCDSA, ECGDSA |
