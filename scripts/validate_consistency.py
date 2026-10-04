@@ -80,7 +80,10 @@ def collect_oids(families: list[dict]) -> set[str]:
 
 
 OID_RE = re.compile(r"^\d+(\.\d+)+$")
-VALID_STATUSES = {"mandatory", "recommended", "not recommended", "approved", "conditional", "transitional", "deprecated", "disallowed", "broken"}
+VALID_STATUSES = {"mandatory", "recommended", "not recommended", "approved", "conditional", "transitional", "non-approved", "deprecated", "disallowed", "broken"}
+# Where an authority posture comes from: a named assessment (default), a general rule the authority
+# states (e.g. SP 800-131A len(n) < 224), or the authority's scope (not on any approved/allowed list).
+VALID_BASIS = {"named", "rule", "scope"}
 
 # The IANA registry (table) a composite belongs to is derived from its subType (a 1:1
 # mapping), not stored on the entry — so `registries.iana` carries only value/references.
@@ -247,11 +250,40 @@ def _extract_authority_statuses(obj: dict) -> list[tuple[str, str]]:
     return results
 
 
+def _check_authority_blocks(label: str, obj: dict) -> list[str]:
+    """Qualifier rules for authority blocks: `basis` in VALID_BASIS; `conditional` needs
+    a `condition` (composites generated before the field existed state it in `note`);
+    `basis: rule` needs a `source`."""
+    problems = []
+    for auth_id, data in (obj.get("authorities") or {}).items():
+        if not isinstance(data, dict):
+            continue
+        basis = data.get("basis")
+        if basis is not None and basis not in VALID_BASIS:
+            problems.append(f"{label} {auth_id}: invalid basis '{basis}' (expected {sorted(VALID_BASIS)})")
+        if data.get("status") == "conditional" and not (data.get("condition") or data.get("note") or data.get("source")):
+            problems.append(f"{label} {auth_id}: status 'conditional' requires a `condition` (or at least a `note`/`source` stating it)")
+        if basis == "rule" and not data.get("source"):
+            problems.append(f"{label} {auth_id}: basis 'rule' requires a `source`")
+    return problems
+
+
 def check_status_values(families: list[dict]) -> bool:
-    """Check 5: all authority status fields contain only valid values."""
+    """Check 5: all authority status fields contain only valid values, and the posture
+    qualifiers (`basis`, `condition`, `source`) follow their rules."""
     ok = True
     for fam in families:
         name = fam.get("family", fam.get("id", "<unknown>"))
+        problems = _check_authority_blocks(name, fam)
+        for param in fam.get("parameters") or []:
+            for val in param.get("values") or []:
+                if isinstance(val, dict):
+                    problems += _check_authority_blocks(f"{name}.{param.get('name')}.{val.get('value')}", val)
+        for ip in fam.get("implicitParameters") or []:
+            problems += _check_authority_blocks(f"{name} implicitParam {ip.get('name')}", ip)
+        for pr in problems:
+            print(f"  FAIL  {pr}")
+            ok = False
 
         # Entry-level authority statuses
         for auth_id, status in _extract_authority_statuses(fam):

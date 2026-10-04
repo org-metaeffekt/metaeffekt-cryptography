@@ -117,10 +117,20 @@ curve, combination facts on the algorithm's parameter.
 | Status | Meaning |
 |---|---|
 | `mandatory` | Required by this authority |
+| `recommended` | Preferred by this authority |
 | `approved` | Acceptable for use |
+| `conditional` | Allowed under the stated `condition` (2026-10-04: SP 800-186 Appendix H / IG C.A curves) |
+| `transitional` | Acceptable until `until` |
+| `not recommended` | IANA: not endorsed, not forbidden |
+| `non-approved` | CMVP: not on an approved or allowed list; outside approved services only (added 2026-10-04) |
 | `deprecated` | Migrate away; still functional |
 | `disallowed` | Must not be used |
 | `broken` | Cryptographically compromised |
+
+Qualifiers on every authority block (2026-10-04): `basis` (`named` default / `rule` / `scope`),
+`source`, `condition` (required for `conditional`), `until`, `note`. `basis: rule` marks a status
+derived from a general rule the authority states (SP 800-131A strength thresholds) rather than a
+per-object assessment; `basis: scope` marks the authority's default for unlisted objects.
 
 ## Migration Summary
 

@@ -211,13 +211,13 @@ classification — shown only where TCG registers the algorithm.
 |:---|:---|:---|:---|:---|:---|:---|:---|
 | `ECDH-P-384` | 192 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §2.3.6) | 🔜 Until 2030 (P-384 only; transitional) | ✓ Standard | SP 800-56A Rev 3; FIPS 186-5; BSI TR-02102-1 §3.5; CNSA 2.0 | CNSA 2.0 transitional; will be replaced by ML-KEM-1024 |
 | `ECDH-[P-256\|P-521]` | 128–260 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §2.3.6) | 🔜 Until 2030 (P-384 only; transitional) | ✓ Standard | SP 800-56A Rev 3; FIPS 186-5; BSI TR-02102-1 §3.5 | CNSA mandates P-384 only |
-| `ECDH-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §2.3.6) | 🔜 Until 2030 (P-384 only; transitional) | ✓ Standard | BSI TR-02102-1 §3.5 | BSI-preferred alternative to NIST curves; not in NIST FIPS or CNSA |
+| `ECDH-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]` | 128–256 bit | ⚠ Conditional (SP 800-186 App. H.1; IG C.A) | ✅ Recommended (TR-02102-1 §2.3.6) | 🔜 Until 2030 (P-384 only; transitional) | ✓ Standard | BSI TR-02102-1 §3.5 | BSI-preferred alternative to NIST curves; not in NIST FIPS or CNSA |
 | `ECDH-[Curve25519\|X25519]` | 128 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §2.3.6) | 🔜 Until 2030 (P-384 only; transitional) | ✓ Standard | SP 800-186; RFC 7748 | Constant-time; default in TLS 1.3; not in CNSA. Curve25519/X25519 not in BSI TR-02102-1 or Table B.3 |
 | `ECDH-[Curve448\|X448]` | 224 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §2.3.6) | 🔜 Until 2030 (P-384 only; transitional) | ✓ Standard | SP 800-186; RFC 7748 | 224-bit security. Curve448/X448 not in BSI TR-02102-1 or Table B.3 |
 | `FFDH-[ffdhe3072\|ffdhe4096\|ffdhe6144\|ffdhe8192]` | 128–192 bit | ✓ Approved | ✓ Approved (TR-02102-1 §2.3.5) | — Not in CNSA 2.0 | — | SP 800-56A; RFC 7919; BSI TR-02102-1; CNSA 2.0 | CNSA 2.0 transitional with DH ≥3072 |
 | `FFDH-ffdhe2048` | 112 bit | ✓ Approved | ✓ Approved (TR-02102-1 §2.3.5) | — Not in CNSA 2.0 | — | SP 800-57; SP 800-56A | 112-bit security; CNSA requires ≥3072. 2048 < BSI 3000-bit DH minimum |
 | `FFDH-[1024\|1536]` | <112 bit | ✓ Approved | ✓ Approved (TR-02102-1 §2.3.5) | — Not in CNSA 2.0 | — | SP 800-131A Rev 2 | Logjam attack; disallowed |
-| `ECDH-secp256k1` | 128 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §2.3.6) | 🔜 Until 2030 (P-384 only; transitional) | — | — | Not in NIST SP 800-186; used in blockchain only. secp256k1 not in BSI Table B.3 recommended curves |
+| `ECDH-secp256k1` | 128 bit | ⚠ Conditional (SP 800-186 App. H.2: blockchain applications) | ✅ Recommended (TR-02102-1 §2.3.6) | 🔜 Until 2030 (P-384 only; transitional) | — | — | Not in NIST SP 800-186; used in blockchain only. secp256k1 not in BSI Table B.3 recommended curves |
 
 > ⚠ **Ephemeral key agreement:** Static (non-ephemeral) ECDH and DH provide no forward secrecy. SP 800-56A requires ephemeral keys for forward-secret key establishment. TLS 1.3 mandates ECDHE or DHE.
 
@@ -258,7 +258,7 @@ All K-series and B-series binary curves (K-163, K-233, K-283, K-409, K-571, B-16
 | Curve family | Approval status | Notes |
 |:---|:---|:---|
 | Brainpool curves (brainpoolP256r1, brainpoolP384r1, brainpoolP512r1, brainpoolP512t1, …) | ✓ Approved (SP 800-186 Appx H.1) | BSI-mandated alternative; may be used with NIST-approved schemes; not in FIPS 186-5 primary list |
-| secp256k1 | ❌ Not approved for general use | SP 800-186 Appendix H.2: discussed in context of blockchain/Bitcoin applications only; not approved for NSS or general-purpose cryptography |
+| secp256k1 | ⚠ Conditional (SP 800-186 Appx H.2) | Allowed for blockchain-related applications; in an approved mode only within ECDSA under FIPS 140-3 IG C.A (CAVP-tested approved curve present, Security Policy restricts use to blockchain applications) |
 
 ### 5.2 Key Establishment Scheme Taxonomy (SP 800-56A Rev.3)
 
@@ -306,7 +306,7 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 | `ECDSA-P-384-SHA-384` | 192 bit | 🔜 Until 2035 | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | FIPS 186-5; SP 800-57; BSI TR-02102-1 §3.4; CNSA 2.0 | CNSA 2.0 transitional; will be replaced by ML-DSA-87 |
 | `ECDSA-[P-256\|P-521]-[SHA-256\|SHA-384\|SHA-512]` | 128–260 bit | 🔜 Until 2035 | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | FIPS 186-5; SP 800-57; BSI TR-02102-1 §3.4 | CNSA mandates P-384 only |
 | `ECDSA-P-384-[SHA-256\|SHA-512]` | 192 bit | 🔜 Until 2035 | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | FIPS 186-5; SP 800-57 | CNSA mandates SHA-384 with P-384 |
-| `ECDSA-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]-*` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | BSI TR-02102-1 §3.4 | BSI-preferred alternative; not in NIST FIPS or CNSA |
+| `ECDSA-[brainpoolP256r1\|brainpoolP384r1\|brainpoolP512r1]-*` | 128–256 bit | ⚠ Conditional (SP 800-186 App. H.1; IG C.A) | ✅ Recommended (TR-02102-1 §5.3.3) | 🔜 Until 2035 (P-384 + SHA-384 only; transitional) | ✓ Standard | BSI TR-02102-1 §3.4 | BSI-preferred alternative; not in NIST FIPS or CNSA |
 | `EdDSA-[Ed25519\|Ed448]` | 128–224 bit | ✅ Recommended | — Not in TR-02102-1 | — Not in CNSA 2.0 | — | FIPS 186-5; RFC 8032 | Deterministic; immune to k-reuse; not in CNSA. EdDSA not in BSI TR-02102-1; BSI recommends ECDSA, ECKDSA/ECKCDSA, ECGDSA |
 | `RSASSA-PSS-[3072\|4096\|7680\|15360]-SHA-384-*` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §5.3.1) | 🔜 Until 2035 (RSA >=3072 + SHA-384; transitional) | ✓ Standard | FIPS 186-5; SP 800-131A; BSI TR-02102-1 §3.6; CNSA 2.0 | CNSA 2.0 transitional with RSA-3072+ and SHA-384 |
 | `RSASSA-PSS-[3072\|4096\|7680\|15360]-[SHA-256\|SHA-512]-*` | 128–256 bit | ✅ Recommended | ✅ Recommended (TR-02102-1 §5.3.1) | 🔜 Until 2035 (RSA >=3072 + SHA-384; transitional) | ✓ Standard | FIPS 186-5; SP 800-131A | CNSA mandates SHA-384 |

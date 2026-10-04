@@ -189,7 +189,7 @@ algorithms NIST has already disallowed:
 | `RSASSA-*-1024-*` | 🚫 Disallowed | ✅ Until 2031 | BSI: 2031 |
 | `DSA-1024-*` | 🚫 Disallowed | 🔜 Until 2029 | BSI: 2029 |
 | `FFDH-[1024\|1536]` | 🚫 Disallowed | ✅ Until 2031 | BSI: 2031 |
-| `ECDH-secp256k1` | ❌ Deprecated | ✅ Until 2031 | BSI: 2031 |
+| `ECDH-secp256k1` | ⚠ Conditional | ✅ Until 2031 | BSI: 2031 |
 | `PBKDF1-*` | 🚫 Disallowed | — Not addressed | — |
 | `PBKDF2-HMAC-SHA-1-*` | ❌ Deprecated | 🚫 Not recommended | — |
 

@@ -22,7 +22,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 |------------|------:|-------|
 | `InstanceValidationSymmetricTest` | 87 | All 77 symmetric families (incl. 2TDEA, RC4-HMAC-EXP) |
 | `InstanceValidationHashMacTest` | 74 | All hash + MAC families (incl. HMAC-MD5, GMAC, GOST HMACs, GOST-28147-MAC, compact no-dash SHA/SHA3/HMACSHA alias forms) |
-| `InstanceValidationAsymmetricTest` | 59 | All asymmetric families (incl. DLIES, MLS, SRTP; curve-typed ellipticCurve: redirect spellings, withdrawn SECG curves, X25519 local names, curve compatibility, CNSA/BSI combination postures) |
+| `InstanceValidationAsymmetricTest` | 61 | All asymmetric families (incl. DLIES, MLS, SRTP; curve-typed ellipticCurve: redirect spellings, rule-based and non-approved curve postures, Appendix H conditional curves, X25519 local names, curve compatibility, CNSA/BSI combination postures) |
 | `InstanceValidationPqcTest` | 60 | All 49 PQC families (incl. ALTEQ; pre-standard Round 3 names Kyber/Dilithium/Falcon/SPHINCS+ as multi-parameter patterns) |
 | `InstanceValidationKdfTest` | 27 | All 27 KDF families (incl. CatKDF, KeyCombine, SSL30-PRF, TLS10-PRF) |
 | `InstanceValidationRngTest` | 31 | All 25 RNG families (incl. OS entropy APIs) |
@@ -37,7 +37,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `MainTest` | 28 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
 | `AlgorithmRegistryTest` | 27 | Registry loading, duplicate detection, OID index (incl. list-valued `oidMap` keys and per-value `oids` lists), cross-validation, coverage |
 | `CompositeValidationTest` | 11 | Composite entry loading, TLS/SSH/X.509 component resolution, authority-aware validation |
-| **Total** | **1178** | |
+| **Total** | **1180** | |
 
 ---
 
