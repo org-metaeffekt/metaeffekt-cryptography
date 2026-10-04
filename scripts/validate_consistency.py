@@ -1105,7 +1105,6 @@ def check_summary_counts(base: Path) -> bool:
 MARKDOWN_ONLY_OID_ALLOWLIST = {
     "1.3.6.1.4.1.1722.12.2.1.8": "BLAKE2b-256 (RFC 7693 arc)",
     "1.3.6.1.4.1.1722.12.2.2.8": "BLAKE2s-256 (RFC 7693 arc)",
-    "1.2.156.10197.1.301":       "SM2 recommended curve sm2p256v1 (GM/T 0003-2012)",
     "1.3.9999.0.1":              "X25519+ML-KEM-768 hybrid (experimental draft arc)",
     "1.2.840.113549.1.12":       "PKCS#12 / PFX (RFC 7292)",
     "1.2.840.113549.1.9.16":     "CMS / S-MIME id-smime (RFC 5652)",

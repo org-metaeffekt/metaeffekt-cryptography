@@ -512,6 +512,26 @@ in CycloneDX. They are registered in `cr-spdx.yaml` without deprecation:
 
 ---
 
+## 17. CycloneDX Curve Names That Are Not Pattern Tokens
+
+| CycloneDX group | Names | Problem |
+|-----------------|-------|---------|
+| `oakley` | `192-bit Random ECP Group`, `224-bit Random ECP Group`, `256-bit Random ECP Group`, `384-bit Random ECP Group`, `521-bit Random ECP Group`, `Oakley Group 3`, `Oakley Group 4` | Contain spaces; they are IKE group *descriptions* (RFC 2409 / RFC 5903), not curve names |
+| `mnt` | `mnt1`, `mnt2/1`, `mnt2/2`, `mnt3/1`, `mnt3/2`, `mnt3/3`, `mnt4`, `mnt5/1`, `mnt5/2`, `mnt5/3` | Eight of ten contain a slash; all are example pairing curves from Miyaji–Nakabayashi–Takano (2001) with no deployment |
+
+**Issue:** the pattern grammar treats dashes as structural separators and allows no spaces or
+slashes inside a NAME token, so these seventeen CycloneDX `ellipticCurves` names cannot be
+registered or validated as patterns.
+
+**Resolution (2026-10-04):** excluded by design and documented here. The identity of the five
+"Random ECP Group" entries is already carried by the IPsec DH-group composites (`cr-ipsec.yaml`,
+groups 19–21, 25–26) and the NIST `P-` curves; Oakley groups 3 and 4 (EC2N 155/185-bit, RFC 2409)
+have no modern use. The MNT family is omitted as a whole rather than registering the two
+slash-free names inconsistently. All other 229 CycloneDX curve names resolve
+(`CycloneDxCurveCoverageTest`).
+
+---
+
 ## Summary
 
 | Category | Count | Status |
@@ -521,6 +541,7 @@ in CycloneDX. They are registered in `cr-spdx.yaml` without deprecation:
 | CycloneDX naming alternatives with canonical equivalent | 31 | Resolved via deprecated cdx families (cr-cdx.yaml) |
 | CycloneDX-only families (no canonical equivalent) | 4 | Registered in cr-cdx.yaml (not deprecated): PBMAC1, X3DH, J-PAKE, WOTSP |
 | Remaining CycloneDX template notation gaps | 0 | All instance patterns covered |
+| CycloneDX curve names not representable as pattern tokens | 17 | Excluded by design (see §17): 7 Oakley/IKE group descriptions (spaces), 10 MNT example curves (8 with a slash) |
 | **SPDX** | | |
 | SPDX aliases on canonical families | 8 | rijndael, desede, tdes, sms4, chacha, diffiehellman, dhe, kazumi |
 | SPDX deprecated alternatives (generic/variant names) | 24 | Resolved via deprecated spdx families (cr-spdx.yaml) |

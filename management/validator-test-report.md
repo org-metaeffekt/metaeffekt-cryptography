@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (17 files, 409 algorithm entries + 370 composite entries, 674 unique OIDs indexed).
+registry (17 files, 569 algorithm entries + 370 composite entries, 750 unique OIDs indexed).
 The composite YAMLs encode authority overlays per entry: cr-tls.yaml (NIST SP 800-52 Rev 2
 + BSI TR-02102-2 v2026-01), cr-ssh.yaml (RFC 9142/8332/8709/etc. + NIST SP 800-131A Rev 2
 + BSI TR-02102-4 v2026-01), cr-ipsec.yaml (RFC 8221/8247 + NIST SP 800-131A Rev 2 +
@@ -27,6 +27,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `InstanceValidationKdfTest` | 27 | All 27 KDF families (incl. CatKDF, KeyCombine, SSL30-PRF, TLS10-PRF) |
 | `InstanceValidationRngTest` | 31 | All 25 RNG families (incl. OS entropy APIs) |
 | `TemplateValidationTest` | 33 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
+| `CycloneDxCurveCoverageTest` | 323 | Every CycloneDX `ellipticCurves` name (229 representable of 246) resolves; every upstream curve OID (92) is indexed; SECG/X9.62 redirects |
 | `CycloneDxRegistryCoverageTest` | 224 | Full CycloneDX cryptography-defs.json coverage (as of upstream commit 2026-08-15) + all 36 cdx families + alternative pattern variants |
 | `SpdxCoverageTest` | 170 | Full SPDX cryptographic-algorithm-list coverage (127 identifiers) |
 | `CertificateAnalyserTest` | 5 | X.509 certificate analysis (RSA-2048, EC-P256) |
@@ -36,7 +37,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `MainTest` | 28 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
 | `AlgorithmRegistryTest` | 25 | Registry loading, duplicate detection, OID index (incl. list-valued `oidMap` keys and per-value `oids` lists), cross-validation, coverage |
 | `CompositeValidationTest` | 11 | Composite entry loading, TLS/SSH/X.509 component resolution, authority-aware validation |
-| **Total** | **840** | |
+| **Total** | **1163** | |
 
 ---
 

@@ -375,34 +375,46 @@ Cryptographic Algorithms
 > Named curves and groups as first-class catalogue entries, grouped by structural family
 > (mirrors the `curve/*` taxonomy sub-branches and SP 800-186 §2). The registry’s exhaustive,
 > machine-readable list is [`cr-ecc-curves.yaml`](ae-pattern-validator/src/main/resources/registry/cr-ecc-curves.yaml).
+>
+> **CycloneDX curve catalogue (ingested 2026-10-04).** Every named curve of the CycloneDX
+> `cryptography-defs.json` `ellipticCurves` section (246 names, 99 with OIDs; upstream commit
+> `24d7698`, 2026-08-15) resolves in the registry: curves with an OID are listed individually
+> below (SECG, ANSI X9.62, WTLS, Brainpool, GOST, ANSSI, NIST binary); SECG/X9.62/X9.63 synonyms of
+> NIST curves (`secp256r1`, `prime256v1`, `ansip384r1`, `sect233k1`, ...) are deprecated redirects
+> to the `P-`/`K-`/`B-` names and appear in the *Name* column of the NIST rows; research and vendor
+> curves without an OID (BN, BLS, NUMS, BADA55, Pasta, SafeCurves candidates, ...) are summarised
+> per family in **group rows** here while the registry holds one entry per curve. Seventeen upstream
+> names are not representable as pattern tokens (seven Oakley/IKE group descriptions with spaces,
+> ten MNT example curves, eight of them with a slash) and are excluded — see
+> `cryptographic-registry-inconsistencies.md`.
 
 ### 10.1 Weierstrass Curves (prime field)
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
 | `p-192` | P-192 · secp192r1 · prime192v1 | Elliptic curve (legacy, disallowed) | `1.2.840.10045.3.1.1` | `ECDH-P-192` / `ECDSA-P-192-*` | SP 800-131A Rev 2 (disallowed for new use after 2013; legacy verification only) |
-| `p-224` | P-224 · secp224r1 | Elliptic curve (transitional) | `1.3.132.0.33` | `ECDH-P-224` / `ECDSA-P-224-*` | FIPS 186-5; SP 800-186; SP 800-131A Rev 2 (transitional through 2030) |
+| `p-224` | P-224 · secp224r1 · ansip224r1 · wtls12 (own OID) | Elliptic curve (transitional) | `1.3.132.0.33` | `ECDH-P-224` / `ECDSA-P-224-*` | FIPS 186-5; SP 800-186; SP 800-131A Rev 2 (transitional through 2030) |
 | `p-256` | P-256 · secp256r1 · prime256v1 | Elliptic curve | `1.2.840.10045.3.1.7` | `ECDH-P-256` / `ECDSA-P-256-*` | FIPS 186-5; SP 800-186 |
-| `p-384` | P-384 · secp384r1 | Elliptic curve | `1.3.132.0.34` | `ECDH-P-384` / `ECDSA-P-384-*` | FIPS 186-5; SP 800-186 |
-| `p-521` | P-521 · secp521r1 | Elliptic curve | `1.3.132.0.35` | `ECDH-P-521` / `ECDSA-P-521-*` | FIPS 186-5; SP 800-186 |
-| `secp256k1` | secp256k1 (Bitcoin curve) | Elliptic curve | `1.3.132.0.10` | `ECDSA-secp256k1-*` | SEC 2; not NIST-approved |
+| `p-384` | P-384 · secp384r1 · ansip384r1 | Elliptic curve | `1.3.132.0.34` | `ECDH-P-384` / `ECDSA-P-384-*` | FIPS 186-5; SP 800-186 |
+| `p-521` | P-521 · secp521r1 · ansip521r1 | Elliptic curve | `1.3.132.0.35` | `ECDH-P-521` / `ECDSA-P-521-*` | FIPS 186-5; SP 800-186 |
+| `secp256k1` | secp256k1 · ansip256k1 (Bitcoin curve) | Elliptic curve | `1.3.132.0.10` | `ECDSA-secp256k1-*` | SEC 2; not NIST-approved |
 | `brainpoolp256r1` | brainpoolP256r1 | Elliptic curve | `1.3.36.3.3.2.8.1.1.7` | `ECDH-brainpoolP256r1` | RFC 5639; BSI TR-02102-1 |
 | `brainpoolp384r1` | brainpoolP384r1 | Elliptic curve | `1.3.36.3.3.2.8.1.1.11` | `ECDH-brainpoolP384r1` | RFC 5639; BSI TR-02102-1 |
 | `brainpoolp512r1` | brainpoolP512r1 | Elliptic curve | `1.3.36.3.3.2.8.1.1.13` | `ECDH-brainpoolP512r1` | RFC 5639; BSI TR-02102-1 |
 | `sm2-curve` | SM2 curve | Elliptic curve | `1.2.156.10197.1.301` | `SM2-*` | GM/T 0003-2012 |
 | `w-25519` | W-25519 · Weierstrass form of Curve25519 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for ECDSA/EdDSA directly) |
 | `w-448` | W-448 · Weierstrass form of Curve448 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for ECDSA/EdDSA directly) |
-| `brainpoolp160r1` | brainpoolP160r1 | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
-| `brainpoolp192r1` | brainpoolP192r1 | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
-| `brainpoolp224r1` | brainpoolP224r1 | Elliptic curve (112-bit) | — | — | RFC 5639 |
-| `brainpoolp320r1` | brainpoolP320r1 | Elliptic curve | — | — | RFC 5639 |
-| `brainpoolp160t1` | brainpoolP160t1 · twisted | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
-| `brainpoolp192t1` | brainpoolP192t1 · twisted | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
-| `brainpoolp224t1` | brainpoolP224t1 · twisted | Elliptic curve (legacy, <128-bit) | — | — | RFC 5639 |
-| `brainpoolp256t1` | brainpoolP256t1 · twisted | Elliptic curve | — | — | RFC 5639 |
-| `brainpoolp320t1` | brainpoolP320t1 · twisted | Elliptic curve | — | — | RFC 5639 |
-| `brainpoolp384t1` | brainpoolP384t1 · twisted | Elliptic curve | — | — | RFC 5639 |
-| `brainpoolp512t1` | brainpoolP512t1 · twisted | Elliptic curve | — | — | RFC 5639 |
+| `brainpoolp160r1` | brainpoolP160r1 | Elliptic curve (legacy, <128-bit) | `1.3.36.3.3.2.8.1.1.1` | — | RFC 5639 |
+| `brainpoolp192r1` | brainpoolP192r1 | Elliptic curve (legacy, <128-bit) | `1.3.36.3.3.2.8.1.1.3` | — | RFC 5639 |
+| `brainpoolp224r1` | brainpoolP224r1 | Elliptic curve (112-bit) | `1.3.36.3.3.2.8.1.1.5` | — | RFC 5639 |
+| `brainpoolp320r1` | brainpoolP320r1 | Elliptic curve | `1.3.36.3.3.2.8.1.1.9` | — | RFC 5639 |
+| `brainpoolp160t1` | brainpoolP160t1 · twisted | Elliptic curve (legacy, <128-bit) | `1.3.36.3.3.2.8.1.1.2` | — | RFC 5639 |
+| `brainpoolp192t1` | brainpoolP192t1 · twisted | Elliptic curve (legacy, <128-bit) | `1.3.36.3.3.2.8.1.1.4` | — | RFC 5639 |
+| `brainpoolp224t1` | brainpoolP224t1 · twisted | Elliptic curve (legacy, <128-bit) | `1.3.36.3.3.2.8.1.1.6` | — | RFC 5639 |
+| `brainpoolp256t1` | brainpoolP256t1 · twisted | Elliptic curve | `1.3.36.3.3.2.8.1.1.8` | — | RFC 5639 |
+| `brainpoolp320t1` | brainpoolP320t1 · twisted | Elliptic curve | `1.3.36.3.3.2.8.1.1.10` | — | RFC 5639 |
+| `brainpoolp384t1` | brainpoolP384t1 · twisted | Elliptic curve | `1.3.36.3.3.2.8.1.1.12` | — | RFC 5639 |
+| `brainpoolp512t1` | brainpoolP512t1 · twisted | Elliptic curve | `1.3.36.3.3.2.8.1.1.14` | — | RFC 5639 |
 | `gost-2001-cryptopro-a` | id-GostR3410-2001-CryptoPro-A-ParamSet | GOST elliptic curve (256-bit param set) | `1.2.643.2.2.35.1` | — | RFC 4357; RFC 9215 |
 | `gost-2001-cryptopro-b` | id-GostR3410-2001-CryptoPro-B-ParamSet | GOST elliptic curve (256-bit param set) | `1.2.643.2.2.35.2` | — | RFC 4357; RFC 9215 |
 | `gost-2001-cryptopro-c` | id-GostR3410-2001-CryptoPro-C-ParamSet | GOST elliptic curve (256-bit param set) | `1.2.643.2.2.35.3` | — | RFC 4357; RFC 9215 |
@@ -413,19 +425,83 @@ Cryptographic Algorithms
 | `gost-2012-256-d` | id-tc26-gost-3410-2012-256-paramSetD | GOST elliptic curve (256-bit param set) | `1.2.643.7.1.2.1.1.4` | — | RFC 9215 |
 | `gost-2012-512-a` | id-tc26-gost-3410-2012-512-paramSetA | GOST elliptic curve (512-bit param set) | `1.2.643.7.1.2.1.2.1` | — | RFC 7836; RFC 9215 |
 | `gost-2012-512-b` | id-tc26-gost-3410-2012-512-paramSetB | GOST elliptic curve (512-bit param set) | `1.2.643.7.1.2.1.2.2` | — | RFC 7836; RFC 9215 |
+| `frp256v1` | FRP256v1 | Elliptic curve (ANSSI, 256-bit) | `1.2.250.1.223.101.256.1` | `FRP256v1` | ANSSI (Journal officiel, 21 Nov 2011); BouncyCastle ANSSIObjectIdentifiers |
+| `secp192k1` | secp192k1 · ansip192k1 | Elliptic curve (SECG Koblitz, 192-bit) | `1.3.132.0.31` | `secp192k1` | SEC 2 v2.0 |
+| `secp224k1` | secp224k1 · ansip224k1 | Elliptic curve (SECG Koblitz, 224-bit) | `1.3.132.0.32` | `secp224k1` | SEC 2 v2.0 |
+| `secp112r1` | secp112r1 · wtls6 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.6` | `secp112r1` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `secp112r2` | secp112r2 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.7` | `secp112r2` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `secp128r1` | secp128r1 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.28` | `secp128r1` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `secp128r2` | secp128r2 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.29` | `secp128r2` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `secp160k1` | secp160k1 · ansip160k1 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.9` | `secp160k1` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `secp160r1` | secp160r1 · ansip160r1 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.8` | `secp160r1` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `secp160r2` | secp160r2 · ansip160r2 · wtls7 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.30` | `secp160r2` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `prime192v2` | prime192v2 | Elliptic curve (ANSI X9.62 example curve, prime field) | `1.2.840.10045.3.1.2` | `prime192v2` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `prime192v3` | prime192v3 | Elliptic curve (ANSI X9.62 example curve, prime field) | `1.2.840.10045.3.1.3` | `prime192v3` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `prime239v1` | prime239v1 | Elliptic curve (ANSI X9.62 example curve, prime field) | `1.2.840.10045.3.1.4` | `prime239v1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `prime239v2` | prime239v2 | Elliptic curve (ANSI X9.62 example curve, prime field) | `1.2.840.10045.3.1.5` | `prime239v2` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `prime239v3` | prime239v3 | Elliptic curve (ANSI X9.62 example curve, prime field) | `1.2.840.10045.3.1.6` | `prime239v3` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `wtls6` | wap-wsg-idm-ecid-wtls6 · wtls6 | Elliptic curve (WTLS, withdrawn; 112-bit prime; same parameters as secp112r1) | `2.23.43.1.4.6` | `wap-wsg-idm-ecid-wtls6` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `wtls7` | wap-wsg-idm-ecid-wtls7 · wtls7 | Elliptic curve (WTLS, withdrawn; 160-bit prime; same parameters as secp160r2) | `2.23.43.1.4.7` | `wap-wsg-idm-ecid-wtls7` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `wtls8` | wap-wsg-idm-ecid-wtls8 · wtls8 | Elliptic curve (WTLS, withdrawn; 112-bit prime) | `2.23.43.1.4.8` | `wap-wsg-idm-ecid-wtls8` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `wtls9` | wap-wsg-idm-ecid-wtls9 · wtls9 | Elliptic curve (WTLS, withdrawn; 160-bit prime) | `2.23.43.1.4.9` | `wap-wsg-idm-ecid-wtls9` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `wtls12` | wap-wsg-idm-ecid-wtls12 · wtls12 | Elliptic curve (WTLS, withdrawn; 224-bit prime) | `2.23.43.1.4.12` | `wap-wsg-idm-ecid-wtls12` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `gost256` | gost256 (generic) | Elliptic curve (GOST R 34.10, 256-bit; no parameter set) | — | `gost256` | CycloneDX generic name; see the id-GostR3410-2001-* / id-tc26-*-256-* rows |
+| `gost512` | gost512 (generic) | Elliptic curve (GOST R 34.10-2012, 512-bit; no parameter set) | — | `gost512` | CycloneDX generic name; see the id-tc26-*-512-* rows |
+| `nums-weierstrass` | NUMS numsp256d1 · numsp384d1 · numsp512d1 · w-254-mont · w-255-mers · w-256-mont · w-382-mont · w-383-mers · w-384-mont · w-510-mont · w-511-mers · w-512-mont (12 curves) | Elliptic curves (research, Weierstrass form) | — | one registry entry per curve | Black, Bos, Costello, Longa, Naehrig — eprint 2014/130; draft-black-numscurves (expired) |
+| `bada55` | BADA55-R-256 · BADA55-VPR-224 · BADA55-VPR2-224 · BADA55-VR-224 · BADA55-VR-256 · BADA55-VR-384 (6 curves) | Elliptic curves (deliberately manipulated demonstration curves — not for use) | — | one registry entry per curve | Bernstein et al., 'How to manipulate curve standards' (2015) |
+| `pasta-tweedle` | Pallas · Vesta · Tweedledee · Tweedledum | Elliptic curves (Zcash Halo / Halo 2 cycles) | — | one registry entry per curve | Zcash Halo 2 'Pasta' and Halo 'Tweedle' cycles |
+| `tom-curves` | Tom-256 · Tom-384 · Tom-521 | Elliptic curves (research; provenance not documented upstream) | — | one registry entry per curve | CycloneDX curve catalogue, group *other* |
+| `ssc-curves` | ssc-160 · ssc-192 · ssc-224 · ssc-256 · ssc-288 · ssc-320 · ssc-384 · ssc-512 (8 curves) | Elliptic curves (research; provenance not documented upstream) | — | one registry entry per curve | CycloneDX curve catalogue, group *other* |
+| `bernstein-lange-weierstrass` | Curve1174 · Curve22103 · Curve4417 · Curve67254 | Elliptic curves (research; Weierstrass form per the CycloneDX catalogue) | — | one registry entry per curve | Bernstein–Lange curve families; CycloneDX curve catalogue |
 
 ### 10.2 Binary Curves (deprecated in SP 800-186)
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
-| `k-233` | K-233 · Koblitz, GF(2^233) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
-| `k-283` | K-283 · Koblitz, GF(2^283) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
-| `k-409` | K-409 · Koblitz, GF(2^409) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
-| `k-571` | K-571 · Koblitz, GF(2^571) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.1 (deprecated) |
-| `b-233` | B-233 · pseudorandom binary, GF(2^233) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
-| `b-283` | B-283 · pseudorandom binary, GF(2^283) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
-| `b-409` | B-409 · pseudorandom binary, GF(2^409) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
-| `b-571` | B-571 · pseudorandom binary, GF(2^571) | Elliptic curve (binary, deprecated) | — | — | SP 800-186 §3.3.2 (deprecated) |
+| `k-163` | K-163 · sect163k1 · ansit163k1 · wtls3 (own OID) | Elliptic curve (binary, legacy-use only) | `1.3.132.0.1` | `K-163` | SP 800-186 §3.3.1 — K-163 legacy-use only; SEC 2 v2.0 |
+| `b-163` | B-163 · sect163r2 · ansit163r2 | Elliptic curve (binary, legacy-use only) | `1.3.132.0.15` | `B-163` | SP 800-186 §3.3.2 — B-163 legacy-use only; SEC 2 v2.0 |
+| `k-233` | K-233 · sect233k1 · ansit233k1 · wtls10 (own OID) · Koblitz, GF(2^233) | Elliptic curve (binary, deprecated) | `1.3.132.0.26` | — | SP 800-186 §3.3.1 (deprecated) |
+| `k-283` | K-283 · sect283k1 · ansit283k1 · Koblitz, GF(2^283) | Elliptic curve (binary, deprecated) | `1.3.132.0.16` | — | SP 800-186 §3.3.1 (deprecated) |
+| `k-409` | K-409 · sect409k1 · ansit409k1 · Koblitz, GF(2^409) | Elliptic curve (binary, deprecated) | `1.3.132.0.36` | — | SP 800-186 §3.3.1 (deprecated) |
+| `k-571` | K-571 · sect571k1 · ansit571k1 · Koblitz, GF(2^571) | Elliptic curve (binary, deprecated) | `1.3.132.0.38` | — | SP 800-186 §3.3.1 (deprecated) |
+| `b-233` | B-233 · sect233r1 · ansit233r1 · wtls11 (own OID) · pseudorandom binary, GF(2^233) | Elliptic curve (binary, deprecated) | `1.3.132.0.27` | — | SP 800-186 §3.3.2 (deprecated) |
+| `b-283` | B-283 · sect283r1 · ansit283r1 · pseudorandom binary, GF(2^283) | Elliptic curve (binary, deprecated) | `1.3.132.0.17` | — | SP 800-186 §3.3.2 (deprecated) |
+| `b-409` | B-409 · sect409r1 · ansit409r1 · pseudorandom binary, GF(2^409) | Elliptic curve (binary, deprecated) | `1.3.132.0.37` | — | SP 800-186 §3.3.2 (deprecated) |
+| `b-571` | B-571 · sect571r1 · ansit571r1 · pseudorandom binary, GF(2^571) | Elliptic curve (binary, deprecated) | `1.3.132.0.39` | — | SP 800-186 §3.3.2 (deprecated) |
+| `sect163r1` | sect163r1 · ansit163r1 | Elliptic curve (SECG binary, GF(2^163)) | `1.3.132.0.2` | `sect163r1` | SEC 2 v2.0 |
+| `sect239k1` | sect239k1 · ansit239k1 | Elliptic curve (SECG Koblitz binary, GF(2^239)) | `1.3.132.0.3` | `sect239k1` | SEC 2 v2.0 |
+| `sect113r1` | sect113r1 · wtls4 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.4` | `sect113r1` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `sect113r2` | sect113r2 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.5` | `sect113r2` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `sect131r1` | sect131r1 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.22` | `sect131r1` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `sect131r2` | sect131r2 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.23` | `sect131r2` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `sect193r1` | sect193r1 · ansit193r1 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.24` | `sect193r1` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `sect193r2` | sect193r2 · ansit193r2 | Elliptic curve (SEC 2 v1.0 only; withdrawn, below 112-bit security) | `1.3.132.0.25` | `sect193r2` | SEC 2 v1.0 (2000); dropped in SEC 2 v2.0; OpenSSL objects.txt |
+| `c2onb191v4` | c2onb191v4 | Elliptic curve (ANSI X9.62 example curve, GF(2^191), optimal normal basis) | `1.2.840.10045.3.0.8` | `c2onb191v4` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2onb191v5` | c2onb191v5 | Elliptic curve (ANSI X9.62 example curve, GF(2^191), optimal normal basis) | `1.2.840.10045.3.0.9` | `c2onb191v5` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2onb239v4` | c2onb239v4 | Elliptic curve (ANSI X9.62 example curve, GF(2^239), optimal normal basis) | `1.2.840.10045.3.0.14` | `c2onb239v4` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2onb239v5` | c2onb239v5 | Elliptic curve (ANSI X9.62 example curve, GF(2^239), optimal normal basis) | `1.2.840.10045.3.0.15` | `c2onb239v5` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2pnb163v1` | c2pnb163v1 · wtls5 | Elliptic curve (ANSI X9.62 example curve, GF(2^163), pentanomial basis) | `1.2.840.10045.3.0.1` | `c2pnb163v1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2pnb163v2` | c2pnb163v2 | Elliptic curve (ANSI X9.62 example curve, GF(2^163), pentanomial basis) | `1.2.840.10045.3.0.2` | `c2pnb163v2` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2pnb163v3` | c2pnb163v3 | Elliptic curve (ANSI X9.62 example curve, GF(2^163), pentanomial basis) | `1.2.840.10045.3.0.3` | `c2pnb163v3` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2pnb176w1` | c2pnb176w1 | Elliptic curve (ANSI X9.62 example curve, GF(2^176), pentanomial basis) | `1.2.840.10045.3.0.4` | `c2pnb176w1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2pnb208w1` | c2pnb208w1 | Elliptic curve (ANSI X9.62 example curve, GF(2^208), pentanomial basis) | `1.2.840.10045.3.0.10` | `c2pnb208w1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2pnb272w1` | c2pnb272w1 | Elliptic curve (ANSI X9.62 example curve, GF(2^272), pentanomial basis) | `1.2.840.10045.3.0.16` | `c2pnb272w1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2pnb304w1` | c2pnb304w1 | Elliptic curve (ANSI X9.62 example curve, GF(2^304), pentanomial basis) | `1.2.840.10045.3.0.17` | `c2pnb304w1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2pnb368w1` | c2pnb368w1 | Elliptic curve (ANSI X9.62 example curve, GF(2^368), pentanomial basis) | `1.2.840.10045.3.0.19` | `c2pnb368w1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2tnb191v1` | c2tnb191v1 | Elliptic curve (ANSI X9.62 example curve, GF(2^191), trinomial basis) | `1.2.840.10045.3.0.5` | `c2tnb191v1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2tnb191v2` | c2tnb191v2 | Elliptic curve (ANSI X9.62 example curve, GF(2^191), trinomial basis) | `1.2.840.10045.3.0.6` | `c2tnb191v2` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2tnb191v3` | c2tnb191v3 | Elliptic curve (ANSI X9.62 example curve, GF(2^191), trinomial basis) | `1.2.840.10045.3.0.7` | `c2tnb191v3` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2tnb239v1` | c2tnb239v1 | Elliptic curve (ANSI X9.62 example curve, GF(2^239), trinomial basis) | `1.2.840.10045.3.0.11` | `c2tnb239v1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2tnb239v2` | c2tnb239v2 | Elliptic curve (ANSI X9.62 example curve, GF(2^239), trinomial basis) | `1.2.840.10045.3.0.12` | `c2tnb239v2` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2tnb239v3` | c2tnb239v3 | Elliptic curve (ANSI X9.62 example curve, GF(2^239), trinomial basis) | `1.2.840.10045.3.0.13` | `c2tnb239v3` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2tnb359v1` | c2tnb359v1 | Elliptic curve (ANSI X9.62 example curve, GF(2^359), trinomial basis) | `1.2.840.10045.3.0.18` | `c2tnb359v1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `c2tnb431r1` | c2tnb431r1 | Elliptic curve (ANSI X9.62 example curve, GF(2^431), trinomial basis) | `1.2.840.10045.3.0.20` | `c2tnb431r1` | ANSI X9.62-1998 Annex J (informative); BouncyCastle X962NamedCurves |
+| `wtls1` | wap-wsg-idm-ecid-wtls1 · wtls1 | Elliptic curve (WTLS, withdrawn; binary GF(2^113)) | `2.23.43.1.4.1` | `wap-wsg-idm-ecid-wtls1` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `wtls3` | wap-wsg-idm-ecid-wtls3 · wtls3 | Elliptic curve (WTLS, withdrawn; binary GF(2^163); same parameters as sect163k1 / K-163) | `2.23.43.1.4.3` | `wap-wsg-idm-ecid-wtls3` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `wtls4` | wap-wsg-idm-ecid-wtls4 · wtls4 | Elliptic curve (WTLS, withdrawn; binary GF(2^113); same parameters as sect113r1) | `2.23.43.1.4.4` | `wap-wsg-idm-ecid-wtls4` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `wtls5` | wap-wsg-idm-ecid-wtls5 · wtls5 | Elliptic curve (WTLS, withdrawn; binary GF(2^163); same parameters as c2pnb163v1) | `2.23.43.1.4.5` | `wap-wsg-idm-ecid-wtls5` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `wtls10` | wap-wsg-idm-ecid-wtls10 · wtls10 | Elliptic curve (WTLS, withdrawn; binary GF(2^233); same parameters as sect233k1 / K-233) | `2.23.43.1.4.10` | `wap-wsg-idm-ecid-wtls10` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
+| `wtls11` | wap-wsg-idm-ecid-wtls11 · wtls11 | Elliptic curve (WTLS, withdrawn; binary GF(2^233); same parameters as sect233r1 / B-233) | `2.23.43.1.4.11` | `wap-wsg-idm-ecid-wtls11` | WAP-261-WTLS-20010406-a; OpenSSL ec_curve.c |
 
 ### 10.3 Montgomery Curves
 
@@ -433,16 +509,24 @@ Cryptographic Algorithms
 |:---|:---|:---|:---|:---|:---|
 | `curve25519` | Curve25519 (Montgomery) | Elliptic curve | `1.3.101.110` | `ECDH-Curve25519` | RFC 7748; SP 800-186 |
 | `curve448` | Curve448 · Curve448-Goldilocks (Montgomery) | Elliptic curve | `1.3.101.111` | `ECDH-Curve448` | RFC 7748; SP 800-186 |
+| `montgomery-research` | M-221 · M-383 · M-511 · Curve383187 | Elliptic curves (research, Montgomery form) | — | one registry entry per curve | Bernstein–Lange SafeCurves candidates; CycloneDX curve catalogue |
 
 ### 10.4 Twisted Edwards Curves
 
 | Id | Name | Crypto Class | OID | Pattern | References |
 |:---|:---|:---|:---|:---|:---|
 | `ed25519-curve` | Ed25519 (Edwards) | Elliptic curve (signature) | `1.3.101.112` | `Ed25519` | RFC 8032 |
-| `ed448-curve` | Ed448 (Edwards) | Elliptic curve (signature) | `1.3.101.113` | `Ed448` | RFC 8032 |
+| `ed448-curve` | Ed448 (Edwards) · Ed448-Goldilocks | Elliptic curve (signature) | `1.3.101.113` | `Ed448` | RFC 8032 |
 | `e448` | E448 · untwisted Edwards, isogenous to Edwards448 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for EdDSA directly) |
 | `gost-2012-256-a` | id-tc26-gost-3410-2012-256-paramSetA · twisted Edwards | GOST elliptic curve (256-bit param set) | `1.2.643.7.1.2.1.1.1` | — | RFC 7836; RFC 9215 |
 | `gost-2012-512-c` | id-tc26-gost-3410-2012-512-paramSetC · twisted Edwards | GOST elliptic curve (512-bit param set) | `1.2.643.7.1.2.1.2.3` | — | RFC 7836; RFC 9215 |
+| `bandersnatch` | Bandersnatch | Elliptic curve (twisted Edwards over the BLS12-381 scalar field) | — | `Bandersnatch` | Ethereum research (2021) |
+| `jubjub` | JubJub | Elliptic curve (twisted Edwards over the BLS12-381 scalar field) | — | `JubJub` | Zcash Sapling |
+| `fourq` | FourQ | Elliptic curve (twisted Edwards, Microsoft) | — | `FourQ` | Costello, Longa 2015 |
+| `curve41417` | Curve41417 | Elliptic curve (Edwards) | — | `Curve41417` | Bernstein, Chuengsatiansup, Lange 2014 |
+| `mdc201601` | MDC201601 (Million Dollar Curve) | Elliptic curve (Edwards) | — | `MDC201601` | Million Dollar Curve (2016) |
+| `e-curves` | E-222 · E-382 · E-521 | Elliptic curves (Edwards; SafeCurves candidates) | — | one registry entry per curve | Bernstein–Lange SafeCurves |
+| `nums-edwards` | NUMS numsp256t1 · numsp384t1 · numsp512t1 · ed-254-mont · ed-255-mers · ed-256-mont · ed-382-mont · ed-383-mers · ed-384-mont · ed-510-mont · ed-511-mers · ed-512-mont (12 curves) | Elliptic curves (research, twisted Edwards form) | — | one registry entry per curve | eprint 2014/130; draft-black-numscurves (expired) |
 
 ### 10.5 Pairing-friendly Curves
 
@@ -451,6 +535,9 @@ Cryptographic Algorithms
 | `bls12-381` | BLS12-381 | Pairing-friendly elliptic curve | — | `BLS-BLS12-381` | IETF draft-irtf-cfrg-bls-signature |
 | `bn-p256` | BN-P256 · Barreto-Naehrig, pairing | Pairing-friendly elliptic curve | — | — | TCG Algorithm Registry (ECDAA) |
 | `bn-p638` | BN-P638 · Barreto-Naehrig, pairing | Pairing-friendly elliptic curve | — | — | TCG Algorithm Registry (ECDAA) |
+| `bls-family` | BLS12-377 · BLS12-446 · BLS12-455 · BLS12-638 · BLS24-477 | Pairing-friendly elliptic curves (Barreto-Lynn-Scott) | — | one registry entry per curve | Zexe (eprint 2018/962); RELIC toolkit |
+| `bn-family` | bn158 · bn190 · bn222 · bn254 · bn286 · bn318 · bn350 · bn382 · bn414 · bn446 · bn478 · bn510 · bn542 · bn574 · bn606 · bn638 (16 curves) | Pairing-friendly elliptic curves (Barreto-Naehrig) | — | one registry entry per curve | Pereira, Simplício, Naehrig, Barreto — eprint 2010/429 |
+| `fp-bn-family` | Fp224BN · Fp254BNa · Fp254BNb · Fp254n2BNa · Fp256BN · Fp384BN · Fp512BN | Pairing-friendly elliptic curves (Barreto-Naehrig, Fp-naming) | — | one registry entry per curve | CycloneDX curve catalogue, group *other* |
 
 ### 10.6 Prime-order Group Abstractions
 
@@ -866,7 +953,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Digital Signatures, stateless (incl. SM9, GOSTR3410) | 14 |
 | Digital Signatures, stateful | 4 |
 | Key agreement algorithms (incl. SPAKE2+, OPAQUE-3DH, MLS, SRTP) | 12 |
-| Named elliptic curves and groups | 56 |
+| Named elliptic curves and groups | 133 |
 | Key derivation functions (incl. CatKDF, KeyCombine) | 13 |
 | Password hashing (incl. Windows) | 10 |
 | Password-based encryption frameworks | 3 |
@@ -879,7 +966,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Non-cryptographic PRNGs (incl. Xoroshiro) | 7 |
 | Padding / encoding schemes | 5 |
 | Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
-| **Total** | **~465** |
+| **Total** | **~540** |
 
 ### Post-quantum Algorithm Counts by Lifecycle
 
