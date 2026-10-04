@@ -12,7 +12,7 @@
 > - **References** — primary standards and specifications
 >
 > **Sources:** FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 ·
-> FIPS 206 (IPD) · NIST SP 800-38 series · SP 800-56A/B/C · SP 800-57 · SP 800-90A/B/C · SP 800-108 ·
+> FIPS 206 (in development) · NIST SP 800-38 series · SP 800-56A/B/C · SP 800-57 · SP 800-90A/B/C · SP 800-108 ·
 > SP 800-131A · SP 800-132 · SP 800-135 · SP 800-186 · SP 800-208 · BSI TR-02102-1 (2026-01) ·
 > BSI AIS 20/31 v3 · RFC 5869 · RFC 7539 · RFC 8017 · RFC 8032 · RFC 8391 · RFC 8439 · RFC 8554 · RFC 9180 ·
 > CycloneDX Cryptography Registry · SPDX Cryptographic Algorithm List
@@ -246,6 +246,9 @@ Cryptographic Algorithms
 | `gmac` | GMAC (GCM used as MAC) | Block cipher MAC | — | `AES-[128\|192\|256]-GMAC` | SP 800-38D |
 | `umac` | UMAC | Universal hash-based MAC | — | `UMAC-[32\|64\|96\|128]` | RFC 4418 |
 | `cbc-mac` | CBC-MAC | Block cipher MAC (deprecated standalone use) | — | `CBC-MAC-*` | ANSI X9.19 (legacy) |
+| `hmac-gostr3411` | HMAC-GOST R 34.11-94 | Keyed hash MAC (legacy) | `1.2.643.2.2.10` | `HMAC-GOSTR3411` | RFC 4357 |
+| `hmac-gostr3411-2012` | HMAC-GOST R 34.11-2012 (Streebog) | Keyed hash MAC | `1.2.643.7.1.1.4.1` (256) · `1.2.643.7.1.1.4.2` (512) | `HMAC-GOSTR3411-2012-[256\|512]` | RFC 7836; RFC 9215 |
+| `gost-28147-mac` | GOST 28147-89 MAC (imitovstavka) | Block cipher MAC (legacy) | `1.2.643.2.2.22` | `GOST-28147-MAC` | RFC 4357 |
 
 ---
 
@@ -291,7 +294,7 @@ Cryptographic Algorithms
 | `sm9-kem` | SM9 (KEM) | Key encapsulation (pairing-based) | `1.2.156.10197.1.302.3` | `SM9-(KEM\|KEYENCAPSULATION\|KEY-ENCAPSULATION)` | GM/T 0044-2016 |
 | `sm9-enc` | SM9 (encryption) | Asymmetric encryption (pairing-based) | `1.2.156.10197.1.302.4` | `SM9-(ENC\|ENCRYPTION\|PKE\|PUBLICKEY-ENCRYPTION\|PUBLIC-KEY-ENCRYPTION)` | GM/T 0044-2016; identity-based encryption |
 | `gostr3410` | GOST R 34.10-2001 | Digital signature (deprecated) | `1.2.643.2.2.19` | `GOSTR3410-*` | GOST R 34.10-2001 (superseded by GOST R 34.10-2012) |
-| `gostr3410-2012` | GOST R 34.10-2012 | Digital signature | `1.2.643.7.1.1.3.2` | `GOSTR3410-2012-*` | RFC 7091; GOST R 34.10-2012 |
+| `gostr3410-2012` | GOST R 34.10-2012 | Digital signature | `1.2.643.7.1.1.3.2` (256) · `1.2.643.7.1.1.3.3` (512); public-key `1.2.643.7.1.1.1.1` / `.1.2` | `GOSTR3410-2012-[256\|512]` | RFC 7091; RFC 9215; GOST R 34.10-2012 |
 
 ### NIST-standardised post-quantum Signatures
 
@@ -312,8 +315,8 @@ Cryptographic Algorithms
 | `slh-dsa-shake-192f` | SLH-DSA-SHAKE-192f | PQC signature — L3 fast (SHAKE) | `2.16.840.1.101.3.4.3.29` | `SLH-DSA-SHAKE-192f` | FIPS 205 |
 | `slh-dsa-shake-256s` | SLH-DSA-SHAKE-256s | PQC signature — L5 small (SHAKE) | `2.16.840.1.101.3.4.3.30` | `SLH-DSA-SHAKE-256s` | FIPS 205 |
 | `slh-dsa-shake-256f` | SLH-DSA-SHAKE-256f | PQC signature — L5 fast (SHAKE) | `2.16.840.1.101.3.4.3.31` | `SLH-DSA-SHAKE-256f` | FIPS 205 |
-| `fn-dsa-512` | FN-DSA-512 · Falcon-512 | PQC signature (lattice/NTRU) — NIST Level 1 | `1.3.9999.3.6` (draft) | `FN-DSA-512` | FIPS 206 (IPD); final expected late 2026; not yet in CycloneDX registry |
-| `fn-dsa-1024` | FN-DSA-1024 · Falcon-1024 | PQC signature (lattice/NTRU) — NIST Level 5 | `1.3.9999.3.9` (draft) | `FN-DSA-1024` | FIPS 206 (IPD); final expected late 2026; not yet in CycloneDX registry |
+| `fn-dsa-512` | FN-DSA-512 · Falcon-512 | PQC signature (lattice/NTRU) — NIST Level 1 | `1.3.9999.3.6` (draft) | `FN-DSA-512` | FIPS 206 in development (no public draft yet); not yet in CycloneDX registry |
+| `fn-dsa-1024` | FN-DSA-1024 · Falcon-1024 | PQC signature (lattice/NTRU) — NIST Level 5 | `1.3.9999.3.9` (draft) | `FN-DSA-1024` | FIPS 206 in development (no public draft yet); not yet in CycloneDX registry |
 | `hash-ml-dsa-44` | HashML-DSA-44 (pre-hash, with SHA-512) | PQC signature (lattice) — NIST Level 2, pre-hash variant | `2.16.840.1.101.3.4.3.32` | `HashML-DSA-44[-{hashAlgorithm}]` | FIPS 204 §6; id-hash-ml-dsa-44-with-sha512; default hash: SHA-512 |
 | `hash-ml-dsa-65` | HashML-DSA-65 (pre-hash, with SHA-512) | PQC signature (lattice) — NIST Level 3, pre-hash variant | `2.16.840.1.101.3.4.3.33` | `HashML-DSA-65[-{hashAlgorithm}]` | FIPS 204 §6; id-hash-ml-dsa-65-with-sha512 |
 | `hash-ml-dsa-87` | HashML-DSA-87 (pre-hash, with SHA-512) | PQC signature (lattice) — NIST Level 5, pre-hash variant | `2.16.840.1.101.3.4.3.34` | `HashML-DSA-87[-{hashAlgorithm}]` | FIPS 204 §6; id-hash-ml-dsa-87-with-sha512 |
@@ -400,16 +403,16 @@ Cryptographic Algorithms
 | `brainpoolp320t1` | brainpoolP320t1 · twisted | Elliptic curve | — | — | RFC 5639 |
 | `brainpoolp384t1` | brainpoolP384t1 · twisted | Elliptic curve | — | — | RFC 5639 |
 | `brainpoolp512t1` | brainpoolP512t1 · twisted | Elliptic curve | — | — | RFC 5639 |
-| `gost-2001-cryptopro-a` | id-GostR3410-2001-CryptoPro-A-ParamSet | GOST elliptic curve (256-bit param set) | — | — | RFC 4357; RFC 9215 |
-| `gost-2001-cryptopro-b` | id-GostR3410-2001-CryptoPro-B-ParamSet | GOST elliptic curve (256-bit param set) | — | — | RFC 4357; RFC 9215 |
-| `gost-2001-cryptopro-c` | id-GostR3410-2001-CryptoPro-C-ParamSet | GOST elliptic curve (256-bit param set) | — | — | RFC 4357; RFC 9215 |
-| `gost-2001-cryptopro-xcha` | id-GostR3410-2001-CryptoPro-XchA-ParamSet | GOST elliptic curve (256-bit, key-exchange set) | — | — | RFC 4357 |
-| `gost-2001-cryptopro-xchb` | id-GostR3410-2001-CryptoPro-XchB-ParamSet | GOST elliptic curve (256-bit, key-exchange set) | — | — | RFC 4357 |
-| `gost-2012-256-b` | id-tc26-gost-3410-2012-256-paramSetB | GOST elliptic curve (256-bit param set) | — | — | RFC 9215 |
-| `gost-2012-256-c` | id-tc26-gost-3410-2012-256-paramSetC | GOST elliptic curve (256-bit param set) | — | — | RFC 9215 |
-| `gost-2012-256-d` | id-tc26-gost-3410-2012-256-paramSetD | GOST elliptic curve (256-bit param set) | — | — | RFC 9215 |
-| `gost-2012-512-a` | id-tc26-gost-3410-2012-512-paramSetA | GOST elliptic curve (512-bit param set) | — | — | RFC 7836; RFC 9215 |
-| `gost-2012-512-b` | id-tc26-gost-3410-2012-512-paramSetB | GOST elliptic curve (512-bit param set) | — | — | RFC 7836; RFC 9215 |
+| `gost-2001-cryptopro-a` | id-GostR3410-2001-CryptoPro-A-ParamSet | GOST elliptic curve (256-bit param set) | `1.2.643.2.2.35.1` | — | RFC 4357; RFC 9215 |
+| `gost-2001-cryptopro-b` | id-GostR3410-2001-CryptoPro-B-ParamSet | GOST elliptic curve (256-bit param set) | `1.2.643.2.2.35.2` | — | RFC 4357; RFC 9215 |
+| `gost-2001-cryptopro-c` | id-GostR3410-2001-CryptoPro-C-ParamSet | GOST elliptic curve (256-bit param set) | `1.2.643.2.2.35.3` | — | RFC 4357; RFC 9215 |
+| `gost-2001-cryptopro-xcha` | id-GostR3410-2001-CryptoPro-XchA-ParamSet | GOST elliptic curve (256-bit, key-exchange set) | `1.2.643.2.2.36.0` | — | RFC 4357 |
+| `gost-2001-cryptopro-xchb` | id-GostR3410-2001-CryptoPro-XchB-ParamSet | GOST elliptic curve (256-bit, key-exchange set) | `1.2.643.2.2.36.1` | — | RFC 4357 |
+| `gost-2012-256-b` | id-tc26-gost-3410-2012-256-paramSetB | GOST elliptic curve (256-bit param set) | `1.2.643.7.1.2.1.1.2` | — | RFC 9215 |
+| `gost-2012-256-c` | id-tc26-gost-3410-2012-256-paramSetC | GOST elliptic curve (256-bit param set) | `1.2.643.7.1.2.1.1.3` | — | RFC 9215 |
+| `gost-2012-256-d` | id-tc26-gost-3410-2012-256-paramSetD | GOST elliptic curve (256-bit param set) | `1.2.643.7.1.2.1.1.4` | — | RFC 9215 |
+| `gost-2012-512-a` | id-tc26-gost-3410-2012-512-paramSetA | GOST elliptic curve (512-bit param set) | `1.2.643.7.1.2.1.2.1` | — | RFC 7836; RFC 9215 |
+| `gost-2012-512-b` | id-tc26-gost-3410-2012-512-paramSetB | GOST elliptic curve (512-bit param set) | `1.2.643.7.1.2.1.2.2` | — | RFC 7836; RFC 9215 |
 
 ### 10.2 Binary Curves (deprecated in SP 800-186)
 
@@ -438,8 +441,8 @@ Cryptographic Algorithms
 | `ed25519-curve` | Ed25519 (Edwards) | Elliptic curve (signature) | `1.3.101.112` | `Ed25519` | RFC 8032 |
 | `ed448-curve` | Ed448 (Edwards) | Elliptic curve (signature) | `1.3.101.113` | `Ed448` | RFC 8032 |
 | `e448` | E448 · untwisted Edwards, isogenous to Edwards448 | Elliptic curve (alt. representation) | — | — | SP 800-186 (not for EdDSA directly) |
-| `gost-2012-256-a` | id-tc26-gost-3410-2012-256-paramSetA · twisted Edwards | GOST elliptic curve (256-bit param set) | — | — | RFC 7836; RFC 9215 |
-| `gost-2012-512-c` | id-tc26-gost-3410-2012-512-paramSetC · twisted Edwards | GOST elliptic curve (512-bit param set) | — | — | RFC 7836; RFC 9215 |
+| `gost-2012-256-a` | id-tc26-gost-3410-2012-256-paramSetA · twisted Edwards | GOST elliptic curve (256-bit param set) | `1.2.643.7.1.2.1.1.1` | — | RFC 7836; RFC 9215 |
+| `gost-2012-512-c` | id-tc26-gost-3410-2012-512-paramSetC · twisted Edwards | GOST elliptic curve (512-bit param set) | `1.2.643.7.1.2.1.2.3` | — | RFC 7836; RFC 9215 |
 
 ### 10.5 Pairing-friendly Curves
 
@@ -857,7 +860,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Block cipher modes (inc. AEAD, FPE, tweakable, Ascon-AEAD128) | 36 |
 | Hash functions and XOFs (incl. SP 800-185 TupleHash/ParallelHash, GOSTR3411) | 46 |
 | Non-cryptographic checksums | 4 |
-| Message authentication codes (incl. KMACXOF128/256) | 17 |
+| Message authentication codes (incl. KMACXOF128/256, GOST MACs) | 20 |
 | Key Encapsulation and asymmetric Encryption (incl. DLIES) | 12 |
 | HPKE ciphersuites (DHKEM variants) | 5 |
 | Digital Signatures, stateless (incl. SM9, GOSTR3410) | 14 |
@@ -876,7 +879,7 @@ Each composite algorithm combines ML-DSA with a traditional signature algorithm,
 | Non-cryptographic PRNGs (incl. Xoroshiro) | 7 |
 | Padding / encoding schemes | 5 |
 | Composite / hybrid constructs (incl. 18 Composite ML-DSA) | 22 |
-| **Total** | **~462** |
+| **Total** | **~465** |
 
 ### Post-quantum Algorithm Counts by Lifecycle
 
@@ -892,7 +895,7 @@ hand-maintained per-lifecycle PQC rows; regenerate it with
 | KEMs | standardised / selected | 6 |
 | KEMs | candidate / broken | 36 |
 | Signatures | standardised | 30 |
-| Signatures | draft | 2 |
+| Signatures | selected / draft | 2 |
 | Signatures | candidate | 29 |
 | Signatures | broken | 49 |
 | **Total** | parameter-set instantiations | **152** |
@@ -920,6 +923,9 @@ SPDX entries not mapped (no standard cryptographic definition found): `dcc`, `ss
 
 Cross-referenced against the [CycloneDX Cryptography Registry](https://github.com/CycloneDX/specification/blob/master/schema/cryptography-defs.json) (Apache 2.0). CycloneDX defines a **pattern vocabulary** — parameterised template strings used in the `cryptographicProperties.algorithm` and `algorithmProperties.primitiveType` fields of CycloneDX SBOM documents. Unlike SPDX's flat enumeration, CycloneDX patterns cover entire algorithm families via `{placeholder}` variables and wildcard notation.
 
+> [!NOTE]
+> **Re-verified 2026-10-04** against upstream `cryptography-defs.json` commit `24d7698` (2026-08-15, "extend GOST registry with 2012/2015 algorithms and curve OIDs"): the GOST family gained `GOSTR3410-2012-(256|512)`, `GOSTR3411-2012-(256|512)`, `HMAC-GOSTR3411-2012-(256|512)`, `Magma[-{mode}][-{padding}]` and `Kuznyechik[-{mode}][-{padding}]`, and the `gost` curve group gained OIDs for the CryptoPro and TC26 parameter sets. All resolve: the four algorithm patterns against the existing canonical families (Kuznyechik through the alias on Grasshopper), the compact `GOST28147` / `GOST28147_MAC` forms (renamed upstream from the `GOST38147` typo on 2026-05-02) through `cr-cdx.yaml`, with the typo forms retained as deprecated aliases for older tooling. 98 families / 167 variants / 246 curves upstream; the file's own `lastUpdated` field still says 2026-02-24.
+
 ### Coverage Model
 
 The `Pattern` column in this table directly uses CycloneDX pattern notation. Every entry with a non-empty Pattern value is CycloneDX-compatible. The `{placeholder}` parameters in Pattern values are documented in `cryptographic-parameters.md`.
@@ -937,7 +943,7 @@ The 7 entries with no CycloneDX pattern are structural or encoding constructs (p
 | Scope | In CycloneDX? | Count | Notes |
 |:---|:---|:---|:---|
 | Core approved algorithms (§1–§12, §14–§18) | ✅ Yes | ~245 | AES, SHA-2/3, Ascon, RSA, ECDSA, ECDH, SM9, HPKE, ML-KEM, ML-DSA, HashML-DSA, SLH-DSA, HashSLH-DSA, LMS, XMSS, DRBGs, CSPRNGs, SPAKE2, OPAQUE-3DH, 3GPP AKA algorithms (MILENAGE, TUAK, 128-EEA*/EIA*, 3GPP-XOR), A5/1, A5/2, etc. |
-| FN-DSA / Falcon (§7) | ❌ No | 2 | FIPS 206 IPD pending; OIDs draft only; not yet in CycloneDX registry as of April 2026. |
+| FN-DSA / Falcon (§7) | ❌ No | 2 | FIPS 206 in development, no public draft yet; OIDs experimental only; not yet in CycloneDX registry as of April 2026. |
 | HQC (§6) | ❌ No | 3 | NIST selected March 2025; FIPS pending (~2027); no OIDs assigned yet; not yet in CycloneDX registry as of April 2026. |
 | NIST Round 2 additional PQC signature candidates (§13) | ❌ No | 24 | MAYO, SNOVA, UOV, QR-UOV, HAWK, CROSS, LESS, FAEST, SDitH, MQOM, Mirath, PERK, RYDE, SQIsign — not in current CycloneDX registry. |
 | NIST Round 3 non-standardised / broken signatures (§13) | ❌ No | 9 | Rainbow (broken), Picnic, GeMSS (broken) — not standardised, not in CycloneDX. |

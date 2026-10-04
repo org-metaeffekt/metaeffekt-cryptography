@@ -12,7 +12,7 @@
 > SP 800-107 Rev 1 · SP 800-131A Rev 2 (Rev 3 IPD Oct 2024) · SP 800-38 series ·
 > SP 800-52 Rev 2 (Aug 2019, TLS) ·
 > SP 800-56A Rev 3 · SP 800-56B/C · SP 800-90A Rev 1 (Rev 2 pre-draft 2025) · SP 800-90B · SP 800-132 · SP 800-135 ·
-> SP 800-186 · SP 800-208 · NIST IR 8214C · FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (IPD) ·
+> SP 800-186 · SP 800-208 · NIST IR 8214C · FIPS 140-3 · FIPS 180-4 · FIPS 186-5 · FIPS 197 · FIPS 198-1 · FIPS 202 · FIPS 203/204/205 · FIPS 206 (in development) ·
 > NSA CNSA 2.0 (PP-22-1338, Sep 2022) ·
 > BSI TR-02102-1 v2026-01 (2026-01-23) · BSI TR-02102-2 v2026-01 (2026-01-27) ·
 > BSI TR-02102-3 v2026-01 (2026-01-27) · BSI TR-02102-4 v2026-01 (2026-01-27) · BSI AIS 20/31 v3 (2022) ·
@@ -346,16 +346,16 @@ SP 800-56A Rev.3 (April 2018) organises key establishment schemes by the number 
 
 > ℹ **Stateless:** SLH-DSA is stateless (unlike LMS/XMSS); no state management required. Signing is slow but requires no storage state. Suitable where signing frequency is low and verification speed matters more than signing speed.
 
-### 6.4 FN-DSA / Falcon digital Signatures (FIPS 206 IPD)
+### 6.4 FN-DSA / Falcon digital Signatures (FIPS 206 pending)
 
 | Pattern | NIST Level | Security | NIST | BSI | CNSA | Notes |
 |:---|:---|:---|:---|:---|:---|:---|
-| `FN-DSA-512` | 1 | 128 bit | ✓ Approved | — Not yet evaluated by BSI | — Not in CNSA 2.0 | FIPS 206 IPD (submitted Aug 2025; final expected late 2026 / early 2027); compact signatures (666 B); floating-point dependency; CNSA mandates ML-DSA-87 |
-| `FN-DSA-1024` | 5 | 256 bit | ✓ Approved | — Not yet evaluated by BSI | — Not in CNSA 2.0 | FIPS 206 IPD; 1280 B signatures; CNSA does not include FN-DSA |
+| `FN-DSA-512` | 1 | 128 bit | ✓ Approved | — Not yet evaluated by BSI | — Not in CNSA 2.0 | FIPS 206 in development (no public draft published as of 2026-10; NIST has announced no publication date); compact signatures (666 B); floating-point dependency; CNSA mandates ML-DSA-87 |
+| `FN-DSA-1024` | 5 | 256 bit | ✓ Approved | — Not yet evaluated by BSI | — Not in CNSA 2.0 | FIPS 206 in development; 1280 B signatures; CNSA does not include FN-DSA |
 
-> ⚠ **IEEE 754 compliance (`{floatingPointMode}`):** FN-DSA/Falcon uses FFT-based Gaussian sampling that relies on IEEE 754 floating-point arithmetic. Execution with extended precision (x87), flush-to-zero, or non-standard rounding **deviates from the specification** and may weaken or break security. Require `ieee754-strict` mode or `integer-emulation` in FIPS 140-3 and CC environments. FIPS 206 is still in the Initial Public Draft stage (IPD submitted for Department of Commerce clearance August 2025; final standard not yet published as of Q1 2026).
+> ⚠ **IEEE 754 compliance (`{floatingPointMode}`):** FN-DSA/Falcon uses FFT-based Gaussian sampling that relies on IEEE 754 floating-point arithmetic. Execution with extended precision (x87), flush-to-zero, or non-standard rounding **deviates from the specification** and may weaken or break security. Require `ieee754-strict` mode or `integer-emulation` in FIPS 140-3 and CC environments. FIPS 206 is still in development: no public draft has been published and the document is absent from NIST's drafts open for comment (checked 2026-10-04).
 
-> ℹ **FIPS 206 standardisation status:** FIPS 203, 204, and 205 were published as final standards on 13 August 2024. FIPS 206 (FN-DSA / Falcon) followed a separate timeline: the IPD was submitted for internal NIST approval in August 2025 and is awaiting Department of Commerce clearance. The final standard is expected late 2026 or early 2027. Implementations may reference the Falcon Round 3.1 specification in the interim.
+> ℹ **FIPS 206 standardisation status:** FIPS 203, 204, and 205 were published as final standards on 13 August 2024. FIPS 206 (FN-DSA / Falcon) follows a separate timeline: the NIST PQC standardisation page lists it as "in development"; as of 2026-10-04 no initial public draft has been published and NIST has announced no publication date. Implementations may reference the Falcon Round 3.1 specification in the interim.
 
 ---
 

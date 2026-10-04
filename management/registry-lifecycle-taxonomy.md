@@ -71,9 +71,11 @@ Concrete demonstrations of the orthogonality:
 - **HQC is `lifecycle: selected` and `nist.status: approved`.** Selected by
   NIST for standardisation in March 2025; final FIPS document pending. NIST
   approves the algorithm for deployment in advance of the final standard.
-- **FN-DSA is `lifecycle: draft` and `nist.status: approved`.** FIPS 206 is
-  in Initial Public Draft (IPD); NIST approves use with the caveat that the
-  draft is subject to change.
+- **FN-DSA is `lifecycle: selected` and `nist.status: approved`.** Falcon was
+  selected by NIST in July 2022 for standardisation as FIPS 206, which NIST
+  lists as "in development"; no public draft has been published (checked
+  2026-10-04), so `draft` does not yet apply. NIST approves use ahead of the
+  final standard with the caveat that the specification may change.
 - **SIKE is `lifecycle: broken` and `nist.status: broken`.** Cryptanalysis
   showed SIDH (and therefore SIKE) is fundamentally insecure during Round 4
   evaluation. Both fields point the same way.
@@ -144,12 +146,16 @@ unknown        # Sentinel matching the category convention — identifier has
   category: "asymmetric/signature/stateless"
   lifecycle: "standardised"          # FIPS 204 (Aug 2024)
 
-# Draft / pending finalisation
-- id: "FN-DSA"
+# Draft / pending finalisation (a draft specification has been published)
+- id: "BLS"
   category: "asymmetric/signature/stateless"
-  lifecycle: "draft"                 # FIPS 206 IPD (Aug 2025; final pending)
+  lifecycle: "draft"                 # published draft; final specification pending
 
 # Selected for standardisation, specification pending
+- id: "FN-DSA"
+  category: "asymmetric/signature/stateless"
+  lifecycle: "selected"              # NIST selected July 2022; FIPS 206 in development, no public draft yet
+
 - id: "HQC"
   category: "asymmetric/kem"
   lifecycle: "selected"              # NIST selected March 2025; FIPS pending ~2027

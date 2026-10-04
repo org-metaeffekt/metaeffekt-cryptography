@@ -145,7 +145,7 @@ Algorithms that NIST/BSI fully approve but CNSA excludes:
 | `ML-KEM-768` | ✅ Recommended | ✅ Recommended (hybrid) | 🚫 Not in CNSA | CNSA mandates ML-KEM-1024 |
 | `ML-DSA-44` / `ML-DSA-65` | ✓ Approved / ✅ Recommended | ✅ Recommended | 🚫 Not in CNSA | CNSA mandates ML-DSA-87 |
 | `SLH-DSA-*` (all variants) | ✓ Approved | ✅ Recommended | 🚫 Not in CNSA | SLH-DSA not in CNSA suite |
-| `FN-DSA-512` / `FN-DSA-1024` | ⚠ Conditional | — Not yet evaluated | 🚫 Not in CNSA | FIPS 206 IPD; CNSA mandates ML-DSA-87 |
+| `FN-DSA-512` / `FN-DSA-1024` | ⚠ Conditional | — Not yet evaluated | 🚫 Not in CNSA | FIPS 206 in development (no public draft); CNSA mandates ML-DSA-87 |
 
 **Action:** For US National Security Systems (NSS), only the CNSA 2.0 algorithm
 suite is permitted. For civilian systems, NIST and BSI guidance is sufficient.

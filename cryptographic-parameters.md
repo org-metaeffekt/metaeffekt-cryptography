@@ -170,7 +170,7 @@ Parameters that select among structural variants or sub-primitive choices for an
 | **Type** | enumeration |
 | **Canonical values** | `ECB` `CBC` `CFB1` `CFB8` `CFB64` `CFB128` `OFB` `CTR` `XTS` `CTS` `GCM` `CCM` `OCB` `GCM-SIV` `SIV` `CTR-HMAC-SHA1` |
 | **Implementation note** | ECB leaks block patterns — never use for >1 block. XTS for disk encryption. GCM/CCM/OCB provide AEAD. SIV nonce-misuse resistant. |
-| **Used in** | AES, 3DES, DES, Blowfish, Twofish, CAMELLIA, ARIA, SEED, SM4, RC2, RC5, RC6, CAST5, CAST6, IDEA, Serpent, GOST38147 |
+| **Used in** | AES, 3DES, DES, Blowfish, Twofish, CAMELLIA, ARIA, SEED, SM4, RC2, RC5, RC6, CAST5, CAST6, IDEA, Serpent, GOST-28147 |
 
 ---
 
@@ -902,7 +902,7 @@ Parameters specifying padding schemes and initialisation vector handling.
 | **Type** | enumeration |
 | **Canonical values** | `PKCS7` `PKCS5` `ISO10126` `ANSIX923` `ZeroPad` `NoPad` `OAEP` `PSS` `PKCS1v15` |
 | **Implementation note** | PKCS7 standard for block ciphers. PKCS1v15 for RSA signing/encryption (PSS preferred). No-padding only for CTR/OFB/stream modes. |
-| **Used in** | AES-CBC, AES-ECB, CAMELLIA, ARIA, SEED, SM4, GOST38147, Blowfish, 3DES, RSAES-PKCS1, RSAES-OAEP, RSASSA-PKCS1, RSASSA-PSS |
+| **Used in** | AES-CBC, AES-ECB, CAMELLIA, ARIA, SEED, SM4, GOST-28147, Blowfish, 3DES, RSAES-PKCS1, RSAES-OAEP, RSASSA-PKCS1, RSASSA-PSS |
 
 ---
 
@@ -1336,7 +1336,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 
 ---
 
-### FN-DSA / Falcon Parameters (FIPS 206 IPD)
+### FN-DSA / Falcon Parameters (FIPS 206 pending)
 
 
 #### `{signingMode}` (pure vs. pre-hash signing)
@@ -1392,7 +1392,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 | **Description** | FN-DSA/Falcon uses FFT-based Gaussian sampling over NTRU lattices, relying on floating-point arithmetic. Non-IEEE-754-compliant execution (extended precision x87 mode, flush-to-zero, non-standard rounding) produces a distribution that deviates from the specification, potentially weakening or breaking security. |
 | **Type** | enumeration |
 | **Canonical values** | `ieee754-strict` `ieee754-relaxed` `integer-emulation` |
-| **Implementation note** | This is a unique parameter class with no analogue in any other standardised algorithm. FIPS 206 is still in the Initial Public Draft (IPD) stage as of Q1 2026 and does not yet mandate a specific arithmetic model; ongoing implementation discussions (PQC forum, Dec 2025) concern whether IEEE 754 compliance or integer-only Gaussian sampling should be required for FIPS 140-3 validation. Integer emulation is slower but portable, deterministic, and verifiable without floating-point test infrastructure. |
+| **Implementation note** | This is a unique parameter class with no analogue in any other standardised algorithm. FIPS 206 is still in development (no public draft published as of October 2026) and does not yet mandate a specific arithmetic model; ongoing implementation discussions (PQC forum, Dec 2025) concern whether IEEE 754 compliance or integer-only Gaussian sampling should be required for FIPS 140-3 validation. Integer emulation is slower but portable, deterministic, and verifiable without floating-point test infrastructure. |
 | **Used in** | FN-DSA |
 
 ---
@@ -1440,7 +1440,7 @@ All 12 parameter sets (SHA-2 and SHAKE variants share identical structural param
 ---
 
 
-#### FN-DSA Size Reference (FIPS 206 IPD)
+#### FN-DSA Size Reference (FIPS 206 pending)
 
 | Parameter set | n | q | pk (bytes) | sk (bytes) | sig (bytes, max) | NIST level |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -1727,8 +1727,8 @@ The effective security strength of a cryptographic operation is determined by th
     - [CSRC landing page](https://csrc.nist.gov/pubs/fips/205/final)
     - [PDF](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.205.pdf)
     - DOI: [10.6028/NIST.FIPS.205](https://doi.org/10.6028/NIST.FIPS.205)
-- NIST FIPS 206 — FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm / Falcon; **Initial Public Draft** — IPD submitted for Department of Commerce clearance August 2025; final standard expected late 2026 / early 2027)
-    - [CSRC landing page](https://csrc.nist.gov/pubs/fips/206/ipd)
+- NIST FIPS 206 — FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm / Falcon; **in development** — no public draft published as of 2026-10-04; NIST has announced no publication date)
+    - [NIST PQC standardization page](https://csrc.nist.gov/projects/post-quantum-cryptography/post-quantum-cryptography-standardization) (lists FIPS 206 as "in development")
     - Interim reference: Falcon Round 3.1 specification at [falcon-sign.info](https://falcon-sign.info/)
 
 ### NIST special Publications

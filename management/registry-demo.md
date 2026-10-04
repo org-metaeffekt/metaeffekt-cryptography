@@ -241,7 +241,7 @@ for fn in sorted(glob.glob('ae-pattern-validator/src/main/resources/registry/cr-
             print(f\"{e['id']:30s}  category={e.get('category')}\")"
 ```
 
-Expected output: FN-DSA (FIPS 206 IPD), MLDSA44/65/87 (LAMPS Composite
+Expected output: FN-DSA (FIPS 206 pending), MLDSA44/65/87 (LAMPS Composite
 ML-DSA draft), Ascon-AEAD128 / Ascon-Hash256 / Ascon-XOF128 / Ascon-CXOF128
 (SP 800-232 draft), XChaCha20 (IETF I-D), BLS, OPAQUE-3DH, cdx:X3DH.
 

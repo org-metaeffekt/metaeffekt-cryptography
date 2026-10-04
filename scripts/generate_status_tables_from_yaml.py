@@ -622,7 +622,7 @@ PQC_ROW_SPEC = [
     ("KEMs",       "standardised / selected", "KEM", {"standardised", "selected", "draft"}),
     ("KEMs",       "candidate / broken",      "KEM", {"candidate", "broken", "withdrawn", "legacy"}),
     ("Signatures", "standardised",            "SIG", {"standardised"}),
-    ("Signatures", "draft",                   "SIG", {"draft"}),
+    ("Signatures", "selected / draft",        "SIG", {"selected", "draft"}),
     ("Signatures", "candidate",               "SIG", {"candidate"}),
     ("Signatures", "broken",                  "SIG", {"broken", "withdrawn", "legacy"}),
 ]

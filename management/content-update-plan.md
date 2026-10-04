@@ -120,6 +120,22 @@ Phase 9 (Style Conventions)           ── independent; applies to all markdow
 - [ ] Identify new algorithms added since last sync
 - [ ] Update `cr-cdx.yaml`, tests, and coverage table if needed
 
+> [!NOTE]
+> **Ingested 2026-10-04 — upstream commit `24d7698` (2026-08-15).** Seven GOST variants and the GOST curve OIDs.
+> No new canonical family was needed: `GOSTR3410-2012-(256|512)` gained a `keyLength` parameter (per-value
+> signature-with-digest OIDs `1.2.643.7.1.1.3.2/.3` plus public-key OIDs `1.2.643.7.1.1.1.1/.2`, RFC 9215);
+> `GOSTR3411-2012-(256|512)` already resolved; `HMAC-GOSTR3411-2012-(256|512)` was re-modelled (tokenised
+> prefix, `outputLength` parameter carrying the RFC 7836 OIDs — the August entry had an unresolvable one-token
+> prefix and an oidMap keyed by full pattern); `Magma` resolved; `Kuznyechik` resolves via the alias on
+> `Grasshopper`. The compact forms `GOST28147[-{mode}][-{padding}]` / `GOST28147_MAC` are new `cr-cdx.yaml`
+> aliases — upstream had silently fixed the `GOST38147` typo on 2026-05-02, which the 2026-07-12 sweep missed;
+> the typo aliases stay as deprecated entries for older tooling. New canonical `GOST-28147-MAC` (RFC 4357
+> `1.2.643.2.2.22`) gives the MAC alias a target. The 12 GOST curve entries in `cr-ecc-curves.yaml` now carry
+> their `oid:` (CryptoPro `1.2.643.2.2.35.1-3` / `.36.0-1`, TC26 `1.2.643.7.1.2.1.1.1-4` / `.2.1-3`; RFC 4357,
+> RFC 7836, RFC 9215 — all verified against the RFC texts), previously present only in remarks. Registry:
+> **409 entries / 674 OIDs**; catalogue gains `hmac-gostr3411`, `hmac-gostr3411-2012`, `gost-28147-mac` rows
+> and the curve OIDs. Upstream `lastUpdated` still reads 2026-02-24, so track the commit log, not that field.
+
 ### 2.2 SPDX Algorithm List
 
 > [!NOTE]
@@ -383,6 +399,21 @@ Reconcile these numbers across all documents:
 > triage, and (d) the proposal's open Question 3 (OIDs bound to parameter sets) is already
 > solved here by parameter-value-level OIDs (406 entries / 658 OIDs). **No registry action
 > today** — proposal is WIP with no PR; watch items tracked in §5 of the review document.
+
+> [!NOTE]
+> **Currency verification (2026-10-04).** **FIPS 206 (FN-DSA):** NIST's PQC standardisation page lists it as
+> "in development"; `csrc.nist.gov/pubs/fips/206/ipd` returns 404 and the document is absent from drafts open
+> for comment. The repository had called it an "Initial Public Draft" in ~20 places (README link, catalogue,
+> status, parameters, glossary, lifecycle taxonomy, diagram) — corrected to "in development, no public draft
+> published"; the unverifiable "submitted for Department of Commerce clearance Aug 2025 / final expected late
+> 2026" timeline was dropped; `FN-DSA` moved from `lifecycle: draft` to `selected` (vocabulary reserves `draft`
+> for a published draft), the PQC lifecycle table row became "selected / draft". **NIST PQC news:** nothing after
+> 2026-05-14. **CycloneDX:** `cryptography-defs.json` commit 2026-08-15 (`24d7698`) adds GOST R 34.10/34.11-2012,
+> HMAC-GOSTR3411-2012, Magma, Kuznyechik, GOST28147_MAC variants and TC26 curve OIDs — **ingested 2026-10-04**
+> (see the Phase 2.1 note). **SPDX:** `pqcClass` **merged 2026-09-09**
+> (PR #89, docs only, no new identifiers; all 127 ids covered) — watch item "#73 merged" in
+> [`spdx-pqc-property-review.md`](spdx-pqc-property-review.md) §5 is triggered; 2026-07-15 added
+> `operationMode`/`keyLength` parameters to 15 block-cipher YAMLs (metadata only).
 
 | Source | Priority | Status | Rationale |
 |:---|:---|:---|:---|

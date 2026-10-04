@@ -202,3 +202,5 @@ Entries that stress the proposed six-value enum:
 of 2026-07-12 in `content-update-plan.md` §8.1 explicitly corrected: no FIPS 206 initial public
 draft has been published. The `cr-pqc.yaml` `FN-DSA` entry carries `lifecycle: draft`. Both
 should be re-checked against the lifecycle taxonomy in a separate pass; not touched here.
+
+**Resolved 2026-10-04:** NIST's PQC standardisation page lists FIPS 206 as "in development" and `csrc.nist.gov/pubs/fips/206/ipd` returns 404, so no initial public draft exists. All "FIPS 206 IPD" wording was corrected repository-wide and `FN-DSA` moved to `lifecycle: selected` (the vocabulary reserves `draft` for a published draft).

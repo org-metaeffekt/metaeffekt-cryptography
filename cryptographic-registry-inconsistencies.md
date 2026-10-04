@@ -52,9 +52,9 @@ cannot distinguish signature from encryption without additional context.
 | SP 800-56C KDF | `SP800_56C_OneStep[...]` | `SP800-56C-{mode}-{hash}` |
 | IKE PRF | `IKE_PRF_DERIVE[-{hash}]` | `IKEv2-PRF-{hash}` |
 | IKE2 PRF | `IKE2_PRF_PLUS_DERIVE[-{hash}]` | `IKEv2-PRF-{hash}` |
-| GOST 28147 | `GOST38147[-{mode}]` | `GOST-28147-*` |
-| GOST MAC | `GOST38147_MAC` | *(not separately registered)* |
-| GOST HMAC | `GOSTR3411_HMAC` | *(not separately registered)* |
+| GOST 28147 | `GOST28147[-{mode}][-{padding}]` (mis-spelled `GOST38147` upstream until 2026-05-02) | `GOST-28147-*` |
+| GOST MAC | `GOST28147_MAC` (was `GOST38147_MAC`) | `GOST-28147-MAC` |
+| GOST HMAC | `GOSTR3411_HMAC` | `HMAC-GOSTR3411` |
 
 **Issue:** CycloneDX uses underscores as intra-name separators (`SP800_108_CounterKDF`),
 while this repository and most standards literature use dashes (`SP800-108`). Because
@@ -156,6 +156,13 @@ to the same algorithm.
 **Resolution:** Both base prefix (`GOSTR3410`, `GOSTR3411`) and year-qualified prefix
 (`GOSTR3410-2012`, `GOSTR3411-2012`) are registered as separate families. The base
 prefix matches when no year suffix is provided.
+
+**Update 2026-08-15 (upstream):** CycloneDX added the year-qualified forms itself —
+`GOSTR3410-2012-(256|512)`, `GOSTR3411-2012-(256|512)`, `HMAC-GOSTR3411-2012-(256|512)` —
+alongside the unqualified ones, so both spellings now exist upstream and both resolve here
+(ingested 2026-10-04). Note the asymmetry CycloneDX keeps: the unqualified `GOSTR3410` /
+`GOSTR3411` cite RFC 4357 (the 2001 / 94 algorithms), so they are *not* synonyms of the
+2012 forms.
 
 ---
 
@@ -289,7 +296,7 @@ The following algorithms are in this repository's taxonomy but **not** in the Cy
 
 | Algorithm | This repo pattern | Notes |
 |-----------|-------------------|-------|
-| FN-DSA (Falcon) | `FN-DSA-[512\|1024]` | FIPS 206 IPD; expected after final publication |
+| FN-DSA (Falcon) | `FN-DSA-[512\|1024]` | FIPS 206 in development (no public draft yet); expected after final publication |
 | HQC | `HQC-[128\|192\|256]` | Selected March 2025; FIPS pending ~2027 |
 | FrodoKEM | `FrodoKEM-[640\|976\|1344]-*` | NIST Round 3 alternate; not standardised |
 | BIKE | `BIKE-[L1\|L3\|L5]` | NIST Round 4 not selected |
@@ -347,8 +354,10 @@ with a `note` field explaining the preferred canonical name. The validator emits
 | `IKE1_PRF_DERIVE[-{hash}]` | `cdx:IKE1_PRF_DERIVE` | `IKEv2-PRF` | Underscore form |
 | `IKE1_Extended_DERIVE[-{hash}]` | `cdx:IKE1_Extended_DERIVE` | `IKEv2-PRF` | Underscore form |
 | `IKE2_PRF_PLUS_DERIVE[-{hash}]` | `cdx:IKE2_PRF_PLUS_DERIVE` | `IKEv2-PRF` | Underscore form |
-| `GOST38147[-{mode}]` | `cdx:GOST38147` | `GOST-28147` | CycloneDX compact form |
-| `GOST38147_MAC` | `cdx:GOST38147_MAC` | `GOST-28147` | Underscore form |
+| `GOST28147[-{mode}][-{padding}]` | `cdx:GOST28147` | `GOST-28147` | CycloneDX compact form (upstream fixed the `GOST38147` typo 2026-05-02) |
+| `GOST28147_MAC` | `cdx:GOST28147_MAC` | `GOST-28147-MAC` | Underscore form |
+| `GOST38147[-{mode}]` | `cdx:GOST38147` | `GOST-28147` | Historical upstream typo, retained for older tooling |
+| `GOST38147_MAC` | `cdx:GOST38147_MAC` | `GOST-28147-MAC` | Historical upstream typo, retained for older tooling |
 | `GOSTR3411_HMAC` | `cdx:GOSTR3411_HMAC` | `HMAC` + `GOSTR3411` | Underscore form |
 | `TLS1-PRF[-RFC7627]` | `cdx:TLS1-PRF` | *(none)* | TLS 1.0/1.1 deprecated per RFC 8996 |
 
@@ -509,7 +518,7 @@ in CycloneDX. They are registered in `cr-spdx.yaml` without deprecation:
 |----------|-------|--------|
 | **CycloneDX** | | |
 | Naming convention conflicts (RSA, AES-Wrap, TLS13, case) | 5 | Resolved via aliases |
-| CycloneDX naming alternatives with canonical equivalent | 29 | Resolved via deprecated cdx families (cr-cdx.yaml) |
+| CycloneDX naming alternatives with canonical equivalent | 31 | Resolved via deprecated cdx families (cr-cdx.yaml) |
 | CycloneDX-only families (no canonical equivalent) | 4 | Registered in cr-cdx.yaml (not deprecated): PBMAC1, X3DH, J-PAKE, WOTSP |
 | Remaining CycloneDX template notation gaps | 0 | All instance patterns covered |
 | **SPDX** | | |

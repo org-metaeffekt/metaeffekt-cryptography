@@ -508,7 +508,7 @@ A NIST/CCCS-maintained living document interpreting the FIPS 140-3 standard and 
 In OpenSSL 3.x, a loadable module that contains only FIPS 140-3 validated cryptographic algorithm implementations. When the FIPS provider is loaded, OpenSSL restricts itself to approved algorithms and operates within the validated cryptographic module boundary. OpenSSL 3.5.0 added ML-KEM, ML-DSA, and SLH-DSA to the FIPS provider.
 
 **FN-DSA — FFT over NTRU-Lattice-Based Digital Signature Algorithm**
-The NIST name for the Falcon signature scheme. Based on lattice mathematics (NTRU) and uses Fast Fourier Transform computations. Produces the smallest signatures of the NIST PQC signature algorithms. Requires strict IEEE 754 floating-point arithmetic in the reference implementation; integer-only variants are under development for constrained platforms. **Status:** FIPS 206 is still in the Initial Public Draft (IPD) stage as of Q1 2026 — the IPD was submitted for Department of Commerce clearance in August 2025; the final standard is expected late 2026 or early 2027. FIPS 203 (ML-KEM), 204 (ML-DSA), and 205 (SLH-DSA) were published as final standards in August 2024.
+The NIST name for the Falcon signature scheme. Based on lattice mathematics (NTRU) and uses Fast Fourier Transform computations. Produces the smallest signatures of the NIST PQC signature algorithms. Requires strict IEEE 754 floating-point arithmetic in the reference implementation; integer-only variants are under development for constrained platforms. **Status:** FIPS 206 is still in development as of October 2026 — NIST's PQC standardisation page lists it as "in development"; no public draft has been published and no publication date has been announced. FIPS 203 (ML-KEM), 204 (ML-DSA), and 205 (SLH-DSA) were published as final standards in August 2024.
 
 **FN-DSA-512 / FN-DSA-1024**
 The two parameter sets for FN-DSA: 512 targets 128-bit security (NIST Level 1); 1024 targets 256-bit security (NIST Level 5).
@@ -957,7 +957,7 @@ A series of NIST publications providing technical analysis and status reports. I
 The US government body overseeing Common Criteria evaluations for IT products under the CCEVS programme. Products providing cryptographic services for National Security Systems require NIAP or NSA validation in addition to FIPS 140.
 
 **NIST — National Institute of Standards and Technology**
-A US government agency that develops cryptographic standards, guidelines, and algorithm recommendations. Publishes FIPS standards and SP 800-series guidance. Managed the Post-Quantum Cryptography standardisation process (2016–present) that produced ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205) in August 2024. FN-DSA (FIPS 206) is in the Initial Public Draft stage. HQC was selected as a fifth PQC standard in March 2025.
+A US government agency that develops cryptographic standards, guidelines, and algorithm recommendations. Publishes FIPS standards and SP 800-series guidance. Managed the Post-Quantum Cryptography standardisation process (2016–present) that produced ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205) in August 2024. FN-DSA (FIPS 206) is in development; no public draft has been published. HQC was selected as a fifth PQC standard in March 2025.
 
 **Nonce**
 A "number used once" — a random or counter value that must never be repeated for a given key. In AEAD ciphers (GCM, ChaCha20-Poly1305), reusing a nonce completely breaks security. In signatures, a random nonce is required for ECDSA (not for EdDSA, which is deterministic).
@@ -1109,7 +1109,7 @@ A 2014 padding-oracle attack against CBC mode in SSL 3.0 that recovers plaintext
 A CPU subsystem that provides hardware counters for events such as cache misses, branch mispredictions, and instruction counts. PMU measurements can be used to detect timing side-channel vulnerabilities in cryptographic implementations (e.g., the KyberSlash analysis used PMU tooling to demonstrate cache-timing leaks).
 
 **Post-Quantum Cryptography (PQC)**
-Cryptographic algorithms designed to resist attacks from quantum computers. Classical algorithms (RSA, ECDSA, ECDH) are broken by Shor's algorithm on a sufficiently powerful quantum computer. NIST published three PQC standards in August 2024: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205). FN-DSA (FIPS 206) is in the Initial Public Draft stage (expected late 2026/early 2027). HQC was selected as a fifth PQC standard in March 2025 (FIPS standard pending).
+Cryptographic algorithms designed to resist attacks from quantum computers. Classical algorithms (RSA, ECDSA, ECDH) are broken by Shor's algorithm on a sufficiently powerful quantum computer. NIST published three PQC standards in August 2024: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205). FN-DSA (FIPS 206) is in development (no public draft published as of October 2026). HQC was selected as a fifth PQC standard in March 2025 (FIPS standard pending).
 
 **PQCA — Post-Quantum Cryptography Alliance**
 A Linux Foundation project bringing together industry and academic stakeholders to accelerate the development, testing, and deployment of production-quality post-quantum cryptographic implementations. Members include AWS, Cisco, Google, IBM, and others. The PQ Code Package (PQCP) initiative operates under PQCA.

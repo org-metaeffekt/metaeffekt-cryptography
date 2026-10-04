@@ -264,7 +264,7 @@
 <text x="700" y="1441" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{deterministicSigning}</text>
 <text x="700" y="1455" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">hedged | deterministic</text>
 <rect x="32" y="1554" width="316" height="298" fill="#f0f6ff" stroke="#cccccc" stroke-width="1" rx="3"/>
-<text x="40" y="1571" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">FN-DSA  (FIPS 206 IPD / Falcon)</text>
+<text x="40" y="1571" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a1a1a">FN-DSA  (FIPS 206 pending / Falcon)</text>
 <rect x="40" y="1588" width="300" height="34" fill="#ffffff" stroke="#cccccc" stroke-width="1" rx="2"/>
 <text x="48" y="1601" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a1a">{parameterSet}</text>
 <text x="48" y="1615" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555555">FN-DSA-512 | FN-DSA-1024</text>

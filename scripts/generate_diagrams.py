@@ -294,7 +294,7 @@ def build_parameters_diagram() -> str:
                 Param("{context}", "domain separation"),
                 Param("{deterministicSigning}", "hedged | deterministic"),
             ], fill="#f0f6ff"),
-            Subsection("FN-DSA  (FIPS 206 IPD / Falcon)", [
+            Subsection("FN-DSA  (FIPS 206 pending / Falcon)", [
                 Param("{parameterSet}", "FN-DSA-512 | FN-DSA-1024"),
                 Param("{n}", "ring dimension (512 | 1024)"),
                 Param("{q}", "modulus (12289)"),
