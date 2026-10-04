@@ -632,15 +632,42 @@ def _pqc_instantiation_count(entry: dict) -> int:
     """Number of distinct parameter-set instantiations an entry defines in the
     YAML, used as the counting unit for the PQC lifecycle table.
 
+    An instantiation is counted only when it is expressed in the entry's own
+    parameter vocabulary — the raw size of ``oidMap`` is NOT a usable proxy since
+    the 2026-08 OID coverage audit: vendor arcs enumerate OID leaves (SNOVA 68,
+    MQOM 60, FrodoKEM 6 for 3 parameter sets) and duplicate the same parameter
+    set under BouncyCastle and OQS names.
+
     Rule (first match wins):
-      1. len(oidMap)                       — one OID per parameter set
+      1. distinct OID-bearing instantiations spelled in declared parameter values:
+           - ``oidMap`` keys whose dash-separated tokens all match a declared
+             parameter value of the entry (e.g. ``SHA2-128s``, ``512-90s``)
+           - parameter values that carry their own ``oid``/``oids`` (e.g. ML-KEM 512)
+         counted as one set of patterns (a value and a key never coincide)
       2. len(parameterSet parameter.values) — explicit parameter-set enumeration
       3. len(first enumerated parameter.values)
       4. 1                                  — single, unparameterised instantiation
     """
-    if entry.get("oidMap"):
-        return len(entry["oidMap"])
     params = entry.get("parameters") or []
+    declared = set()
+    for p in params:
+        for v in p.get("values") or []:
+            val = v.get("value") if isinstance(v, dict) else v
+            if val is not None:
+                declared.add(str(val).lower())
+
+    instantiations: set[str] = set()
+    for key in (entry.get("oidMap") or {}):
+        tokens = str(key).split("-")
+        if tokens and all(t.lower() in declared for t in tokens):
+            instantiations.add(str(key).lower())
+    for p in params:
+        for v in p.get("values") or []:
+            if isinstance(v, dict) and (v.get("oid") or v.get("oids")):
+                instantiations.add(str(v.get("value")).lower())
+    if instantiations:
+        return len(instantiations)
+
     for p in params:
         if p.get("name") == "parameterSet" and p.get("values"):
             return len(p["values"])
@@ -705,10 +732,16 @@ def render_pqc_lifecycle_counts() -> str:
         "`scripts/generate_status_tables_from_yaml.py`; counts parameter-set "
         "instantiations bucketed by `category × lifecycle` "
         "(see [`management/registry-lifecycle-taxonomy.md`](management/registry-lifecycle-taxonomy.md)). "
+        "An instantiation is counted only when it is spelled in the entry's own "
+        "parameter vocabulary (an OID-bearing parameter value, or an `oidMap` key "
+        "composed of declared parameter values such as `SHA2-128s` or `512-90s`); "
+        "vendor OID arcs that enumerate leaves beyond the declared parameters "
+        "(BouncyCastle / OQS maps added by the OID coverage audit) do not inflate it. "
         "This is the YAML-faithful view and may exceed the consolidated "
         "post-quantum rows in the Summary Counts table above, which count "
         "representative catalogue rows: the registry enumerates instantiations "
-        "(e.g. Classic McEliece systematic / `f` variants, FAEST `s` / `f` × levels) "
+        "(e.g. Classic McEliece systematic / `f` variants, FAEST `s` / `f` × levels, "
+        "the withdrawn Round 3 Kyber `90s` / Dilithium `aes` / SPHINCS+ `robust` variants) "
         "that the catalogue prose collapses._"
     )
     return "\n".join(lines)
