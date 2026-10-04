@@ -1453,6 +1453,94 @@ def check_ascii_taxonomy_coverage(families: list[dict], base: Path) -> bool:
 # Main
 # ---------------------------------------------------------------------------
 
+def _value_oids(v: dict) -> list[str]:
+    out = []
+    if v.get("oid"):
+        out.append(v["oid"])
+    out.extend(v.get("oids") or [])
+    return out
+
+
+def check_curve_oid_duplication(families: list[dict]) -> bool:
+    """Check 20: curve OIDs carried on algorithm `ellipticCurve` values must equal the
+    OID of the first-class curve entry of the same name.
+
+    Curve OIDs have their home on the `curve/*` entries (cr-ecc-curves.yaml). The EC
+    algorithm entries (ECDSA, ECDH, ...) still carry a copy of some of them on their
+    inline `ellipticCurve` values — a known, documented duplication that exists so
+    `--oid` keeps resolving those OIDs to the algorithm pattern until the validator
+    resolves curve-typed parameters against the curve registry (plan §8.4). This check
+    pins the two copies together so they cannot drift:
+
+      FAIL  value OID present on a curve entry (or umbrella value) of the same name
+            but with a different OID
+      INFO  value OID whose curve entry carries no OID at all (e.g. ECDH Curve25519
+            carries the RFC 8410 id-X25519 *algorithm* OID; the curve has no OID)
+      INFO  value names with an OID but no curve entry of that name (X25519, publicKey)
+    """
+    curve_oids: dict[str, set[str]] = {}
+    for fam in families:
+        if not str(fam.get("category", "")).startswith("curve"):
+            continue
+        entry_oids = set()
+        if fam.get("oid"):
+            entry_oids.add(fam["oid"])
+        for v in (fam.get("oidMap") or {}).values():
+            entry_oids.update(v if isinstance(v, list) else [v])
+        names = [fam["id"]] + ["-".join(a) for a in fam.get("aliases") or []]
+        prefix = "-".join(fam.get("prefix") or [fam["id"]])
+        for n in names:
+            curve_oids.setdefault(n.lower(), set()).update(entry_oids)
+        # umbrella entries (P-{size}, K-{size}, B-{size}, W-{size}): one name per value
+        for p in fam.get("parameters") or []:
+            for v in p.get("values") or []:
+                if isinstance(v, dict):
+                    curve_oids.setdefault(f"{prefix}-{v['value']}".lower(), set()).update(_value_oids(v))
+
+    mismatches, no_curve_oid, no_curve = [], [], []
+    checked = 0
+    for fam in families:
+        if str(fam.get("category", "")).startswith("curve"):
+            continue
+        for p in fam.get("parameters") or []:
+            if p.get("name") != "ellipticCurve":
+                continue
+            for v in p.get("values") or []:
+                if not isinstance(v, dict):
+                    continue
+                oids = _value_oids(v)
+                if not oids:
+                    continue
+                name = str(v["value"])
+                key = name.lower()
+                if key not in curve_oids:
+                    no_curve.append(f"{fam['id']} {name} ({', '.join(oids)})")
+                    continue
+                checked += 1
+                expected = curve_oids[key]
+                if not expected:
+                    no_curve_oid.append(f"{fam['id']} {name} ({', '.join(oids)})")
+                elif not set(oids) <= expected:
+                    mismatches.append(f"{fam['id']} {name}: value {', '.join(oids)} vs curve entry {', '.join(sorted(expected))}")
+
+    ok = not mismatches
+    if ok:
+        print(f"  OK    {checked} ellipticCurve value OID(s) agree with their curve entries")
+    else:
+        print(f"  FAIL  {len(mismatches)} ellipticCurve value OID(s) diverge from the curve entry of the same name:")
+        for m in mismatches:
+            print(f"          {m}")
+    if no_curve_oid:
+        print(f"  INFO  {len(no_curve_oid)} value OID(s) whose curve entry carries no OID (algorithm identifier, not a curve OID):")
+        for m in no_curve_oid:
+            print(f"          {m}")
+    if no_curve:
+        print(f"  INFO  {len(no_curve)} OID-bearing value(s) with no curve entry of that name (not a duplication):")
+        for m in no_curve:
+            print(f"          {m}")
+    return ok
+
+
 def main():
     if len(sys.argv) > 1:
         base = Path(sys.argv[1]).resolve()
@@ -1507,6 +1595,8 @@ def main():
                                                        lambda: check_category_vocab_matches_doc(families, base)),
         ("19. Category top-levels represented in the ## Taxonomy tree",
                                                        lambda: check_ascii_taxonomy_coverage(families, base)),
+        ("20. ellipticCurve value OIDs vs curve entries",
+                                                       lambda: check_curve_oid_duplication(families)),
     ]
 
     for title, fn in checks:

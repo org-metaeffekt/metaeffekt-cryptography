@@ -8,7 +8,7 @@
 # management/content-update-plan.md §8.4).
 #
 # Fast checks (always run):
-#   1. scripts/validate_consistency.py        — 14 cross-file consistency checks
+#   1. scripts/validate_consistency.py        — 20 cross-file consistency checks
 #   2. generate_status_tables_from_yaml.py     — autogen-freshness (--check)
 #
 # Slow check (opt-in with --tests / --all):
@@ -53,7 +53,7 @@ run_step() {
   echo
 }
 
-run_step "Consistency validator (16 checks)" \
+run_step "Consistency validator (20 checks)" \
   python3 scripts/validate_consistency.py
 
 run_step "Autogen tables up to date" \
