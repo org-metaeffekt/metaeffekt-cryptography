@@ -128,6 +128,7 @@ Phase 9 (Style Conventions)           ── independent; applies to all markdow
 - [ ] Fetch latest SPDX YAML from GitHub
 - [ ] Compare against `SpdxCoverageTest.java`
 - [ ] Update `cr-spdx.yaml`, tests, and coverage table if needed
+- [ ] Track upstream metadata proposals (issues #43, #72, #73) — see [`spdx-pqc-property-review.md`](spdx-pqc-property-review.md) §5 for the watch items and their triggers
 
 ---
 
@@ -152,6 +153,27 @@ Phase 9 (Style Conventions)           ── independent; applies to all markdow
 
 - [ ] Run `mvn test`, capture results
 - [ ] Update `management/validator-test-report.md` counts and taxonomy breakdown
+
+> [!NOTE]
+> **Suite repaired and re-synced (2026-10-04).** `mvn test` had one failure since the pre-standard PQC
+> entries landed on 2026-08-05: `AlgorithmRegistryTest.crossValidation_allParameterValuesValidate`
+> rejected 42 hyphenated parameter values (`Kyber` `512-90s`, `Dilithium` `2-aes`, 36 `SPHINCS+`
+> `sha2-128s-robust`-style values) because a parameter value is a single pattern segment. Fix: the
+> three entries in `cr-pqc.yaml` are remodelled as positional parameters — `parameterSet` + `variant`
+> (`90s` / `aes`) for Kyber and Dilithium, `hashFamily` × `parameterSet` × `variant` (`robust` /
+> `simple`) for SPHINCS+ — with the 42 combination OIDs moved onto `oidMap` keys; the unique-OID
+> count is unchanged (658). Two registry-schema gaps surfaced and were closed in the Java loader:
+> per-value `oids:` lists were silently ignored (never indexed for `--oid` lookup), and `oidMap`
+> values could not carry more than one OID (the 12 sha2/shake *simple* SPHINCS+ combinations have a
+> BouncyCastle and an OQS OID). `oidMap` values now accept a string or a list (first = primary, all
+> indexed); `validate_consistency.py` and the registry README schema follow. Suite: **826 tests,
+> 16 classes, 0 failures** (was reported as 788 in the README and 806 in this report while the
+> suite actually had 813). Check 8 now also compares the report against the README claim and, when
+> `ae-pattern-validator/target/surefire-reports` exists, against the real per-class counts. A third
+> index gap closed on the same pass: composite entries (no `prefix`) were skipped by the OID index, so
+> the 13 Composite ML-DSA X.509 OIDs (`2.16.840.1.114027.80.8.1.*`) never resolved via `--oid` or in
+> certificate analysis — the runtime log said "645 OIDs indexed" against 658 in the YAML. They are now
+> indexed under their entry id, and the log reports 658.
 
 ---
 
@@ -343,8 +365,28 @@ Reconcile these numbers across all documents:
 > - **SPDX** (`spdx/cryptographic-algorithm-list`, branch `main`, no releases, 128 algorithm YAMLs) — most recent commit **2026-06-03** (the `gostr3412-2015` filename-bug fix, already absorbed in our 2026-06-16 resync); recent work added `cryptoClass`/`cryptoSubClass` **metadata** properties (PR #71), not new algorithm identifiers. Our resync post-dates the last upstream commit → **current, nothing to ingest.**
 > - **NIST PQC** — main mover: the **additional-signatures on-ramp advanced to Round 3** with **9 candidates** (FAEST, HAWK, MAYO, MQOM, QR-UOV, SDitH, SNOVA, SQIsign, UOV) on **2026-05-14** (**NIST IR 8610**, final). These are candidates, not standards → no YAML entry; a glossary/roadmap knowledge item only. **Status corrections/confirmations:** **FIPS 206 (FN-DSA)** — *no IPD published yet* (still in-development; absent from Drafts-Open-for-Comment — corrects the 2026-07-11 note's "still IPD"); **FIPS 207 (HQC)** — no draft yet (selected 2025-03-11; finalisation targeted ~2027); **NIST IR 8547** — still IPD, no final; **FIPS 203/204/205** — no revised standards (FIPS 204 errata note refreshed 2026-02-23, FIPS 203 note 2025-11-17). PIV drafts **SP 800-73-6 / 800-78-6** (integrating ML-DSA/ML-KEM) are open for comment — adjacent, out of scope here.
 
+> [!NOTE]
+> **Currency verification (2026-09-02), SPDX only.** The 2026-07-12 verdict ("SPDX current,
+> nothing to ingest") still holds for the *algorithm identifiers*, but upstream **metadata**
+> work has resumed: issue **#73** carries a WIP proposal (posted 2026-08-12, edited 2026-08-26)
+> for a **`pqcClass`** property — cardinality `[0..1]`, six mathematical-family values
+> (Lattice-Based, Code-Based, Multivariate, Hash-Based, Isogeny-Based, MPC-in-the-Head), where
+> presence marks an algorithm post-quantum and absence marks it classical. Two existing entries
+> would gain the property (`mceliece`, `ntruencrypt`) and ten candidates from **#43** would be
+> added (ML-KEM, ML-DSA, FN-DSA, SLH-DSA, Classic McEliece, HQC, BIKE, MAYO, SQIsign, FAEST) —
+> **all ten already exist as canonical families here**, so a merge would mean alias mapping
+> only, no new canonical families. Ingested and reviewed in
+> [`spdx-pqc-property-review.md`](spdx-pqc-property-review.md): ten findings, of which the load-
+> bearing ones are (a) the value set mixes hardness assumptions with the MPC-in-the-Head
+> *construction paradigm*, (b) six values do not cover group-action candidates (ALTEQ, LESS),
+> (c) "absence means not post-quantum" mis-flags symmetric primitives for SBOM quantum-readiness
+> triage, and (d) the proposal's open Question 3 (OIDs bound to parameter sets) is already
+> solved here by parameter-value-level OIDs (406 entries / 658 OIDs). **No registry action
+> today** — proposal is WIP with no PR; watch items tracked in §5 of the review document.
+
 | Source | Priority | Status | Rationale |
 |:---|:---|:---|:---|
+| SPDX issue #73 (`pqcClass` property) | Medium | **Reviewed 2026-09-02**, not ingested (upstream WIP, no PR) — see [`spdx-pqc-property-review.md`](spdx-pqc-property-review.md) | Proposed PQC metadata property for the SPDX algorithm list. Metadata only, no new identifiers; becomes actionable if merged, or if #43 lands the ten candidate identifiers, or if #72 adds `Key-Encapsulation-Mechanism` |
 | ~~FIPS 140-3 IG~~ | — | **Ingested 2026-05-02** (cryptographic-glossary.md entry; companion reference to FIPS 140-3 validation programme) | Implementation guidance for FIPS 140 level requirements; shallow ingestion only — deeper integration with per-algorithm IG-section references deferred to a future pass |
 | ~~TCG Algorithm Registry (Family "2.0" Level 00 Rev 1.35)~~ | — | **Ingested 2026-07-01** (cryptographic-glossary.md entry; `tcg:` identity overlay + `tcg` authority in the YAML registry) | TPM 2.0 algorithm-identifier registry (`TPM_ALG_ID` / `TPM_ECC_CURVE`). Modelled in two layers: (1) **identity** — a `tcg:` overlay (registry/identifier/value) parallel to `iana:`; (2) **posture** — `tcg` is a first-class **authority** (registered like nist/bsi/cnsa; `--authority tcg`), mapping **TCG Legacy → `deprecated`** and **TCG Standard → `approved`** (Assigned → no posture). Curves and block-cipher modes are first-class entries (`cr-ecc-curves.yaml`, category `curve`; generic modes in `cr-symmetric-ciphers.yaml`) so each identifier lives once; SHA/SHA3 ids sit on the umbrella `variant` values. Not mapped: TCG-internal object types (`KEYEDHASH`/`NULL`/`SYMCIPHER`/`XOR`) and bare key-type tags (`RSA`/`ECC`). Human-readable TCG column in the status-comparison tables deferred. **Updated 2026-07-11 to TCG Algorithm Registry Version 2.0 (2025-07-28):** `TPM_` → `TCG_` prefix rebrand — `TCG_` name is now the primary `identifier`, legacy `TPM_` name in `legacyMnemonicId` (both kept; ecosystem/SPDM still use `TPM_`); the `tcg.registry` field renamed to `tcg.section` (values `algorithm`/`ecc-curve`/`*-parameter-set`); added PQC overlays (5 families + ML-KEM/ML-DSA/HashML-DSA parameter sets; SLH-DSA entry-level + remark for the compound hashFamily×parameterSet mapping); ECB → TCG Legacy. 70 tcg identifiers, 3 deprecated postures (3DES, SHA-1, ECB). Verified on JDK 17: all consistency checks pass. **Refined 2026-07-12:** `tcg.section` dropped from all overlays — it is fully derivable from the `mnemonicId` prefix (a registry invariant), so check 17 now derives it (rejecting unrecognized prefixes) instead of reading a stored field; overlay is now `mnemonicId`/`numericId`/`legacyMnemonicId` only |
 | ~~NIST SP 800-53 Rev 5~~ | — | **Ingested 2026-07-11** (glossary entry; `cryptographic-governance.md` §Compliance Controls) | Security and Privacy Controls catalogue (RMF backbone). Governance-layer ingestion — **not** a registry/algorithm source: its crypto controls (SC-13 Cryptographic Protection, SC-12 Key Establishment & Management, SC-8 Transmission, SC-28 At-Rest, SC-17 PKI, IA-7 Crypto Module Auth) mandate cryptography but delegate algorithm selection to FIPS-validated / NSA-approved crypto and the SP 800-52/56/57/63 family. Control statements verified against the PDF in `.downloads/`. Compact controls table added to the governance doc as a compliance driver; no `cr-*.yaml`, OIDs, or protocol composites (nothing to register) |

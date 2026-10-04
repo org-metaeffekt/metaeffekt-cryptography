@@ -56,13 +56,16 @@ def extract_families(yaml_files: list[tuple[str, dict]]) -> list[dict]:
 
 
 def collect_oids(families: list[dict]) -> set[str]:
-    """Collect every unique OID from family, oidMap, implicitParameters, and parameter values."""
+    """Collect every unique OID from family, oidMap (string or list values), implicitParameters,
+    and parameter values (`oid` plus `oids` lists)."""
     oids: set[str] = set()
     for fam in families:
         if fam.get("oid"):
             oids.add(fam["oid"])
         for v in (fam.get("oidMap") or {}).values():
-            oids.add(v)
+            # oidMap values are a single OID or a list of OIDs (divergent arcs)
+            for o in (v if isinstance(v, list) else [v]):
+                oids.add(o)
         for ip in fam.get("implicitParameters") or []:
             if ip.get("oid"):
                 oids.add(ip["oid"])
@@ -425,7 +428,8 @@ def check_oid_format(families: list[dict]) -> bool:
         if fam.get("oid"):
             validate_oid(fam["oid"], "family oid")
         for key, val in (fam.get("oidMap") or {}).items():
-            validate_oid(val, f"oidMap[{key}]")
+            for o in (val if isinstance(val, list) else [val]):
+                validate_oid(o, f"oidMap[{key}]")
         for ip in fam.get("implicitParameters") or []:
             if ip.get("oid"):
                 validate_oid(ip["oid"], f"implicitParam {ip.get('name')}")
@@ -802,7 +806,8 @@ def check_heading_style(base: Path) -> bool:
 
 
 def check_test_count(base: Path) -> bool:
-    """Check 8: total test count in validator-test-report.md vs sum of per-class counts."""
+    """Check 8: validator-test-report.md total vs per-class sum, vs the README claim, and (when a local
+    build exists) vs the surefire per-class counts in ae-pattern-validator/target/surefire-reports."""
     report = base / "management" / "validator-test-report.md"
     if not report.exists():
         print(f"  SKIP  management/validator-test-report.md not found")
@@ -845,12 +850,44 @@ def check_test_count(base: Path) -> bool:
         return True
 
     computed = sum(per_class)
+    ok = True
     if computed == claimed_total:
         print(f"  OK    test total {claimed_total} matches sum of {len(per_class)} per-class counts")
-        return True
     else:
         print(f"  FAIL  claimed total {claimed_total}, but sum of per-class counts is {computed} ({len(per_class)} classes)")
-        return False
+        ok = False
+
+    # Top-level README claim ("NNN tests across M test classes") must match the report total.
+    readme = base / "README.md"
+    if readme.exists():
+        m = re.search(r"(\d+) tests across (\d+) test classes", readme.read_text())
+        if m:
+            readme_total, readme_classes = int(m.group(1)), int(m.group(2))
+            if readme_total == claimed_total and readme_classes == len(per_class):
+                print(f"  OK    README claims {readme_total} tests / {readme_classes} classes — matches report")
+            else:
+                print(f"  FAIL  README claims {readme_total} tests / {readme_classes} classes, "
+                      f"report has {claimed_total} / {len(per_class)}")
+                ok = False
+
+    # When the validator has been built locally, the report must match the actual suite
+    # (surefire per-class counts). Skipped when no surefire output is present.
+    surefire = base / "ae-pattern-validator" / "target" / "surefire-reports"
+    if surefire.is_dir():
+        actual = {}
+        for f in surefire.glob("*.txt"):
+            m = re.search(r"Tests run: (\d+)", f.read_text())
+            if m:
+                actual[f.stem.rsplit(".", 1)[-1]] = int(m.group(1))
+        if actual:
+            actual_total = sum(actual.values())
+            if actual_total == claimed_total and len(actual) == len(per_class):
+                print(f"  OK    surefire reports: {actual_total} tests in {len(actual)} classes — matches report")
+            else:
+                print(f"  FAIL  surefire reports show {actual_total} tests in {len(actual)} classes, "
+                      f"report claims {claimed_total} in {len(per_class)} — regenerate the Test Summary table")
+                ok = False
+    return ok
 
 
 CATEGORY_VOCABULARY = {

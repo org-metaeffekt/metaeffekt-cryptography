@@ -2,7 +2,7 @@
 
 Test statistics for the `ae-pattern-validator` module (Java 17, JUnit 6.1.0-M1,
 Spring Boot 4.1.0-M4). Generated from the test suite against the YAML validation
-registry (17 files, 396 algorithm entries + 370 composite entries, 257 unique OIDs indexed).
+registry (17 files, 406 algorithm entries + 370 composite entries, 658 unique OIDs indexed).
 The composite YAMLs encode authority overlays per entry: cr-tls.yaml (NIST SP 800-52 Rev 2
 + BSI TR-02102-2 v2026-01), cr-ssh.yaml (RFC 9142/8332/8709/etc. + NIST SP 800-131A Rev 2
 + BSI TR-02102-4 v2026-01), cr-ipsec.yaml (RFC 8221/8247 + NIST SP 800-131A Rev 2 +
@@ -23,7 +23,7 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `InstanceValidationSymmetricTest` | 87 | All 77 symmetric families (incl. 2TDEA, RC4-HMAC-EXP) |
 | `InstanceValidationHashMacTest` | 70 | All 40 hash + 10 MAC families (incl. HMAC-MD5, GMAC, compact no-dash SHA/SHA3/HMACSHA alias forms) |
 | `InstanceValidationAsymmetricTest` | 44 | All 37 asymmetric families (incl. DLIES, MLS, SRTP) |
-| `InstanceValidationPqcTest` | 51 | All 40 PQC families (incl. ALTEQ) |
+| `InstanceValidationPqcTest` | 60 | All 49 PQC families (incl. ALTEQ; pre-standard Round 3 names Kyber/Dilithium/Falcon/SPHINCS+ as multi-parameter patterns) |
 | `InstanceValidationKdfTest` | 27 | All 27 KDF families (incl. CatKDF, KeyCombine, SSL30-PRF, TLS10-PRF) |
 | `InstanceValidationRngTest` | 31 | All 25 RNG families (incl. OS entropy APIs) |
 | `TemplateValidationTest` | 33 | Templates, constraints, normalisation, choice groups, fixed identifiers, equivalentPattern |
@@ -33,10 +33,10 @@ Build: `cd ae-pattern-validator && mvn clean verify`
 | `CmsAnalyserTest` | 7 | CMS/PKCS#7 SignedData + EnvelopedData analysis |
 | `CBomAnalyserTest` | 8 | CycloneDX CBOM validation (6 components, compliance check) |
 | `CBomGeneratorTest` | 4 | CBOM JSON generation from cert/CMS analysis |
-| `MainTest` | 26 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
-| `AlgorithmRegistryTest` | 15 | Registry loading, duplicate detection, OID index, cross-validation, coverage |
+| `MainTest` | 28 | CLI integration (all modes incl. cert, cms, cbom, table/verbose) |
+| `AlgorithmRegistryTest` | 24 | Registry loading, duplicate detection, OID index (incl. list-valued `oidMap` keys and per-value `oids` lists), cross-validation, coverage |
 | `CompositeValidationTest` | 11 | Composite entry loading, TLS/SSH/X.509 component resolution, authority-aware validation |
-| **Total** | **806** | |
+| **Total** | **826** | |
 
 ---
 
